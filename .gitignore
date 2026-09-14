@@ -1,0 +1,13 @@
+# ===== 百度网盘同步冲突文件 =====
+*_冲突文件_*
+
+# ===== WorkBuddy 本地项目数据（记忆日志，不进公开仓库）=====
+.workbuddy/
+
+# ===== Obsidian 本地 UI 状态（每次开关文件都会变化）=====
+.obsidian/workspace.json
+
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini

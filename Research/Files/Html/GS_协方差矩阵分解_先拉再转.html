@@ -1,0 +1,26 @@
+<svg viewBox="0 0 680 310" width="100%" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>协方差矩阵分解：先缩放再旋转</title>
+<desc>标准圆球经缩放 S 和旋转 R 变成目标椭球，Σ 等于 R 乘 S 乘 S 乘 R 转置</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<circle cx="115" cy="120" r="55" fill="#B5D4F4" stroke="#185FA5" stroke-width="0.5"/>
+<circle cx="115" cy="120" r="3" fill="#0C447C"/>
+<text x="115" y="200" text-anchor="middle" style="font:500 14px var(--font-sans); fill:#0C447C">1. 标准圆球</text>
+<text x="115" y="218" text-anchor="middle" style="font:400 12px var(--font-sans); fill:#185FA5">每根轴长度都一样</text>
+<line x1="185" y1="120" x2="245" y2="120" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<ellipse cx="340" cy="120" rx="85" ry="32" fill="#85B7EB" stroke="#185FA5" stroke-width="0.5"/>
+<circle cx="340" cy="120" r="3" fill="#0C447C"/>
+<text x="340" y="200" text-anchor="middle" style="font:500 14px var(--font-sans); fill:#0C447C">2. 缩放 S（3 个数）</text>
+<text x="340" y="218" text-anchor="middle" style="font:400 12px var(--font-sans); fill:#185FA5">沿 x / y / z 各拉多长</text>
+<line x1="440" y1="120" x2="500" y2="120" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<ellipse cx="575" cy="120" rx="85" ry="32" transform="rotate(-25 575 120)" fill="#378ADD" stroke="#185FA5" stroke-width="0.5"/>
+<circle cx="575" cy="120" r="3" fill="#042C53"/>
+<text x="575" y="200" text-anchor="middle" style="font:500 14px var(--font-sans); fill:#0C447C">3. 旋转 R（4 个数）</text>
+<text x="575" y="218" text-anchor="middle" style="font:400 12px var(--font-sans); fill:#185FA5">四元数，转到目标朝向</text>
+<rect x="40" y="245" width="600" height="50" rx="12" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
+<text x="340" y="266" text-anchor="middle" style="font:500 14px var(--font-sans); fill:var(--color-text-primary)">Σ = R·S·S·Rᵀ：GS 只存 7 个数（3 缩放 + 4 旋转），用时拼回矩阵</text>
+<text x="340" y="284" text-anchor="middle" style="font:400 12px var(--font-sans); fill:var(--color-text-secondary)">好处：这样拼出的永远是合法椭球（数学上叫"正定"），不用额外检查</text>
+</svg>

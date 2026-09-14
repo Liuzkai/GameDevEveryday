@@ -1,0 +1,26 @@
+<svg viewBox="0 0 680 300" width="100%" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>alpha blending 顺序依赖</title>
+<desc>同样两个半透明椭圆，先红后蓝与先蓝后红得到不同颜色</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<text x="180" y="46" text-anchor="middle" style="font:500 14px var(--font-sans); fill:#993C1D">顺序 ①：先画红，再画蓝</text>
+<rect x="40" y="60" width="280" height="150" rx="12" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
+<circle cx="115" cy="130" r="42" fill="#D85A30" opacity="0.55"/>
+<circle cx="175" cy="130" r="42" fill="#378ADD" opacity="0.55"/>
+<line x1="222" y1="130" x2="238" y2="130" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="244" y="108" width="60" height="44" rx="8" fill="#919BBA" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="274" y="172" text-anchor="middle" style="font:400 12px var(--font-sans); fill:#993C1D">偏蓝</text>
+<text x="340" y="140" text-anchor="middle" style="font:500 26px var(--font-sans); fill:var(--color-text-primary)">≠</text>
+<text x="500" y="46" text-anchor="middle" style="font:500 14px var(--font-sans); fill:#185FA5">顺序 ②：先画蓝，再画红</text>
+<rect x="360" y="60" width="280" height="150" rx="12" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<circle cx="435" cy="130" r="42" fill="#378ADD" opacity="0.55"/>
+<circle cx="495" cy="130" r="42" fill="#D85A30" opacity="0.55"/>
+<line x1="542" y1="130" x2="558" y2="130" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="564" y="108" width="60" height="44" rx="8" fill="#B98F8F" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="594" y="172" text-anchor="middle" style="font:400 12px var(--font-sans); fill:#185FA5">偏红</text>
+<text x="340" y="248" text-anchor="middle" style="font:400 12px var(--font-sans); fill:var(--color-text-secondary)">同一个像素、同样两个椭圆，顺序一换颜色就变 —— blending 天生依赖绘制顺序</text>
+<text x="340" y="268" text-anchor="middle" style="font:400 12px var(--font-sans); fill:var(--color-text-secondary)">不透明物体有 z-buffer「只留最近」不用排序；半透明没有这种捷径，只能先排好再画</text>
+</svg>
