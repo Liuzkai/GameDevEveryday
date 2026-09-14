@@ -1,11 +1,12 @@
 ---
 name: game-development-research-knowledge
-version: 1.0.0
+version: 1.1.0
 description: >-
   Discover global game-development research, curate frontier and classical papers,
   build and maintain an Obsidian knowledge graph, track the user's Easy/Normal/Hard
   knowledge state, construct learning bridges for Hard topics, and explain research
   through concept relationships and historical technology timelines.
+  After each daily run, commit and push all vault changes to GitHub (see §41).
 triggers:
   - daily game development research
   - game development papers
@@ -984,6 +985,7 @@ Example structure:
 ```text
 Papers/
   2026-09-11-Example-Paper.md
+Files/Html/
   2026-09-11-Example-Paper.html
 ```
 
@@ -1269,6 +1271,7 @@ Follow this sequence on each run:
 15. Update the daily note.
 16. Update weekly/monthly artifacts when due.
 17. Do not repeat Easy content unless an exception rule applies.
+18. After the daily digest is delivered to the user, commit and push all vault changes to Git (see section 41).
 ```
 
 ---
@@ -1499,3 +1502,39 @@ The skill succeeds when the vault increasingly explains:
 The final artifact is therefore not a paper library. It is:
 
 > **A Global Game Development Knowledge Graph + Personal Cognitive Map + Technology Evolution Archive + Adaptive Learning System.**
+
+---
+
+# 41. Git Version Control — Automatic Commit After Each Run
+
+The vault is a Git repository synchronized to GitHub:
+
+- **Repository root:** `E:\BaiduSyncdisk\ObsidianNotes\定时任务`
+- **Remote:** `https://github.com/Liuzkai/GameDevEveryday` — branch `main`
+
+**After every daily run — once all notes are produced and the user-facing daily digest has been delivered — commit and push all changes exactly once.**
+
+## Procedure
+
+```bash
+cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
+git add -A
+git commit -m "research: YYYY-MM-DD 每日研究更新 —— <brief summary>"
+git push origin main
+```
+
+## Rules
+
+1. **Exactly one commit per run.** Batch the whole day's changes into a single commit — no matter how many notes were created or edited.
+2. **Commit message format:**
+   `research: YYYY-MM-DD 每日研究更新 —— <brief summary>`
+   Example: `research: 2026-09-15 每日研究更新 —— 2 Papers / 1 Concept / Daily`
+3. **No changes → skip silently.** If `git status` is clean, do not create an empty commit and do not report an error.
+4. **Never commit these paths** (already in `.gitignore`; do not override it):
+   - `.workbuddy/` — local agent memory, automation logs, session data
+   - `*_冲突文件_*` — Baidu Netdisk sync-conflict files
+   - `.obsidian/workspace.json` — local Obsidian UI state
+5. **Failure handling:** if commit or push fails, retry once. If it still fails, record one short line in the daily digest and continue — Git sync must never break the main research workflow.
+6. **Credentials:** Git Credential Manager already holds valid credentials (authorized once interactively); no login is required during runs. If authentication fails, tell the user to run `git push` once manually in their own terminal to re-authorize.
+7. **Known environment limitation (tool sandbox):** when Git runs inside the WorkBuddy tool sandbox, a newly written remote-tracking ref (`refs/remotes/origin/*`) may not persist locally — `git status` may show `[gone]` even though **the push succeeded and the remote content is correct**. This is a known sandbox behavior, not a repository problem. **Do not migrate the repository, change Git configuration, or treat it as an error.** The user's own terminal operations are unaffected; a manual `git fetch` by the user restores the local tracking state.
+8. **Sync conflicts on note files:** if a note file exists in a sync-conflict state, prefer regenerating or merging the note before committing, so that conflict copies are never treated as content.
