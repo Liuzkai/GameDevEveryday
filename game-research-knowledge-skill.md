@@ -1534,7 +1534,7 @@ git push origin main
    - `.workbuddy/` — local agent memory, automation logs, session data
    - `*_冲突文件_*` — Baidu Netdisk sync-conflict files
    - `.obsidian/workspace.json` — local Obsidian UI state
-5. **Failure handling:** if commit or push fails, retry once. If it still fails, record one short line in the daily digest and continue — Git sync must never break the main research workflow.
+5. **Failure handling:** if commit or push fails, retry up to 2 times with a short delay (transient HTTP `403` / network / proxy errors are known to occur in this environment and typically resolve on retry). If it still fails, record one short line in the daily digest and continue — Git sync must never break the main research workflow.
 6. **Credentials:** Git Credential Manager already holds valid credentials (authorized once interactively); no login is required during runs. If authentication fails, tell the user to run `git push` once manually in their own terminal to re-authorize.
 7. **Known environment limitation (tool sandbox):** when Git runs inside the WorkBuddy tool sandbox, a newly written remote-tracking ref (`refs/remotes/origin/*`) may not persist locally — `git status` may show `[gone]` even though **the push succeeded and the remote content is correct**. This is a known sandbox behavior, not a repository problem. **Do not migrate the repository, change Git configuration, or treat it as an error.** The user's own terminal operations are unaffected; a manual `git fetch` by the user restores the local tracking state.
 8. **Sync conflicts on note files:** if a note file exists in a sync-conflict state, prefer regenerating or merging the note before committing, so that conflict copies are never treated as content.
