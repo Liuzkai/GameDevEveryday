@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-14]]（昨日：[[2026-09-11]]）
+- **今日**：[[2026-09-15]]（昨日：[[2026-09-14]]）
 - **本周综合**：[[2026-W37]]
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正
 
-## Papers（26）
+## Papers（29）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -45,12 +45,16 @@ created: 2026-09-07
 | [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]] | S（经典） | Normal | **高（PBR 环境光半边 / 移动端 GI 根源）** |
 | [[2026-09-14-Gaussian Light Transport]]                                                      | A-  | Hard（概念桥短） | 高（GI 显式路线对照）     |
 | [[2026-09-14-Learning Realistic Athletic Sprinting Without Demonstrations]]                  | A-  | Hard        | 中（零示范范式）        |
+| [[Kajiya — The Rendering Equation (1986)]]                                                    | S（经典） | Normal | **高（渲染谱系最大锚点 / PBR 容器侧）** |
+| [[2026-09-15-Grid-Free Monte Carlo for Time-Dependent Diffusion]]                             | A-  | Hard（取两个认知点即可） | 中（方法论对偶样本）     |
+| [[2026-09-15-UniMo — Unifying Human and Animal Motion Generation]]                            | B+  | Hard（取一句话即可） | 中低（数据价值 > 方法价值） |
 
-## Concepts（20）
+## Concepts（21）
 
 **基础锚点**
 - [[Real-Time Rendering]]
 - [[Global Illumination]]
+- [[Rendering Equation]] ★ 2026-09-15 入库（谱系最大锚点补齐）
 
 **你的领域（Easy）**
 - [[Real-Time VFX Performance Budgeting]]
@@ -124,4 +128,4 @@ Research/
 
 ---
 
-最后更新：2026-09-14（用户手动插入经典：Ramamoorthi-Hanrahan SH Irradiance 2001 入库；Run #6：+3 Papers 含经典 Cook-Torrance、+2 Concepts、首份 Weekly [[2026-W37]]）
+最后更新：2026-09-15（Run #7：+3 Papers 含经典 Kajiya 1986 渲染方程、+1 Concept（Rendering Equation）、Daily；DLSS 5 笔记补 E-Day 口径更正）

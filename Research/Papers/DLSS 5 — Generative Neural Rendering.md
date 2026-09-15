@@ -23,6 +23,8 @@ tags: [neural-rendering, real-time, nvidia, dlss, generative]
 
 DLSS 5 不再"重建一个更贵渲染结果的近似"，而是**直接生成最终画面的外观**。它把生成式先验（从真实世界外观学到的东西，如皮肤次表面散射、叶片透光）注入实时帧，同时用 3D 几何 + 引擎 motion vector + 艺术方向值做约束，保证不破坏 authored content。一步像素空间扩散模型，4K 实时，因果且确定性，专为帧间时间稳定训练。2026-09-03 随 NBA 2K27 首发，仅 RTX 50 系。
 
+> 注（2026-09-15）：Gears of War: E-Day（10-6 发售）官方确认为 **DLSS 4.5** 套件（SR + Dynamic MFG + Reflex），**并非 DLSS 5**——早前"DLSS 5 随 E-Day 秋季首发"的预期证伪，DLSS 5 首发仍仅 NBA 2K27。
+
 ## Problem
 
 - 前几代 DLSS 是**重建**：近似一个本需要更高渲染预算才能得到的参考输出。画质上限被"渲染器本身能表达什么"锁死。
