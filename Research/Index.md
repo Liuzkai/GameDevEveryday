@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-15]]（昨日：[[2026-09-14]]）
+- **今日**：[[2026-09-16]]（昨日：[[2026-09-15]]）
 - **本周综合**：[[2026-W37]]
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正
 
-## Papers（29）
+## Papers（32）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -48,13 +48,18 @@ created: 2026-09-07
 | [[Kajiya — The Rendering Equation (1986)]]                                                    | S（经典） | Normal | **高（渲染谱系最大锚点 / PBR 容器侧）** |
 | [[2026-09-15-Grid-Free Monte Carlo for Time-Dependent Diffusion]]                             | A-  | Hard（取两个认知点即可） | 中（方法论对偶样本）     |
 | [[2026-09-15-UniMo — Unifying Human and Animal Motion Generation]]                            | B+  | Hard（取一句话即可） | 中低（数据价值 > 方法价值） |
+| [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]                   | S（经典） | Normal（研读中） | **最高（GGX 论文：你用的 D 与 G 出自这里）** |
+| [[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]]                       | A-  | Hard（D/G 部分 Normal 可读） | 中高（Smith 假设 → height-field 极限） |
+| [[2026-09-16-ESG — Generating Physically Consistent Dynamic 3D Scenes from Text]]             | B+  | Normal | 中（架构模板 > 技术） |
 
-## Concepts（21）
+## Concepts（23）
 
 **基础锚点**
 - [[Real-Time Rendering]]
 - [[Global Illumination]]
 - [[Rendering Equation]] ★ 2026-09-15 入库（谱系最大锚点补齐）
+- [[Microfacet Theory]] ★ 2026-09-16 入库（当前学习目标节点：D·G·F）
+- [[Participating Media]] ★ 2026-09-16 入库（VFX/OverDraw Easy 域 ↔ 理论的最大缺口）
 
 **你的领域（Easy）**
 - [[Real-Time VFX Performance Budgeting]]
@@ -128,4 +133,4 @@ Research/
 
 ---
 
-最后更新：2026-09-15（Run #7：+3 Papers 含经典 Kajiya 1986 渲染方程、+1 Concept（Rendering Equation）、Daily；DLSS 5 笔记补 E-Day 口径更正）
+最后更新：2026-09-16（Run #8：+3 Papers 含经典 Walter 2007「GGX 论文」、+2 Concepts（Microfacet Theory / Participating Media）、+1 图解（Microfacet D·G·F）、Daily、Index/BRDF/PBR/Arm/Real-Time GI 五处编辑）

@@ -41,6 +41,30 @@ Arm 产品负责人原话点名 DLSS 5："DLSS 就算有软件支持也跑不了
 - 第三代光追单元 + Opacity Micromaps：演示中帧率 +30%、光追负载 -70%
 - NFRU 叠加后支持移动端 120 FPS 游戏会话
 
+## Neural Dawn —— 首个生产级落地样本（2026-09-16 核实补录）
+
+| 项 | 内容 |
+|---|---|
+| 开发 | Arm × Sumo Digital，**17 人 / 18 个月** |
+| 引擎 | **UE 5.6.1** |
+| 里程碑 | **全球第一款在移动端启用 UE MegaLights 的游戏**（同时叠硬件光追） |
+| 规模 | 约 120 分钟流程 / 4 关卡；2026 下半年上架 |
+| 平台 | **独占新一代 Arm Mali GPU 的 Android 设备** |
+
+性能口径（Arm 官方，非第三方实测）：
+
+- **NSS**：最多 **50% GPU workload 削减**
+- **NFRU**：最多 **2× 帧率**
+- 上代 GPU 极限 40 FPS → 新 GPU **60 FPS**
+
+**核心叙事不是"手机变快了"，而是预算置换**：用神经超分省下的功耗预算，去开 MegaLights + 光追。Sumo Digital 联合 COO 的表述是"bank a key power saving, enabling us to switch on both MegaLights and ray tracing"。
+
+### ⚠️ 必须一起看的 caveat（Arm 官方 FAQ 口径）
+
+> NSS / NFRU 是 plug-and-play；但 **"NSSD + MegaLights 的完整组合涉及更深的管线改动，目前在 UE 里不是 plug-and-play 方案"**（需自定义管线改动，不是勾一个开关）。
+
+这条决定了它的参考价值边界：**移动端 MegaLights 今天仍是有代价的定制集成，且绑死独占硬件**，不能当作普适结论外推。
+
 ## 已确认接入方（对中国手游研发异常关键）
 
 - **腾讯游戏 Central Tech：MagicDawn 引擎接入**；Arena Breakout Infinite（暗区突围）做 NSSD 演示

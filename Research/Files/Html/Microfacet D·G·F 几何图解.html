@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microfacet D·G·F 几何图解</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1c2024; --muted:#6b7280; --line:#d8dee6;
+    --card:#f7f9fb; --accent:#2563eb; --warn:#d97706; --ok:#059669;
+    --d:#2563eb; --g:#d97706; --f:#059669;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#16181d; --fg:#e6e9ef; --muted:#9aa3b0; --line:#30363f;
+      --card:#1d2027; --accent:#60a5fa; --warn:#fbbf24; --ok:#34d399;
+      --d:#60a5fa; --g:#fbbf24; --f:#34d399;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 22px 40px;
+    background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.65; font-size:15px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 4px;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 26px}
+  h2{
+    font-size:16px;margin:34px 0 12px;padding-left:10px;
+    border-left:3px solid var(--accent);
+  }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+  svg{display:block;width:100%;height:auto;margin:6px 0}
+  .cap{color:var(--muted);font-size:12.5px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-weight:600}
+  code{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px}
+  .k-d{color:var(--d);font-weight:600}
+  .k-g{color:var(--g);font-weight:600}
+  .k-f{color:var(--f);font-weight:600}
+  ul{margin:8px 0 0;padding-left:20px}
+  li{margin:4px 0}
+  .warn{border-left:3px solid var(--warn);padding-left:12px;color:var(--fg);margin-top:14px;font-size:14px}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Microfacet D · G · F — 几何图解</h1>
+<p class="sub">三个因子各管一件事 · 缺任何一个，能量或形状就会出错</p>
+
+<div class="card">
+  <svg viewBox="0 0 840 300" role="img" aria-label="微面几何：宏观平坦表面放大后是锯齿状微面，只有法线等于半程向量的微面参与着色">
+    <!-- macro surface -->
+    <line x1="40" y1="248" x2="800" y2="248" stroke="var(--line)" stroke-width="2"/>
+    <text x="40" y="272" fill="var(--muted)" font-size="12">宏观表面 n（看起来是平的）</text>
+
+    <!-- magnified microfacet profile -->
+    <path d="M 300 248 L 340 226 L 372 236 L 404 210 L 440 232 L 480 216 L 520 238 L 560 222 L 600 240 L 640 228 L 680 244 L 720 230 L 760 248"
+          fill="none" stroke="var(--fg)" stroke-width="2"/>
+
+    <!-- the active microfacet -->
+    <line x1="404" y1="210" x2="440" y2="232" stroke="var(--d)" stroke-width="5" stroke-linecap="round"/>
+    <text x="452" y="205" fill="var(--d)" font-size="13" font-weight="600">活跃微面：法线 m</text>
+
+    <!-- normal m -->
+    <line x1="422" y1="221" x2="436" y2="170" stroke="var(--d)" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="441" y="166" fill="var(--d)" font-size="13" font-weight="600">m</text>
+
+    <!-- macro normal n -->
+    <line x1="420" y1="221" x2="420" y2="150" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="3 3"/>
+    <text x="410" y="143" fill="var(--muted)" font-size="12">n</text>
+
+    <!-- incoming l -->
+    <line x1="290" y1="120" x2="414" y2="214" stroke="var(--f)" stroke-width="2.2" marker-end="url(#arF)"/>
+    <text x="272" y="112" fill="var(--f)" font-size="13" font-weight="600">l（入射）</text>
+
+    <!-- outgoing v -->
+    <line x1="414" y1="214" x2="560" y2="118" stroke="var(--g)" stroke-width="2.2" marker-end="url(#arG)"/>
+    <text x="556" y="108" fill="var(--g)" font-size="13" font-weight="600">v（出射/视线）</text>
+
+    <!-- half vector -->
+    <line x1="414" y1="214" x2="438" y2="108" stroke="var(--d)" stroke-width="2.2" marker-end="url(#arD)"/>
+    <text x="438" y="96" fill="var(--d)" font-size="13" font-weight="600">h = normalize(l+v)</text>
+
+    <defs>
+      <marker id="arF" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="var(--f)"/></marker>
+      <marker id="arG" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="var(--g)"/></marker>
+      <marker id="arD" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="var(--d)"/></marker>
+    </defs>
+
+    <text x="40" y="34" fill="var(--fg)" font-size="14" font-weight="600">① 微面假设</text>
+    <text x="40" y="56" fill="var(--muted)" font-size="12.5">放大看，粗糙表面是无数完美镜面小片。</text>
+    <text x="40" y="74" fill="var(--muted)" font-size="12.5">能把 l 反射到 v 的，只有法线 m = h 的那些。</text>
+  </svg>
+  <p class="cap">关键：微面理论把"表面长什么样"换成了一个统计问题——<b>有多少微面朝向 h</b>。这就是 D 要回答的。</p>
+</div>
+
+<h2>② D — 法线分布：高光的形状</h2>
+<div class="card">
+  <svg viewBox="0 0 840 250" role="img" aria-label="Beckmann 与 GGX 法线分布对比：GGX 长尾更明显">
+    <line x1="40" y1="200" x2="800" y2="200" stroke="var(--line)" stroke-width="2"/>
+    <text x="40" y="226" fill="var(--muted)" font-size="12">与宏观法线 n 的夹角 θ</text>
+
+    <!-- Beckmann -->
+    <path d="M 220 200 C 250 200 258 130 262 96 C 266 130 274 200 300 200 Z"
+          fill="var(--muted)" opacity="0.35" stroke="var(--muted)" stroke-width="2"/>
+    <text x="196" y="80" fill="var(--muted)" font-size="13" font-weight="600">Beckmann</text>
+    <text x="196" y="98" fill="var(--muted)" font-size="12">尾部短：离开中心就迅速衰减</text>
+
+    <!-- GGX -->
+    <path d="M 540 200 C 585 200 610 150 622 92 C 634 150 655 200 700 200 Z"
+          fill="var(--d)" opacity="0.28" stroke="var(--d)" stroke-width="2.5"/>
+    <text x="500" y="62" fill="var(--d)" font-size="13" font-weight="600">GGX（UE 默认）</text>
+    <text x="500" y="80" fill="var(--d)" font-size="12">长尾：中心之外还有一圈明显辉光</text>
+
+    <!-- tail marker -->
+    <line x1="300" y1="200" x2="300" y2="150" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="700" y1="200" x2="700" y2="150" stroke="var(--d)" stroke-width="1" stroke-dasharray="3 3"/>
+    <text x="640" y="176" fill="var(--d)" font-size="12">← 长尾区</text>
+
+    <text x="40" y="34" fill="var(--fg)" font-size="14" font-weight="600">D(m)：法线朝向 m 的微面密度</text>
+  </svg>
+  <p class="cap"><b>为什么 GGX 赢了业界？</b>不是因为它"更物理"——是因为长尾同时带来两件事：视觉上掠射更真实，工程上 Roughness 滑杆手感更线性、更好调。<b>物理正确 + 美术好调</b>同时成立才让它成为默认。</p>
+  <div class="warn">D 的归一化是对<b>投影面积</b>做的：<code>∫ D(m)(n·m) dω = 1</code>，不是 <code>∫ D(m) dω = 1</code>。少了这个 (n·m)，推导永远对不上。</div>
+</div>
+
+<h2>③ G — 几何遮蔽：为什么掠射角不会爆亮</h2>
+<div class="card">
+  <svg viewBox="0 0 840 260" role="img" aria-label="masking 与 shadowing 示意">
+    <line x1="40" y1="200" x2="800" y2="200" stroke="var(--line)" stroke-width="2"/>
+
+    <!-- surface bumps -->
+    <path d="M 60 200 L 100 168 L 140 192 L 180 156 L 220 186 L 260 162 L 300 194 L 340 170 L 380 198 L 420 176 L 460 200"
+          fill="none" stroke="var(--fg)" stroke-width="2"/>
+
+    <!-- target facet -->
+    <line x1="180" y1="156" x2="220" y2="186" stroke="var(--d)" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- shadowing: blocked light -->
+    <line x1="60" y1="60" x2="200" y2="171" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="46" y="50" fill="var(--warn)" font-size="13" font-weight="600">入射光被挡 = Shadowing</text>
+
+    <!-- masking: blocked view -->
+    <line x1="200" y1="171" x2="330" y2="60" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="300" y="50" fill="var(--warn)" font-size="13" font-weight="600">视线被挡 = Masking</text>
+
+    <!-- blocker for shadowing -->
+    <path d="M 100 168 L 140 192" stroke="var(--warn)" stroke-width="6" stroke-linecap="round"/>
+    <text x="96" y="228" fill="var(--warn)" font-size="12">挡光者</text>
+
+    <!-- blocker for masking -->
+    <path d="M 260 162 L 300 194" stroke="var(--warn)" stroke-width="6" stroke-linecap="round"/>
+    <text x="256" y="228" fill="var(--warn)" font-size="12">挡视者</text>
+
+    <!-- right side: grazing -->
+    <text x="560" y="80" fill="var(--fg)" font-size="13.5" font-weight="600">掠射角为什么必须有 G？</text>
+    <text x="560" y="106" fill="var(--muted)" font-size="12.5">越接近掠射，微面互相遮挡的概率 → 1。</text>
+    <text x="560" y="126" fill="var(--muted)" font-size="12.5">没有 G 项，掠射会凭空多出能量，</text>
+    <text x="560" y="146" fill="var(--muted)" font-size="12.5">表现为物体边缘<b>整体发白</b>。</text>
+
+    <text x="40" y="34" fill="var(--fg)" font-size="14" font-weight="600">G(l,v,m)：既没被挡光、又没被挡视线的微面占比</text>
+  </svg>
+  <p class="cap">Smith 的形式：<code>G = G₁(l) · G₁(v)</code>，其中 <code>G₁ = 1/(1+Λ)</code>，对 GGX 有 <code>Λ = (−1+√(1+α²tan²θ))/2</code>。两个方向各自算一次再相乘——这隐含了<b>「高度与斜率不相关」的独立性假设</b>。2026 年的 GPIS 工作证明：它是 height-field 极限下的可推导结果，不再只是"为了算得动而做的假设"。</p>
+</div>
+
+<h2>④ 组装：完整公式</h2>
+<div class="card">
+  <svg viewBox="0 0 840 130" role="img" aria-label="Cook-Torrance 微面 BRDF 公式组装">
+    <text x="40" y="60" fill="var(--fg)" font-size="27" font-family="Georgia,'Times New Roman',serif">f<tspan font-size="15" dy="6">r</tspan><tspan dy="-6"> (l,v) = </tspan>
+      <tspan fill="var(--d)" font-weight="700">D(h)</tspan><tspan> · </tspan>
+      <tspan fill="var(--g)" font-weight="700">G(l,v,h)</tspan><tspan> · </tspan>
+      <tspan fill="var(--f)" font-weight="700">F(v,h)</tspan><tspan> / 4(n·l)(n·v)</tspan>
+    </text>
+    <line x1="40" y1="80" x2="800" y2="80" stroke="var(--line)" stroke-width="1"/>
+    <text x="40" y="104" fill="var(--d)" font-size="12.5">形状：高光长什么样</text>
+    <text x="230" y="104" fill="var(--g)" font-size="12.5">可见性：有多少真的参与</text>
+    <text x="430" y="104" fill="var(--f)" font-size="12.5">强度：反射 vs 折射进去</text>
+    <text x="640" y="104" fill="var(--muted)" font-size="12.5">雅可比：微面空间→方向空间</text>
+  </svg>
+  <table>
+    <tr><th>因子</th><th>UE 里的实现</th><th>不管它的后果</th></tr>
+    <tr><td><span class="k-d">D</span></td><td><code>D_GGX</code></td><td>高光位置和形状全错</td></tr>
+    <tr><td><span class="k-g">G</span></td><td><code>Vis_SmithJointApprox</code></td><td>掠射偏亮，能量不守恒</td></tr>
+    <tr><td><span class="k-f">F</span></td><td><code>F_Schlick</code>（Schlick 1994，非 Walter 2007 贡献）</td><td>掠射反射强度不对</td></tr>
+  </table>
+  <div class="warn"><b>性能视角：</b>D·G·F 是<b>每像素固定开销</b>。多一个 lobe（Clear Coat / Cloth / Hair / Subsurface）= 乘一份开销。所以 <b>Shading Model 的种类数是 DrawCall 之外的隐藏预算维度</b>。</div>
+</div>
+
+<h2>⑤ 两个常被忽略、但很关键的细节</h2>
+<div class="card">
+  <ul>
+    <li><b>可见法线分布 D<sub>ω</sub>(m) 比 D(m) 更本质。</b>真正参与着色的是"从当前方向<b>看得见</b>的微面"。现代重要性采样直接采 D<sub>ω</sub> 而不是"采 D 再判可见"——这就是为什么它高效得多。</li>
+    <li><b>经典形式只算单次散射。</b>光在微面间弹第二次就被丢掉，所以粗糙度越高越暗（能量损失）。多次散射修正是后来补的，不在 Cook-Torrance / Walter 原文里。</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>

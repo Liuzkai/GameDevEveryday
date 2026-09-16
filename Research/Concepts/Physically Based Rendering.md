@@ -31,7 +31,7 @@ BRDF 形式化（Nicodemus 1977）
         ↓
 ★ Cook-Torrance 1981：完整物理框架（离线渲染逐渐采用）
         ↓
-GGX 分布（Walter 2007，长尾更贴实测）
+★ [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]：GGX 分布 + Smith height-correlated G（长尾更贴实测，**实时 PBR 的 D 与 G 两项都出自此文**）
         ↓
 Disney Principled BRDF（2012，《无敌破坏王》生产验证：原则化参数化）
         ↓
@@ -47,8 +47,8 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 | 物理项 | 精确形式 | 实时近似 |
 |---|---|---|
 | F | 完整 Fresnel（波长相关） | Schlick 近似：$F_0 + (1-F_0)(1-\cos\theta)^5$ |
-| D | Beckmann / 任意 NDF | GGX |
-| G | 微面遮挡积分 | Smith 近似（UE 用 height-correlated Smith 变体） |
+| D | Beckmann / 任意 NDF | **GGX**（[[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]） |
+| G | 微面遮挡积分 | **Smith 近似**（UE 用 height-correlated Smith 变体，同源同文） |
 | 环境镜面 | 预滤波卷积 | split-sum：环境贴图预滤波 + BRDF LUT |
 
 理解这张表 = 理解"实时 PBR 里没有新物理，只有便宜的近似"——这是评估任何"新着色技术"的基准姿势。
@@ -56,9 +56,13 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 ## Prerequisites
 
 - [[BRDF]]（数学核心）
+- [[Microfacet Theory]]（★ D·G·F 的完整拆解与 45 年演化链，见 [[Microfacet D·G·F 几何图解]]）
 - [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]（框架源头）
+- [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]（**你实际在用的 D 与 G 的来源**）
 
 ## Related Concepts
+
+- [[Participating Media]]（表面 ↔ 介质的对偶；2026 工作已把两者统一）
 
 - [[Real-Time Rendering]]
 - [[Inverse Rendering]]（PBR 参数是逆渲染要反解的目标）
