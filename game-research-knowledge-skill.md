@@ -1520,7 +1520,10 @@ The vault is a Git repository synchronized to GitHub:
 cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
 git add -A
 git commit -m "research: YYYY-MM-DD 每日研究更新 —— <brief summary>"
-git push origin main
+# 必须带这三个环境变量，否则 push 会在无头环境永久挂起（见 Rule 5）
+GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 git push origin main
+# 唯一可靠的验证方式（[gone] 不具参考价值，见 Rule 7）
+git ls-remote origin main && git rev-parse HEAD
 ```
 
 ## Rules
@@ -1534,7 +1537,13 @@ git push origin main
    - `.workbuddy/` — local agent memory, automation logs, session data
    - `*_冲突文件_*` — Baidu Netdisk sync-conflict files
    - `.obsidian/workspace.json` — local Obsidian UI state
-5. **Failure handling:** if commit or push fails, retry up to 2 times with a short delay (transient HTTP `403` / network / proxy errors are known to occur in this environment and typically resolve on retry). If it still fails, record one short line in the daily digest and continue — Git sync must never break the main research workflow.
-6. **Credentials:** Git Credential Manager already holds valid credentials (authorized once interactively); no login is required during runs. If authentication fails, tell the user to run `git push` once manually in their own terminal to re-authorize.
-7. **Known environment limitation (tool sandbox):** when Git runs inside the WorkBuddy tool sandbox, a newly written remote-tracking ref (`refs/remotes/origin/*`) may not persist locally — `git status` may show `[gone]` even though **the push succeeded and the remote content is correct**. This is a known sandbox behavior, not a repository problem. **Do not migrate the repository, change Git configuration, or treat it as an error.** The user's own terminal operations are unaffected; a manual `git fetch` by the user restores the local tracking state.
+5. **Failure handling — root cause is interactive credential prompting, not the network.** Verified 2026-09-16: `git push` hangs indefinitely (no output, >7 min) because Git Credential Manager (`credential.helper=manager`) attempts an interactive prompt in a headless automation environment and blocks forever. **Fix: always set `GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0` on the push command** — with these set, push completes in seconds using the already-cached credential. This is an environment-variable fix; **do not modify Git configuration**.
+   - Diagnostic that distinguishes hang causes: `git ls-remote origin main` works (read path needs no auth) while `git push` hangs → it is the credential prompt, not connectivity. An explicit "needs-interaction → fail fast" test (`GIT_TERMINAL_PROMPT=0 git push`) confirms it by either succeeding or erroring immediately.
+   - Sandbox vs outside-sandbox is **not** the deciding variable — both hang without the env vars.
+   - If push genuinely fails, retry up to 2 times; if it still fails, record one short line in the daily digest and continue — Git sync must never break the main research workflow.
+6. **Credentials:** Git Credential Manager holds valid cached credentials for GitHub (the repo-local `user.name`/`user.email` are commit metadata only and play no part in authentication). No login is required during runs. If authentication genuinely fails, tell the user to run `git push` once manually in their own terminal to re-authorize.
+7. **`[gone]` is a tracking-ref symptom, NOT evidence about push success.** Verified 2026-09-16: `refs/remotes/origin/*` cannot be persisted in this environment at all — `git fetch origin main` reports success (`* [new branch] main -> origin/main`) yet `git for-each-ref refs/remotes/` is **empty immediately afterwards**, and `git status` still shows `[gone]`. Consequences:
+   - `[gone]` appears **both** when the push failed (09:00 run) **and** after it succeeded — it carries zero signal about sync state. Never infer "push succeeded" from it.
+   - **The only reliable verification is comparing `git ls-remote origin main` against `git rev-parse HEAD`.** Use that to confirm sync; if they match, the work is on the remote.
+   - This is an environment limitation, not a repository problem. **Do not migrate the repository, change Git configuration, or treat it as an error.** The user's own terminal operations are unaffected; a manual `git fetch` by the user restores the local tracking state.
 8. **Sync conflicts on note files:** if a note file exists in a sync-conflict state, prefer regenerating or merging the note before committing, so that conflict copies are never treated as content.
