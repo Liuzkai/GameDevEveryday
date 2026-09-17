@@ -1520,10 +1520,12 @@ The vault is a Git repository synchronized to GitHub:
 cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
 git add -A
 git commit -m "research: YYYY-MM-DD 每日研究更新 —— <brief summary>"
-# 必须带这三个环境变量，否则 push 会在无头环境永久挂起（见 Rule 5）
-GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 git push origin main
+# ⚠️ 必须用【系统 Git】的绝对路径推送 —— 工具 shell 里的 git 是 PortableGit，拿不到凭据（见 Rule 5(c)）
+# 三个环境变量也要带上，否则会在无头环境挂起（见 Rule 5(a)）
+GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
+  "/c/Program Files/Git/cmd/git.exe" push origin main
 # 唯一可靠的验证方式（[gone] 不具参考价值，见 Rule 7）
-git ls-remote origin main && git rev-parse HEAD
+"/c/Program Files/Git/cmd/git.exe" ls-remote origin main && "/c/Program Files/Git/cmd/git.exe" rev-parse HEAD
 ```
 
 ## Rules
@@ -1540,9 +1542,20 @@ git ls-remote origin main && git rev-parse HEAD
 5. **Failure handling — two distinct causes, in this order.**
    - **(a) Interactive credential prompting (2026-09-16).** `git push` hangs indefinitely (no output, >7 min) because Git Credential Manager attempts an interactive prompt in a headless environment. **Fix: always set `GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0` on the push command.** This is an environment-variable fix; **do not modify Git configuration**.
    - **(b) No credential available at all (2026-09-17).** The env vars above **only help when a cached credential exists**. When the cache is unavailable/expired, the identical command instead fails fast with `fatal: could not read Username for 'https://github.com': terminal prompts disabled`, or silently hangs again. **The env-var fix cannot repair a missing credential — it only converts "hang" into "fail fast".**
-   - **Environment facts verified 2026-09-17** (supersede the 2026-09-16 note about `credential.helper=manager`): this environment uses **PortableGit** (`~/.workbuddy/binaries/PortableGit/1.2.0`); the actual `credential.helper` value is **`helper-selector`** (from PortableGit's `/etc/gitconfig`), not `manager`; GCM 2.9.0 is installed but `git credential fill` returns nothing; `GIT_TERMINAL_PROMPT=0` is now a **global env var** (already set in every shell); `gh` is not logged in and provides no fallback.
-   - **Diagnostic order:** `git ls-remote origin main` (read path, needs no auth) → if it works, the network is fine and any push failure is credential-related. Then `git credential fill` — if it returns nothing, cause (b).
-   - **Escalation:** if push fails 2–3 times, **stop retrying** and record one short line in the daily digest telling the user to run `git push origin main` manually once in their own terminal to re-authorize. Do not edit Git config, migrate the repo, or keep retrying — the local commit is intact and nothing is lost.
+   - **(c) ROOT CAUSE + FIX, verified 2026-09-17 11:55 — two different Git installations.**
+     - The **tool shell's** `git` resolves to **PortableGit** (`C:/Users/zhongkailiu/.workbuddy/binaries/PortableGit/versions/1.2.0`), whose `credential.helper` comes from *its own* `etc/gitconfig` and is **`helper-selector`**. In this environment that chain returns **no credential**, so `git push` fails (cause (b)) or hangs (cause (a)).
+     - The **user's own Git** is **`C:/Program Files/Git/cmd/git.exe`** (system Git for Windows 2.53.0.windows.2), with `credential.helper=manager` from `C:/Program Files/Git/etc/gitconfig` and `credential.helperselector.selected=manager` in `~/.gitconfig`. **This one has the working credential.**
+     - ✅ **FIX — always push with the system Git explicitly:**
+       ```bash
+       cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
+       GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
+         "/c/Program Files/Git/cmd/git.exe" push origin main
+       ```
+       Verified: completed in seconds, `ls-remote` == `rev-parse HEAD`. **Do not modify Git config, do not migrate the repo.**
+   - **Other verified environment facts:** `GIT_TERMINAL_PROMPT=0` is a **global env var** (already set in every shell); `gh` is not logged in and provides no fallback.
+   - **Tool-shell caveat (2026-09-17):** in some tool-shell invocations the PATH loses coreutils (`ls`/`grep`/`head`/`cat`/`mkdir` all "command not found"), and `timeout` resolves to Windows `timeout.exe` (which rejects POSIX args). **Do not pipe git output to `head`/`cat` and do not wrap the push in `timeout`** — redirect to a file under `.workbuddy/tmp/` and read it instead.
+   - **Diagnostic order:** `git ls-remote origin main` (read path, needs no auth) → if it works, the network is fine and any push failure is credential-related. Then compare `ls-remote` against `rev-parse HEAD` to decide whether a push is even needed.
+   - **Escalation:** if the system-Git push still fails 2–3 times, **stop retrying** and record one short line in the daily digest telling the user to run `git push origin main` manually once in their own terminal. The local commit is intact and nothing is lost.
    - Diagnostic that distinguishes hang causes: `git ls-remote origin main` works (read path needs no auth) while `git push` hangs → it is the credential prompt, not connectivity. An explicit "needs-interaction → fail fast" test (`GIT_TERMINAL_PROMPT=0 git push`) confirms it by either succeeding or erroring immediately.
    - Sandbox vs outside-sandbox is **not** the deciding variable — both hang without the env vars.
    - If push genuinely fails, retry up to 2 times; if it still fails, record one short line in the daily digest and continue — Git sync must never break the main research workflow.
