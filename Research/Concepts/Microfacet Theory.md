@@ -32,6 +32,15 @@ $$f_r(l,v) = \frac{D(h)\,G(l,v,h)\,F(v,h)}{4\,(n\cdot l)\,(n\cdot v)}$$
 
 分母 $4(n\cdot l)(n\cdot v)$ 是**雅可比**——把"微面法线空间的密度"换算到"方向空间"的修正项，不是凑出来的常数。
 
+### F 项的两个专属坑（2026-09-17 补）
+
+1. **F 的角度是 $h\cdot v$（或 $h\cdot l$），不是 $n\cdot v$。** F 是在**微面法线**上求的，不是宏观法线上。用错角度 → 粗糙表面的高光不会随掠射变白，材质"发死"。
+2. **Schlick 近似对金属（导体）物理上不成立**——它没有复折射率的位置。工业上靠参数化绕过：不算 $F_0$，直接把 $F_0$ 设成美术给的 BaseColor（UE 里 `Metallic=1` 时就是这样）。**一个物理上错误的公式，靠参数化技巧变成美术可控且视觉正确的东西。**
+
+误差数据：n=1.5 时最大绝对误差 **0.0357**（约 85°），n=1.33 时 **0.0599**（约 84°）；30°–70° 系统性低估、80° 后转高估。但**这个误差在最终像素里几乎看不见**——因为 F 要乘 G，而 G 在掠射趋于 0，把误差一起压掉了（85° 处衰减 70%）。详见 [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]。
+
+> **可复用判据**：看到任何近似的误差数字，先问"它在最终表达式里被谁乘掉了"，再判断够不够用。
+
 ### 三个常被忽略的点
 
 1. **D 的归一化是对投影面积做的**：$\int D(m)\,(n\cdot m)\,d\omega_m = 1$，不是 $\int D(m)\,d\omega_m = 1$。差这个 $(n\cdot m)$，很多推导会对不上。
@@ -78,6 +87,7 @@ Substrate（UE 5.2+）—— 多 lobe 可组合化，微面仍是底层积木
 |---|---|
 | [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] | 框架来源：D·G·F 与能量守恒 |
 | [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] | **GGX 与 Smith height-correlated 的来源**——你实际在用的那个 D 和 G |
+| **[[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]** ★ 2026-09-17 | **你实际在用的那个 F**（$F_0+(1-F_0)(1-\cos\theta)^5$）。三因子至此全部有出处 |
 | Heitz 2014《Understanding the Masking-Shadowing Function in Microfacet-Based BRDFs》 | 把 G 与可见法线分布讲透（推荐作为 G 项的深入读物） |
 | [[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]] | 2026：D 与 G 被从随机几何反推，Smith 成为 height-field 极限 |
 
@@ -102,13 +112,18 @@ Substrate（UE 5.2+）—— 多 lobe 可组合化，微面仍是底层积木
 
 ## Personal Knowledge
 
-**Normal，正在研读中**（2026-09-14 起的 Cook-Torrance D/G/F 学习线，今日 2026-09-16 补上 Walter 2007 锚点）。
+**Normal，正在研读中**（2026-09-14 起的 Cook-Torrance D/G/F 学习线）。
 
-已具备：[[Rendering Equation]]（容器）、[[BRDF]]（数学形式）、[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]（框架）。
+- 2026-09-16 补上 Walter 2007 锚点（D 与 G）；
+- **2026-09-17 补上 Schlick 1994（F）——三因子至此全部有出处**，来源侧闭合。
+
+已具备：[[Rendering Equation]]（容器）、[[BRDF]]（数学形式）、[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]（框架）、[[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]（D 与 G）、[[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]（F）。
 
 ## Learning Gap
 
-缺的是**"我实际在用的是哪一个 D、哪一个 G"**——即 Walter 2007 之后的实时化路径（Karis 2013 的 split-sum 与各种近似）。补上这一环，[[Physically Based Rendering]] 才能收口为 Easy。
+1. ~~"我实际在用的是哪一个 D、哪一个 G"~~ → 已由 Walter 2007 补上；
+2. **剩余缺口：实时化路径本身**——Karis 2013 的 split-sum、EnvBRDF LUT、以及 $F_{90}$ 形式的由来。补上这一环，[[Physically Based Rendering]] 才能收口为 Easy；
+3. **边界认知**：[[Hair Rendering]] 是微面模型**失效**的典型边界（细长散射体，含透射，需各向异性 BRDF）。知道理论在哪儿失效与知道它怎么用同样重要。
 
 ## Next Step
 

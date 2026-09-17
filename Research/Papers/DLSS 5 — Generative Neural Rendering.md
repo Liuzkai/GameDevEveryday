@@ -25,6 +25,16 @@ DLSS 5 不再"重建一个更贵渲染结果的近似"，而是**直接生成最
 
 > 注（2026-09-15）：Gears of War: E-Day（10-6 发售）官方确认为 **DLSS 4.5** 套件（SR + Dynamic MFG + Reflex），**并非 DLSS 5**——早前"DLSS 5 随 E-Day 秋季首发"的预期证伪，DLSS 5 首发仍仅 NBA 2K27。
 
+> **注（2026-09-17 补录核实，来源：NVIDIA 官方 DLSS 5 FAQ）**：上一条需要做重要补充，而不是被推翻——
+> - **首发 ≠ 全面可用**。官方口径：DLSS 5 于 **2026 秋季**正式推出，届时首发阵容约 15 款：**AION 2、Assassin's Creed Shadows、Black State、CINDER CITY、Delta Force、Hogwarts Legacy、Justice、NARAKA: BLADEPOINT、NTE: Neverness to Everness、Phantom Blade Zero、Resident Evil Requiem、Sea of Remnants、Starfield、The Elder Scrolls IV: Oblivion Remastered、Where Winds Meet**。NBA 2K27 是"最先拿到"的那一款，不是唯一一款。
+> - **首发阵容里中文项目占比极高**：Delta Force（腾讯）、Justice / NARAKA: BLADEPOINT / Where Winds Meet（网易）、NTE（Hotta）、Phantom Blade Zero（S-GAME）。官方列出的支持厂商含 **Tencent、NetEase、Hotta Studio、NCSOFT、S-GAME**。这对判断"国内同行的技术跟进节奏"是一个直接信号。
+> - ⚠️ **最重要的 caveat：GTC 的早期预览 demo 是跑在两块 RTX 5090 上的——一块渲染游戏，另一块专门跑 DLSS 5 模型。** 官方称会针对单 GPU 优化，**最低 GPU 规格与显存/性能开销在 FAQ 里均标注为"待公布"**。也就是说：**截至本次核实，DLSS 5 的单卡实时成本仍然是个未知数。**
+> - 定位官方原话：DLSS 5 **不替代** Path Tracing——PT 提供光照**准确性**（位置对不对），DLSS 5 提供光照**真实感**（像不像有更大的光预算和更好的材质）。二者叠加。
+> - 集成方式：**NVIDIA Streamline SDK 或 UE5 插件**，"与集成 DLSS Frame Generation 类似"。
+> - 官方明确列为增强对象的材质：**skin（SSS）、eyes、hair、fabric**，及 rim lighting / contact shadows。
+
+**对生产就绪度的修正**：本笔记原标 `Early Production`。考虑到①单卡成本未公布、②最低 GPU 规格未公布、③首发阵容尚未全部落地，**在官方给出单卡性能与显存数据之前，对它的预算影响只能做定性判断，不能做定量假设。** 这不影响它对"预算定义域"的长期结构性冲击判断（见下），但影响"明年能不能进 PC_High 档"这类具体决策。
+
 ## Problem
 
 - 前几代 DLSS 是**重建**：近似一个本需要更高渲染预算才能得到的参考输出。画质上限被"渲染器本身能表达什么"锁死。

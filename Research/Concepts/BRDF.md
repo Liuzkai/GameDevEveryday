@@ -34,6 +34,8 @@ $$f_r(\omega_i, \omega_o) = \frac{dL_o(\omega_o)}{dE_i(\omega_i)}$$
 | 微面理论 | Torrance-Sparrow 1967（物理光学）→ Blinn 1977 引入 CG | 有机制，Fresnel 被简化 |
 | **完整物理** | **[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]** | D·G·F 齐备，能量守恒 |
 | **改进分布** | [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]（GGX / Trowbridge-Reitz） | 长尾高光更贴实测；**今日实时渲染的默认 D 项** |
+| **廉价的 F** | [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]] | 五次幂近似 Fresnel；**今日实时渲染的默认 F 项**（对金属物理上不成立，靠 $F_0$ 参数化绕过） |
+| **失效边界** | [[Hair Rendering]]（Kajiya-Kay 1989 / Marschner 2003） | 细长散射体 + 透射，**标准微面 BRDF 不适用** |
 | 生产参数化 | Disney Principled 2012 → Karis UE4 2013 | 实时化，美术友好 |
 | 测量数据 | MERL 100 材质库（2003） | 验证基准 |
 

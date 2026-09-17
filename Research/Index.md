@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-16]]（昨日：[[2026-09-15]]）
+- **今日**：[[2026-09-17]]（昨日：[[2026-09-16]]）
 - **本周综合**：[[2026-W37]]
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正
 
-## Papers（32）
+## Papers（35）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -51,8 +51,11 @@ created: 2026-09-07
 | [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]                   | S（经典） | Normal（研读中） | **最高（GGX 论文：你用的 D 与 G 出自这里）** |
 | [[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]]                       | A-  | Hard（D/G 部分 Normal 可读） | 中高（Smith 假设 → height-field 极限） |
 | [[2026-09-16-ESG — Generating Physically Consistent Dynamic 3D Scenes from Text]]             | B+  | Normal | 中（架构模板 > 技术） |
+| [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]                  | S（经典） | Normal（研读中） | **最高（你实际在用的那个 F；D·G·F 三因子至此全部有出处）** |
+| [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]                        | A-  | Normal | 高（发片→发丝自动升档；分档阶梯首次可上可下） |
+| [[2026-09-17-EMODY Flow — Emotion-Aware Audio-Driven Full-Body Motion Generation]]             | B+  | Normal（只取一条诊断） | 中（"弱条件被抑制"修法可迁移） |
 
-## Concepts（23）
+## Concepts（24）
 
 **基础锚点**
 - [[Real-Time Rendering]]
@@ -68,6 +71,7 @@ created: 2026-09-07
 - [[Gaussian Splatting]] ✅ 2026-09-11 标 Easy
 
 **Normal 学习区**
+- [[Hair Rendering]] ★ 2026-09-17 入库（资产表示 + 着色 + 分档三层；**也是 [[Microfacet Theory]] 失效的边界**）
 - [[Motion Matching]] ★ 关键瓶颈
 - [[BRDF]] ★ 主动研读中（2026-09-14 信号）
 - [[Physically Based Rendering]] ★ 主动研读中（与 BRDF 同线）
@@ -133,4 +137,4 @@ Research/
 
 ---
 
-最后更新：2026-09-16（Run #8：+3 Papers 含经典 Walter 2007「GGX 论文」、+2 Concepts（Microfacet Theory / Participating Media）、+1 图解（Microfacet D·G·F）、Daily、Index/BRDF/PBR/Arm/Real-Time GI 五处编辑）
+最后更新：2026-09-17（Run #9：+3 Papers 含经典 Schlick 1994「你实际在用的 F」+2 前沿（HairCS / EMODY Flow）、+1 Concept（Hair Rendering，渲染侧最后一个结构性缺口）、+1 图解（Schlick vs 精确 Fresnel，含自算误差数据）、Daily、Index/BRDF/Microfacet Theory/DLSS 5 四处编辑）
