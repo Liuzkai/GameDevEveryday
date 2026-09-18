@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split-Sum 环境光近似图解</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1c2024; --muted:#6b7280; --line:#d8dee6;
+    --card:#f7f9fb; --accent:#2563eb; --warn:#d97706; --ok:#059669;
+    --env:#2563eb; --brdf:#b45309; --bad:#dc2626;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#16181d; --fg:#e6e9ef; --muted:#9aa3b0; --line:#30363f;
+      --card:#1d2027; --accent:#60a5fa; --warn:#fbbf24; --ok:#34d399;
+      --env:#60a5fa; --brdf:#fbbf24; --bad:#f87171;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 22px 44px;
+    background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.65; font-size:15px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 4px;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 26px}
+  h2{font-size:16px;margin:34px 0 12px;padding-left:10px;border-left:3px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+  svg{display:block;width:100%;height:auto;margin:6px 0}
+  .cap{color:var(--muted);font-size:12.5px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-weight:600}
+  code{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px}
+  .k-env{color:var(--env);font-weight:600}
+  .k-brdf{color:var(--brdf);font-weight:600}
+  .k-bad{color:var(--bad);font-weight:600}
+  ul{margin:8px 0 0;padding-left:20px}
+  li{margin:4px 0}
+  .warn{border-left:3px solid var(--warn);padding-left:12px;margin-top:14px;font-size:14px}
+  .eq{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13.5px;background:var(--card);
+      border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Split-Sum — 环境光镜面反射怎么变成两次查表</h1>
+<p class="sub">Karis 2013 · 没有新物理，只是把"随视角变化的部分"从积分里剥离出来</p>
+
+<div class="card">
+  <p style="margin:0 0 6px"><b>要算的东西（每像素对半球积分）：</b></p>
+  <div class="eq">L_o = ∫ L_i(l) · f(l,v) · cosθ_l dl
+    ≈ (1/N) Σ L_i(l_k) f(l_k,v) cosθ_l / p(l_k,v)      ← 重要性采样，原文用 1024 次</div>
+  <p style="margin:12px 0 6px"><b>拆成两项的乘积（式 7）：</b></p>
+  <div class="eq">L_o ≈ ( 1/N Σ L_i )  ×  ( 1/N Σ f·cosθ / p )
+              └── 只有环境 ──┘   └─── 只有 BRDF ───┘
+       =  <span style="color:var(--env)">PrefilteredColor(R, Roughness)</span>  ×  <span style="color:var(--brdf)">( F0·A + B )</span>
+
+其中 (F0·A + B) 来自把 Schlick 的 F 代入后 <b>F0 可以提出积分</b>（式 8）：
+   ∫ f·cosθ dl  =  F0·∫ f/F·(1−(1−v·h)⁵)·cosθ dl  +  ∫ f/F·(1−v·h)⁵·cosθ dl
+                     └──────── A（scale）────────┘     └───── B（bias）─────┘</div>
+  <p class="cap"><b>能拆的前提是 F 用 Schlick 的线性形式。</b> 精确 Fresnel（含偏振、复折射率）做不到这一步 —— 这是 Schlick 那个"顺手给的近似"的第二份红利：不只便宜，而且<b>可分解</b>。</p>
+</div>
+
+<h2>运行时：两次查表</h2>
+
+<div class="card">
+  <svg viewBox="0 0 840 300" role="img" aria-label="运行时两条查表路径：反射向量查 cubemap mip 链，NoV 与粗糙度查二维 BRDF LUT">
+    <!-- left: prefiltered cubemap -->
+    <rect x="40" y="60" width="150" height="150" rx="8" fill="none" stroke="var(--env)" stroke-width="2"/>
+    <text x="115" y="48" text-anchor="middle" fill="var(--env)" font-size="13" font-weight="600">预滤波环境贴图</text>
+    <text x="115" y="140" text-anchor="middle" fill="var(--muted)" font-size="12">cubemap</text>
+    <text x="115" y="158" text-anchor="middle" fill="var(--muted)" font-size="12">mip 链 = 粗糙度</text>
+    <g stroke="var(--line)" stroke-width="1">
+      <line x1="210" y1="235" x2="330" y2="235"/>
+    </g>
+    <text x="212" y="252" fill="var(--muted)" font-size="11.5">mip0（粗糙度≈0，最锐）</text>
+    <text x="212" y="272" fill="var(--muted)" font-size="11.5">…</text>
+    <text x="212" y="292" fill="var(--muted)" font-size="11.5">mipN（粗糙度=1，最糊）</text>
+
+    <!-- input arrows -->
+    <text x="300" y="86" fill="var(--muted)" font-size="12.5">输入①：反射向量 R</text>
+    <text x="300" y="106" fill="var(--muted)" font-size="12.5">输入②：Roughness → 选 mip</text>
+    <line x1="240" y1="135" x2="196" y2="135" stroke="var(--env)" stroke-width="2" marker-end="url(#a2)"/>
+
+    <!-- middle: multiply -->
+    <circle cx="420" cy="136" r="20" fill="none" stroke="var(--fg)" stroke-width="2"/>
+    <line x1="410" y1="126" x2="430" y2="146" stroke="var(--fg)" stroke-width="2"/>
+    <line x1="430" y1="126" x2="410" y2="146" stroke="var(--fg)" stroke-width="2"/>
+    <line x1="196" y1="136" x2="398" y2="136" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <line x1="442" y1="136" x2="600" y2="136" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <text x="420" y="176" text-anchor="middle" fill="var(--muted)" font-size="12">逐像素相乘（1 次乘法）</text>
+
+    <!-- right: LUT -->
+    <rect x="620" y="60" width="150" height="150" rx="8" fill="none" stroke="var(--brdf)" stroke-width="2"/>
+    <text x="695" y="48" text-anchor="middle" fill="var(--brdf)" font-size="13" font-weight="600">环境 BRDF LUT</text>
+    <text x="695" y="140" text-anchor="middle" fill="var(--muted)" font-size="12">2D，R16G16</text>
+    <text x="695" y="158" text-anchor="middle" fill="var(--muted)" font-size="12">输出 (A, B)</text>
+    <line x1="620" y1="136" x2="442" y2="136" stroke="var(--brdf)" stroke-width="2" marker-end="url(#a3)"/>
+    <text x="560" y="86" text-anchor="middle" fill="var(--muted)" font-size="12.5">输入：Roughness , n·v</text>
+    <text x="560" y="200" text-anchor="middle" fill="var(--muted)" font-size="12.5">最后：Prefiltered × (F0·A + B)</text>
+
+    <defs>
+      <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="var(--env)"/>
+      </marker>
+      <marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="var(--brdf)"/>
+      </marker>
+    </defs>
+  </svg>
+  <p class="cap">核心量级对比：<b>离线 1024 次重要性采样 → 运行时 1 次 cubemap 采样 + 1 次 LUT 采样 + 1 次乘法。</b> 这不是"优化了一点"，这是把 IBL 从"不可能实时"变成"固定开销"。</p>
+</div>
+
+<h2>两个近似：哪个更要紧（Karis 自己排过序）</h2>
+<table>
+  <tr><th>近似</th><th>内容</th><th>视觉后果</th><th>严重程度</th></tr>
+  <tr>
+    <td class="k-bad">① n = v = r</td>
+    <td>预滤波时假设"法线 = 视线 = 反射方向"，于是可以脱离视角预存一张 mip 链</td>
+    <td><b>掠射角得不到"抻长"的反射</b>；各向异性高光形态丢失</td>
+    <td><b>较大</b>（原文原话：compared with the split sum approximation, this is actually the larger source of error）</td>
+  </tr>
+  <tr>
+    <td class="k-env">② split-sum 本身</td>
+    <td>把一次积分拆成两个独立积分的乘积</td>
+    <td>环境含<b>高频亮源</b>（太阳、窗、灯带）且表面较粗糙时，能量分布错位</td>
+    <td>较小（"对常数 L 精确，对常见环境相当准"）</td>
+  </tr>
+</table>
+<div class="warn">
+  <b>最值钱的一条判据</b>：人们通常担心 split-sum 准不准，而作者说真正的误差在它旁边那一刀。<b>评估任何预计算方案，先看"为了让结果可预存，额外假设了什么"</b> —— 通常那一刀比公式本身的近似更贵。
+</div>
+
+<h2>成本与分档（把它当预算项看）</h2>
+<table>
+  <tr><th>项</th><th>性质</th><th>随什么增长</th><th>你的分档旋钮</th></tr>
+  <tr><td>预滤波 cubemap</td><td>固定开销（1 次采样）</td><td>与光源数无关，与 <b>lobe 数</b> 成正比</td><td>分辨率 / mip 数 / 是否实时捕获</td></tr>
+  <tr><td>EnvBRDF LUT</td><td>固定开销（1 次采样）</td><td>同上</td><td><b>R16G16 → R8G8</b>；移动端可换解析拟合</td></tr>
+  <tr><td>多 lobe（Clearcoat / Aniso / Hair）</td><td><b>乘法</b>：每个 lobe 一份 IBL</td><td>lobe 组合数</td><td>低档砍 lobe，而不是砍精度</td></tr>
+</table>
+<ul>
+  <li><b>和动态灯光预算是此消彼长的</b>：环境光（IBL）能让场景在没有动态光源时也"有光"，这正是 MegaLights / 神经 GI 路线要抢的位置；</li>
+  <li><b>它不含间接光</b>：split-sum 只算"环境贴图对表面的镜面反射"，<b>不含场景间反弹</b> —— 那是 [[Global Illumination]] 的另一条线（Lumen / MegaLights / 神经 GI）；</li>
+  <li><b>2026 的新问题</b>：当画面真实感由生成模型补齐（DLSS 5 一类），<b>IBL 的精度还值多少预算？</b> 这个问题目前没有答案，但它就是你分档表未来可能要重排的地方。</li>
+</ul>
+
+<div class="warn" style="border-left-color:var(--ok)">
+  <b>一句话带走</b>：split-sum = 把"随视角变化"的耦合断开，让另一半可以脱离场景预先算死。<b>把它记住的方式是记住那个假设（n=v=r），而不是记住那两行公式。</b>
+</div>
+
+</div>
+</body>
+</html>

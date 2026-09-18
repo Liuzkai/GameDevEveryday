@@ -37,6 +37,7 @@ $$f_r(\omega_i, \omega_o) = \frac{dL_o(\omega_o)}{dE_i(\omega_i)}$$
 | **廉价的 F** | [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]] | 五次幂近似 Fresnel；**今日实时渲染的默认 F 项**（对金属物理上不成立，靠 $F_0$ 参数化绕过） |
 | **失效边界** | [[Hair Rendering]]（Kajiya-Kay 1989 / Marschner 2003） | 细长散射体 + 透射，**标准微面 BRDF 不适用** |
 | 生产参数化 | Disney Principled 2012 → Karis UE4 2013 | 实时化，美术友好 |
+| 进引擎 | [[Karis — Real Shading in Unreal Engine 4 (2013)]] | D 取 GGX 且 $\alpha=$Roughness²、G 用 Schlick 形式配 $k$、F 用球面高斯；**环境光走 [[Split-Sum Approximation]]**（2026-09-18 入库） |
 | 测量数据 | MERL 100 材质库（2003） | 验证基准 |
 
 ## Prerequisites
@@ -48,6 +49,7 @@ $$f_r(\omega_i, \omega_o) = \frac{dL_o(\omega_o)}{dE_i(\omega_i)}$$
 ## Related Concepts
 
 - [[Microfacet Theory]]（★ 微面模型是本谱系「完整物理」之后的全部内容；D·G·F 逐项拆解见此）
+- [[Split-Sum Approximation]]（★ 2026-09-18 入库：BRDF 的半球积分在实时里怎么变成查表——**F 用 Schlick 形式是它能被因式分解的前提**）
 - [[Participating Media]]（对偶：微面 = 随机表面，介质 = 随机体积；2026 工作已把两者打通）
 - [[Physically Based Rendering]]（BRDF 是 PBR 的数学核心）
 - [[Global Illumination]]（BRDF 决定 bounce 的能量分配）

@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-17]]（昨日：[[2026-09-16]]）
-- **本周综合**：[[2026-W37]]
+- **今日**：[[2026-09-18]]（昨日：[[2026-09-17]]）
+- **本周综合**：[[2026-W37]]（W38 覆盖 9-14~9-20，应于 9-20 产出）
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正
 
-## Papers（35）
+## Papers（38）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -54,8 +54,11 @@ created: 2026-09-07
 | [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]                  | S（经典） | Normal（研读中） | **最高（你实际在用的那个 F；D·G·F 三因子至此全部有出处）** |
 | [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]                        | A-  | Normal | 高（发片→发丝自动升档；分档阶梯首次可上可下） |
 | [[2026-09-17-EMODY Flow — Emotion-Aware Audio-Driven Full-Body Motion Generation]]             | B+  | Normal（只取一条诊断） | 中（"弱条件被抑制"修法可迁移） |
+| [[Karis — Real Shading in Unreal Engine 4 (2013)]]                                            | S（经典） | Normal（研读中） | **最高（PBR 工程侧收口：UE 里那些常数从哪来 + split-sum）** |
+| [[Marschner — Light Scattering from Human Hair Fibers (2003)]]                                 | S（经典） | Normal | **高（毛发理论源头 R/TT/TRT；微面 BRDF 的失效边界）** |
+| [[2026-09-17-DSD — Diffusion Skill Discovery]]                                                 | A-  | Hard（可只取一个抽象） | 中（技能库宽度；与 [[Motion Matching]] 构成检索对偶） |
 
-## Concepts（24）
+## Concepts（25）
 
 **基础锚点**
 - [[Real-Time Rendering]]
@@ -71,10 +74,11 @@ created: 2026-09-07
 - [[Gaussian Splatting]] ✅ 2026-09-11 标 Easy
 
 **Normal 学习区**
-- [[Hair Rendering]] ★ 2026-09-17 入库（资产表示 + 着色 + 分档三层；**也是 [[Microfacet Theory]] 失效的边界**）
-- [[Motion Matching]] ★ 关键瓶颈
-- [[BRDF]] ★ 主动研读中（2026-09-14 信号）
-- [[Physically Based Rendering]] ★ 主动研读中（与 BRDF 同线）
+- [[Split-Sum Approximation]] ★ 2026-09-18 入库（PBR 工程侧最后一块：环境光镜面怎么变成两次查表）
+- [[Hair Rendering]] ★ 2026-09-17 入库（资产表示 + 着色 + 分档三层；**也是 [[Microfacet Theory]] 失效的边界**）★ 2026-09-18 补齐理论源头 Marschner 2003
+- [[Motion Matching]] ★ 关键瓶颈（9-17 起转 Watchlist 静默项）
+- [[BRDF]] ★ 主动研读中（2026-09-14 信号）★ 2026-09-18 谱系补至"进引擎"
+- [[Physically Based Rendering]] ★ 主动研读中（**来源侧 9-17 闭合、工程侧 9-18 闭合**）
 - [[Tile-Based Rendering]]
 - [[GPU-Driven Rendering]]
 - [[Neural Upscaling and Frame Generation]]（实为 Technology）
@@ -137,4 +141,4 @@ Research/
 
 ---
 
-最后更新：2026-09-17（Run #9：+3 Papers 含经典 Schlick 1994「你实际在用的 F」+2 前沿（HairCS / EMODY Flow）、+1 Concept（Hair Rendering，渲染侧最后一个结构性缺口）、+1 图解（Schlick vs 精确 Fresnel，含自算误差数据）、Daily、Index/BRDF/Microfacet Theory/DLSS 5 四处编辑）
+最后更新：2026-09-18（Run #10：+2 经典（**Karis 2013 = PBR 工程侧收口**：UE 常数来源 + split-sum；**Marschner 2003 = 毛发理论源头** R/TT/TRT）+1 前沿（DSD，技能库宽度）+1 Concept（[[Split-Sum Approximation]]）+2 图解（Hair R·TT·TRT / Split-Sum）+Daily，另补录 AMD "Neural Lighting" 传闻与 DLSS 5 数值格式门槛）

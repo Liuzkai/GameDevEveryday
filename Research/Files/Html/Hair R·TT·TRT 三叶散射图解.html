@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hair R·TT·TRT 三叶散射图解</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1c2024; --muted:#6b7280; --line:#d8dee6;
+    --card:#f7f9fb; --accent:#2563eb; --warn:#d97706; --ok:#059669;
+    --r:#2563eb; --tt:#059669; --trt:#b45309; --fail:#dc2626;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#16181d; --fg:#e6e9ef; --muted:#9aa3b0; --line:#30363f;
+      --card:#1d2027; --accent:#60a5fa; --warn:#fbbf24; --ok:#34d399;
+      --r:#60a5fa; --tt:#34d399; --trt:#fbbf24; --fail:#f87171;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 22px 44px;
+    background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.65; font-size:15px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 4px;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 26px}
+  h2{font-size:16px;margin:34px 0 12px;padding-left:10px;border-left:3px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+  svg{display:block;width:100%;height:auto;margin:6px 0}
+  .cap{color:var(--muted);font-size:12.5px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-weight:600}
+  code{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:13px}
+  .k-r{color:var(--r);font-weight:600}
+  .k-tt{color:var(--tt);font-weight:600}
+  .k-trt{color:var(--trt);font-weight:600}
+  .k-no{color:var(--fail);font-weight:600}
+  ul{margin:8px 0 0;padding-left:20px}
+  li{margin:4px 0}
+  .warn{border-left:3px solid var(--warn);padding-left:12px;margin-top:14px;font-size:14px}
+  .eq{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13.5px;background:var(--card);
+      border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:pre}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Hair R · TT · TRT — 三叶散射图解</h1>
+<p class="sub">Marschner et al. 2003 · 一根头发是一根半透明散射体，不是一个面</p>
+
+<div class="card">
+  <svg viewBox="0 0 840 340" role="img" aria-label="头发纤维截面与三条光路：R 表面反射、TT 透射、TRT 内部反射">
+    <!-- fiber cross section -->
+    <circle cx="420" cy="175" r="105" fill="none" stroke="var(--fg)" stroke-width="2"/>
+    <circle cx="420" cy="175" r="88" fill="none" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="420" y="182" text-anchor="middle" fill="var(--muted)" font-size="12">内部：色素 σa（吸收）</text>
+    <text x="420" y="200" text-anchor="middle" fill="var(--muted)" font-size="11">折射率 η ≈ 1.55</text>
+
+    <!-- tilted cuticle scales (schematic) -->
+    <g stroke="var(--fg)" stroke-width="1.4" opacity="0.55">
+      <line x1="360" y1="76" x2="374" y2="92"/>
+      <line x1="400" y1="70" x2="414" y2="86"/>
+      <line x1="440" y1="70" x2="454" y2="86"/>
+      <line x1="480" y1="76" x2="494" y2="92"/>
+    </g>
+    <text x="556" y="62" fill="var(--muted)" font-size="12">角质鳞片：朝发根倾斜（≈3°）</text>
+
+    <!-- incident light -->
+    <line x1="60" y1="60" x2="330" y2="132" stroke="var(--fg)" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="60" y="50" fill="var(--fg)" font-size="12.5">入射光</text>
+
+    <!-- R -->
+    <line x1="330" y1="132" x2="120" y2="238" stroke="var(--r)" stroke-width="2.5"/>
+    <text x="86" y="262" fill="var(--r)" font-size="13" font-weight="600">R（p=0）表面反射</text>
+    <text x="86" y="279" fill="var(--muted)" font-size="11.5">白色高光 · 保偏 · 绕发一周都存在</text>
+
+    <!-- TT -->
+    <line x1="330" y1="132" x2="470" y2="278" stroke="var(--tt)" stroke-width="2.5"/>
+    <line x1="470" y1="278" x2="740" y2="238" stroke="var(--tt)" stroke-width="2.5"/>
+    <text x="620" y="288" fill="var(--tt)" font-size="13" font-weight="600">TT（p=1）透射</text>
+    <text x="590" y="305" fill="var(--muted)" font-size="11.5">逆光"亮边" · 携带吸收色</text>
+
+    <!-- TRT -->
+    <line x1="330" y1="132" x2="520" y2="243" stroke="var(--trt)" stroke-width="2.5"/>
+    <line x1="520" y1="243" x2="366" y2="105" stroke="var(--trt)" stroke-width="2.5"/>
+    <line x1="366" y1="105" x2="196" y2="118" stroke="var(--trt)" stroke-width="2.5"/>
+    <text x="196" y="98" fill="var(--trt)" font-size="13" font-weight="600">TRT（p=2）内部反射一次</text>
+    <text x="196" y="81" fill="var(--muted)" font-size="11.5">有色次级高光 · 去偏 · 黑发上看不见</text>
+
+    <defs>
+      <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="var(--fg)"/>
+      </marker>
+    </defs>
+  </svg>
+  <p class="cap">路径由 <code>φ(p,h) = 2pγ − 2γ + pπ</code> 决定：p=0 单根、p=1 单根、<b>p=2 可能一根也可能三根</b>（三根即焦散 caustic，正是彩虹的同一套几何）。TRT 走的路最长，因此被内部吸收吃得最多 —— <b>"黑发看不到次级高光"是吸收的必然结果，不是艺术选择</b>。</p>
+</div>
+
+<h2>双高光从哪来：一个倾角，三个偏移</h2>
+
+<div class="card">
+  <svg viewBox="0 0 840 260" role="img" aria-label="三个 lobe 在纵向角度上被切屑倾角推开">
+    <!-- axis -->
+    <line x1="70" y1="200" x2="790" y2="200" stroke="var(--line)" stroke-width="2"/>
+    <text x="70" y="226" fill="var(--muted)" font-size="12">纵向半角 θh（发根 ←→ 发梢）</text>
+
+    <!-- zero marker -->
+    <line x1="470" y1="52" x2="470" y2="200" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="474" y="48" fill="var(--muted)" font-size="11.5">理想柱面的镜面锥（α=0）</text>
+
+    <!-- R lobe: center left of zero, narrow -->
+    <path d="M 330 200 C 372 200 380 84 400 84 C 420 84 428 200 470 200" fill="none" stroke="var(--r)" stroke-width="2.5"/>
+    <text x="300" y="74" fill="var(--r)" font-size="12.5" font-weight="600">R</text>
+
+    <!-- TT lobe: slightly right, narrow -->
+    <path d="M 500 200 C 528 200 534 140 548 140 C 562 140 568 200 596 200" fill="none" stroke="var(--tt)" stroke-width="2.5"/>
+    <text x="516" y="132" fill="var(--tt)" font-size="12.5" font-weight="600">TT</text>
+
+    <!-- TRT lobe: far right, wide -->
+    <path d="M 588 200 C 650 200 664 158 700 158 C 736 158 750 200 812 200" fill="none" stroke="var(--trt)" stroke-width="2.5"/>
+    <text x="704" y="150" fill="var(--trt)" font-size="12.5" font-weight="600">TRT</text>
+
+    <!-- offsets -->
+    <text x="196" y="176" fill="var(--muted)" font-size="11.5">αR ≈ −8°（往发根）</text>
+    <text x="604" y="228" fill="var(--muted)" font-size="11.5">αTT = −αR/2</text>
+    <text x="748" y="228" fill="var(--muted)" font-size="11.5">αTRT = −3αR/2</text>
+    <text x="70" y="240" fill="var(--muted)" font-size="11.5">箭头方向：往发根 ←</text>
+  </svg>
+  <p class="cap">示意图（非按论文数据绘制，取 αR=−8°、βR=8° 一档说明形状关系）。三个 lobe 都是高斯：<code>M_p(θh) = g(β_p; θh − α_p)</code>。宽度关系 <code>βTT = βR/2</code>、<code>βTRT = 2βR</code> —— <b>次级高光天然比主高光宽一倍、暗一档</b>，这就是它最适合在分档里先砍的结构性原因。</p>
+</div>
+
+<h2>参数表（论文 Table 1，典型值）</h2>
+<table>
+  <tr><th>参数</th><th>含义</th><th>典型值</th></tr>
+  <tr><td>η</td><td>折射率</td><td>1.55</td></tr>
+  <tr><td>σa</td><td>吸收系数（R,G,B 三通道）</td><td>0.2 → ∞</td></tr>
+  <tr><td>a</td><td>椭圆度（轴比）</td><td>0.85 – 1</td></tr>
+  <tr><td class="k-r">αR</td><td>R lobe 纵向偏移</td><td>−10° ～ −5°</td></tr>
+  <tr><td class="k-tt">αTT = −αR/2</td><td>TT lobe 偏移（往发梢）</td><td>+2.5° ～ +5°</td></tr>
+  <tr><td class="k-trt">αTRT = −3αR/2</td><td>TRT lobe 偏移（往发梢更多）</td><td>+7.5° ～ +15°</td></tr>
+  <tr><td>βR / βTT / βTRT</td><td>纵向宽度（标准差）</td><td>5–10° / βR÷2 / 2·βR</td></tr>
+  <tr><td>kG, wc</td><td>glint 缩放 / caustic 方位宽度</td><td>0.5–5 / 10°–25°</td></tr>
+  <tr><td>Δη′, ΔhM</td><td>caustic 合并过渡 / 强度上限</td><td>0.2–0.4 / 0.5</td></tr>
+</table>
+
+<h2>lobe ↔ 视觉现象（这张表是分档判断的依据）</h2>
+<table>
+  <tr><th>lobe</th><th>你看到的</th><th>丢了会怎样</th><th>分档优先级</th></tr>
+  <tr><td class="k-r">R</td><td>沿发丝的白色高光带</td><td>头发变成一块哑光布</td><td><b>必留</b>（最便宜、信息量最大）</td></tr>
+  <tr><td class="k-tt">TT</td><td>逆光时的透光轮廓</td><td><b>角色轮廓光消失，头发立刻"死"</b></td><td><b>倒数第二个砍</b></td></tr>
+  <tr><td class="k-trt">TRT</td><td>有色次级高光（暖色偏位一圈）</td><td>近景少一层层次；远景看不出</td><td><b>最先砍</b>（宽、暗、远不可辨）</td></tr>
+  <tr><td>glints</td><td>高倾角下的离面尖峰（亮斑）</td><td>高光略显"平"，一般可接受</td><td>只在特写档考虑</td></tr>
+</table>
+
+<div class="warn">
+  <b>用颜色换预算的一个位置</b>：σa 是三通道的。低档把饱和度压低（吸收调淡）时，TRT 与 TT 的视觉贡献同时下降 —— 也就是说，<b>"把发色做得更朴素"本身就是一种性能优化</b>，而不只是美术选择。
+</div>
+
+<h2>为什么标准微面 BRDF 在这里失效</h2>
+<table>
+  <tr><th></th><th>微面 BRDF（面）</th><th>纤维散射（Marschner）</th></tr>
+  <tr><td>度量单位</td><td>辐照度 / 辐射度 —— <b>按面积</b></td><td>曲线辐照度 / 曲线强度 —— <b>按长度</b></td></tr>
+  <tr><td>积分域</td><td>上半球</td><td><b>整个球面</b>（光会从背面出来）</td></tr>
+  <tr><td>几何量</td><td>法线 n、半程向量 h</td><td>发丝切向 u、法平面 (v,w)</td></tr>
+  <tr><td>关键参数</td><td>粗糙度、F0</td><td>倾角 αR、宽度 βR、η、σa、椭圆度 a</td></tr>
+  <tr><td>降维手法</td><td>只有 h=m 的微面参与着色</td><td><b>倾角守恒</b> → 3D 问题降到法平面 2D</td></tr>
+</table>
+<p class="cap">两者是同一类思维（找守恒量 → 降维），但<b>输入输出的物理量不同</b> —— 这是毛发放不进标准 Lit 材质、必须单独一个 Hair shading model 的根本原因，而不是"公式更复杂"。</p>
+
+<div class="warn" style="border-left-color:var(--ok)">
+  <b>一句话带走</b>：一条高光来自表面（R），一条来自体内（TRT），一道亮边来自穿透（TT）。<b>知道这三个 lobe 各自对应画面上的什么</b>，你才判断得出某档次"能不能砍"。
+</div>
+
+</div>
+</body>
+</html>

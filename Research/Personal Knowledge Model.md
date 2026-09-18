@@ -61,9 +61,10 @@ user_level: Easy      # 或 Normal / Hard
 
 | 知识 | 推断理由 |
 |---|---|
-| [[Motion Matching]] | 懂动画与 VFX 时序耦合，但未必深入检索/混合内部 |
+| [[Motion Matching]] | 懂动画与 VFX 时序耦合，但未必深入检索/混合内部（9-17 起转静默项） |
 | [[BRDF]] | 2026-09-14 新信号：用户主动研读 Cook-Torrance D/G/F 物理来源（非推断，用户自述） |
-| [[Physically Based Rendering]] | 同上，与 BRDF 同一条学习线；库已备 [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] 收口检查表 |
+| [[Physically Based Rendering]] | 同上，与 BRDF 同一条学习线；**来源侧（D·G·F 出处）9-17 闭合、工程侧（进引擎 + IBL 查表）9-18 闭合**，收口清单 25 条 |
+| [[Split-Sum Approximation]] | 2026-09-18 新建：环境光镜面反射的实时近似（UE Sky Light / 反射捕获的底层）；判据是你日常接触的固定开销项 |
 | [[Tile-Based Rendering]] | 做移动端分档，应有概念但未必系统 |
 | [[Neural Upscaling and Frame Generation]] | 作为渲染工程师应已接触，未必深入 |
 | [[GPU-Driven Rendering]] | 与 DrawCall 预算相关，应是部分掌握 |
@@ -130,13 +131,23 @@ user_level: Easy      # 或 Normal / Hard
 
 以下知识有**客观**掌握判据，不用凭感觉：
 
-- [[Motion Matching]] — 6 条判据
+- [[Motion Matching]] — 6 条判据（静默中）
 - [[Tile-Based Rendering]] — 5 条判据
 - [[GPU-Driven Rendering]] — 4 条判据
 - [[Gaussian Splatting]] — 4 条判据 ✅ 2026-09-11 达成（见 [[GS 图解 1 — 协方差与椭球：高斯的形状说明书|图解 1]]、[[GS 图解 2 — 排序瓶颈、管线冲突与密度控制|图解 2]]）
+- **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
+- **[[Hair Rendering]] — 5 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09]] 技术雷达
+## 待用户处理的推断项（每次运行检查）
+
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 11 天**。当前不影响工作（推送已按推断值自动调权），但**任何一次校正都会立刻改变推送重心**；
+2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）；
+3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**。
+
+---
+
+相关：[[2026-09-07]] · [[2026-09-18]] · [[2026-09]] 技术雷达

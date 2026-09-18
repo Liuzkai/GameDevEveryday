@@ -46,12 +46,13 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 
 | 物理项 | 精确形式 | 实时近似 |
 |---|---|---|
-| F | 完整 Fresnel（波长相关） | Schlick 近似：$F_0 + (1-F_0)(1-\cos\theta)^5$ |
-| D | Beckmann / 任意 NDF | **GGX**（[[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]） |
-| G | 微面遮挡积分 | **Smith 近似**（UE 用 height-correlated Smith 变体，同源同文） |
-| 环境镜面 | 预滤波卷积 | split-sum：环境贴图预滤波 + BRDF LUT |
+| F | 完整 Fresnel（波长相关） | Schlick 近似：$F_0 + (1-F_0)(1-\cos\theta)^5$（Karis 版用球面高斯去 pow） |
+| D | Beckmann / 任意 NDF | **GGX**（[[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]），$\alpha=\text{Roughness}^2$ |
+| G | 微面遮挡积分 | **Smith 近似**（UE 用 height-correlated Smith 变体，同源同文）；Karis 改写成 Schlick 形式配 $k=(\text{Roughness}+1)^2/8$ |
+| 环境镜面 | 预滤波卷积 | **[[Split-Sum Approximation]]**：预滤波 cubemap mip 链 + EnvBRDF LUT（R16G16） |
+| 环境漫反射 | 半球卷积 | SH 投影 9 系数（[[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]） |
 
-理解这张表 = 理解"实时 PBR 里没有新物理，只有便宜的近似"——这是评估任何"新着色技术"的基准姿势。
+理解这张表 = 理解"实时 PBR 里没有新物理，只有便宜的近似"——这是评估任何"新着色技术"的基准姿势。**逐项来源见 [[Karis — Real Shading in Unreal Engine 4 (2013)]]（进引擎的那一步）。**
 
 ## Prerequisites
 
@@ -77,6 +78,11 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 
 - [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]——直接光 / 镜面侧
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]——环境光 / 漫反射侧（IBL 的 SH 半边）
+- [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]——F 项
+- [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]——D（GGX）与 G（Smith）
+- [[Karis — Real Shading in Unreal Engine 4 (2013)]]——★ **实时化那一步（2013 入库 2026-09-18）**：三因子换廉价形式 + [[Split-Sum Approximation]] 环境光 + 材质模型定型（BaseColor/Metallic/Roughness，非金属 $F_0$=0.04）
+
+> **至此本概念从"理论"到"引擎"两侧都不缺：来源侧（D·G·F）2026-09-17 闭合，工程侧（进引擎 + IBL 查表）2026-09-18 闭合。**
 
 ## Personal Knowledge
 
@@ -84,9 +90,10 @@ Current Level: **Normal**（主动研读 D/G/F 物理来源中，2026-09 信号�
 
 ## Learning Gap
 
-- D/G/F 物理来源（随 Cook-Torrance 线收口）
-- split-sum 预积分的推导直觉（为什么能把 2D 积分拆成两个 1D/2D 查表）
+- ~~D/G/F 物理来源（随 Cook-Torrance 线收口）~~ ✅ 2026-09-17 收口（D/G 于 9-16、F 于 9-17）
+- ~~split-sum 预积分的推导直觉（为什么能把 2D 积分拆成两个 1D/2D 查表）~~ ✅ 2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 与 [[Split-Sum Approximation]] 补齐；**残留一条**：多次散射能量补偿（高粗糙度下单散射 GGX 丢能量，Kulla-Conty 2017 / Fdez-Agüera 2019 一类），尚未入库
 
 ## Next Step
 
-Cook-Torrance 检查表 5 条全过后，PBR 与 BRDF 可同时升 Easy——它们是同一知识体的两个切面。
+1. **收口自测**：Cook-Torrance / Kajiya / Walter / Schlick / Karis **各 5 条，共 25 条**（Karis 的 5 条在 [[Karis — Real Shading in Unreal Engine 4 (2013)]]）。**全过即可把 [[BRDF]] 与 PBR 同时标 Easy**——它们是同一知识体的两个切面。
+2. **一次可做的实测**（不需读论文）：同一场景下 **Sky Light 镜面开/关** 与 **LUT 精度 R16G16→R8G8** 两组对比的 GPUTime / 显存差 → 可直接支撑反射类材质与特效的分档表。
