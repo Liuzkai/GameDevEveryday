@@ -63,7 +63,8 @@ user_level: Easy      # 或 Normal / Hard
 |---|---|
 | [[Motion Matching]] | 懂动画与 VFX 时序耦合，但未必深入检索/混合内部（9-17 起转静默项） |
 | [[BRDF]] | 2026-09-14 新信号：用户主动研读 Cook-Torrance D/G/F 物理来源（非推断，用户自述） |
-| [[Physically Based Rendering]] | 同上，与 BRDF 同一条学习线；**来源侧（D·G·F 出处）9-17 闭合、工程侧（进引擎 + IBL 查表）9-18 闭合**，收口清单 25 条 |
+| [[Physically Based Rendering]] | 同上，与 BRDF 同一条学习线；**来源侧（D·G·F 出处）9-17 闭合、工程侧（进引擎 + IBL 查表）9-18 闭合、能量侧（多次散射）9-19 闭合**，收口清单 25 条 |
+| [[Multiple Scattering and Energy Compensation]] | 2026-09-19 新建：**PBR 最后一块账本**（单次散射丢的能量 + 三条补法各缺哪一角）。判据是你日常接触的高粗糙度材质观感；**含唯一的引擎侧实测题（furnace test）** |
 | [[Split-Sum Approximation]] | 2026-09-18 新建：环境光镜面反射的实时近似（UE Sky Light / 反射捕获的底层）；判据是你日常接触的固定开销项 |
 | [[Tile-Based Rendering]] | 做移动端分档，应有概念但未必系统 |
 | [[Neural Upscaling and Frame Generation]] | 作为渲染工程师应已接触，未必深入 |
@@ -136,6 +137,8 @@ user_level: Easy      # 或 Normal / Hard
 - [[GPU-Driven Rendering]] — 4 条判据
 - [[Gaussian Splatting]] — 4 条判据 ✅ 2026-09-11 达成（见 [[GS 图解 1 — 协方差与椭球：高斯的形状说明书|图解 1]]、[[GS 图解 2 — 排序瓶颈、管线冲突与密度控制|图解 2]]）
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
+  - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）。**不计入 25 条**，标为"读了，不是会了"；
+  - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作）**：纯金属球 + 只有环境光 + Roughness 0→1 截图 + 切换多次散射补偿对比。做法见 [[多次散射能量补偿_三条路线图解]] 第 5 节。**做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。**
 - **[[Hair Rendering]] — 5 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
@@ -144,10 +147,11 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 11 天**。当前不影响工作（推送已按推断值自动调权），但**任何一次校正都会立刻改变推送重心**；
-2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）；
-3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**。
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 12 天**。当前不影响工作（推送已按推断值自动调权），但**本周新增 7 个概念、其中 5 个标为 Normal，推断误差正在累积**。任何一次校正都会立刻改变推送重心，**建议本周内做一次**；
+2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）；**
+3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
+4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）已从 9-10 挂到 9-19，**已在 [[2026-W38]] 中列为下周第一优先级，不再逐日提示**。
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09-18]] · [[2026-09]] 技术雷达
+相关：[[2026-09-07]] · [[2026-09-19]] · [[2026-W38]] · [[2026-09]] 技术雷达

@@ -39,6 +39,10 @@ Disney Principled BRDF（2012，《无敌破坏王》生产验证：原则化参
         ↓
 全工业默认（UE / Unity / 自研引擎全部收敛到金属度工作流）
         ↓
+★ Heitz 2016（多次散射的随机真值）→ ★ Kulla-Conty 2017（4KB 表补回能量，工程可用）★ 2026-09-19 入库
+        ↓
+Dupuy 2026 —— 特制 NDF 上所有散射阶的**精确初等闭式**（理论天花板，代价是无 roughness 参数）★ 2026-09-19 入库
+        ↓
 Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 ```
 
@@ -51,8 +55,11 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 | G | 微面遮挡积分 | **Smith 近似**（UE 用 height-correlated Smith 变体，同源同文）；Karis 改写成 Schlick 形式配 $k=(\text{Roughness}+1)^2/8$ |
 | 环境镜面 | 预滤波卷积 | **[[Split-Sum Approximation]]**：预滤波 cubemap mip 链 + EnvBRDF LUT（R16G16） |
 | 环境漫反射 | 半球卷积 | SH 投影 9 系数（[[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]） |
+| **丢失的能量** | 微面间多次散射的真实输运 | **[[Multiple Scattering and Energy Compensation]]**：加一个 $(1-E(\mu_o))(1-E(\mu_i))/\pi(1-E_{avg})$ 的 lobe（32×32 表 ≈ 4KB），或选择不补（高粗糙度端偏暗） |
 
 理解这张表 = 理解"实时 PBR 里没有新物理，只有便宜的近似"——这是评估任何"新着色技术"的基准姿势。**逐项来源见 [[Karis — Real Shading in Unreal Engine 4 (2013)]]（进引擎的那一步）。**
+
+> **最后一行是 2026-09-19 补的，也是最容易被漏掉的一行**：前面所有近似都只影响"形状对不对"，**这一行影响的是"总量对不对"**。而且它**默认不一定开启** —— 所以在引擎里看到高粗糙度材质发闷，先查这一项。
 
 ## Prerequisites
 
@@ -64,6 +71,7 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 ## Related Concepts
 
 - [[Participating Media]]（表面 ↔ 介质的对偶；2026 工作已把两者统一）
+- [[Multiple Scattering and Energy Compensation]] ★ 2026-09-19（PBR 的"能量账本"；本概念 Learning Gap 的最后一条）
 
 - [[Real-Time Rendering]]
 - [[Inverse Rendering]]（PBR 参数是逆渲染要反解的目标）
@@ -80,9 +88,11 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]——环境光 / 漫反射侧（IBL 的 SH 半边）
 - [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]——F 项
 - [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]——D（GGX）与 G（Smith）
-- [[Karis — Real Shading in Unreal Engine 4 (2013)]]——★ **实时化那一步（2013 入库 2026-09-18）**：三因子换廉价形式 + [[Split-Sum Approximation]] 环境光 + 材质模型定型（BaseColor/Metallic/Roughness，非金属 $F_0$=0.04）
+- [[Karis — Real Shading in Unreal Engine 4 (2013)]]——★ **实时化那一步（入库 2026-09-18）**：三因子换廉价形式 + [[Split-Sum Approximation]] 环境光 + 材质模型定型（BaseColor/Metallic/Roughness，非金属 $F_0$=0.04）
+- [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]——★ **能量侧那一步（入库 2026-09-19）**：单次散射丢掉的那部分能量怎么补回来（32×32 表 ≈ 4KB）+ **Furnace Test** 这个可执行的自测方法
+- [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]——★ 理论天花板（2026，所有散射阶的精确初等闭式）
 
-> **至此本概念从"理论"到"引擎"两侧都不缺：来源侧（D·G·F）2026-09-17 闭合，工程侧（进引擎 + IBL 查表）2026-09-18 闭合。**
+> **至此本概念三侧齐备：来源侧（D·G·F 的物理出处）2026-09-17 闭合，工程侧（进引擎 + IBL 查表）2026-09-18 闭合，能量侧（多次散射）2026-09-19 闭合。**
 
 ## Personal Knowledge
 
@@ -91,9 +101,12 @@ Current Level: **Normal**（主动研读 D/G/F 物理来源中，2026-09 信号�
 ## Learning Gap
 
 - ~~D/G/F 物理来源（随 Cook-Torrance 线收口）~~ ✅ 2026-09-17 收口（D/G 于 9-16、F 于 9-17）
-- ~~split-sum 预积分的推导直觉（为什么能把 2D 积分拆成两个 1D/2D 查表）~~ ✅ 2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 与 [[Split-Sum Approximation]] 补齐；**残留一条**：多次散射能量补偿（高粗糙度下单散射 GGX 丢能量，Kulla-Conty 2017 / Fdez-Agüera 2019 一类），尚未入库
+- ~~split-sum 预积分的推导直觉~~ ✅ 2026-09-18（[[Karis — Real Shading in Unreal Engine 4 (2013)]] + [[Split-Sum Approximation]]）
+- ~~多次散射能量补偿~~ ✅ 2026-09-19（[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]] + [[Multiple Scattering and Energy Compensation]]）
+- **剩余唯一缺口：你自己的 IBL 分档实测数据**（见 Next Step 第 2 条）。**这是清单里唯一需要动手的一条，其余都是纸面自测。**
 
 ## Next Step
 
 1. **收口自测**：Cook-Torrance / Kajiya / Walter / Schlick / Karis **各 5 条，共 25 条**（Karis 的 5 条在 [[Karis — Real Shading in Unreal Engine 4 (2013)]]）。**全过即可把 [[BRDF]] 与 PBR 同时标 Easy**——它们是同一知识体的两个切面。
-2. **一次可做的实测**（不需读论文）：同一场景下 **Sky Light 镜面开/关** 与 **LUT 精度 R16G16→R8G8** 两组对比的 GPUTime / 显存差 → 可直接支撑反射类材质与特效的分档表。
+2. **一次可做的实测（30 分钟，唯一需要动手的一条）**：**Furnace Test** —— 纯金属球 + 只有环境光 + Roughness 0→1 截图 + 切换引擎侧多次散射补偿对比。做法见 [[多次散射能量补偿_三条路线图解]] 第 5 节。**做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。**
+3. **另一次可做的实测**（不需读论文）：同一场景下 **Sky Light 镜面开/关** 与 **LUT 精度 R16G16→R8G8** 两组对比的 GPUTime / 显存差 → 可直接支撑反射类材质与特效的分档表。

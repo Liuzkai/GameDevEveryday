@@ -45,7 +45,7 @@ $$f_r(l,v) = \frac{D(h)\,G(l,v,h)\,F(v,h)}{4\,(n\cdot l)\,(n\cdot v)}$$
 
 1. **D 的归一化是对投影面积做的**：$\int D(m)\,(n\cdot m)\,d\omega_m = 1$，不是 $\int D(m)\,d\omega_m = 1$。差这个 $(n\cdot m)$，很多推导会对不上。
 2. **"可见法线分布" $D_\omega(m)$ 比 $D(m)$ 更本质**：真正参与着色的是"从当前方向**看得见**的微面法线分布"，$D_\omega(m) = D(m)\,G_1(v,m)\,(v\cdot m)/(v\cdot n)$。现代重要性采样都是采 $D_\omega$ 而不是 $D$——这解释了为什么"采样可见法线"比"采样法线再判可见"高效得多。
-3. **经典形式只算单次散射**：光在微面之间弹第二次就被丢掉了，所以粗糙度越高能量损失越明显（表现为"高粗糙度变暗"）。多次散射修正是后来补的。
+3. **经典形式只算单次散射**（2026-09-19 补全）：光在微面之间弹第二次就被丢掉了。**根因不是实现缺陷，而是公式形态** —— $G$ 项把"被别的微面挡住"的光当成"消失"处理，但**"被挡住" ≠ "被吸收"**：真实微结构里被挡住的光会弹到旁边的微面，最终仍有机会离开表面。于是粗糙度越高、掠射角越斜，能量损失越明显（表现为"高粗糙度变暗"）。**这正是 [[Multiple Scattering and Energy Compensation]] 这本账的全部内容。**
 
 ## Prerequisites
 
@@ -71,12 +71,18 @@ Karis 2013（UE4 Real Shading）—— GGX + Smith + split-sum，进引擎，成
         ↓
 Heitz 2014 —— 把 masking-shadowing 讲透（可见法线分布 D_ω 的形式化）
         ↓
-多次散射修正（2016 前后）—— 补回高粗糙度丢失的能量
+Heitz et al. 2016 —— Smith 模型下**多次散射的随机真值**（精确，但求值需要随机数）
+        ↓
+★ Kulla-Conty 2017 —— **补回高粗糙度丢失的能量**（4KB 查表近似，工程可用：一个 lobe 把账补齐）
         ↓
 Substrate（UE 5.2+）—— 多 lobe 可组合化，微面仍是底层积木
         ↓
-★ 2026 —— 从随机几何（GPIS）把 Beckmann / GGX / Smith 重新推导为特例
-         （[[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]]）
+★ 2026 —— 两条线同时发生：
+         ①GPIS 从随机几何把 Beckmann / GGX / Smith 重新推导为特例
+           （[[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]]）
+         ②Dupuy 用一个特制 NDF 把所有散射阶写成**精确初等闭式**
+           （[[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]）
+           —— 代价是没有 roughness 参数
 ```
 
 这条链上有一个很好看的对称：**1981 年 Torrance 提出框架，2007 年 Torrance 本人署名把它推广到折射（GGX 出自那里），2026 年它被从更一般的随机几何里重新推导出来。**
@@ -90,11 +96,16 @@ Substrate（UE 5.2+）—— 多 lobe 可组合化，微面仍是底层积木
 | **[[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]** ★ 2026-09-17 | **你实际在用的那个 F**（$F_0+(1-F_0)(1-\cos\theta)^5$）。三因子至此全部有出处 |
 | Heitz 2014《Understanding the Masking-Shadowing Function in Microfacet-Based BRDFs》 | 把 G 与可见法线分布讲透（推荐作为 G 项的深入读物） |
 | [[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]] | 2026：D 与 G 被从随机几何反推，Smith 成为 height-field 极限 |
+| **[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]** ★ 2026-09-19 | **单次散射丢失的能量怎么补回来**（工程解：4KB 表 + 5 行证明）；附带 Furnace Test 这个可执行的自测方法 |
+| **[[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]** ★ 2026-09-19 | 2026：**所有散射阶的精确初等闭式**（理论天花板；代价是无 roughness 参数） |
+
+> **一句话记住这一组两篇**：**Kulla-Conty 用近似换来"覆盖全粗糙度"，Dupuy 用"放弃粗糙度"换来精确闭式 —— "精确 / 便宜 / 有参数"三样，目前没人同时拿到。**
 
 ## Related Concepts
 
 - [[BRDF]]（上位概念）
 - [[Physically Based Rendering]]（工程化后的形态）
+- [[Multiple Scattering and Energy Compensation]] ★ 2026-09-19（**本理论的必然副产品**：有互遮挡就必然有互反射，有互反射就必然有"忽略互反射"的误差）
 - [[Participating Media]]（对偶：微面是"随机表面"，介质是"随机体积"；2026 的工作把两者打通）
 - [[Inverse Rendering]]（微面参数是逆渲染要反解的目标）
 
@@ -122,8 +133,10 @@ Substrate（UE 5.2+）—— 多 lobe 可组合化，微面仍是底层积木
 ## Learning Gap
 
 1. ~~"我实际在用的是哪一个 D、哪一个 G"~~ → 已由 Walter 2007 补上；
-2. **剩余缺口：实时化路径本身**——Karis 2013 的 split-sum、EnvBRDF LUT、以及 $F_{90}$ 形式的由来。补上这一环，[[Physically Based Rendering]] 才能收口为 Easy；
-3. **边界认知**：[[Hair Rendering]] 是微面模型**失效**的典型边界（细长散射体，含透射，需各向异性 BRDF）。知道理论在哪儿失效与知道它怎么用同样重要。
+2. ~~"实时化路径本身"~~ → 已由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 与 [[Split-Sum Approximation]]（9-18）补上；
+3. ~~"能量损失那一条"~~ → 已由 [[Multiple Scattering and Energy Compensation]]（9-19）补上；
+4. **剩余缺口：四个因子的"实现形态"与"物理形态"的差异清单**——D（GGX vs Beckmann）、G（Schlick 拟合 vs Smith 精确）、F（Schlick vs 精确 Fresnel）、能量（近似 vs 精确）。**这条不阻塞标 Easy，属于"从懂到精"的整理工作；**
+5. **边界认知**：[[Hair Rendering]] 是微面模型**失效**的典型边界 —— 但失效原因比"细长 + 透射"更根本：**度量单位不同**（纤维散射按每单位长度，微面 BRDF 按每单位面积），单位不同就没法塞进同一管线。知道理论在哪儿失效与知道它怎么用同样重要。
 
 ## Next Step
 

@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-18]]（昨日：[[2026-09-17]]）
-- **本周综合**：[[2026-W37]]（W38 覆盖 9-14~9-20，应于 9-20 产出）
+- **今日**：[[2026-09-19]]（昨日：[[2026-09-18]]）
+- **本周综合**：[[2026-W38]]（覆盖 9-14~9-19，周六提前产出；上一周：[[2026-W37]]）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 12 天）
 
-## Papers（38）
+## Papers（41）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -57,8 +57,11 @@ created: 2026-09-07
 | [[Karis — Real Shading in Unreal Engine 4 (2013)]]                                            | S（经典） | Normal（研读中） | **最高（PBR 工程侧收口：UE 里那些常数从哪来 + split-sum）** |
 | [[Marschner — Light Scattering from Human Hair Fibers (2003)]]                                 | S（经典） | Normal | **高（毛发理论源头 R/TT/TRT；微面 BRDF 的失效边界）** |
 | [[2026-09-17-DSD — Diffusion Skill Discovery]]                                                 | A-  | Hard（可只取一个抽象） | 中（技能库宽度；与 [[Motion Matching]] 构成检索对偶） |
+| [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] | A   | Normal（概念）+ Hard（推导） | **最高（PBR 最后缺口的理论天花板）** |
+| [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]                      | S（经典） | Normal（研读中） | **最高（PBR 最后缺口的工程解：4KB 表补回能量）** |
+| [[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]                          | A-  | Hard（只取一条架构） | 中（物理动画第四篇：能和物体接触） |
 
-## Concepts（25）
+## Concepts（26）
 
 **基础锚点**
 - [[Real-Time Rendering]]
@@ -74,6 +77,7 @@ created: 2026-09-07
 - [[Gaussian Splatting]] ✅ 2026-09-11 标 Easy
 
 **Normal 学习区**
+- [[Multiple Scattering and Energy Compensation]] ★ 2026-09-19 入库（**PBR 最后一块账本**：单次散射丢了什么、三条补法各缺哪一角；含唯一的引擎侧实测题）
 - [[Split-Sum Approximation]] ★ 2026-09-18 入库（PBR 工程侧最后一块：环境光镜面怎么变成两次查表）
 - [[Hair Rendering]] ★ 2026-09-17 入库（资产表示 + 着色 + 分档三层；**也是 [[Microfacet Theory]] 失效的边界**）★ 2026-09-18 补齐理论源头 Marschner 2003
 - [[Motion Matching]] ★ 关键瓶颈（9-17 起转 Watchlist 静默项）
@@ -141,4 +145,4 @@ Research/
 
 ---
 
-最后更新：2026-09-18（Run #10：+2 经典（**Karis 2013 = PBR 工程侧收口**：UE 常数来源 + split-sum；**Marschner 2003 = 毛发理论源头** R/TT/TRT）+1 前沿（DSD，技能库宽度）+1 Concept（[[Split-Sum Approximation]]）+2 图解（Hair R·TT·TRT / Split-Sum）+Daily，另补录 AMD "Neural Lighting" 传闻与 DLSS 5 数值格式门槛）
+最后更新：2026-09-19（Run #11：+2 前沿（**Dupuy 2026 = 多次散射所有阶的精确闭式**；LYRIC = 物理动画第四篇）+1 经典（**Kulla-Conty 2017 = 能量补偿工程解，PBR 最后缺口闭环**）+1 Concept（[[Multiple Scattering and Energy Compensation]]）+1 图解 + Daily + **Weekly W38**；另录 DLSS 5 首批第三方功耗实测）

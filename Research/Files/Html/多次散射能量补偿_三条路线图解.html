@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>多次散射与能量补偿 — 三条路线图解</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1b1f24; --muted:#5b6572; --line:#d8dee6; --panel:#f6f8fa;
+    --accent:#c0392b; --accent2:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --fg:#e6edf3; --muted:#9aa6b2; --line:#2c333c; --panel:#1b2027;
+      --accent:#ff7b72; --accent2:#79c0ff; --ok:#3fb950; --warn:#d29922;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 22px 48px; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.72; font-size:15px; max-width:980px; margin-inline:auto;
+  }
+  h1{font-size:23px; margin:0 0 4px; letter-spacing:.2px}
+  h2{font-size:17px; margin:38px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+  h3{font-size:14.5px; margin:22px 0 6px; color:var(--fg)}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 6px}
+  p{margin:8px 0}
+  code,.mono{font-family:var(--mono); font-size:.93em}
+  .formula{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:12px 14px; margin:12px 0; font-family:var(--mono); font-size:14px;
+    overflow-x:auto; white-space:nowrap;
+  }
+  table{border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px}
+  th,td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top}
+  th{background:var(--panel); font-weight:600}
+  .tag{display:inline-block; font-size:11.5px; padding:1px 7px; border-radius:10px;
+       border:1px solid var(--line); color:var(--muted); margin-left:6px; vertical-align:1px}
+  .yes{color:var(--ok); font-weight:600}
+  .no{color:var(--accent); font-weight:600}
+  .mid{color:var(--warn); font-weight:600}
+  .cards{display:grid; grid-template-columns:1fr; gap:12px; margin:14px 0}
+  @media(min-width:720px){ .cards{grid-template-columns:1fr 1fr 1fr} }
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+  .card h3{margin:0 0 6px; font-size:14px}
+  .card ul{margin:6px 0 0; padding-left:18px; font-size:13px}
+  .card li{margin:4px 0}
+  .note{border-left:3px solid var(--accent2); background:var(--panel); padding:9px 13px;
+        border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px}
+  .warnbox{border-left:3px solid var(--warn); background:var(--panel); padding:9px 13px;
+        border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px}
+  .kbd{border:1px solid var(--line); border-bottom-width:2px; border-radius:5px;
+       padding:0 5px; font-family:var(--mono); font-size:12.5px}
+  .caption{color:var(--muted); font-size:12.5px; text-align:center; margin:6px 0 0}
+  svg{display:block; max-width:100%; height:auto}
+  .lbl{font-size:11.5px; fill:var(--muted)}
+  .lbl2{font-size:12.5px; fill:var(--fg); font-weight:600}
+  .axis{stroke:var(--line); stroke-width:1}
+  .stepline{font-size:13px}
+  ol.steps{padding-left:20px; font-size:13.5px}
+  ol.steps li{margin:6px 0}
+</style>
+</head>
+<body>
+
+<h1>多次散射与能量补偿</h1>
+<p class="sub">为什么微面 BRDF 天生少收一笔能量，以及三条把它补回来的路 · 2026-09-19 建立</p>
+
+<div class="note">
+  <strong>一句话：</strong>微面 BRDF 的 <code>D·G·F</code> 只算<b>一次</b>弹射。<b>"被挡住"</b>在单次散射里被当成<b>"被吸收"</b>处理 —— 但在真实微结构里，被挡住的光会弹到旁边的微面，最终仍有机会离开表面。这笔丢失的能量随粗糙度上升、在掠射角最严重。
+</div>
+
+<h2>1 · 先能量化：方向 albedo 与 Furnace Test</h2>
+
+<p>把 BRDF 按余弦加权在整个入射半球积分，得到 <b>方向 albedo</b>：</p>
+<div class="formula">E(μo) = ∫₀²π ∫₀¹ f(μo; μi, φ) · μi dμi dφ&nbsp;&nbsp;&nbsp;&nbsp;理想值（纯反射表面）= 1</div>
+
+<p><b>Furnace Test（炉膛测试）</b>：把表面放进一个完全均匀的辐射场。纯反射表面应当<b>完全消失</b>，与背景不可分。E &lt; 1 时它会显出一团灰影 —— 这就是"能量丢了"的肉眼可见形态。</p>
+
+<div style="margin:16px 0">
+<svg viewBox="0 0 880 300" role="img" aria-label="单次散射能量缺口示意曲线">
+  <!-- axes -->
+  <line class="axis" x1="70" y1="250" x2="520" y2="250"/>
+  <line class="axis" x1="70" y1="250" x2="70" y2="40"/>
+  <text class="lbl" x="470" y="270">掠射角 θ（0° → 90°）</text>
+  <text class="lbl" x="16" y="150" transform="rotate(-90 16,150)">方向 albedo E</text>
+  <text class="lbl" x="46" y="44">1.0</text>
+  <line class="axis" x1="66" y1="42" x2="76" y2="42" stroke-dasharray="3 3"/>
+  <text class="lbl" x="46" y="254">0</text>
+
+  <!-- ideal E=1 -->
+  <line x1="70" y1="42" x2="520" y2="42" stroke="#1a7f37" stroke-width="2" stroke-dasharray="6 4"/>
+  <text class="lbl2" x="380" y="34" fill="#1a7f37">E = 1（理想：完全不丢）</text>
+
+  <!-- roughness 0.2 : nearly flat close to 1 -->
+  <path d="M70,50 C200,54 330,66 400,84 C450,98 490,116 520,132" fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+  <text class="lbl2" x="524" y="134" fill="#1f6feb">roughness ≈ 0.2</text>
+
+  <!-- roughness 0.5 -->
+  <path d="M70,62 C200,72 330,96 400,128 C450,154 490,182 520,206" fill="none" stroke="#9a6700" stroke-width="2.4"/>
+  <text class="lbl2" x="524" y="208" fill="#9a6700">roughness ≈ 0.5</text>
+
+  <!-- roughness 1.0 -->
+  <path d="M70,80 C200,98 330,142 400,182 C450,212 490,228 520,238" fill="none" stroke="#c0392b" stroke-width="2.6"/>
+  <text class="lbl2" x="524" y="244" fill="#c0392b">roughness = 1.0</text>
+
+  <!-- gap annotation -->
+  <line x1="470" y1="42" x2="470" y2="222" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 4"/>
+  <path d="M462,42 L478,42 M462,222 L478,222" stroke="var(--muted)" stroke-width="1"/>
+  <text class="lbl" x="446" y="138" text-anchor="end" fill="var(--accent)">丢失的能量 1−E</text>
+  <text class="lbl" x="446" y="154" text-anchor="end" fill="var(--muted)">越粗糙 / 越掠射越大</text>
+
+  <text class="lbl" x="70" y="286">曲线为形态示意，非实测数值 —— 用于说明趋势方向。</text>
+</svg>
+<p class="caption">图 1 · 方向 albedo 随掠射角与粗糙度的下降（示意）</p>
+</div>
+
+<h2>2 · 三条补法，各自缺一角</h2>
+
+<p>目前<b>没有任何一条路线同时拿到"精确 + 便宜 + 有参数"三样东西</b>。这是一个被三篇论文从三个方向逼近、但都还差一角的三角形。</p>
+
+<div class="cards">
+  <div class="card">
+    <h3>① 随机真值 <span class="tag">Heitz 2016</span></h3>
+    <ul>
+      <li><span class="yes">精确</span> <span class="yes">有参数</span></li>
+      <li><span class="no">求值也需要随机数</span></li>
+      <li>原文定性：<i>"found ground truth but only as a stochastic model"</i></li>
+      <li>被弃用理由（Kulla-Conty 原话）：<i>"Poor fit for our rendering architecture"</i></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>② 账平近似 <span class="tag">Kelemen 2001 → Kulla-Conty 2017</span></h3>
+    <ul>
+      <li><span class="yes">便宜</span> <span class="yes">有参数</span></li>
+      <li><span class="mid">分布是近似</span>（只补方向 albedo 这一个标量）</li>
+      <li>额外假设：<b>多次散射是漫射的</b></li>
+      <li>成本：32×32 表 ≈ <b>4KB</b>（float）+ 32 项 1D 表</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>③ 精确闭式 <span class="tag">Dupuy 2026</span></h3>
+    <ul>
+      <li><span class="yes">精确</span> <span class="yes">便宜</span></li>
+      <li><span class="no">没有 roughness 参数</span></li>
+      <li>额外假设：Smith 独立性 + 一个特制 NDF</li>
+      <li>作者自述：<i>"it lacks the typical roughness parameters"</i></li>
+    </ul>
+  </div>
+</div>
+
+<h2>3 · 账平近似为什么成立（5 行数学）</h2>
+
+<p>Kulla-Conty 补的那一项叫 <code>f_ms</code>：</p>
+<div class="formula">f_ms(μo; μi) = (1 − E(μo)) (1 − E(μi)) / [ π (1 − E_avg) ]&nbsp;&nbsp;&nbsp;，&nbsp;&nbsp;E_avg = 2 ∫₀¹ E(μ) μ dμ</div>
+
+<p>算它的方向 albedo，会看到<b>中间那个积分按定义就等于 E_avg，与分母相消</b>：</p>
+
+<ol class="steps">
+  <li><span class="mono">E_ms(μo) = 2π ∫₀¹ [(1−E(μo))(1−E(μi)) / (π(1−E_avg))] μi dμi</span></li>
+  <li><span class="mono">　　　　 = [(1−E(μo)) / (1−E_avg)] · 2∫₀¹ (1−E(μi)) μi dμi</span>　← 与被积函数共享因子，可提出</li>
+  <li><span class="mono">　　　　 = [(1−E(μo)) / (1−E_avg)] · (1 − E_avg)</span>　← 按定义</li>
+  <li><span class="mono">　　　　 = <b>1 − E(μo)</b></span>　← <span class="yes">恰好等于原 BRDF 缺的那一份</span></li>
+</ol>
+
+<div class="warnbox">
+  <strong>作者自己强调的两点（speaker notes 原文）：</strong><br>
+  ① 这个公式<b>在 Kelemen 论文里只给结论、不给证明</b>（"stated without proof"）；<br>
+  ② <b>"I haven't made any particular assumption about the BRDF. This method always works."</b> —— 它<b>对任何 BRDF 都成立</b>。推论：它同样可用于你没有闭式的 lobe。
+</div>
+
+<h2>4 · 精确闭式长什么样</h2>
+
+<p>Dupuy 2026 在一条<b>特制的一维单侧二次 NDF</b> 上，把所有散射阶求和后得到一个初等形式：</p>
+<div class="formula">f_r(ωi, ωo) = (z_i + z_o) / [ π (1 + ωi · ωo) ]&nbsp;&nbsp;&nbsp;，&nbsp;&nbsp;z = cosθ = n · ω</div>
+
+<p>这条公式的两个极限值，正好解释了它为什么"看起来像漫反射、但又不完全是"：</p>
+
+<table>
+  <tr><th>情形</th><th>代入</th><th>结果</th><th>外观</th></tr>
+  <tr><td><b>法向入射</b></td><td class="mono">z_i = z_o = 1，ωi·ωo = 1</td><td class="mono">2 / (π·2) = 1/π</td><td><span class="yes">完全等于 Lambertian</span></td></tr>
+  <tr><td><b>掠射入射</b></td><td class="mono">z_i → 0</td><td>分母 (1+ωi·ωo) 只有在 ωo 接近镜面方向时才小</td><td><span class="mid">能量向镜面方向收拢</span></td></tr>
+</table>
+
+<p class="sub">注意这一条与 9-18 的对照：Karis 2013 在 IBL 里为了能提出 F₀ 而用的 <code>n = v = r</code> 假设，效果是<b>把掠射反射抹平</b>。Dupuy 的新解在掠射端<b>反而向镜面收拢</b> —— <b>方向恰好相反</b>。同一处物理，两种处理。</p>
+
+<div style="margin:16px 0">
+<svg viewBox="0 0 880 250" role="img" aria-label="BRDF 在三个入射角下的形状示意">
+  <text class="lbl2" x="20" y="20">同一个 BRDF 在三个入射角下的"形状"（示意）</text>
+
+  <!-- three polar-ish lobes drawn as closed curves -->
+  <g transform="translate(150,150)">
+    <circle r="86" fill="none" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <path d="M0,0 L0,84 A84,84 0 0 1 60,60 Z" fill="var(--accent2)" opacity="0.22"/>
+    <path d="M0,0 L0,84 A84,84 0 0 0 -60,60 Z" fill="var(--accent2)" opacity="0.22"/>
+    <path d="M0,0 L0,84 A84,84 0 0 1 60,60 Z" fill="none" stroke="var(--accent2)" stroke-width="2"/>
+    <path d="M0,0 L0,84 A84,84 0 0 0 -60,60 Z" fill="none" stroke="var(--accent2)" stroke-width="2"/>
+    <line x1="0" y1="0" x2="0" y2="-76" stroke="var(--accent)" stroke-width="2"/>
+    <text class="lbl2" x="0" y="118" text-anchor="middle">θi = 0°</text>
+    <text class="lbl" x="0" y="136" text-anchor="middle">≈ Lambert 圆形</text>
+  </g>
+
+  <g transform="translate(440,150)">
+    <circle r="86" fill="none" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <path d="M0,0 L-58,-58 A82,82 0 0 0 40,-72 Z" fill="var(--warn)" opacity="0.2"/>
+    <path d="M0,0 L-58,-58 A82,82 0 0 0 40,-72 Z" fill="none" stroke="var(--warn)" stroke-width="2"/>
+    <path d="M0,0 L-58,58 A82,82 0 0 1 66,52 Z" fill="var(--warn)" opacity="0.2"/>
+    <path d="M0,0 L-58,58 A82,82 0 0 1 66,52 Z" fill="none" stroke="var(--warn)" stroke-width="2"/>
+    <line x1="0" y1="0" x2="-60" y2="-60" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="0" y1="0" x2="60" y2="60" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <text class="lbl2" x="0" y="118" text-anchor="middle">θi = 45°</text>
+    <text class="lbl" x="0" y="136" text-anchor="middle">开始偏离圆形</text>
+  </g>
+
+  <g transform="translate(730,150)">
+    <circle r="86" fill="none" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <path d="M0,0 L-84,-16 C-70,-46 -30,-72 10,-70 C60,-66 84,-34 84,-8 Z" fill="var(--accent)" opacity="0.2"/>
+    <path d="M0,0 L-84,-16 C-70,-46 -30,-72 10,-70 C60,-66 84,-34 84,-8 Z" fill="none" stroke="var(--accent)" stroke-width="2.2"/>
+    <line x1="0" y1="0" x2="-84" y2="-14" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <line x1="0" y1="0" x2="80" y2="-12" stroke="var(--accent)" stroke-width="2"/>
+    <text class="lbl2" x="0" y="118" text-anchor="middle">θi = 80°</text>
+    <text class="lbl" x="0" y="136" text-anchor="middle">能量收拢到镜面方向</text>
+  </g>
+
+  <text class="lbl" x="20" y="232">实心箭头 = 出射峰值方向；虚线箭头 = 镜面方向参照（示意，非渲染结果）</text>
+</svg>
+<p class="caption">图 2 · 同一条 BRDF，入射角从 0° 走到 80° 的形状变化（示意）</p>
+</div>
+
+<h2>5 · 现在就能做的一件事</h2>
+
+<table>
+  <tr><th style="width:34%">步骤</th><th>做法</th><th style="width:26%">看什么</th></tr>
+  <tr><td>1. 造一个纯反射球</td><td>Metal = 1，无贴图，BaseColor 白</td><td>—</td></tr>
+  <tr><td>2. 只留环境光</td><td>关掉所有方向光 / 阴影 / 后处理曝光自适应</td><td>球应当几乎看不见</td></tr>
+  <tr><td>3. Roughness 扫 0 → 1</td><td>截图每个档位</td><td><b>粗糙端是否整团变暗</b></td></tr>
+  <tr><td>4. 切换引擎侧的多次散射补偿</td><td>开 / 关 各一遍</td><td>差异就是这篇论文在处理的东西</td></tr>
+</table>
+
+<div class="note">
+  <strong>做完这一步，本概念可从 Normal 升 Easy。</strong>理由：它把"能量守恒"从公式问题变成了一个<b>你亲手看见过的现象</b>，而且顺带验证了引擎侧的默认行为。<b>这也是整个 PBR 自测清单里唯一的引擎侧实测题。</b>
+</div>
+
+<h2>6 · 带走的两条判据</h2>
+
+<p><b>判据 A（审近似）：</b>看到一个"补能量 / 预计算 / 闭式化"方案，先问 —— <b>为了让结果可预存或可求值，它额外假设了什么？这个假设在哪个角度或参数区间会肉眼可见？</b></p>
+<p class="sub">· Kulla-Conty：假设多次散射是漫射的 → 高粗糙度掠射端可能偏平&nbsp;&nbsp;· Dupuy：固定 NDF → 完全没有粗糙度自由度&nbsp;&nbsp;· Karis 2013：<code>n=v=r</code> → 掠射反射被抹平（作者自认第一误差源）</p>
+
+<p><b>判据 B（审"更真"）：</b><b>"物理更真实"和"工程更可用"是两条独立的评价轴。</b></p>
+<p class="sub">最干净的证据就在这四篇里：Heitz 2016 被 Kulla-Conty 弃用的理由不是"不够准"，而是<b>准了但求值要随机数，不适配光栅管线</b>。</p>
+
+<hr style="border:none; border-top:1px solid var(--line); margin:32px 0 14px">
+<p class="sub">相关笔记：[[Multiple Scattering and Energy Compensation]] · [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]] · [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] · [[Microfacet Theory]] · [[Split-Sum Approximation]]</p>
+
+</body>
+</html>
