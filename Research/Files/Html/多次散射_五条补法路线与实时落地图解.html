@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多次散射 — 五条补法路线与实时落地图解</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1b1f24; --muted:#5b6572; --line:#d8dee6; --panel:#f6f8fa;
+    --accent:#c0392b; --accent2:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --fg:#e6edf3; --muted:#9aa6b2; --line:#2c333c; --panel:#1b2027;
+      --accent:#ff7b72; --accent2:#79c0ff; --ok:#3fb950; --warn:#d29922;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 22px 56px; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.72; font-size:15px; max-width:1000px; margin-inline:auto;
+  }
+  h1{font-size:23px; margin:0 0 4px; letter-spacing:.2px}
+  h2{font-size:17px; margin:38px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+  h3{font-size:14.5px; margin:22px 0 6px}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 6px}
+  p{margin:8px 0}
+  code,.mono{font-family:var(--mono); font-size:.93em}
+  pre{background:var(--panel); border:1px solid var(--line); border-radius:8px;
+      padding:12px 14px; margin:12px 0; overflow-x:auto; font-family:var(--mono); font-size:12.5px; line-height:1.6}
+  .formula{background:var(--panel); border:1px solid var(--line); border-radius:8px;
+      padding:12px 14px; margin:12px 0; font-family:var(--mono); font-size:13.5px; overflow-x:auto}
+  table{border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px}
+  th,td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top}
+  th{background:var(--panel); font-weight:600}
+  .yes{color:var(--ok); font-weight:600}
+  .no{color:var(--accent); font-weight:600}
+  .mid{color:var(--warn); font-weight:600}
+  .note{border-left:3px solid var(--accent2); background:var(--panel); padding:9px 13px;
+        border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px}
+  .warnbox{border-left:3px solid var(--warn); background:var(--panel); padding:9px 13px;
+        border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px}
+  .danger{border-left:3px solid var(--accent); background:var(--panel); padding:9px 13px;
+        border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px}
+  .legend{color:var(--muted); font-size:12.5px; margin:-4px 0 10px}
+  figure{margin:16px 0}
+  figcaption{color:var(--muted); font-size:12.5px; margin-top:6px}
+  svg{max-width:100%; height:auto; display:block}
+  .svgbox{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px}
+  .kbd{font-family:var(--mono); border:1px solid var(--line); border-bottom-width:2px;
+       border-radius:5px; padding:0 5px; font-size:.9em}
+  ol,ul{padding-left:22px}
+  li{margin:5px 0}
+  hr{border:0; border-top:1px solid var(--line); margin:34px 0}
+</style>
+</head>
+<body>
+
+<h1>多次散射 — 五条补法路线与实时落地图解</h1>
+<p class="sub">建立于 2026-09-20 · 覆盖 [[Multiple Scattering and Energy Compensation]] 的全部路线账 · 数字均取自原文</p>
+
+<p>
+微面 BRDF 的 <code>D·G·F</code> <strong>只算一次弹射</strong>。光被微面挡住时，公式把它当成"吸收"，
+但真实表面里它会弹到别的微面上、最终仍有机会离开。<strong>这就是全部能量丢失的来源</strong> ——
+损失随粗糙度上升、在掠射角最严重。
+</p>
+
+<div class="formula">
+E(ω_o) = ∫ f(ω_o; ω_i, φ) · μ_i dμ_i dφ &nbsp;&nbsp;→&nbsp;&nbsp; 纯反射表面理想值 = 1，<strong>实际 &lt; 1</strong>
+</div>
+
+<h2>一、账本只有一行</h2>
+
+<div class="svgbox">
+<svg viewBox="0 0 680 150" role="img" aria-label="能量账本：单次散射加多次散射等于一">
+  <g font-family="-apple-system,Segoe UI,PingFang SC,sans-serif" font-size="13">
+    <!-- bar -->
+    <rect x="20" y="52" width="640" height="34" rx="6" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <rect x="20" y="52" width="410" height="34" rx="6" fill="var(--accent2)" opacity="0.30"/>
+    <rect x="430" y="52" width="230" height="34" rx="6" fill="var(--accent)" opacity="0.30"/>
+    <!-- labels -->
+    <text x="225" y="74" text-anchor="middle" fill="var(--fg)" font-weight="600">单次散射 E_ss</text>
+    <text x="545" y="74" text-anchor="middle" fill="var(--fg)" font-weight="600">多次散射 E_ms</text>
+    <!-- bracket -->
+    <path d="M20 96 L20 104 L660 104 L660 96" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="340" y="124" text-anchor="middle" fill="var(--muted)">总方向 albedo = 1（能量守恒）</text>
+    <!-- arrows -->
+    <text x="340" y="34" text-anchor="middle" fill="var(--muted)" font-size="12">
+      高粗糙度时这一段可以占到 20% —— 不是零头
+    </text>
+  </g>
+</svg>
+</div>
+<p class="legend">多次散射占比 20% 这一数字出自 <span class="mono">Heitz et al. 2016</span> 原文。</p>
+
+<div class="note">
+  <strong>整套方案的分水岭，是这一句：</strong><br>
+  <span class="yes">"补能量"</span> 与 <span class="yes">"推输运"</span> 是两件事。<br>
+  前者只把 <em>一个标量</em>（方向 albedo）补平，<strong>不依赖任何物理假设</strong> —— 所以永远"对"，但分布可能是编的；<br>
+  后者<strong>从假设推出分布</strong> —— 所以分布对，但假设错了就全错。
+</div>
+
+<h2>二、五条路线（同一问题的五种答案）</h2>
+
+<table>
+<thead>
+<tr>
+  <th style="width:16%">路线</th>
+  <th style="width:24%">做法</th>
+  <th style="width:14%">新增资源</th>
+  <th style="width:16%">修正范围</th>
+  <th style="width:30%">代价 / 出处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>① 精确随机</strong><br><span class="sub">真值参照系</span></td>
+  <td>把表面写成微片体积极限，用随机游走采样所有散射阶</td>
+  <td>无预计算</td>
+  <td class="yes">全部（含分布、各向异性、透射）</td>
+  <td class="no">求值要随机数 → <strong>不可实时</strong>。<span class="mono">Heitz et al. 2016</span></td>
+</tr>
+<tr>
+  <td><strong>② 精确闭式</strong><br><span class="sub">理论天花板</span></td>
+  <td>构造特制无参 NDF，使全部散射阶求和有初等闭式</td>
+  <td>无</td>
+  <td class="yes">全部散射阶，精确</td>
+  <td class="mid"><strong>没有 roughness 参数</strong>。<span class="mono">Dupuy 2026</span></td>
+</tr>
+<tr>
+  <td><strong>③ 查表 lobe</strong><br><span class="sub">通用工程解</span></td>
+  <td>加一个 <span class="mono">f_ms</span> lobe，其方向 albedo 恰为 <span class="mono">1−E(μ_o)</span></td>
+  <td>32×32 + 32 项表（≈4KB）</td>
+  <td class="yes">任意 BRDF、任意光源</td>
+  <td class="mid">分布被当成漫射；<strong>path tracing 语境</strong>。<span class="mono">Kelemen 2001 → Kulla-Conty 2017</span></td>
+</tr>
+<tr>
+  <td><strong>④ 复用 LUT</strong><br><span class="sub">实时 IBL 版</span></td>
+  <td>发现 <span class="mono">E_ss = f_ab.x + f_ab.y</span> —— 缺的信息已经在现有表里</td>
+  <td class="yes">零</td>
+  <td class="mid"><strong>只 IBL</strong>；两端同修</td>
+  <td class="mid">窄光源（点光/方向光）不成立。<span class="mono">Fdez-Agüera 2019</span></td>
+</tr>
+<tr>
+  <td><strong>⑤ 缩放 lobe</strong><br><span class="sub">最便宜</span></td>
+  <td><span class="mono">F_r *= 1 + f0·(1/dfg.y − 1)</span> —— 直接缩放已有镜面 lobe</td>
+  <td class="yes">零</td>
+  <td class="no">只 IBL；只补高粗糙度端</td>
+  <td class="yes"><strong>一条乘加</strong>。Filament 文档记作 [Lagarde18]（credit Turquin）</td>
+</tr>
+</tbody>
+</table>
+
+<p class="legend">成本自上而下递减，修正范围也递减。<strong>没有一个方案同时拿到"精确 / 便宜 / 有参数"三样。</strong></p>
+
+<h2>三、路线 ① 的算法心脏（Heitz 2016，Alg. 1）</h2>
+
+<p>
+整篇论文的随机游走，每一步只做一件事：<strong>下一个交点在哪一层高度</strong>。原文把"逃逸判定"和"下一层高度采样"写在同一个随机数上 —— 这是全篇最优雅的一行。
+</p>
+
+<div class="svgbox">
+<svg viewBox="0 0 680 300" role="img" aria-label="Heitz 随机游走单步流程">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="var(--muted)"/>
+    </marker>
+  </defs>
+  <g font-family="-apple-system,Segoe UI,PingFang SC,sans-serif" font-size="12.5">
+    <!-- start -->
+    <rect x="20" y="20" width="200" height="42" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="120" y="39" text-anchor="middle" fill="var(--fg)" font-weight="600">初始化</text>
+    <text x="120" y="55" text-anchor="middle" fill="var(--muted)" font-size="11.5">e₁ = 1,  h₀ = ∞,  ω₁ = −ω_i</text>
+
+    <line x1="220" y1="41" x2="268" y2="41" stroke="var(--muted)" marker-end="url(#ar)"/>
+
+    <!-- rand -->
+    <rect x="270" y="18" width="200" height="46" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="370" y="38" text-anchor="middle" fill="var(--fg)" font-weight="600">取一个随机数 U</text>
+    <text x="370" y="54" text-anchor="middle" fill="var(--muted)" font-size="11.5">与"逃逸概率"共用同一个 U</text>
+
+    <!-- decision -->
+    <path d="M370 64 L370 86" stroke="var(--muted)" marker-end="url(#ar)"/>
+    <polygon points="370,88 470,116 370,144 270,116" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="370" y="113" text-anchor="middle" fill="var(--fg)" font-weight="600">U ≥ 1 − G₁^dist(ω_r, h_r, ∞) ?</text>
+    <text x="370" y="129" text-anchor="middle" fill="var(--muted)" font-size="11">（这一步只跟当前高度有关）</text>
+
+    <!-- yes: leave -->
+    <line x1="470" y1="116" x2="556" y2="116" stroke="var(--muted)" marker-end="url(#ar)"/>
+    <text x="513" y="108" text-anchor="middle" fill="var(--ok)" font-size="11.5" font-weight="600">是</text>
+    <rect x="558" y="94" width="112" height="44" rx="8" fill="none" stroke="var(--ok)" stroke-width="1.5"/>
+    <text x="614" y="113" text-anchor="middle" fill="var(--fg)" font-weight="600">离开微表面</text>
+    <text x="614" y="129" text-anchor="middle" fill="var(--muted)" font-size="11.5">h_{r+1} = ∞</text>
+
+    <!-- no -->
+    <line x1="370" y1="144" x2="370" y2="176" stroke="var(--muted)" marker-end="url(#ar)"/>
+    <text x="382" y="166" fill="var(--accent)" font-size="11.5" font-weight="600">否</text>
+    <rect x="180" y="178" width="380" height="60" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="370" y="200" text-anchor="middle" fill="var(--fg)" font-weight="600">与微表面相交 → 采样下一层高度</text>
+    <text x="370" y="224" text-anchor="middle" fill="var(--fg)" font-size="13" font-weight="600">
+      h_{r+1} = C₁⁻¹( C₁(h_r) · (1−U)^{1/Λ(ω_r)} )
+    </text>
+
+    <!-- continue -->
+    <path d="M180 208 L120 208 L120 258" stroke="var(--muted)" fill="none" marker-end="url(#ar)"/>
+    <text x="130" y="248" fill="var(--muted)" font-size="11.5">继续</text>
+    <rect x="20" y="260" width="220" height="34" rx="8" fill="none" stroke="var(--line)"/>
+    <text x="130" y="282" text-anchor="middle" fill="var(--fg)" font-size="12">
+      在新交点按相位函数散射，能量 × 材质 BSDF
+    </text>
+  </g>
+</svg>
+</div>
+
+<div class="note">
+  <strong>为什么必须放弃常见的乘积式 G₂？</strong><br>
+  经典做法 <span class="mono">G₂ = G₁(ω_i) · G₁(ω_o)</span> 忽略高度相关性。
+  但随机游走<strong>必须知道光当前在哪一层高度</strong> ——
+  所以这里改用高度相关的 G₂，掩蔽函数写成
+  <span class="mono">G₁^dist(ω, h) = C₁(h)^Λ(ω)</span>。
+</div>
+
+<p>
+<strong>成本随粗糙度上升</strong>（原文数字，同一场景下额外渲染时间）：
+</p>
+<table>
+<thead><tr><th>场景 / 材质</th><th>额外成本</th></tr></thead>
+<tbody>
+<tr><td>电介质板，纹理化 GGX α = 0…1（Fig. 1）</td><td class="yes">+19%（且达成 100% 能量守恒）</td></tr>
+<tr><td>粗糙导体，GGX α = 0.3，光谱金 Fresnel（Fig. 18）</td><td>+24%</td></tr>
+<tr><td>漫反射 / 电介质，α = 0.1 / 0.5 / 1.0（Fig. 19）</td><td class="mid">+6% / +50% / +62%</td></tr>
+<tr><td>bottles 场景（Fig. 17）</td><td class="no">+87%（几乎翻倍）</td></tr>
+</tbody>
+</table>
+
+<div class="danger">
+  <strong>但它不可实时 —— 原文自己的判词：</strong><br>
+  <span class="mono">"our model is unsuitable for real-time rendering where the shading has to be smooth with one sample per pixel."</span><br>
+  <strong>这句话定义了后面所有实时方案要解决的问题</strong>，也解释了为什么路线 ③④⑤ 全都"放弃分布、只补标量"。
+</div>
+
+<h2>四、路线 ④ 的落地（Fdez-Agüera 2019）：信息已经在表里</h2>
+
+<p>
+这是全库目前<strong>"研究 → 引擎"距离最短</strong>的一条：论文自带 GLSL，<strong>不引入任何新贴图、不改管线</strong>。
+整条推导的转折点是发现 —— <strong>Epic 那张 EnvBRDF LUT 的两个通道相加，就是单次散射的方向 albedo。</strong>
+</p>
+
+<div class="svgbox">
+<svg viewBox="0 0 680 330" role="img" aria-label="Fdez-Agüera 数据流：LUT 到 Ess 到 Ems 到 Fms 到合成">
+  <defs>
+    <marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="var(--muted)"/>
+    </marker>
+  </defs>
+  <g font-family="-apple-system,Segoe UI,PingFang SC,sans-serif" font-size="12.5">
+    <!-- LUT box -->
+    <rect x="20" y="24" width="185" height="86" rx="9" fill="none" stroke="var(--accent2)" stroke-width="1.5"/>
+    <text x="112" y="46" text-anchor="middle" fill="var(--fg)" font-weight="600">EnvBRDF LUT</text>
+    <text x="112" y="64" text-anchor="middle" fill="var(--muted)" font-size="11.5">Karis 2013，早就跑着了</text>
+    <text x="112" y="88" text-anchor="middle" fill="var(--fg)" font-size="12">f_ab.x = f_a &nbsp;·&nbsp; f_ab.y = f_b</text>
+    <text x="112" y="104" text-anchor="middle" fill="var(--muted)" font-size="11">（对 F₀ 的 scale 与 bias）</text>
+
+    <line x1="205" y1="67" x2="252" y2="67" stroke="var(--muted)" marker-end="url(#ar2)"/>
+
+    <!-- Ess -->
+    <rect x="254" y="36" width="170" height="62" rx="9" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <text x="339" y="60" text-anchor="middle" fill="var(--fg)" font-weight="600">一个加法</text>
+    <text x="339" y="82" text-anchor="middle" fill="var(--accent)" font-weight="600" font-size="13">E_ss = f_ab.x + f_ab.y</text>
+
+    <line x1="424" y1="67" x2="470" y2="67" stroke="var(--muted)" marker-end="url(#ar2)"/>
+    <rect x="472" y="36" width="186" height="62" rx="9" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="565" y="60" text-anchor="middle" fill="var(--fg)" font-weight="600">缺口 = 剩下的能量</text>
+    <text x="565" y="82" text-anchor="middle" fill="var(--fg)" font-size="13">E_ms = 1 − E_ss</text>
+
+    <!-- down -->
+    <path d="M339 98 L339 130" stroke="var(--muted)" marker-end="url(#ar2)"/>
+    <text x="352" y="120" fill="var(--muted)" font-size="11.5">代入</text>
+
+    <!-- Fms -->
+    <rect x="150" y="132" width="380" height="58" rx="9" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="340" y="154" text-anchor="middle" fill="var(--fg)" font-weight="600">F_ms = (F₀f_a + f_b) · F_avg / ( 1 − F_avg·(1 − E_ss) )</text>
+    <text x="340" y="176" text-anchor="middle" fill="var(--muted)" font-size="11.5">
+      F_avg = F₀ + (1−F₀)/21 —— Schlick 下的解析平均，不需要表
+    </text>
+
+    <path d="M340 190 L340 222" stroke="var(--muted)" marker-end="url(#ar2)"/>
+
+    <!-- composition -->
+    <rect x="20" y="224" width="300" height="88" rx="9" fill="none" stroke="var(--ok)" stroke-width="1.5"/>
+    <text x="170" y="246" text-anchor="middle" fill="var(--fg)" font-weight="600">导体（Listing 1）</text>
+    <text x="170" y="270" text-anchor="middle" fill="var(--fg)" font-size="12">F_ssE_ss · radiance</text>
+    <text x="170" y="290" text-anchor="middle" fill="var(--ok)" font-size="12">+ F_ms · E_ms · irradiance</text>
+    <text x="170" y="306" text-anchor="middle" fill="var(--muted)" font-size="11">用已有的预滤波镜面 + 已有的 irradiance</text>
+
+    <rect x="340" y="224" width="318" height="88" rx="9" fill="none" stroke="var(--ok)" stroke-width="1.5"/>
+    <text x="499" y="246" text-anchor="middle" fill="var(--fg)" font-weight="600">电介质（Listing 2）</text>
+    <text x="499" y="270" text-anchor="middle" fill="var(--fg)" font-size="12">E_dss = 1 − (F_ssE_ss + F_ms·E_ms)</text>
+    <text x="499" y="290" text-anchor="middle" fill="var(--ok)" font-size="12">k_D = albedo · E_dss</text>
+    <text x="499" y="306" text-anchor="middle" fill="var(--muted)" font-size="11">← 这里同时修掉「低粗糙度端的超额能量」</text>
+  </g>
+</svg>
+</div>
+
+<h3>两端都被修正（这是本路线独有的一点）</h3>
+<table>
+<thead><tr><th style="width:20%">端</th><th style="width:34%">现象</th><th>被谁修</th></tr></thead>
+<tbody>
+<tr><td><strong>高粗糙度端</strong></td><td>表面发暗、颜色失饱和</td><td>导体与电介质都会补回缺失能量</td></tr>
+<tr><td><strong>低粗糙度端</strong></td><td>掠射边缘一圈不自然的 <strong>亮边</strong>（超额能量）</td><td class="yes">仅电介质：把常见的 <span class="mono">E_d = 1 − F₀</span> 换成扣掉镜面实际拿走的部分</td></tr>
+</tbody>
+</table>
+<p class="legend">原文用一张参考照片对照：修好之后球体的边缘暗部更接近真实照片（Fig. 7）。</p>
+
+<div class="warnbox">
+  <strong>必须记住的边界：它只修 IBL，不修解析光。</strong><br>
+  二次以上散射被假设为"均匀漫射" → 对<strong>均匀环境精确</strong>、对<strong>大面积光源（天穹）很好</strong>，
+  但对<strong>窄光源（点光 / 方向光）不成立</strong>（原文原话）。<br>
+  → <strong>"环境光那半边修好了" ≠ "能量补偿已经做了"</strong>。灯光那半边仍然空着，那是路线 ③ 的位置。
+</div>
+
+<div class="warnbox">
+  <strong>⚠️ 照抄之前先找勘误页（本次两篇工程文献都有官方勘误）</strong><br>
+  Fdez-Agüera 2019 勘误栏原文（JCGT 论文页，逐字核对）：<br>
+  <span class="mono" style="display:block;margin:6px 0 4px">
+  Equation 6,7,10: missing factors of 1/π in integrals. ·
+  Equation 11: missing factor of π. ·
+  Equation 15: missing dot product operator. ·
+  Listing 1,2: Constant used in computing Favg adjusted by π.
+  </span>
+  错误全在<strong>常数与因子层</strong> —— 这类错误抄进 shader 不会报错，只会慢半拍地表现成"看起来有点不对"。
+</div>
+
+<h2>五、可执行的实测题：Furnace Test（30 分钟）</h2>
+
+<p>这是整个 PBR 体系里<strong>唯一一个能一眼看出对不对</strong>的验证方法 —— 不需要参考照片，不需要美术判断。</p>
+
+<ol>
+  <li>建一个 <strong>纯金属球</strong>（Metal = 1、无贴图、无法线细节），放在只有环境光的场景里（关掉方向光与阴影）；</li>
+  <li><strong>Roughness 从 0 扫到 1</strong>，截图 —— 看粗糙端是否整团变暗（<span class="no">变暗 = 丢了能量</span>）；</li>
+  <li>再建一个 <strong>光滑白色电介质球</strong>（Roughness ≈ 0），看<strong>掠射边缘是否有一圈偏亮</strong>（<span class="no">偏亮 = 超额能量</span>）；</li>
+  <li>切换引擎侧的能量补偿开关，重复两次，对比；</li>
+  <li>理想结果：albedo 为 1 的物体在均匀环境里<strong>完全消失</strong>（与背景不可分）。</li>
+</ol>
+
+<div class="note">
+  <strong>第 3 步是本次新增的检查项。</strong>过去的 furnace test 只查"暗"，不查"亮" ——
+  <span class="mono">Fdez-Agüera 2019</span> 指出低粗糙度端也有账，且比缺失端更容易被忽略
+  （因为它看起来"更干净"而不是"更暗"）。
+</div>
+
+<hr>
+
+<h2>六、一句话带走</h2>
+
+<ul>
+  <li><strong>物理上</strong>：能量丢失来自"把被挡住当成被吸收" —— 这是微面理论的固有后果，不是实现缺陷；</li>
+  <li><strong>工程上</strong>：<strong>"精确 / 便宜 / 有参数"三样，目前没有任何一条路线同时拿到。</strong>看到任何方案，先问它交出了哪一样；</li>
+  <li><strong>执行上</strong>：<strong>路线 ④⑤ 的边际成本约等于 0</strong> —— 在一个已经跑着 Sky Light 的场景里，这类"几乎免费的正确性"应当默认开启，而不是当成分档项；</li>
+  <li><strong>边界上</strong>：免费的那条<strong>只管环境光</strong>。把它当成"能量补偿已完成"是最容易犯的错。</li>
+</ul>
+
+<p class="sub" style="margin-top:26px">
+来源：Heitz et al. 2016（TOG 35(4)，原文 PDF 逐节核对）·Kulla-Conty 2017 · Fdez-Agüera 2019（JCGT 8(1) 45–55，勘误栏逐字核对）·
+Dupuy 2026（arXiv 2609.20394）· Filament 官方 PBR 文档（路线 ⑤ 的公式与 shader，原始书目条目待核实）。
+</p>
+
+</body>
+</html>

@@ -69,6 +69,11 @@ $$L_o\;\approx\;\underbrace{\text{PrefilteredColor}(R,\text{Roughness})}_{\text{
         ↓
 全引擎默认（UE / Unity / 自研）
         ↓
+★ 2019  Fdez-Agüera —— 发现 "缺口就在这张表里"：
+   EnvBRDF LUT 的两个通道相加 = 单次散射方向 albedo
+   → E_ms = 1 − E_ss，零新增资源补回多次散射
+   （见 [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]）
+        ↓
 移动端：Analytic EnvBRDF（纯解析拟合，省掉 LUT 采样）
         ↓
 2026 —— 神经路线绕开它：DLSS 5 从画面侧补光照与材质真实感
@@ -93,6 +98,7 @@ $$L_o\;\approx\;\underbrace{\text{PrefilteredColor}(R,\text{Roughness})}_{\text{
 - [[Microfacet Theory]] — $D\cdot G$ 的积分在 LUT 里被预积分掉了
 - [[Global Illumination]] — **边界**：split-sum 只算**环境光**的镜面反射（天空盒 / 反射捕获），**不含场景间间接光**；真正的动态 GI（Lumen / MegaLights / 神经 GI）是另一条线
 - [[Neural Global Illumination]] — 对偶的技术路线：一边是"预积分查表"，一边是"学习/推理解算"
+- [[Multiple Scattering and Energy Compensation]] — **本概念的免费搭车项**：缺口 $1-E_{ss}$ 所需的 $E_{ss}$ 就是本概念的 LUT 两个通道之和（[[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]）
 
 ## Technologies
 
@@ -121,16 +127,21 @@ $$L_o\;\approx\;\underbrace{\text{PrefilteredColor}(R,\text{Roughness})}_{\text{
 
 ## Learning Gap
 
-- **残留一条（不是本文问题）**：**多次散射能量补偿**（高粗糙度下单散射 GGX 丢能量）由后续工作处理（Kulla-Conty 2017 / Fdez-Agüera 2019 一类），**尚未入库**；
+- ✅ **残留一条已闭环（2026-09-19 → 09-20）**：**多次散射能量补偿**（高粗糙度下单散射 GGX 丢能量）已由 [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（新增查表的通用解）、[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（精确真值）、[[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**复用本概念的 LUT**，零新增资源）三篇补齐。概念汇总见 [[Multiple Scattering and Energy Compensation]]；
+- **🔴 本次最有价值的一条（2026-09-20）**：**split-sum 的产物不只是"一个近似"，而是"三样东西"** —— 预滤波 cubemap、EnvBRDF LUT、**以及一个免费附带的能量补偿项**（因为 $E_{ss}=f_a+f_b$ 已经在 LUT 里）。**这意味着 IBL 镜面半边的"固定开销表"要比原先记的多一行，而这一行成本 ≈ 0**；
 - **一条实践差距**：你库里没有"同一场景 IBL 开关 + 精度分档"的实测数据。**这一条只能自己测**，见 Next Step。
 
 ## Next Step
 
 1. **可做的一次实测（不需读论文）**：在 NGR 里取一个代表性场景，测 **Sky Light 镜面开/关**、以及 **LUT 精度从 R16G16 降到 R8G8** 两组的 GPUTime 与显存差。这一组数字能直接支撑你的"反射类特效/材质分档"判断；
 2. 视觉验证 **$n=v=r$**：找一个高粗糙度金属球 + 强环境（天空盒有太阳），对比掠射角下的反射"长度"。**看得见就说明这条近似在你项目里是可感的**；
-3. 经典补缺（可选）：Kulla-Conty 2017（多次散射能量补偿）。
+3. ~~经典补缺：Kulla-Conty 2017~~ ✅ 已入库（9-19）；~~Fdez-Agüera 2019~~ ✅ 已入库（9-20）。**下一步剩下的相关经典是 **Hammon 2017**（漫反射侧）与 **d'Eon 的 Hitchhiker's Guide**；**
+4. **新增（与上面第 1 条合并做）**：顺手确认**引擎当前的多次散射补偿状态** —— 用同一组球做 furnace test（做法见 [[多次散射_五条补法路线与实时落地图解]] 第五节）。**如果发现没开或没有，这一篇的 GLSL 就是现成的补法。**
 
 ## Notes
 
 - 2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 建立，来源为该文第 3 节（Image-Based Lighting / Split Sum Approximation 式 7 / Environment BRDF 式 8）与实现代码片段。
 - 与 [[Microfacet Theory]]、[[BRDF]] 一起，构成"微面 BRDF 三件套"的完整链条：**理论 → 三个因子的实现形式 → 成像（IBL）的最后一步**。
+- **2026-09-20 的重要补充**：本概念的 LUT **不只是为单次散射服务的**。它的两个通道相加就是 $E_{ss}$，因此**它同时是多次散射能量补偿的输入**。
+  → **它从"一个近似"升级为"一个可以重复提取信息的固定资源"**。这改变了它在预算表里的定位：**不是"为 IBL 付一次钱"，而是"付一次钱、拿到两件事"**。
+- ⚠️ **勘误提醒**：本概念的后续实现 [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] **有官方勘误**（JCGT 论文页，2018-02-01 修订版）。**引用与照抄该文时请走修订版。**

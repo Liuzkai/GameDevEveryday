@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-19]]（昨日：[[2026-09-18]]）
-- **本周综合**：[[2026-W38]]（覆盖 9-14~9-19，周六提前产出；上一周：[[2026-W37]]）
+- **今日**：[[2026-09-20]]（昨日：[[2026-09-19]]）
+- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**，9-19 提前产出、9-20 追加更新；上一周：[[2026-W37]]）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 12 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 13 天）
 
-## Papers（41）
+## Papers（43）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -60,6 +60,8 @@ created: 2026-09-07
 | [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] | A   | Normal（概念）+ Hard（推导） | **最高（PBR 最后缺口的理论天花板）** |
 | [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]                      | S（经典） | Normal（研读中） | **最高（PBR 最后缺口的工程解：4KB 表补回能量）** |
 | [[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]                          | A-  | Hard（只取一条架构） | 中（物理动画第四篇：能和物体接触） |
+| [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]                    | S（经典） | Hard（**四条结论可按 Normal 读**） | **最高（能量账本的"真值参照系"；"不可实时"定义了后续所有工作）** |
+| [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] | A（经典） | Normal | **最高（本库"研究 → 引擎"距离最短：零新增资源 + 论文自带 GLSL）** |
 
 ## Concepts（26）
 
@@ -77,7 +79,7 @@ created: 2026-09-07
 - [[Gaussian Splatting]] ✅ 2026-09-11 标 Easy
 
 **Normal 学习区**
-- [[Multiple Scattering and Energy Compensation]] ★ 2026-09-19 入库（**PBR 最后一块账本**：单次散射丢了什么、三条补法各缺哪一角；含唯一的引擎侧实测题）
+- [[Multiple Scattering and Energy Compensation]] ★ 2026-09-19 入库、**2026-09-20 由三条路线扩为五条**（**PBR 最后一块账本**：单次散射丢了什么、五条补法各缺哪一角、**成本与覆盖面严格反向**；含唯一的引擎侧实测题 —— furnace test **要查两头**）
 - [[Split-Sum Approximation]] ★ 2026-09-18 入库（PBR 工程侧最后一块：环境光镜面怎么变成两次查表）
 - [[Hair Rendering]] ★ 2026-09-17 入库（资产表示 + 着色 + 分档三层；**也是 [[Microfacet Theory]] 失效的边界**）★ 2026-09-18 补齐理论源头 Marschner 2003
 - [[Motion Matching]] ★ 关键瓶颈（9-17 起转 Watchlist 静默项）
@@ -145,4 +147,4 @@ Research/
 
 ---
 
-最后更新：2026-09-19（Run #11：+2 前沿（**Dupuy 2026 = 多次散射所有阶的精确闭式**；LYRIC = 物理动画第四篇）+1 经典（**Kulla-Conty 2017 = 能量补偿工程解，PBR 最后缺口闭环**）+1 Concept（[[Multiple Scattering and Energy Compensation]]）+1 图解 + Daily + **Weekly W38**；另录 DLSS 5 首批第三方功耗实测）
+最后更新：2026-09-20（Run #12：**前沿窗口无新条目（周末 arXiv 无 listing），按 No-Filler 空转前沿线**；+2 经典（**Heitz 2016 = 多次散射精确真值，"不可实时"定义了后续所有工作**；**Fdez-Agüera 2019 = 实时 IBL 收口，`Ess = f_ab.x + f_ab.y` 一行加法零新增资源**）+1 图解（五条补法路线）+ Daily + **[[2026-W38]] 追加 9-20 并更新结论**；另录三条产业信号：《控制：共振》把 PT+GI 做成所有光追档位的公共底座、DLSS 5 官方预估性能损失 50–60%、Auto SR 扩到 Panther Lake）

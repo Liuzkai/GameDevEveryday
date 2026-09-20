@@ -137,8 +137,8 @@ user_level: Easy      # 或 Normal / Hard
 - [[GPU-Driven Rendering]] — 4 条判据
 - [[Gaussian Splatting]] — 4 条判据 ✅ 2026-09-11 达成（见 [[GS 图解 1 — 协方差与椭球：高斯的形状说明书|图解 1]]、[[GS 图解 2 — 排序瓶颈、管线冲突与密度控制|图解 2]]）
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
-  - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）。**不计入 25 条**，标为"读了，不是会了"；
-  - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作）**：纯金属球 + 只有环境光 + Roughness 0→1 截图 + 切换多次散射补偿对比。做法见 [[多次散射能量补偿_三条路线图解]] 第 5 节。**做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。**
+  - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）。**不计入 25 条**，标为"读了，不是会了"；
+  - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。**
 - **[[Hair Rendering]] — 5 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
@@ -147,11 +147,25 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 12 天**。当前不影响工作（推送已按推断值自动调权），但**本周新增 7 个概念、其中 5 个标为 Normal，推断误差正在累积**。任何一次校正都会立刻改变推送重心，**建议本周内做一次**；
-2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）；**
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 13 天**。当前不影响工作（推送已按推断值自动调权），但**本周新增 7 个概念、其中 5 个标为 Normal，推断误差正在累积**。任何一次校正都会立刻改变推送重心，**建议本周内做一次**；
+2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
-4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）已从 9-10 挂到 9-19，**已在 [[2026-W38]] 中列为下周第一优先级，不再逐日提示**。
+4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）已从 9-10 挂到 9-20，**已在 [[2026-W38]] 中列为下周第一优先级，不再逐日提示**；
+5. **🔴 9-20 新增（对你的分档工作直接相关）**：**《控制：共振》把路径追踪 + 全局光照做成了所有光追预设的公共底座** → **"画质档位 = 在同一管线上调参数"这个隐含前提需要重新审视**。建议在 S/A/B/C × 五档矩阵里显式区分"**换参数**"与"**换管线**"两类档位差异。详见 [[2026-09-20]] 产业信号 2。
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09-19]] · [[2026-W38]] · [[2026-09]] 技术雷达
+## 一处值得复用的分层模板（9-20 建立）
+
+[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] 的 `user_level` 标为 **Hard**，但笔记里**显式分列了两层**：
+
+| 层 | 内容 | 可读性 |
+|---|---|---|
+| **推导层** | Smith 随机输运的自由程分布与相位函数、微片辐射度量学 | **真正的 Hard** —— 不必现在动 |
+| **结论层** | ①"被挡住 ≠ 被吸收" ②它不可实时 ③成本随粗糙度上升 ④按事件序列分解 lobe | **Normal 可直接拿走，不需要任何推导** |
+
+**结论：`user_level: Hard` 不等于"这篇不能读"。** 面对 Hard 材料时，**先问"它的结论层是不是 Normal 的"** —— 如果是，就把两层分开记，Hard 的那层挂着等前置补齐即可。**这与本库 §14 的 Hard 策略（找最小前置、搭桥）是同一件事的一个更省力的入口。**
+
+---
+
+相关：[[2026-09-07]] · [[2026-09-20]] · [[2026-W38]] · [[2026-09]] 技术雷达
