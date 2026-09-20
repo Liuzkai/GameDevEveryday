@@ -1,20 +1,26 @@
 ---
 type: paper
-title: "A Reflectance Model for Computer Graphics"
-authors: [Robert L. Cook, Kenneth E. Torrance]
+title: A Reflectance Model for Computer Graphics
+authors:
+  - Robert L. Cook
+  - Kenneth E. Torrance
 year: 1981
 published: "1981-07 (SIGGRAPH '81)；期刊版 1982-01 (ACM TOG 1(1): 7-24)"
-venue: "SIGGRAPH 1981 / ACM Transactions on Graphics"
-url: "https://dl.acm.org/doi/10.1145/357290.357293"
+venue: SIGGRAPH 1981 / ACM Transactions on Graphics
+url: https://dl.acm.org/doi/10.1145/357290.357293
 code: ""
 project_page: ""
-category: [rendering, brdf, classical]
+category:
+  - rendering
+  - brdf
+  - classical
 importance: S
 historical_importance: 5
 game_relevance: 5
 production_readiness: Industry Adopted
 user_level: Normal
-status: studying
+status:
+  - reading
 ---
 
 # A Reflectance Model for Computer Graphics (Cook & Torrance, 1981)
