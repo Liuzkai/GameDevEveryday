@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-20]]（昨日：[[2026-09-19]]）
-- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**，9-19 提前产出、9-20 追加更新；上一周：[[2026-W37]]）
+- **今日**：[[2026-09-21]]（昨日：[[2026-09-20]]）
+- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 1 天**；上一周：[[2026-W37]]）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 13 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 14 天）
 
-## Papers（43）
+## Papers（46）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -62,17 +62,22 @@ created: 2026-09-07
 | [[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]                          | A-  | Hard（只取一条架构） | 中（物理动画第四篇：能和物体接触） |
 | [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]                    | S（经典） | Hard（**四条结论可按 Normal 读**） | **最高（能量账本的"真值参照系"；"不可实时"定义了后续所有工作）** |
 | [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] | A（经典） | Normal | **最高（本库"研究 → 引擎"距离最短：零新增资源 + 论文自带 GLSL）** |
+| [[Reeves — Particle Systems (1983)]]                                                            | S（经典） | **Easy（你的专业域）** | **最高（★ 你五个预算维度中四个的原始出处；库内 VFX 域唯一历史锚点）** |
+| [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]]                                  | A（经典） | **Easy（机制）/ Normal（成本模型）** | **最高（★ "动态灯光 ≤3/≤2/≤1/0"的原始依据；补齐零覆盖的阴影域）** |
+| [[2026-09-18-GestureFAR — Streaming Co-Speech Gesture Generation with Flow Autoregression]]        | A-  | Normal（只取一条配方） | 中低（**`freeze-and-distill` 配方第 3 例**；无引擎侧实现） |
 
-## Concepts（26）
+## Concepts（28）
 
 **基础锚点**
 - [[Real-Time Rendering]]
 - [[Global Illumination]]
 - [[Rendering Equation]] ★ 2026-09-15 入库（谱系最大锚点补齐）
 - [[Microfacet Theory]] ★ 2026-09-16 入库（当前学习目标节点：D·G·F）
-- [[Participating Media]] ★ 2026-09-16 入库（VFX/OverDraw Easy 域 ↔ 理论的最大缺口）
+- [[Participating Media]] ★ 2026-09-16 入库（VFX/OverDraw Easy 域 ↔ 理论的最大缺口）★ **2026-09-21 找到历史入口：[[Reeves — Particle Systems (1983)]] §5 的两个"做不到"（粒子被打亮 / 云的自阴影）正是它的起点**
+- [[Shadow Mapping]] ★ 2026-09-21 入库（**填补库里零覆盖的"阴影"域**；**"动态灯光 ≤3/≤2/≤1/0"的成本依据 = 每盏灯 ≈ +1× 场景渲染**；同时是 MegaLights 复审的对照基线）
 
 **你的领域（Easy）**
+- [[Particle Systems]] ★ 2026-09-21 入库（**VFX 域唯一的历史锚点**；五步帧循环 = Niagara 生命周期；**"屏占比 × 密度"是"同屏粒子数"预算的原始出处**）
 - [[Real-Time VFX Performance Budgeting]]
 - [[Niagara]]
 - [[Scalability and Quality Tiers]]
@@ -147,4 +152,4 @@ Research/
 
 ---
 
-最后更新：2026-09-20（Run #12：**前沿窗口无新条目（周末 arXiv 无 listing），按 No-Filler 空转前沿线**；+2 经典（**Heitz 2016 = 多次散射精确真值，"不可实时"定义了后续所有工作**；**Fdez-Agüera 2019 = 实时 IBL 收口，`Ess = f_ab.x + f_ab.y` 一行加法零新增资源**）+1 图解（五条补法路线）+ Daily + **[[2026-W38]] 追加 9-20 并更新结论**；另录三条产业信号：《控制：共振》把 PT+GI 做成所有光追档位的公共底座、DLSS 5 官方预估性能损失 50–60%、Auto SR 扩到 Panther Lake）
+最后更新：2026-09-21（Run #13：前沿窗口 9-18 ~ 9-21 **仅 1 条新提交**（arXiv API `submittedDate` 交叉确认，周末无公告），入库 **GestureFAR**（A-，`freeze-and-distill` 配方第 3 例）+ **2 篇经典**（**Reeves 1983 = 粒子系统源头，你五维预算中四维的原始出处**；**Williams 1978 = 曲面阴影开创，动态灯光预算的成本依据**，同时补齐库里零覆盖的阴影域）+ **2 个新概念**（[[Particle Systems]]、[[Shadow Mapping]]，均按 9-20 的分层模板拆为「机制层 Easy / 成本模型层 Normal」）+ 1 图解（[[预算五维_1978-1983_源头图解]]）+ Daily；产业侧四条：《控制：共振》档位实为**多正交子系统 + 帧生成倍率**且 RT Ultra 档厂商绑定、《铁拳 8》**神经渲染开销破坏锁帧玩法逻辑**、DLSS 5 被第三方在 Intel Xe2 上重实现（**显存成为神经层第三预算项**）、MegaLights 限制落到 VFX 域（二手待核实））

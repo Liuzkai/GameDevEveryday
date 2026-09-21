@@ -67,10 +67,13 @@ tags: [vfx, performance, production, user-domain]
 
 外部研究对这个模型的冲击点：
 
-1. **[[LightOpt — Lights Optimization for Real-Time Rendering]]** → 把"动态灯光上限"从经验值变成可推导值
-2. **[[DLSS 5 — Generative Neural Rendering]]** → 部分表达力外包给神经层，预算的自变量集合会变（但代价是 -50% 帧率，且只覆盖 PC）
-3. **[[Motion Style Slider — Continuous Style Control for Human Motion Diffusion]]** → "端点监督换连续控制"的思路可迁移：S/A/B/C 是 4 个离散端点，还是 1 个强度滑杆？
-4. **[[MotionBricks — Scalable Real-Time Motions]]** → 若技能动作变成运行时生成，VFX 时序锚点必须从"固定帧"改为"语义事件"
+1. **[[Reeves — Particle Systems (1983)]]** → **你的五个维度里有四个的原始出处**（屏占比 LOD / 发射器层级 / 寿命 / 加法混合免排序）。**含义：这份预算表可以引用 40 余年前的成本法则来论证，而不必只靠实测经验值。** 见 [[预算五维_1978-1983_源头图解]]
+2. **[[Williams — Casting Curved Shadows on Curved Surfaces (1978)]]** → **"动态灯光"维度的成本依据**：每盏灯的阴影代价 ≈ +1× 场景渲染（单位是"一遍渲染"，不是"一个图元"）→ **这才解释了为什么它的上限是 0–3 而同屏粒子是 100–3000**
+3. **[[LightOpt — Lights Optimization for Real-Time Rendering]]** → 把"动态灯光上限"从经验值变成可推导值
+4. **[[DLSS 5 — Generative Neural Rendering]]** → 部分表达力外包给神经层，预算的自变量集合会变（但代价是 -50% 帧率，且只覆盖 PC）。**2026-09-21 补：神经层已确认消耗三个预算维度 —— 功耗（9-19）、帧时间（9-20）、显存/设备缓冲（9-21，Intel Xe2 重实现在 720p 占约 2.3 GiB）**
+5. **[[Motion Style Slider — Continuous Style Control for Human Motion Diffusion]]** → "端点监督换连续控制"的思路可迁移：S/A/B/C 是 4 个离散端点，还是 1 个强度滑杆？
+6. **[[MotionBricks — Scalable Real-Time Motions]]** → 若技能动作变成运行时生成，VFX 时序锚点必须从"固定帧"改为"语义事件"（**2026-09-21 由 [[2026-09-18-GestureFAR — Streaming Co-Speech Gesture Generation with Flow Autoregression]] 独立佐证第二次**）
+7. **🔴 一条硬约束（2026-09-21，二手待核实）** → 二手来源称 **UE 5.8 MegaLights 不支持半透明物体 / 流体 / 云 / 发丝，也不支持前向渲染** → **特效打光不在 MegaLights 覆盖范围内**，仍走 [[Shadow Mapping]] 的成本法则。**"动态灯光变便宜"不能直接推到 VFX 侧。**
 
 ## Personal Knowledge
 

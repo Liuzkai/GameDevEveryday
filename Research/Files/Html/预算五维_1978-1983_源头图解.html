@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>预算五维 —— 1978 / 1983 的源头图解</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #b3541e;
+    --accent-soft: #fdf1e8;
+    --s: #c0392b;
+    --a: #c7701a;
+    --b: #b79114;
+    --c: #2e7d4f;
+    --code: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #e0a06a;
+      --accent-soft: #2a221b;
+      --s: #e8705f;
+      --a: #e0a04a;
+      --b: #d6c243;
+      --c: #6bbf8a;
+      --code: #24282b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 28px 20px 48px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  h1 {
+    font-size: 25px;
+    line-height: 1.3;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    color: var(--ink-3);
+    font-size: 13.5px;
+    margin: 0 0 26px;
+  }
+  h2 {
+    font-size: 16px;
+    margin: 36px 0 12px;
+    padding-left: 10px;
+    border-left: 3px solid var(--accent);
+    letter-spacing: -0.005em;
+  }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+
+  .lede {
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 0 0 6px;
+    color: var(--ink);
+    font-size: 15px;
+  }
+  .lede strong { color: var(--accent); }
+
+  /* ---------- 主表 ---------- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th {
+    background: var(--code);
+    color: var(--ink-2);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--line);
+  }
+  tr:last-child td { border-bottom: none; }
+  td.dim { color: var(--ink); font-weight: 600; }
+  .tier { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+  .tier .s { color: var(--s); font-weight: 700; }
+  .tier .a { color: var(--a); font-weight: 700; }
+  .tier .b { color: var(--b); font-weight: 700; }
+  .tier .c { color: var(--c); font-weight: 700; }
+  td.src { white-space: nowrap; color: var(--accent); font-weight: 600; }
+  .quote { color: var(--ink-3); font-size: 12.5px; font-style: italic; }
+
+  /* ---------- 公式卡 ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 4px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .card h3 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .card .tag {
+    display: inline-block;
+    font-size: 11.5px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 0 6px;
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+  }
+  .formula {
+    background: var(--code);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--ink);
+    overflow-x: auto;
+    margin: 8px 0 10px;
+    white-space: nowrap;
+  }
+  .card ul { margin: 8px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; }
+  .card li { margin-bottom: 5px; }
+
+  /* ---------- 三条法则 ---------- */
+  .laws { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .law { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .law .num {
+    display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center;
+    border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; margin-right: 6px;
+  }
+  @media (prefers-color-scheme: dark) { .law .num { color: #16181a; } }
+  .law .t { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+  .law .d { color: var(--ink-2); font-size: 12.5px; margin-top: 6px; }
+
+  /* ---------- 对照条 ---------- */
+  .bars { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .bar { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; font-size: 13px; }
+  .bar:last-child { margin-bottom: 0; }
+  .bar .name { width: 132px; flex: none; color: var(--ink-2); }
+  .bar .track { flex: 1; height: 20px; background: var(--code); border-radius: 4px; position: relative; overflow: hidden; }
+  .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+  .bar .val { width: 132px; flex: none; text-align: right; color: var(--ink-3); font-size: 12px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  code { background: var(--code); padding: 1px 5px; border-radius: 3px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>预算五维 —— 1978 / 1983 的源头图解</h1>
+  <p class="sub">你的五个量化维度，全部可以在一篇 1983 年的 TOG 论文与一篇 1978 年的 SIGGRAPH 论文里找到原始机制。</p>
+
+  <div class="lede">
+    <strong>结论</strong>：NGR 现行的 SABC × 五档矩阵 <strong>不是"从经验里总结出来的规则"</strong>，
+    而是两类早已存在的成本结构的<strong>重新参数化</strong>：<br>
+    ① <strong>数量类维度</strong>（粒子 / 发射器）→ 成本随数量<strong>线性</strong>增长，上限可以较大；<br>
+    ② <strong>质量类维度</strong>（分辨率 / 贴图 / 灯光）→ 成本随<strong>边长平方</strong>或<strong>完整渲染遍</strong>增长，上限必须很小。
+  </div>
+
+  <h2>五个维度 × 原始出处</h2>
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:150px">你的预算维度</th>
+          <th style="width:170px">S / A / B / C 上限</th>
+          <th style="width:118px">源头</th>
+          <th>原始机制（已逐节核对原文）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim">Niagara 发射器数</td>
+          <td class="tier"><span class="s">12</span> / <span class="a">8</span> / <span class="b">4</span> / <span class="c">2</span></td>
+          <td class="src">Reeves 1983 §2.6</td>
+          <td>
+            <strong>粒子系统的树状层级</strong> —— "粒子本身是粒子系统"，父级参数随机继承给子级。
+            一旦可以递归，"数量"就不再是美术随手拉的滑杆，而是<strong>指数</strong>。<br>
+            <span class="quote">"The data structure used to represent the hierarchy is a tree."</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="dim">同屏粒子数</td>
+          <td class="tier"><span class="s">3000</span> / <span class="a">1200</span> / <span class="b">400</span> / <span class="c">100</span></td>
+          <td class="src">Reeves 1983 §2.1</td>
+          <td>
+            <strong>屏占比 × 单位面积密度</strong> —— 原文把这条明确说成"控制细节层次与渲染时间"。<br>
+            <span class="quote">"there is no need to generate 100,000 particles in an object that covers 4 pixels on the screen."</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="dim">贴图尺寸</td>
+          <td class="tier"><span class="s">2048</span> / <span class="a">1024</span> / <span class="b">512</span> / <span class="c">256</span></td>
+          <td class="src">Williams 1978</td>
+          <td>
+            <strong>横向分辨率的平方律</strong> —— 分辨率/内存/带宽同源；图像空间算法的开销只与分辨率有关，与场景复杂度无关。<br>
+            <span class="quote">"extra lateral resolution is purchased at <strong>square law</strong> expense."</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="dim">动态灯光</td>
+          <td class="tier"><span class="s">≤3</span> / <span class="a">≤2</span> / <span class="b">≤1</span> / <span class="c">0</span></td>
+          <td class="src">Williams 1978</td>
+          <td>
+            <strong>每盏灯的阴影代价 ≈ 2× 场景渲染</strong>（光源视角不需要着色，故是"约"而非"恰好"）。<br>
+            <span class="quote">"The cost of determining the shadows associated with each light source is roughly <strong>twice the cost of rendering the scene without shadows</strong>, plus a fixed transformation overhead which depends on the image resolution."</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="dim">VFX 时长</td>
+          <td class="tier"><span class="s">3s</span> / <span class="a">2s</span> / <span class="b">1s</span> / <span class="c">0.5s</span></td>
+          <td class="src">Reeves 1983 §2.2 / §2.4</td>
+          <td>
+            <strong>寿命以帧计、在生成时决定、归零即杀</strong> —— 寿命是粒子的第七个属性，另配两条"零贡献即杀"规则（强度低于阈值、偏离原点过远）作为最早的性能裁剪。<br>
+            <span class="quote">"a particle is given a lifetime measured in frames."</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>两条公式，两个量级</h2>
+  <div class="cards">
+
+    <div class="card">
+      <span class="tag">REEVES 1983 · 粒子侧</span>
+      <h3>屏占比法则 → 数量类维度</h3>
+      <div class="formula">NParts_f = ( MeanParts_sar + Rand() × VarParts_sar ) × ScreenArea</div>
+      <p style="font-size:13px;margin:0">另有一种"绝对数量"写法 <code>MeanParts_f + Rand() × VarParts_f</code>，原文同时给出两种，并指出<strong>屏占比重法才控制细节层次与渲染时间</strong>。</p>
+      <ul>
+        <li><strong>量级</strong>：一个粒子的成本单位是"<strong>一个点</strong>"（或一条抗锯齿线段）</li>
+        <li><strong>增长</strong>：随屏占比<strong>线性</strong> → 上限可以大（数百 ~ 数千）</li>
+        <li><strong>分档含义</strong>：<strong>屏占比密度是几何的</strong>（面积变 → 数量按比例变），<strong>绝对上限是统计的</strong>（"通常够用"）</li>
+        <li><strong>额外红利</strong>：加法混合下<strong>无需排序、无隐藏面、无阴影</strong>（<span class="quote">"no sorting of the particles is needed"</span>）</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="tag">WILLIAMS 1978 · 灯光侧</span>
+      <h3>每灯成本法则 → 质量类维度</h3>
+      <div class="formula">Cost ≈ (1× 场景渲染，无着色) + (1× 主渲染) + f(分辨率²)</div>
+      <p style="font-size:13px;margin:0">后处理式变体的变换开销<strong>与场景复杂度无关</strong>，只与图像分辨率有关；逐点式变体则随<strong>深度复杂度线性</strong>增长。</p>
+      <ul>
+        <li><strong>量级</strong>：一盏动态灯的成本单位是"<strong>又一遍完整场景渲染</strong>"</li>
+        <li><strong>增长</strong>：随<strong>灯数线性</strong>、随<strong>全向光面数（常为 6）×</strong> → 上限必须极小（0–3）</li>
+        <li><strong>反直觉推论</strong>：<strong>降阴影分辨率解决不了灯数问题</strong> —— 分辨率相关项只占图像空间那部分，省不掉那 1× 场景渲染</li>
+        <li><strong>隐藏乘数</strong>：点光需分扇区 → <strong>内存与渲染遍数同时乘以面数</strong>（<span class="quote">"The major difficulty with this method is the increased memory required."</span>）</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <h2>成本单位对照：这才是 3 与 3000 的差别来源</h2>
+  <div class="bars">
+    <div class="bar">
+      <div class="name">动态灯光（每盏）</div>
+      <div class="track"><div class="fill" style="width:100%;background:var(--s)"></div></div>
+      <div class="val">≈ 1× 场景渲染</div>
+    </div>
+    <div class="bar">
+      <div class="name">同屏粒子（+100）</div>
+      <div class="track"><div class="fill" style="width:3%;background:var(--c)"></div></div>
+      <div class="val">100 × 一个点</div>
+    </div>
+    <div class="bar">
+      <div class="name">发射器（每个）</div>
+      <div class="track"><div class="fill" style="width:9%;background:var(--a)"></div></div>
+      <div class="val">一个模拟系统</div>
+    </div>
+    <div class="bar">
+      <div class="name">贴图（边长 ×2）</div>
+      <div class="track"><div class="fill" style="width:26%;background:var(--b)"></div></div>
+      <div class="val">面积 ×4（平方律）</div>
+    </div>
+    <p style="font-size:12px;color:var(--ink-3);margin:12px 0 0">
+      条长为示意，仅表达<strong>成本单位的数量级差异</strong>，不代表真实毫秒数。
+    </p>
+  </div>
+
+  <h2>三条可迁移法则</h2>
+  <div class="laws">
+    <div class="law">
+      <span class="num">1</span><span class="t">先砍静态细节，后砍动态</span>
+      <div class="d">Reeves 结论段的落点：<span class="quote">"The most important aspect of particle systems is that <strong>they move</strong>."</span> 砍预算时优先砍尺寸/贴图/颜色分层，最后才动发射率曲线、寿命、速度散布 —— <strong>「动得好」才是可信度来源</strong>。</div>
+    </div>
+    <div class="law">
+      <span class="num">2</span><span class="t">成本只看分辨率 = 档位可按分辨率定义</span>
+      <div class="d">Williams 对图像空间算法的辩护：开销与场景复杂度解耦，<strong>只与图像分辨率有关</strong>。这就是为什么"五档画质"可以按分辨率/精度切 —— 同一句话在 2026 年解释了 Lumen / SSR / MegaLights 为何都走屏幕空间路线。</div>
+    </div>
+    <div class="law">
+      <span class="num">3</span><span class="t">低档做"亮而软的阴影"，不要做"精确硬阴影"</span>
+      <div class="d">1978 年就已写明：<span class="quote">"<strong>translucent shadows</strong> ... generally look better than deep black shadows"</span>，且阴影的平滑过渡本身会掩盖量化误差。低档的正确姿势是偏亮、偏软、保留环境项 —— <strong>观感更好且更便宜</strong>。</div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>出处</strong>：William T. Reeves, <em>Particle Systems—A Technique for Modeling a Class of Fuzzy Objects</em>, ACM TOG 2(2), 91–108, 1983 ·
+    Lance Williams, <em>Casting Curved Shadows on Curved Surfaces</em>, SIGGRAPH '78, Computer Graphics 12(3), 270–274, 1978。<br>
+    两篇原文 PDF 均已下载并逐节核对；本页所有公式与引语均取自抽取文本，非转述。相关笔记：<code>Reeves — Particle Systems (1983)</code>、<code>Williams — Casting Curved Shadows on Curved Surfaces (1978)</code>、<code>Particle Systems</code>、<code>Shadow Mapping</code>。
+  </footer>
+
+</div>
+</body>
+</html>
