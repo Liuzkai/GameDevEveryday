@@ -1509,7 +1509,7 @@ The final artifact is therefore not a paper library. It is:
 
 The vault is a Git repository synchronized to GitHub:
 
-- **Repository root:** `E:\BaiduSyncdisk\ObsidianNotes\定时任务`
+- **Repository root:** `E:\ObsidianFiles\GameDevEveryday`（**2026-09-21 迁移**：原 `E:\BaiduSyncdisk\ObsidianNotes\定时任务` 已弃用，旧位置仅存遗留副本，勿再从旧位置提交/推送）
 - **Remote:** `https://github.com/Liuzkai/GameDevEveryday` — branch `main`
 
 **After every daily run — once all notes are produced and the user-facing daily digest has been delivered — commit and push all changes exactly once.**
@@ -1517,7 +1517,7 @@ The vault is a Git repository synchronized to GitHub:
 ## Procedure
 
 ```bash
-cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
+cd "E:\ObsidianFiles\GameDevEveryday"
 git add -A
 git commit -m "research: YYYY-MM-DD 每日研究更新 —— <brief summary>"
 # ⚠️ 必须用【系统 Git】的绝对路径推送 —— 工具 shell 里的 git 是 PortableGit，拿不到凭据（见 Rule 5(c)）
@@ -1547,7 +1547,7 @@ GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
      - The **user's own Git** is **`C:/Program Files/Git/cmd/git.exe`** (system Git for Windows 2.53.0.windows.2), with `credential.helper=manager` from `C:/Program Files/Git/etc/gitconfig` and `credential.helperselector.selected=manager` in `~/.gitconfig`. **This one has the working credential.**
      - ✅ **FIX — always push with the system Git explicitly:**
        ```bash
-       cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
+       cd "E:\ObsidianFiles\GameDevEveryday"
        GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
          "/c/Program Files/Git/cmd/git.exe" push origin main
        ```
@@ -1569,7 +1569,7 @@ GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
    - **Symptom:** `git push` fails fast (no hang) with `! [rejected] main -> main (fetch first)` / `Updates were rejected because the remote contains work that you do not have locally`. **This is NOT a credential problem and NOT an error — do not retry the push.**
    - **Required procedure:**
      ```bash
-     cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
+     cd "E:\ObsidianFiles\GameDevEveryday"
      GIT_TERMINAL_PROMPT=0 "/c/Program Files/Git/cmd/git.exe" fetch origin main
      "/c/Program Files/Git/cmd/git.exe" log --oneline -3 FETCH_HEAD      # 看远程多了什么
      "/c/Program Files/Git/cmd/git.exe" diff --name-status HEAD FETCH_HEAD  # 看是否与本次产出冲突

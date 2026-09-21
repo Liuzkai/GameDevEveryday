@@ -93,6 +93,8 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 - [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]——★ 理论天花板（2026，所有散射阶的精确初等闭式）
 
 > **至此本概念三侧齐备：来源侧（D·G·F 的物理出处）2026-09-17 闭合，工程侧（进引擎 + IBL 查表）2026-09-18 闭合，能量侧（多次散射）2026-09-19 闭合。**
+>
+> 🔭 **前沿外延（2026-09-21 补记）**：PBR 正在"出借"到新方向 —— [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] 把**渲染方程改写进 VAE 潜空间**（带符号辐射 / 平响应项 / 遮挡项三项修正），路径追踪首次直接输出 latent 图。**含义：渲染方程（[[Rendering Equation]]）的输出物可被整体替换 —— 这不是 PBR 的"改进"，而是 PBR 作为"可迁移求解框架"的第一次外借。**
 
 ## Personal Knowledge
 

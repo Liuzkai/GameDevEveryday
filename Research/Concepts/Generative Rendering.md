@@ -25,6 +25,8 @@ tags: [rendering, neural, generative]
 
 关键句：**生成式渲染的上限不再是"渲染器能表达什么"，而是"模型知道真实世界长什么样"。**
 
+**另一条反向路线（2026-09-21 补记）**：不是在 RGB 上"生成最终外观"，而是把**物理渲染器改写进生成模型的潜空间** —— [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] 给渲染方程加三项修正（带符号辐射 / 平响应 / 遮挡）以直接输出 VAE latent 图。**前者是"生成替代物理"，后者是"物理进入生成的表示"——两条方向相反、可互补的路线。**
+
 ## Prerequisites
 
 - [[Neural Rendering]]
@@ -61,6 +63,7 @@ DLSS 4（多帧生成 + 光线重建）
 ## Important Papers
 
 - [[DLSS 5 — Generative Neural Rendering]]
+- [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] —— **反方向**：把物理渲染器改写为潜空间渲染器（"物理进入生成"而非"生成替代物理"；其 SDS 应用模式可先于实时侧落地）
 
 ## Personal Knowledge
 

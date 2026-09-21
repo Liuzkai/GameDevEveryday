@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>潜空间渲染 —— 管线 / 三项修改 / 成本账本</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #b3541e;
+    --accent-soft: #fdf1e8;
+    --phy: #2f6fb3;
+    --phy-soft: #eaf1fa;
+    --net: #7a4fb3;
+    --net-soft: #f2ecfa;
+    --bad: #c0392b;
+    --good: #2e7d4f;
+    --code: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #e0a06a;
+      --accent-soft: #2a221b;
+      --phy: #7fb2e8;
+      --phy-soft: #1d2836;
+      --net: #b9a1e6;
+      --net-soft: #262034;
+      --bad: #e8705f;
+      --good: #6bbf8a;
+      --code: #24282b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 25px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 26px; }
+  h2 {
+    font-size: 16px; margin: 36px 0 12px; padding-left: 10px;
+    border-left: 3px solid var(--accent); letter-spacing: -0.005em;
+  }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede {
+    background: var(--accent-soft); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px 18px; margin: 0 0 6px; color: var(--ink);
+  }
+  .lede strong { color: var(--accent); }
+
+  /* ---------- 管线 ---------- */
+  .pipe-block { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 14px; margin: 14px 0; }
+  .pipe-title { font-size: 13px; color: var(--ink-3); margin: 0 0 12px; font-weight: 600; letter-spacing: .04em; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .node {
+    border: 1px solid var(--line); background: var(--bg);
+    border-radius: 8px; padding: 8px 12px; font-size: 13.5px; color: var(--ink);
+    white-space: nowrap;
+  }
+  .node small { display: block; font-size: 11.5px; color: var(--ink-3); line-height: 1.3; }
+  .node.phy { border-color: var(--phy); background: var(--phy-soft); }
+  .node.net { border-color: var(--net); background: var(--net-soft); }
+  .node.dead { border-style: dashed; color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--bad); }
+  .arr { color: var(--ink-3); font-size: 15px; }
+  .tag {
+    display: inline-block; font-size: 11.5px; border-radius: 6px; padding: 1px 7px;
+    margin-left: 6px; vertical-align: 1px;
+  }
+  .tag.bad { color: var(--bad); border: 1px solid var(--bad); }
+  .tag.good { color: var(--good); border: 1px solid var(--good); }
+  .pipe-note { font-size: 12.5px; color: var(--ink-3); margin: 10px 0 0; }
+
+  /* ---------- 表 ---------- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 720px; }
+  th, td { text-align: left; padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th { color: var(--ink-3); font-weight: 600; font-size: 12.5px; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: none; }
+  td .eq { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--code); padding: 1px 5px; border-radius: 4px; }
+  .obs { color: var(--ink); }
+  .chip { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 7px; vertical-align: 1px; }
+  .chip.p { background: var(--phy); } .chip.n { background: var(--net); }
+
+  /* ---------- 成本卡 ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 14px 0 6px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card .k { font-size: 12.5px; color: var(--ink-3); margin: 0 0 6px; }
+  .card .v { font-size: 21px; font-weight: 650; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .card .v.good { color: var(--good); } .card .v.bad { color: var(--bad); }
+  .card .d { font-size: 12.5px; color: var(--ink-2); margin: 0; }
+  code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--code); padding: 1px 5px; border-radius: 4px; }
+  .footer {
+    margin-top: 34px; padding: 14px 18px; border-top: 1px solid var(--line);
+    color: var(--ink-3); font-size: 12.5px;
+  }
+  .footer strong { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>潜空间渲染（Latent Rendering）—— 管线 · 三项修改 · 成本账本</h1>
+  <p class="sub">Radovanovic · Gupta · Gruson · Hua — Pacific Graphics 2026 Journal Track（Computer Graphics Forum）· arXiv 2609.21054 · 入库 2026-09-21（同日补录）</p>
+
+  <div class="lede">
+    <strong>核心思想：</strong>把渲染方程<b>改写成能在 VAE 潜空间里求解的形式</b>，让路径追踪<b>直接输出 latent 图</b>（而非 RGB），再经"精化网络 + 解码器"还原画面。
+    关键在于：潜空间与光传输之间<b>确有桥</b>（结构 / 反射 / 角度依赖被保留），但也有三处<b>不守物理</b>（带符号发光 / 平响应 / 遮挡增亮）—— 这三处必须被<b>显式建模成方程项</b>，而不是交给网络隐式吸收。
+  </div>
+
+  <h2>① 管线对照：把物理渲染器接在潜空间上</h2>
+
+  <div class="pipe-block">
+    <p class="pipe-title">传统路线（baseline）—— 想拿 latent，必须"渲染 RGB + 再编码"</p>
+    <div class="flow">
+      <span class="node">场景 + 材质</span><span class="arr">→</span>
+      <span class="node phy">路径追踪<small>渲染方程（Kajiya 1986）</small></span><span class="arr">→</span>
+      <span class="node">RGB 图</span><span class="arr">→</span>
+      <span class="node">VAE 编码器<small>每换一次场景参数就要再编码一遍</small></span><span class="arr">→</span>
+      <span class="node">latent</span>
+    </div>
+  </div>
+
+  <div class="pipe-block">
+    <p class="pipe-title">本文路线（latent rendering）—— 编码器整段删除，渲染器直接说"潜空间的语言"</p>
+    <div class="flow">
+      <span class="node">场景 + 材质</span><span class="arr">→</span>
+      <span class="node phy">修改的渲染方程<small>带符号辐射 + 平响应项 + 遮挡项（Mitsuba + PRB 可微优化）</small></span><span class="arr">→</span>
+      <span class="node">latent 图<small>128×128×16</small></span><span class="arr">→</span>
+      <span class="node net">精化网络<small>只预测残差（边界 / 高频）</small></span><span class="arr">→</span>
+      <span class="node net">VAE 解码器<small>评估一次 = 主导成本</small></span><span class="arr">→</span>
+      <span class="node">RGB 图</span>
+      <span class="tag bad">解码器成为新瓶颈</span>
+    </div>
+    <p class="pipe-note">训练对象：<b>单张渲染图</b>（每场景）；场景参数 3000 迭代 + 精化网络 3000 迭代；Cornell Box 在 RTX 4090 上各约 5 分钟。</p>
+  </div>
+
+  <h2>② 潜空间里的"三个不守物理" → 方程的三项修改</h2>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th style="width:36%">观察（§4，SD 3.5 的 VAE 上）</th><th style="width:30%">对渲染方程的修改（§5.1）</th><th>要点</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="obs"><span class="chip p"></span><b>发光是带符号的</b><br>物理渲染假设辐射度非负；latent 的发光值可正可负</td>
+          <td><span class="eq">Ĩᵉ</span> 带符号辐射与反射<br>（式 4：带符号光传输方程）</td>
+          <td>允许发射器发出带符号辐射 <span class="eq">L̃e</span>；BSDF 求值允许带符号；纯镜面材质不改</td>
+        </tr>
+        <tr>
+          <td class="obs"><span class="chip p"></span><b>部分通道"平"</b><br>不同表面不忠实反映材质差异，塌缩成近似常数</td>
+          <td><span class="eq">Ĩᵃ</span> 平响应项<br>（式 5）</td>
+          <td>显式控制"保留材质差异 ↔ 塌缩为常数"的比例</td>
+        </tr>
+        <tr>
+          <td class="obs"><span class="chip p"></span><b>遮挡区可增亮 / 变号</b><br>物理上遮挡只会减少能量；latent 里遮挡区甚至比未遮挡区更"亮"</td>
+          <td><span class="eq">Ĩᶜ</span> 遮挡项<br>（式 6）</td>
+          <td>只在着色区域额外贡献：相机子路径末端 + 光源可见性函数 <span class="eq">V</span></td>
+        </tr>
+        <tr>
+          <td class="obs" colspan="3" style="color:var(--ink-2)">
+            <b>合成 —— 潜空间渲染方程（式 7）：</b>
+            <span class="eq">Ĩ = Ĩᵉ + Ĩᵃ + Ĩᶜ</span>
+            &nbsp;·&nbsp; 保号 gamma 校正（式 8）：<span class="eq">g(x,γ) = max(x,0)^γ − max(−x,0)^γ</span>，γ = 2.2
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12.5px;color:var(--ink-3);margin-top:8px">
+    有效性（Table 1 消融 · Cornell Box · 相机变化，LPIPS）：
+    仅带符号发射器 <b style="color:var(--bad)">0.502</b>（差且不稳）→ +平响应 <b>0.228</b> → +遮挡项 <b>0.213</b> → +精化网络 <b style="color:var(--good)">0.075</b>。
+    &nbsp;<b>结论：</b>"非物理偏离"不是噪声、是必须显式建模的一等结构；且渲染 latent 质量差时，精化网络救不回来。
+  </p>
+
+  <h2>③ 成本账本：计算搬家，不消灭成本</h2>
+
+  <div class="cards">
+    <div class="card">
+      <p class="k">表示压缩</p>
+      <p class="v">12×</p>
+      <p class="d">1024×1024×3 RGB → 128×128×16 latent（通道 d = 16）</p>
+    </div>
+    <div class="card">
+      <p class="k">在 latent 空间里估计</p>
+      <p class="v good">快 42–84×</p>
+      <p class="d">对照"先 RGB 路径追踪、再经编码器"</p>
+    </div>
+    <div class="card">
+      <p class="k">输出 RGB（解码后）</p>
+      <p class="v bad">慢 6–35×</p>
+      <p class="d">"单次解码器评估主导运行时"—— 解码器成为新的成本单位</p>
+    </div>
+    <div class="card">
+      <p class="k">训练（单图）</p>
+      <p class="v">5 + 5 分钟</p>
+      <p class="d">场景参数 + 精化网络，各 3000 迭代；RTX 4090 · Cornell Box</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <strong>本库定位：</strong>"分层收敛"模式目前走得最深的样本 —— 物理渲染器做<b>决定性骨架</b>（"most of the work is done by the rendered latents"），网络只补残差；两层交换的界面第一次从"像素"压到了"表示"。
+    &nbsp;·&nbsp; <strong>一句话：</strong>要让物理在别的表示里成立，必须先显式建模那个表示"不像物理"的部分。
+  </div>
+
+</div>
+</body>
+</html>

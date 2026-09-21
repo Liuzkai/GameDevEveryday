@@ -15,7 +15,7 @@ created: 2026-09-07
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 14 天）
 
-## Papers（46）
+## Papers（47）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -65,6 +65,7 @@ created: 2026-09-07
 | [[Reeves — Particle Systems (1983)]]                                                            | S（经典） | **Easy（你的专业域）** | **最高（★ 你五个预算维度中四个的原始出处；库内 VFX 域唯一历史锚点）** |
 | [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]]                                  | A（经典） | **Easy（机制）/ Normal（成本模型）** | **最高（★ "动态灯光 ≤3/≤2/≤1/0"的原始依据；补齐零覆盖的阴影域）** |
 | [[2026-09-18-GestureFAR — Streaming Co-Speech Gesture Generation with Flow Autoregression]]        | A-  | Normal（只取一条配方） | 中低（**`freeze-and-distill` 配方第 3 例**；无引擎侧实现） |
+| [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]]                        | A-  | Normal（渲染方程改写层可直接读） | **高（PBR 首次被改写进 VAE 潜空间；"分层收敛"交换层压到"表示"的实例 + 成本转移账本）** ★ 2026-09-21 补录 |
 
 ## Concepts（28）
 
@@ -153,3 +154,4 @@ Research/
 ---
 
 最后更新：2026-09-21（Run #13：前沿窗口 9-18 ~ 9-21 **仅 1 条新提交**（arXiv API `submittedDate` 交叉确认，周末无公告），入库 **GestureFAR**（A-，`freeze-and-distill` 配方第 3 例）+ **2 篇经典**（**Reeves 1983 = 粒子系统源头，你五维预算中四维的原始出处**；**Williams 1978 = 曲面阴影开创，动态灯光预算的成本依据**，同时补齐库里零覆盖的阴影域）+ **2 个新概念**（[[Particle Systems]]、[[Shadow Mapping]]，均按 9-20 的分层模板拆为「机制层 Easy / 成本模型层 Normal」）+ 1 图解（[[预算五维_1978-1983_源头图解]]）+ Daily；产业侧四条：《控制：共振》档位实为**多正交子系统 + 帧生成倍率**且 RT Ultra 档厂商绑定、《铁拳 8》**神经渲染开销破坏锁帧玩法逻辑**、DLSS 5 被第三方在 Intel Xe2 上重实现（**显存成为神经层第三预算项**）、MegaLights 限制落到 VFX 域（二手待核实））
+　　▸ **同日 10:00 补录（Run #13b）**：**周一 listing 放出（3 条）**——新增 [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]]（**PBR 进 VAE 潜空间**，PG 2026 / CGF；图解 [[潜空间渲染_管线与三项修改图解]]；"分层收敛"表示层实例 + 成本转移账本）+ Daily 补录 + **检索方法修正**：API `submittedDate` 窗口查询不能兜底（公告前不可见 / 公告后窗口外），须核对 `recent` 页日期分组
