@@ -162,6 +162,10 @@ user_level: Easy      # 或 Normal / Hard
    - **② 每千像素粒子数**：把现有绝对上限（3000/1200/400/100）与 **"屏占比 × 密度"** 对照一次 —— 绝对上限是**统计的**，屏占比密度是**几何的**。若两者在最重镜头下差很多，说明上限没抓住真正的成本变量。
    - 材料：[[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] · [[Reeves — Particle Systems (1983)]] · [[预算五维_1978-1983_源头图解]]
 8. **⚠️ 9-21 硬约束（二手，待官方核实）**：二手来源称 **UE 5.8 MegaLights 不支持半透明物体 / 流体 / 云 / 发丝，也不支持前向渲染** → **特效打光不在 MegaLights 覆盖范围内，仍走 1978 的成本法则（每盏灯 +1× 场景）**。**"动态灯光变便宜"不能直接推到 VFX 侧。动手前请核实官方 release notes。**
+9. **🟡 9-21 观察：库里首次出现"来自另一个客户端"的改动**（不是校正，但是engagement 信号）。运行开始时 `git push` 被拒（`fetch first`）—— 远程比本地多两个提交（`7ea6834 Sync`、`02ae272 Sync`，来自另一设备的 Obsidian Git / 同步客户端）。**唯一的实质内容改动是 [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] 的 frontmatter 被重排**（内联数组 → 块列表、去引号，`status: studying` → `status: [reading]`）。
+   - **⚠️ 关键：这不是 `user_level` 变更** —— `user_level: Normal` **原样未动**。该重排是 **Obsidian 属性编辑器的格式副作用**，**不能据此认为用户校正了 PKM**。
+   - **但有一条正向信号**：**Cook-Torrance 笔记被打开并保存过**，而该笔记正是 **PBR 收口清单里 25 条中的 5 条所在**（且含 9-19 之前你主动研读的那条线）。**与"用户正在走 PBR 自测清单"这个判断一致**，但仍属弱推断。
+   - **已把此情形写入规则文件 §41 Rule 9**（远程分歧的判定与处理流程 + "frontmatter 重排 ≠ user_level 变更"的判别规则），下次运行改为**推送前先 fetch**。
 
 ---
 

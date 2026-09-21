@@ -1565,3 +1565,20 @@ GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
    - **The only reliable verification is comparing `git ls-remote origin main` against `git rev-parse HEAD`.** Use that to confirm sync; if they match, the work is on the remote.
    - This is an environment limitation, not a repository problem. **Do not migrate the repository, change Git configuration, or treat it as an error.** The user's own terminal operations are unaffected; a manual `git fetch` by the user restores the local tracking state.
 8. **Sync conflicts on note files:** if a note file exists in a sync-conflict state, prefer regenerating or merging the note before committing, so that conflict copies are never treated as content.
+9. **Remote divergence — push rejected with `fetch first` (verified 2026-09-21).** The user runs **Obsidian Git / a sync client on another device** against the same repository, so the remote regularly gains commits the automation does not have. Symptoms and required handling:
+   - **Symptom:** `git push` fails fast (no hang) with `! [rejected] main -> main (fetch first)` / `Updates were rejected because the remote contains work that you do not have locally`. **This is NOT a credential problem and NOT an error — do not retry the push.**
+   - **Required procedure:**
+     ```bash
+     cd "E:\BaiduSyncdisk\ObsidianNotes\定时任务"
+     GIT_TERMINAL_PROMPT=0 "/c/Program Files/Git/cmd/git.exe" fetch origin main
+     "/c/Program Files/Git/cmd/git.exe" log --oneline -3 FETCH_HEAD      # 看远程多了什么
+     "/c/Program Files/Git/cmd/git.exe" diff --name-status HEAD FETCH_HEAD  # 看是否与本次产出冲突
+     "/c/Program Files/Git/cmd/git.exe" rebase FETCH_HEAD                 # 本轮产出叠到远程之上
+     GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never GCM_GUI_PROMPT=0 \
+       "/c/Program Files/Git/cmd/git.exe" push origin main
+     ```
+   - **Distinguishing the two failure modes** (never confuse them): **hang / `could not read Username`** → credential problem (Rule 5); **immediate `fetch first` rejection** → remote divergence (this rule).
+   - **Do not force-push.** The other device's commits are real user work. Rebase, never rewrite.
+   - **Rebase is normally clean** because the automation creates *new* files and the other device edits *existing* ones; on 2026-09-21 a 13-file commit rebased cleanly over two remote `Sync` commits.
+   - **Observed remote-side contents (useful to recognize):** commits literally titled `Sync`, plus `.obsidian/github-sync-metadata.json` (Obsidian Git plugin metadata), and **frontmatter reformatting** of existing notes (inline arrays `[a, b]` → block lists, dropping quotes, and property-value rewrites such as `status: studying` → `status: [reading]`). **Frontmatter reformatting is an Obsidian property-editor artifact — do NOT treat it as a `user_level` change.** Read the actual `user_level`/`status` values before concluding the user corrected anything.
+   - **Recommended practice:** run `fetch` **before** the push in every run, so divergence is detected in one step instead of after a failed push.
