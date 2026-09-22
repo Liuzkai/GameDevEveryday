@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>程序化建筑 · CGA shape 与 ProxyBuild 对照图解</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-2: #57606a;
+    --line: #d8dce1;
+    --accent: #b45309;      /* 琥珀：2006 */
+    --accent2: #1d4ed8;     /* 靛蓝：2026 */
+    --accent-bg: #fff7ed;
+    --accent2-bg: #eef2ff;
+    --ok: #15803d;
+    --warn: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181d;
+      --panel: #1e2128;
+      --ink: #e6e8eb;
+      --ink-2: #9aa3ad;
+      --line: #333842;
+      --accent: #f59e0b;
+      --accent2: #818cf8;
+      --accent-bg: #2a2117;
+      --accent2-bg: #1c2033;
+      --ok: #4ade80;
+      --warn: #f87171;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 40px;
+    background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.65;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: .2px; }
+  .sub { color: var(--ink-2); font-size: 12.5px; margin-bottom: 22px; }
+  h2 { font-size: 15.5px; margin: 30px 0 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
+  h2.blue { border-left-color: var(--accent2); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .col { flex: 1 1 300px; min-width: 280px; }
+
+  /* 阶段流 */
+  .flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .step {
+    flex: 1 1 150px; min-width: 140px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 12px 10px; position: relative;
+  }
+  .step + .step { margin-left: 26px; }
+  .step + .step::before {
+    content: "→"; position: absolute; left: -21px; top: 50%; transform: translateY(-50%);
+    color: var(--ink-2); font-size: 16px;
+  }
+  .step .tag { font-size: 10.5px; letter-spacing: .8px; color: var(--ink-2); text-transform: uppercase; }
+  .step .big { font-size: 14px; font-weight: 600; margin: 3px 0 6px; }
+  .step p { margin: 0; font-size: 12px; color: var(--ink-2); }
+  .step.hot { border-color: var(--accent); background: var(--accent-bg); }
+
+  /* 机制卡 */
+  .mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 11px 13px; }
+  .card b { font-size: 13px; }
+  .card code { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; background: var(--bg); border: 1px solid var(--line); padding: 0 4px; border-radius: 4px; }
+  .card p { margin: 5px 0 0; font-size: 12px; color: var(--ink-2); }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 12.8px; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--bg); font-weight: 600; }
+  td.k { color: var(--ink-2); white-space: nowrap; }
+  .a { color: var(--accent); font-weight: 600; }
+  .b { color: var(--accent2); font-weight: 600; }
+
+  /* 时间线 */
+  .tl { position: relative; margin: 10px 0 0; padding: 0 0 0 18px; border-left: 2px solid var(--line); }
+  .tl .ev { position: relative; padding: 0 0 14px 14px; }
+  .tl .ev::before {
+    content: ""; position: absolute; left: -25px; top: 6px; width: 9px; height: 9px;
+    border-radius: 50%; background: var(--line); border: 2px solid var(--panel);
+  }
+  .tl .ev.hl::before { background: var(--accent); }
+  .tl .ev.hl2::before { background: var(--accent2); }
+  .tl .yr { font-weight: 700; font-size: 12.5px; margin-right: 8px; }
+  .tl .ev p { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-2); }
+  .callout { border-left: 3px solid var(--accent); background: var(--accent-bg); padding: 10px 13px; border-radius: 6px; margin-top: 14px; font-size: 12.8px; }
+  .callout.blue { border-left-color: var(--accent2); background: var(--accent2-bg); }
+  .foot { margin-top: 26px; color: var(--ink-2); font-size: 11.5px; }
+  b.ok { color: var(--ok); } b.no { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>程序化建筑 · CGA shape 与 ProxyBuild 对照图解</h1>
+  <div class="sub">源头：Müller et al. 2006《Procedural Modeling of Buildings》（SIGGRAPH 2006）　×　前沿：ProxyBuild 2026（arXiv 2609.23386）</div>
+
+  <h2>① 两阶段推导 —— 2006 年 CGA shape 的核心骨架</h2>
+  <div class="flow">
+    <div class="step">
+      <div class="tag">宏观 · 自由</div>
+      <div class="big">质量模型（Mass Model）</div>
+      <p>用立方体 / 柱体 / 屋顶拼出体块。可任意旋转、收分（如 Petronas 塔）。此阶段只关心"体量"。</p>
+    </div>
+    <div class="step hot">
+      <div class="tag">桥 · 关键一步</div>
+      <div class="big">Component Split 抽面</div>
+      <p>把体块的每个面抽成"正确对齐、正确参数化"的二维 scope。<b>表面不再是任意多边形，而是有坐标系的工作面。</b></p>
+    </div>
+    <div class="step">
+      <div class="tag">微观 · 秩序</div>
+      <div class="big">立面 / 屋顶规则</div>
+      <p>在二维 scope 上做 split / repeat：楼层、开窗、门、栏杆、屋面砖。规则永不需要面对"一般多边形"。</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>为什么必须两阶段？</b> 原文给出三条理由，最狠的一条：<b>"这些表面是算法的输出，而不是产生式规则的输出"</b> ——
+    直接对可见立面写规则，等于让规则去面对算法的产物（凹口、多顶点、多洞）。<b>规则必须作用在结构化的中间表示上。</b>
+    这句话在 2026 年评估"生成式资产为什么不可编辑"时依然成立。
+  </div>
+
+  <h2>② 让"体块"与"细节"对上账的四种机制</h2>
+  <div class="mini">
+    <div class="card">
+      <b>Scope（作用域）</b>
+      <p>位置 P + 三正交轴 + 尺寸 S = 定向包围盒。所有规则的<em>作用对象</em>，L-system 龟形记号的演化。</p>
+    </div>
+    <div class="card">
+      <b>规则形式 <code>id : 前件 : 条件 ; 后件 : 概率</code></b>
+      <p>带优先级的推导：低细节先、高细节后，受控推进；形状标记为 inactive 而非删除——推导树可查询。</p>
+    </div>
+    <div class="card">
+      <b>Occlusion 遮挡查询</b>
+      <p>返回 <code>none / part / full</code> 三态：能放窗放窗、不能放窗放墙、全遮挡删掉。<b>优雅降级 2006 年就有了。</b> <code>noparent</code> 排除父形状是必须修正。</p>
+    </div>
+    <div class="card">
+      <b>Snapping 吸附线</b>
+      <p>体块所有面 → 全局构建平面 → 楼层线<b>自动跨全部体块对齐</b>（塔楼收分处被强制对齐）。split 遇吸附线只改最近的切分。</p>
+    </div>
+  </div>
+
+  <h2 class="blue">③ 2006 → 2026：同一个"两阶段"，换掉了"谁写规则"</h2>
+  <table>
+    <tr>
+      <th style="width:110px"></th>
+      <th>2006 · CGA shape（Müller 等）</th>
+      <th>2026 · ProxyBuild</th>
+    </tr>
+    <tr>
+      <td class="k">输入</td>
+      <td>建筑用地 / GIS 足迹（可续造）</td>
+      <td>文本 + <b>已分块但无语义标签</b>的壳（点云重建 / LoD2 数据）</td>
+    </tr>
+    <tr>
+      <td class="k">中间表示</td>
+      <td>二维 scope（对齐+参数化的工作面）</td>
+      <td><b>MAPP</b>：面-边关联图 + 每个面/边的角色概率分布（含 Null 过滤）</td>
+    </tr>
+    <tr>
+      <td class="k">结构从哪来</td>
+      <td><span class="a">人写规则</span>（庞贝：190 条手写规则；"rule authoring is laborious"）</td>
+      <td><span class="b">网络推断</span>（face-edge bigraph 预测角色）+ LLM 解析文本属性</td>
+    </tr>
+    <tr>
+      <td class="k">几何从哪来</td>
+      <td>规则实例化终端对象</td>
+      <td><span class="b">检索复用</span>资产库（Sketchfab + Blender Geometry Nodes）</td>
+    </tr>
+    <tr>
+      <td class="k">一致性靠</td>
+      <td>occlusion + snapping（跨体块对齐）</td>
+      <td>硬约束适配器（消融：去掉后 NCR 95.7%→<b class="no">73.6%</b>，预测值不变 → <b>结构预测准 ≠ 摆放正确</b>）</td>
+    </tr>
+    <tr>
+      <td class="k">编辑性</td>
+      <td>改规则 → 全体再生</td>
+      <td>修正单个面/边的角色、加删组件、替换资产（<b>落在"语义槽位"而非"网格顶点"</b>）</td>
+    </tr>
+  </table>
+
+  <div class="callout blue">
+    <b>2006 年原文写下的两个未来方向，2026 年被逐条兑现：</b>
+    ① <b>"rule authoring is laborious"</b> → ProxyBuild 用"推断 + 检索"绕开写规则；
+    ② <b>"employ shape grammars for shape understanding"</b>（用形状文法做形状<em>理解</em>）→ ProxyBuild 的 face-edge 语义推断就是这个"理解模块"。
+  </div>
+
+  <h2>④ 谱系时间线（两篇同日入库，互为两端）</h2>
+  <div class="tl">
+    <div class="ev"><span class="yr">1975</span><p>Stiny《Shape Grammars》——建筑学形状文法，人工推导</p></div>
+    <div class="ev"><span class="yr">1991</span><p>L-system 植物建模（Prusinkiewicz & Lindenmayer）——"生长"范式的辉煌</p></div>
+    <div class="ev"><span class="yr">2001</span><p>Parish & Müller《Procedural Modeling of Cities》——城市级生成（简单体块 + shader）</p></div>
+    <div class="ev hl"><span class="yr">2006</span><p><b>CGA shape</b>：复杂体块 + 一致立面的两阶段解法 ★</p></div>
+    <div class="ev"><span class="yr">2008</span><p>CityEngine 首商用版（Procedural Inc.）→ 2011 Esri 收购 → 行业标准工具</p></div>
+    <div class="ev hl2"><span class="yr">2026</span><p><b>ProxyBuild</b>：LLM 属性解析 + 拓扑角色推断 + 检索组装 ★</p></div>
+  </div>
+
+  <div class="callout">
+    <b>两条可带走的判据：</b><br>
+    ① <b>"规则（或生成）必须作用在结构化的中间表示上"</b> —— 2006 年叫"二维 scope"，2026 年叫"角色概率分布"，本质是同一件事：<em>给生成过程一个可对齐、可查询、可修正的工作面。</em><br>
+    ② <b>"离线生成量与运行时负载是两本账"</b> —— 2006 年：十亿多边形一天生成，但实时化"需要尚未开发的 LOD 技术，因为我们不优化一致拓扑"；2026 年：ProxyBuild 全是离线资产管线，同样不涉运行时。
+  </div>
+
+  <div class="foot">
+    数据来源：Müller et al. 2006 原文 PDF（逐节核对）；ProxyBuild arXiv 2609.23386 HTML 全文（逐节核对）。<br>
+    本图解为学习笔记，解释性重构非原文排版。
+  </div>
+</div>
+</body>
+</html>
