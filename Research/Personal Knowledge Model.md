@@ -141,7 +141,7 @@ user_level: Easy      # 或 Normal / Hard
 - [[Gaussian Splatting]] — 4 条判据 ✅ 2026-09-11 达成（见 [[GS 图解 1 — 协方差与椭球：高斯的形状说明书|图解 1]]、[[GS 图解 2 — 排序瓶颈、管线冲突与密度控制|图解 2]]）
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
   - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）。**不计入 25 条**，标为"读了，不是会了"；
-  - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。**
+  - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。** **（9-23 更新：对照基线已就位——先查 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 13.7.1 / 13.8.1 的球面 albedo 拟合值，再对引擎实测。）**
 - **[[Hair Rendering]] — 5 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 15 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 1 个概念（[[Procedural Content Generation]] 标 Normal）——这是 9-21 以来首次重新增加 Normal 标签。**任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 16 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 1 个概念（[[Linear Transport Theory]] 标 Normal）+ 2 篇前沿（WorldCrafter / Mira-Scene）+ 1 本手册（[[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）已从 9-10 挂到 9-20，**已在 [[2026-W38]] 中列为下周第一优先级，不再逐日提示**；
@@ -171,6 +171,10 @@ user_level: Easy      # 或 Normal / Hard
     - **同构到你的五档**：**特效参数也并非都随档位等比缩放**。建议给预算矩阵里每个参数标一个"**绝对 / 相对**"属性（如贴图尺寸、动态灯数偏绝对；时长、粒子密度可相对）。**凡是"整体乘个比例"的缩放方案，先检查这一项。**
     - 另借一条成本原则（同日）：**"离线生成量与运行时负载是两本账"** —— 与"成本不会消失只会转移"同构（PCG 生成端多省/多花，运行时另算）。
 11. **（观察项）UE6 时间线**：2026-05 公布，**首作《火箭联盟》UE6 版已进入职业测试、2027 上线**（9-21 官宣）。含义：NGR 一类的 UE5 项目大概率全周期在 UE5 线上，但**引擎换代节奏在加快**（UE5 公布→首作约 3 年；UE6 约 1.5 年）。生产管线规划值得记一笔。
+12. **🔴 9-23 新增（实测题升级为"有对照物"）**：**furnace test 的对照基线已就位** —— [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 的 13.7.1（Beckmann）/ 13.8.1（GGX）给出**球面 albedo 的拟合闭式**（对 η、α）与大量 benchmark 值。**此前这项实测只能"凭感觉看变暗/亮"，现在可以"实测值 vs 手册值"对照**。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节；先查手册、再跑引擎、后比数值。
+13. **9-23 新增两条跨域借条**（供分档体检用，均为"廉价可做"类）：
+    - **"记忆/状态按查询压缩"**（[[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory|WorldCrafter]]）：不存全部、不物化——**预算按"谁来看/怎么用"分配**。与你的"最重镜头资源分配"思考同构；
+    - **"有界 vs 无界"体检（比 9-22 的"绝对/相对"更一般）**：[[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction|Mira-Scene]] 消融证明"稠密化不够、有界才是关键"（0.379→0.727）。**凡是让模型/参数自由回归的量，先检查能不能改成"有限区间内的对应"。**
 
 ---
 
@@ -200,4 +204,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09-22]] · [[2026-09-21]] · [[2026-W38]] · [[2026-09]] 技术雷达
+相关：[[2026-09-07]] · [[2026-09-23]] · [[2026-09-22]] · [[2026-09-21]] · [[2026-W38]] · [[2026-09]] 技术雷达

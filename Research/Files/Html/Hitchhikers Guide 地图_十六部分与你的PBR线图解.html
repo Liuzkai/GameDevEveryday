@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hitchhiker's Guide 地图 · 十六部分 × 你的 PBR 线</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --panel: #ffffff;
+    --ink: #1f2328;
+    --ink-2: #57606a;
+    --line: #d8dce1;
+    --accent: #b45309;      /* 琥珀：书/核心 */
+    --accent2: #1d4ed8;     /* 靛蓝：你的线 */
+    --accent-bg: #fff7ed;
+    --accent2-bg: #eef2ff;
+    --ok: #15803d;
+    --warn: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181d;
+      --panel: #1e2128;
+      --ink: #e6e8eb;
+      --ink-2: #9aa3ad;
+      --line: #333842;
+      --accent: #f59e0b;
+      --accent2: #818cf8;
+      --accent-bg: #2a2117;
+      --accent2-bg: #1c2033;
+      --ok: #4ade80;
+      --warn: #f87171;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 40px;
+    background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.65;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: .2px; }
+  .sub { color: var(--ink-2); font-size: 12.5px; margin-bottom: 22px; }
+  h2 { font-size: 15.5px; margin: 30px 0 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
+  h2.blue { border-left-color: var(--accent2); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; }
+  .card b { font-size: 13.5px; }
+  .card p { margin: 5px 0 0; font-size: 12.3px; color: var(--ink-2); }
+  .card .tag { font-size: 10.5px; letter-spacing: .8px; color: var(--accent); text-transform: uppercase; font-weight: 700; }
+
+  /* 16 部分网格 */
+  .parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 9px; }
+  .part {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
+    padding: 9px 12px 9px;
+  }
+  .part .no { font-size: 10.5px; font-weight: 700; color: var(--ink-2); letter-spacing: 1px; }
+  .part .nm { font-size: 13px; font-weight: 600; margin: 1px 0 3px; }
+  .part .pg { font-size: 10.8px; color: var(--ink-2); }
+  .part p { margin: 3px 0 0; font-size: 11.8px; color: var(--ink-2); }
+  .part.hot { border-color: var(--accent); background: var(--accent-bg); }
+  .part.hot .no { color: var(--accent); }
+  .part.cool { border-color: var(--accent2); background: var(--accent2-bg); }
+  .part.cool .no { color: var(--accent2); }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 12.8px; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--bg); font-weight: 600; }
+  td.k { color: var(--ink-2); white-space: nowrap; }
+  .a { color: var(--accent); font-weight: 600; }
+  .b { color: var(--accent2); font-weight: 600; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 11.6px; background: var(--bg); border: 1px solid var(--line); padding: 0 4px; border-radius: 4px; }
+  .callout { border-left: 3px solid var(--accent); background: var(--accent-bg); padding: 10px 13px; border-radius: 6px; margin-top: 14px; font-size: 12.8px; }
+  .callout.blue { border-left-color: var(--accent2); background: var(--accent2-bg); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin: 10px 0 12px; }
+  .legend .sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; border: 1px solid var(--line); }
+  .sw.hot { background: var(--accent-bg); border-color: var(--accent); }
+  .sw.cool { background: var(--accent2-bg); border-color: var(--accent2); }
+  .sw.pl { background: var(--panel); }
+  .foot { margin-top: 26px; color: var(--ink-2); font-size: 11.5px; }
+  b.ok { color: var(--ok); } b.no { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>A Hitchhiker's Guide to Multiple Scattering · 地图</h1>
+  <div class="sub">Eugene d'Eon（NVIDIA）· v0.3.2（2022-11，首版 2016-07）· 746 页 · 2000+ 条文献指引 · 三种记号（图形学 σ<sub>t</sub> / 光学 μ<sub>t</sub> / 中子 Σ<sub>t</sub>）· 配套 MC 代码 + Mathematica 交叉验证（GitHub: eugenedeon/hitchhikersscatter）</div>
+
+  <h2>① 三种用法 —— 它是地图册，不是教程</h2>
+  <div class="mini">
+    <div class="card">
+      <div class="tag">Lookup 1</div>
+      <b>查"这个问题解过没有"</b>
+      <p>按「几何（无限 / 半空间 / slab / 球）× 散射类型（各向同性 / 各向异性 / Rayleigh）× 源（点 / 平面 / searchlight）」编排的 100+ 章，附逐条 Further Reading。</p>
+    </div>
+    <div class="card">
+      <div class="tag">Lookup 2</div>
+      <b>查"精确基准值"</b>
+      <p>大量问题附 benchmark 数值 + MC 代码 —— 可直接校验你自己的实现。<b>对 furnace test 尤其直接（见 ④）。</b></p>
+    </div>
+    <div class="card">
+      <div class="tag">Lookup 3</div>
+      <b>查"近似谱系"</b>
+      <p>同一问题并列 exact / singly / doubly / 各类扩散近似 / "our first~fourth approximation" —— "更准 vs 更便宜"的全谱对照表。</p>
+    </div>
+  </div>
+
+  <h2>② 十六部分地图 <span style="font-size:11.5px;color:var(--ink-2);font-weight:400">—— ★ 高亮 = 你的库内线所在</span></h2>
+  <div class="legend">
+    <span><span class="sw hot"></span>直接对应你已入库的工作</span>
+    <span><span class="sw cool"></span>前瞻 / 工具层</span>
+    <span><span class="sw pl"></span>其余部分（按需再查）</span>
+  </div>
+  <div class="parts">
+    <div class="part"><div class="no">PART I</div><div class="nm">Foundations</div><div class="pg">pp. 9–30</div><p>线性 Boltzmann 方程；"一个多次散射问题由什么构成"。</p></div>
+    <div class="part"><div class="no">PART II</div><div class="nm">Scattering（相位函数）</div><div class="pg">pp. 31–64</div><p>3D / Flatland / Rod 散射核；相似关系与重标定。</p></div>
+    <div class="part hot"><div class="no">PART III ★</div><div class="nm">Boundaries：Rough Boundaries + Layered</div><div class="pg">pp. 65–100</div><p><b>13 章 = 微面理论 + NDF 动物园 + Smith Λ 表 + 球面 albedo 拟合闭式；14 章含 Kelemen 2001 归属与"albedo 只能拟合/查表"的手册级表述。</b></p></div>
+    <div class="part"><div class="no">PART IV</div><div class="nm">1D Rod</div><div class="pg">pp. 101–150</div><p>最小可解模型；含随机介质版本。</p></div>
+    <div class="part"><div class="no">PART V</div><div class="nm">2D Flatland</div><div class="pg">pp. 151–164</div><p>扁平世界解；与 3D 对照用。</p></div>
+    <div class="part"><div class="no">PART VI</div><div class="nm">3D · 球对称（点源 Green 函数）</div><div class="pg">pp. 165–224</div><p>无限介质点源族；含 GRT（非经典自由程）版本。</p></div>
+    <div class="part hot"><div class="no">PART VII ★</div><div class="nm">3D · 平面对称：半空间 / Slab 反照率</div><div class="pg">pp. 225–308</div><p><b>48 章 = 库内"五条补法谱系"的原文全谱（exact / singly / doubly / diffusion / 各类改进近似）；56–58 章为 slab / 多层 slab。</b></p></div>
+    <div class="part"><div class="no">PART VIII</div><div class="nm">Searchlight</div><div class="pg">pp. 309–324</div><p>准直光束入射族（半空间 / slab）。</p></div>
+    <div class="part"><div class="no">PART IX</div><div class="nm">3D · 一般形状</div><div class="pg">pp. 325–334</div><p>任意形状 / 异质介质 / 球形行星模型。</p></div>
+    <div class="part cool"><div class="no">PART X ◆</div><div class="nm">Monte Carlo 方法</div><div class="pg">pp. 335–372</div><p><b>MC 指南 / 方差缩减 / zero-variance 理论 / track-length / 双向方法 —— "为什么 MC 是输运的万能解"的工具箱。</b></p></div>
+    <div class="part"><div class="no">PART XI</div><div class="nm">积分方程（Fredholm / Wiener-Hopf）</div><div class="pg">pp. 373–388</div><p>H 函数与伪问题所在 —— <b>推导层（Hard，不必现在动）</b>。</p></div>
+    <div class="part"><div class="no">PART XII</div><div class="nm">Displacement Kernels</div><div class="pg">pp. 389–422</div><p>各类位移核（Picard-Lalesco / MacDonald-Hankel…）。</p></div>
+    <div class="part"><div class="no">PART XIII</div><div class="nm">Free-Flight Distributions</div><div class="pg">pp. 423–460</div><p>非指数自由程分布族（Bessel K / Lévy / Mittag-Leffler…）。</p></div>
+    <div class="part"><div class="no">PART XIV</div><div class="nm">Stochastic Processes</div><div class="pg">pp. 461–508</div><p>点过程 / 更新过程 / Cox 过程 / 随机飞行。</p></div>
+    <div class="part cool"><div class="no">PART XV ◆</div><div class="nm">非经典线性输运（随机介质）</div><div class="pg">pp. 509–550</div><p><b>非 Beer 介质中的透射与多次散射 —— 毛发 / 植被 / 云这类"相关介质"的前瞻方向。</b></p></div>
+    <div class="part"><div class="no">PART XVI</div><div class="nm">Misc（数学附录）</div><div class="pg">pp. 551–561</div><p>特殊函数 / 积分变换 / 几何。</p></div>
+  </div>
+
+  <h2 class="blue">③ 你的线在哪 —— 库内工作 → 书内坐标</h2>
+  <div class="panel">
+    <table>
+      <tr><th>库内工作（已入库）</th><th>在本书的坐标</th></tr>
+      <tr><td>[[Multiple Scattering and Energy Compensation]] 的"五条补法谱系"</td><td><span class="a">VII.48</span> 一章的<b>内部结构</b>：exact / singly-scattered / doubly-scattered / 扩散近似 / "our first~fourth approximation" 逐条并列</td></tr>
+      <tr><td>[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]</td><td><span class="a">13.3.4</span> 的散射截面 σ(u) = (1+Λ(u))u、σ(−u) = Λ(u)u（无反向对称、σ(−1)=0）；<span class="a">13.8</span> 的 GGX 截面（13.34）</td></tr>
+      <tr><td>[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]</td><td><span class="a">13.7.1 / 13.8.1</span>：球面 albedo 的<b>拟合闭式</b>（查表路线的姊妹方案）；<span class="a">14.2</span>："albedo 不闭式、需拟合或查表（Kulla and Conty 2017）"</td></tr>
+      <tr><td>[[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media|Dupuy 2026]]</td><td>"半无限微片介质"族问题（自 <span class="a">13.3.4</span> 起的一整条）的<b>新闭式解</b></td></tr>
+      <tr><td>[[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media|GPIS 2026]]</td><td><span class="a">13.1</span> 开篇命题（"microfacet theory 是几何光学近似"）的<b>现代随机几何重表述</b></td></tr>
+      <tr><td>[[Participating Media]]</td><td>PART IV–IX 全部 + <span class="b">PART XV</span>（非经典输运）</td></tr>
+      <tr><td>[[Rendering Equation]]（Kajiya 1986）</td><td>同一守恒式的<b>表面形式</b>；本书给的是<b>体积形式</b>的完整解集</td></tr>
+    </table>
+    <div class="callout">两处与本库"归属更正"的对账：<br>
+      ▸ <b>Kelemen &amp; Szirmay-Kalos 2001</b>：14.2 节原文明确"equivalent to the BRDF model of Kelemen and Szirmay-Kalos (2001)"——库内"公式本体来自 Kelemen"的归属注在此获得<b>手册级佐证</b>；<br>
+      ▸ <b>"三样不可兼得"</b>：14.2 节原文"albedos a<sub>spec</sub>(θ) are <b>not known in closed form</b> and require approximate fitting or tabulation"——手册盖章的边界。
+    </div>
+  </div>
+
+  <h2>④ 立刻可用 —— 三条行动</h2>
+  <div class="mini">
+    <div class="card">
+      <div class="tag">Action 1</div>
+      <b>furnace test 有对照基线了</b>
+      <p>你的两项检查（① 粗糙端是否变暗 ② 光滑白电介质掠射亮边）→ 先在 <b>13.7.1 / 13.8.1</b> 查到对应 η、α 的<b>球面 albedo 闭式近似值</b>，再与引擎实测对照。<b>这是 9-20 以来唯一未闭环实测题的第一个客观基线。</b></p>
+    </div>
+    <div class="card">
+      <div class="tag">Action 2</div>
+      <b>溯源工具</b>
+      <p>"这个解第一次出现在哪？"——2000+ 条 Further Reading 逐条带年代与出处（库内已有两次归属教训：Kelemen 2001 / Crow 1977，这类问题历史长、重名多）。</p>
+    </div>
+    <div class="card">
+      <div class="tag">Action 3</div>
+      <b>前瞻观察点</b>
+      <p>PART XV（非经典输运）：非指数自由程 / 随机介质 —— 与毛发（细长散射体）、植被、云同方向，是 [[Hair Rendering]] 与 [[Participating Media]] 的共同延伸。</p>
+    </div>
+  </div>
+
+  <div class="callout blue" style="margin-top:22px">
+    <b>使用注意</b>：① 下载选 <b>Graphics notation（σ<sub>t</sub>）</b>版本；② 746 页 / 29 MB，按章查、不通读；③ 2022 版托管 Google Drive，2016 版有 eugenedeon.com 直链（hitchhikers_v0.1.3.pdf）作备份；④ 本书<b>不是教程</b>（原文："no attempt to provide theory and derivations"），要推导去看它指向的文献。
+  </div>
+
+  <div class="foot">
+    来源：E. d'Eon, <i>A Hitchhiker's Guide to Multiple Scattering</i>, v0.3.2（2022-11）· eugenedeon.com/hitchhikers · GitHub: eugenedeon/hitchhikersscatter ｜ 页码与公式核对自 2022 v0.3.2 Graphics notation PDF（746 页）。 ｜ 生成于 2026-09-23（Game Dev Research Agent）
+  </div>
+
+</div>
+</body>
+</html>

@@ -55,13 +55,19 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 2026       混合线：[[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]]
            （LLM 解析属性 + 网络推断结构角色 + 检索复用资产）
            —— "不写规则，推断规则的作用对象"
+2026-09    混合线（续）：[[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]]
+           （单图 → 可编辑场景：几何/布局双流共生成；布局用"稠密有界对应"替代"稀疏无界位姿"）
+           —— "不猜位姿，恢复对应、再交给几何对齐"（同一母题的第三天第三例）
 ```
 
 ## Important Papers
 
 - [[Müller — Procedural Modeling of Buildings (2006)]] —— **本文库的程序化建筑源头**（CGA shape；CityEngine 理论基础）
 - [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]] —— **2026 前沿样本**（推理 + 检索的混合范式；"结构锚定拓扑"原则）
+- [[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]] —— **2026 前沿样本（续）**（单图→场景；"稠密有界对应"替代"稀疏无界位姿"）
 - 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Parish & Müller 2001《Procedural Modeling of Cities》；Wonka et al. 2003《Instant Architecture》；Perlin 1985《An Image Synthesizer》
+
+> **"结构锚定"母题三例**（9-21 ~ 9-23 连续入库）：Müller 2006 锚在"二维 scope" → ProxyBuild 锚在"面-边拓扑" → Mira-Scene 锚在"像素 ↔ 规范坐标"。**锚什么可以变，但"生成必须作用在可对齐、可查询、可修正的中间表示上"不变。** Mira-Scene 还给出本母题目前最干净的量化判据：**稠密化不够，"有界"才是关键**（场景空间稠密预测 3D-IoU 0.379 vs 有界规范空间 0.727）。
 
 ## Related Concepts
 

@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-22]]（昨日：[[2026-09-21]]）
-- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 2 天**；上一周：[[2026-W37]]）
+- **今日**：[[2026-09-23]]（昨日：[[2026-09-22]]）
+- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 3 天**；上一周：[[2026-W37]]）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 15 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 16 天）
 
-## Papers（49）
+## Papers（52）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -68,8 +68,11 @@ created: 2026-09-07
 | [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]]                        | A-  | Normal（渲染方程改写层可直接读） | **高（PBR 首次被改写进 VAE 潜空间；"分层收敛"交换层压到"表示"的实例 + 成本转移账本）** ★ 2026-09-21 补录 |
 | [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]] | B+  | Normal（取三条抽象即可） | 中（**PCG 域 2026 样本：LLM 解析 + 拓扑角色推断 + 检索组装；"生成只做决策层"第 4 例**） ★ 2026-09-22 |
 | [[Müller — Procedural Modeling of Buildings (2006)]]                                            | S（经典） | Normal | **高（PCG 域历史锚点：CGA shape / CityEngine 理论基础；"规则必须作用在结构化中间表示上"）** ★ 2026-09-22 |
+| [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]                                  | S（经典/手册） | Normal（结论层）/ Hard（推导层） | **最高（★ 库内两条线"多次散射 + 参与介质"的共同参考层：746 页地图册 + MC 交叉验证；furnace test 的第一个对照基线）** ★ 2026-09-23 |
+| [[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory]]         | A-  | Normal（接口层 + 三条抽象） | 中高（**"记忆=预算"第一例；北大 × 腾讯 ARC Lab；隐式记忆 vs 显式 warp 的 21.7× 成本差**） ★ 2026-09-23 |
+| [[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]]         | B+  | Normal（取三条抽象即可） | 中（**"结构锚定"母题第三例；"稠密化不够、有界才是关键"的最干净量化判据**） ★ 2026-09-23 |
 
-## Concepts（29）
+## Concepts（30）
 
 **基础锚点**
 - [[Real-Time Rendering]]
@@ -78,6 +81,7 @@ created: 2026-09-07
 - [[Microfacet Theory]] ★ 2026-09-16 入库（当前学习目标节点：D·G·F）
 - [[Participating Media]] ★ 2026-09-16 入库（VFX/OverDraw Easy 域 ↔ 理论的最大缺口）★ **2026-09-21 找到历史入口：[[Reeves — Particle Systems (1983)]] §5 的两个"做不到"（粒子被打亮 / 云的自阴影）正是它的起点**
 - [[Shadow Mapping]] ★ 2026-09-21 入库（**填补库里零覆盖的"阴影"域**；**"动态灯光 ≤3/≤2/≤1/0"的成本依据 = 每盏灯 ≈ +1× 场景渲染**；同时是 MegaLights 复审的对照基线）
+- [[Linear Transport Theory]] ★ 2026-09-23 入库（**"输运"母题的共同坐标原点**：微面多次散射 / 体积多次散射 / 毛发 / 云是同一条方程的特例；配套手册 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]）
 
 **你的领域（Easy）**
 - [[Particle Systems]] ★ 2026-09-21 入库（**VFX 域唯一的历史锚点**；五步帧循环 = Niagara 生命周期；**"屏占比 × 密度"是"同屏粒子数"预算的原始出处**）
@@ -156,6 +160,6 @@ Research/
 
 ---
 
-最后更新：2026-09-22（Run #14：前沿窗口 9-19 ~ 9-22，**API `submittedDate` 捕获 2 条**（cs.CV 主分类条目不出现在 cs.GR recent 页），入库 **ProxyBuild**（B+，**PCG 域 2026 前沿样本**；"生成只做决策层"第 4 例）+ 经典 **[[Müller — Procedural Modeling of Buildings (2006)]]**（**CGA shape：程序化建筑奠基论文 / CityEngine 理论基础**，与 ProxyBuild 构成跨 20 年的直接问答）+ 新概念 **[[Procedural Content Generation]]**（PCG 域第一个锚点）+ 1 图解（[[程序化建筑_CGA shape 与 ProxyBuild 对照图解]]）+ Daily；产业侧两条：**UE6 进入职业电竞实测阶段、首作 2027**（《火箭联盟》UE3→UE6 迁移）；**XeSS 3 官方 UE 插件落地，帧生成倍率成为引擎级可配置参数**（`r.XeFG.MaxInterpolatedFrames`，Intel 官方仓库核实））
-　　▸ **9-21 回顾**（Run #13）：前沿窗口 9-18 ~ 9-21 仅 1 条新提交（GestureFAR）+ 2 篇经典（Reeves 1983 粒子系统 / Williams 1978 曲面阴影）+ 2 概念（[[Particle Systems]]、[[Shadow Mapping]]）+ 图解 [[预算五维_1978-1983_源头图解]]；产业侧：《控制：共振》档位为**多正交子系统 + 帧生成倍率**、《铁拳 8》**神经渲染破坏锁帧玩法逻辑**、DLSS 5 第三方在 Intel Xe2 重实现（显存成为神经层第三预算项）
-　　▸ **9-21 同日补录**（Run #13b）：周一 listing 3 条 → **[[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]]**；检索方法修正：**API 窗口查询不能兜底，须核对 `recent` 页日期分组**
+最后更新：2026-09-23（Run #15：前沿窗口 9-19 ~ 9-23，**9-22 listing（11 条）中 9 条新条目**全部评估，入库 **2 篇**：**WorldCrafter**（A-，**"记忆=预算"第一例**：视角条件压缩、隐式记忆 vs 显式 warp 21.7×；北大 × 腾讯 ARC Lab）+ **Mira-Scene**（B+，**"结构锚定"母题第三例**："稠密化不够、有界才是关键"）+ 手册级经典 **[[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]**（**库内两条线的参考层落地**；furnace test 首个对照基线）+ 新概念 **[[Linear Transport Theory]]** + 1 图解（[[Hitchhikers Guide 地图_十六部分与你的PBR线图解]]）+ Daily；产业侧两条：**UE 5.8.3 hotfix**（Nanite LOD / PCG / FastGeo 修复）、**IEEE Spectrum 就 DLSS 5 采访 NVIDIA**（"6 个月 5 倍、单卡全 RTX 50"，9-21 发布））
+　　▸ **9-22 回顾**（Run #14）：**PCG 域从零覆盖到"源头 + 前沿"双锚点** —— ProxyBuild（B+）+ Müller 2006（CGA shape，跨 20 年的直接问答）+ 新概念 [[Procedural Content Generation]] + 图解；产业侧：UE6 职业电竞实测（首作《火箭联盟》2027）、XeSS 3 官方 UE 插件（帧生成倍率成为引擎级参数）
+　　▸ **9-21 回顾**（Run #13 + #13b）：Reeves 1983 粒子系统 / Williams 1978 曲面阴影（**预算五维源头对齐**）+ GestureFAR + PBR-Latent 补录 + §41 Rule 9（远程分歧判定）

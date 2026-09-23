@@ -192,7 +192,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 | Lagarde & Golubev 2018（credit Emmanuel Turquin） | **路线 ⑤ 最便宜版**（只缩放已有 lobe） | ⚠️ 经 Filament 官方文档转述核实，**原始书目条目待核实** |
 | Kelemen & Szirmay-Kalos 2001, Eurographics Short | 公式源头 | ❌ 未入库（较老，可只在本文引用） |
 | Hill 2018, *A Multi-Faceted Exploration* part 2 / part 3 | 比 ④ 更准（逐次弹射模拟），但每次弹射一张表、且不处理 IBL | ❌ 未入库，**可作为"更准 vs 能用"的又一实例** |
-| d'Eon, *A Hitchhiker's Guide to Multiple Scattering* | 系统性手册 | ❌ 未入库，**优先级高** |
+| [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] | **系统性手册（746 页参考地图册）** | ✅ **2026-09-23 入库** —— 本书即"五条补法"谱系的**原文全谱**（VII.48）；13.3.4 给出 Heitz 式截面，13.7.1/13.8.1 给出**球面 albedo 的拟合闭式**（furnace test 的第一个客观对照基线）；14.2 节为 Kelemen 2001 归属提供手册级佐证 |
 | Hammon 2017, *PBR Diffuse Lighting for GGX+Smith Microsurfaces* | **漫反射侧**的同类问题 | ❌ 未入库，**优先级高** |
 
 ## Related Concepts
@@ -200,6 +200,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 - [[Microfacet Theory]] — 本概念是它的**必然副产品**：有互遮挡就必然有互反射，有互反射就必然有"忽略互反射"的误差；
 - [[Split-Sum Approximation]] — **同一根 IBL 管线上的相邻两步**：split-sum 解决"积分太贵"，能量补偿解决"积分算少了"。**两者叠加才是 IBL 镜面半边的完整固定开销**；
 - [[Participating Media]] — 多次散射的**理论通道**：Dupuy 2026 的整个推导就是把表面写成半无限微片介质；
+- [[Linear Transport Theory]] — **共同的母题（2026-09-23 随 d'Eon 手册入库而建立）**：本概念的"五条补法"正是该理论 **VII.48 章的内部结构**；"**表面问题 = 半空间随机游走**"是两概念间的总翻译规则；
 - [[Hair Rendering]] — **另一个"微面 BRDF 失效"的边界**（单位不同）；毛发里的多次散射由 Marschner 的 TRT 等明确路径处理，因为纤维内部吸收是主要的、可以显式建模；
 - 🔴 **一条 2026-09-20 新发现的跨领域合流**：[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] 把粗糙电介质 BSDF 按 **R/T 事件序列** 分解（TRT、TTR 等 lobe），而 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 按 **R/TT/TRT** 分解毛发散射 —— **两个完全不同的物理场景，独立收敛到"按散射事件序列分解 BSDF"**。
   → **可操作结论：[[Hair Rendering]] 里那条"TRT 先砍、TT 最后砍"的分档判据，其底层手法不是毛发专属的。**"哪个 lobe 可以先砍"的通用判据是"事件序列的可见性"。
@@ -245,7 +246,8 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 
 1. **把 furnace test 做成一次真实的自测**（30 分钟内可完成）：
    纯金属球 → Roughness 0→1 → 只有环境光 → 截图；**再加一个光滑白电介质球查掠射亮边**；然后切换引擎侧的能量补偿开关对比。**做完这一条，本概念即可从 Normal 升 Easy**；
-2. **经典候选排队（2026-09-20 更新）**：~~Heitz et al. 2016~~ ✅ 已入库 → ~~Fdez-Agüera 2019~~ ✅ 已入库 → 现在最高优先级是 **Hammon 2017**（`PBR Diffuse Lighting for GGX+Smith Microsurfaces` —— **漫反射侧也漏能量**，与 diffuse 认知直接相关）> **d'Eon, *A Hitchhiker's Guide to Multiple Scattering***（系统性手册）> **Hill 2018 part 2/3**（"更准 vs 能用"的又一实例）；
+   **🔴 2026-09-23 更新：现在有客观对照基线了** —— 先在 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 的 **13.7.1（Beckmann）/ 13.8.1（GGX）** 查到对应 $\eta$、$\alpha$ 的**球面 albedo 拟合闭式值**，再与引擎实测对照（不再是"凭感觉看变暗/变亮"）；
+2. **经典候选排队（2026-09-23 更新）**：~~Heitz et al. 2016~~ ✅ 已入库 → ~~Fdez-Agüera 2019~~ ✅ 已入库 → ~~d'Eon, *A Hitchhiker's Guide to Multiple Scattering*~~ ✅ **已入库（9-23）** → 现在最高优先级是 **Hammon 2017**（`PBR Diffuse Lighting for GGX+Smith Microsurfaces` —— **漫反射侧也漏能量**，与 diffuse 认知直接相关；**原文阻塞中**：GDC Vault 403 已三试）> **Hill 2018 part 2/3**（"更准 vs 能用"的又一实例）；
 3. 与 [[Split-Sum Approximation]] 合并成一张"IBL 镜面半边固定开销表"（cubemap 预滤波 + EnvBRDF LUT + 能量补偿），纳入 [[Real-Time VFX Performance Budgeting]] 的参考账。**④ 让这张表多了一行"成本 ≈ 0"**。
 
 ## Visualization
