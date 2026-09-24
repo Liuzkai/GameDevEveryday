@@ -140,7 +140,7 @@ user_level: Easy      # 或 Normal / Hard
 - [[GPU-Driven Rendering]] — 4 条判据
 - [[Gaussian Splatting]] — 4 条判据 ✅ 2026-09-11 达成（见 [[GS 图解 1 — 协方差与椭球：高斯的形状说明书|图解 1]]、[[GS 图解 2 — 排序瓶颈、管线冲突与密度控制|图解 2]]）
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
-  - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）。**不计入 25 条**，标为"读了，不是会了"；
+  - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）+ [[Hill — A Multi-Faceted Exploration (2018-2019)]]（**谱系中段的完整过程记录**，9-24 入库）。**不计入 25 条**，标为"读了，不是会了"；
   - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。** **（9-23 更新：对照基线已就位——先查 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 13.7.1 / 13.8.1 的球面 albedo 拟合值，再对引擎实测。）**
 - **[[Hair Rendering]] — 5 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
@@ -150,10 +150,10 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 16 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 1 个概念（[[Linear Transport Theory]] 标 Normal）+ 2 篇前沿（WorldCrafter / Mira-Scene）+ 1 本手册（[[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 17 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 2 篇前沿（[[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]] / [[2026-09-22-PartLLM — A Unified Multimodal Foundation for 3D Part Segmentation|PartLLM]]）+ 1 篇经典（[[Hill — A Multi-Faceted Exploration (2018-2019)]]）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
-4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）已从 9-10 挂到 9-20，**已在 [[2026-W38]] 中列为下周第一优先级，不再逐日提示**；
+4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
 5. **🔴 9-20 新增（对你的分档工作直接相关）**：**《控制：共振》把路径追踪 + 全局光照做成了所有光追预设的公共底座** → **"画质档位 = 在同一管线上调参数"这个隐含前提需要重新审视**。建议在 S/A/B/C × 五档矩阵里显式区分"**换参数**"与"**换管线**"两类档位差异。详见 [[2026-09-20]] 产业信号 2。
 6. **🔴 9-21 更新（比 9-20 更尖锐，两条）**：
    - **档位实为"多个正交子系统的组合"**：[[2026-09-21]] 产业信号 1 查到《控制：共振》的菜单是 `RT Preset` × `Direct Lighting` × `Indirect Lighting` × `Transparency` × 各自 `Denoising` × **`帧生成倍率 2x–6x / Dynamic`** 的笛卡尔积。**你的五档可能需要定义"这一档下哪些子系统被替换"，而不是"资源上限乘多少"。** 另：**RT Ultra 档需 DLSS 4.5 Ray Reconstruction + RTX Mega Geometry → 厂商绑定**，跨平台体系里最高档可能在移动端/AMD 端根本不存在；
@@ -175,6 +175,12 @@ user_level: Easy      # 或 Normal / Hard
 13. **9-23 新增两条跨域借条**（供分档体检用，均为"廉价可做"类）：
     - **"记忆/状态按查询压缩"**（[[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory|WorldCrafter]]）：不存全部、不物化——**预算按"谁来看/怎么用"分配**。与你的"最重镜头资源分配"思考同构；
     - **"有界 vs 无界"体检（比 9-22 的"绝对/相对"更一般）**：[[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction|Mira-Scene]] 消融证明"稠密化不够、有界才是关键"（0.379→0.727）。**凡是让模型/参数自由回归的量，先检查能不能改成"有限区间内的对应"。**
+14. **🔴 9-24 一手核验：UE 5.8 MegaLights 官方口径落定（复审材料全部就绪，可直接执行）**：
+    - **官方事实**（UE 5.8 MegaLights 文档 + release notes）：Production Ready；**开销恒定**（"无阴影与有阴影光源差别不大"）；**与前向渲染器不兼容**（通用限制）；**不支持移动端 / Switch / 上代主机（PS4/XB1）**；`r.MegaLights.Allow 0` **可按 Scalability Level / Device Profile 禁用**（官方档位开关）；
+    - **对五档预算的三点重述**：① **PC 两档**：动态灯光维度与"灯数"脱钩 → "≤3/≤2/≤1/0"的含义从"每盏灯成本"改为"**光照复杂度预算**（同像素重要光源数 + 降噪质量）"；② **Android 三档硬性无缘**（MegaLights 不支持移动端 → 仍走 1978 每灯 +1× 账；前向渲染不兼容再叠一层）；③ **Niagara 粒子光源已被支持**（逐发射器 "Allow Mega Lights" + "Cast Shadows"）→ **特效打光进入覆盖范围（更正 9-21 二手记录）**，但需实测（稀疏性/投影数建议为软性约束）；
+    - 详见 [[2026-09-24]] 产业信号 1 与 [[Scalability and Quality Tiers]]；
+15. **9-24 方法论库存 +1（"取消式优化"）**：[[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]] 证明**"排序可以被取消，而不是优化"**（成本函数置换：∝ 场景复杂度 → 每像素 + 固定项）。**体检问法**：面对任一瓶颈，先问"**它能不能不存在**"，再问"它能不能变便宜"；
+16. **9-24 补录（PartLLM，供资产流程参考）**：[[2026-09-22-PartLLM — A Unified Multimodal Foundation for 3D Part Segmentation|PartLLM]]（腾讯 Visvise / SIGGRAPH Asia 2026）把分件做成"**意图条件的粒度接口**"——同一资产可按不同下游需求生成不同粒度分解。观察项：Visvise 是否把该能力产品化（部件级批量材质 / 碰撞 / LOD 预处理）。
 
 ---
 

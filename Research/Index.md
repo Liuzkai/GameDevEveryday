@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-23]]（昨日：[[2026-09-22]]）
-- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 3 天**；上一周：[[2026-W37]]）
+- **今日**：[[2026-09-24]]（昨日：[[2026-09-23]]）
+- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 4 天**；上一周：[[2026-W37]]）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 16 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 17 天）
 
-## Papers（52）
+## Papers（55）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -71,6 +71,9 @@ created: 2026-09-07
 | [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]                                  | S（经典/手册） | Normal（结论层）/ Hard（推导层） | **最高（★ 库内两条线"多次散射 + 参与介质"的共同参考层：746 页地图册 + MC 交叉验证；furnace test 的第一个对照基线）** ★ 2026-09-23 |
 | [[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory]]         | A-  | Normal（接口层 + 三条抽象） | 中高（**"记忆=预算"第一例；北大 × 腾讯 ARC Lab；隐式记忆 vs 显式 warp 的 21.7× 成本差**） ★ 2026-09-23 |
 | [[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]]         | B+  | Normal（取三条抽象即可） | 中（**"结构锚定"母题第三例；"稠密化不够、有界才是关键"的最干净量化判据**） ★ 2026-09-23 |
+| [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] | A-  | Normal（GS 之上的新研究） | **高（"取消排序"第四条 GS 路线；成本函数置换样本：全管线 2.1×、去噪 +1 ms 常数；"无干净引导时 trust 必须靠学"）** ★ 2026-09-24 |
+| [[2026-09-22-PartLLM — A Unified Multimodal Foundation for 3D Part Segmentation]]             | A-  | Normal      | 中高（**分件 = 意图条件生成**；腾讯 Visvise / SIGGRAPH Asia 2026；**粒度可点单**；"生成只做决策层"第 5 例） ★ 2026-09-24 |
+| [[Hill — A Multi-Faceted Exploration (2018-2019)]]                                            | A（经典） | Normal      | **最高（能量账本谱系缺失中段：Fms 修正 → Schlick 线性性 2D LUT → 单贴图 3 MAD；Turquin TR / Lagarde18 两处待核实同日结案）** ★ 2026-09-24 |
 
 ## Concepts（30）
 
@@ -160,6 +163,6 @@ Research/
 
 ---
 
-最后更新：2026-09-23（Run #15：前沿窗口 9-19 ~ 9-23，**9-22 listing（11 条）中 9 条新条目**全部评估，入库 **2 篇**：**WorldCrafter**（A-，**"记忆=预算"第一例**：视角条件压缩、隐式记忆 vs 显式 warp 21.7×；北大 × 腾讯 ARC Lab）+ **Mira-Scene**（B+，**"结构锚定"母题第三例**："稠密化不够、有界才是关键"）+ 手册级经典 **[[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]]**（**库内两条线的参考层落地**；furnace test 首个对照基线）+ 新概念 **[[Linear Transport Theory]]** + 1 图解（[[Hitchhikers Guide 地图_十六部分与你的PBR线图解]]）+ Daily；产业侧两条：**UE 5.8.3 hotfix**（Nanite LOD / PCG / FastGeo 修复）、**IEEE Spectrum 就 DLSS 5 采访 NVIDIA**（"6 个月 5 倍、单卡全 RTX 50"，9-21 发布））
+最后更新：2026-09-24（Run #16：前沿窗口 9-23 ~ 9-24，**9-23 listing（5 条）+ API 交叉核验另捕获 5 条"已提交未公告"条目**全部评估，入库 **2 篇前沿**：**Stochastic GS Denoising**（A-，**"取消排序"第四条 GS 路线**：全管线 3.75 ms / 2.1×、去噪 +1 ms 常数、"无干净引导时 trust 必须靠学"）+ **PartLLM**（A-，**3D 分件统一为"意图条件生成"**：腾讯 Visvise / SIGGRAPH Asia 2026；联合分配 + 粒度可点单）+ 经典 **[[Hill — A Multi-Faceted Exploration (2018-2019)]]**（**能量账本谱系缺失中段**：Fms 修正 → Schlick 线性性 → 单贴图 3 MAD；**Turquin TR / Lagarde18 两处"待核实"同日结案**）+ 2 图解 + Daily；**产业侧头条：UE 5.8 MegaLights 官方口径一手核验完成** —— **Niagara 粒子光源已支持（更正 9-21 二手记录）**、**移动端/Switch/上代主机完全不支持（五档硬约束）**、开销恒定、`r.MegaLights.Allow` 官方档位开关 → **动态灯光维度复审材料全部到位**；另：《控制：共振》今日发售（DLSS 4.5 全套 + Dynamic MFG 6×；实测 5090 PT 4K 72→39）、E-Day 将带 MegaLights + RTX Mega Geometry（首个非 Remedy 样本））
+　　▸ **9-23 回顾**（Run #15）：d'Eon《Hitchhiker's Guide》入库（**参考层落地**；furnace test 首获对照基线）+ WorldCrafter（**记忆=预算** 第一例）+ Mira-Scene（**有界才是关键**）+ 新概念 [[Linear Transport Theory]]
 　　▸ **9-22 回顾**（Run #14）：**PCG 域从零覆盖到"源头 + 前沿"双锚点** —— ProxyBuild（B+）+ Müller 2006（CGA shape，跨 20 年的直接问答）+ 新概念 [[Procedural Content Generation]] + 图解；产业侧：UE6 职业电竞实测（首作《火箭联盟》2027）、XeSS 3 官方 UE 插件（帧生成倍率成为引擎级参数）
-　　▸ **9-21 回顾**（Run #13 + #13b）：Reeves 1983 粒子系统 / Williams 1978 曲面阴影（**预算五维源头对齐**）+ GestureFAR + PBR-Latent 补录 + §41 Rule 9（远程分歧判定）

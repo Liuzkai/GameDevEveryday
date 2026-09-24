@@ -36,6 +36,7 @@ NeRF（隐式 MLP + volume rendering，慢）
   · 重建质量 → 视频扩散先验（VidSplat）、物理+光学混合（GauSmoke）
   · 规模 → 光场显示（CoherentRaster）、4D 不确定性（GraphiXS）、
            语义抠资产（LangSplatV2）+ 稀疏体素（fVDB）
+  · 渲染管线 → 随机光栅化（取消排序与混合）+ 时域神经去噪 ★ 2026-09-24 入库
         ↓
 成为生成式世界模型的原生输出格式
 ```
@@ -57,6 +58,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 ## Important Papers
 
 - [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization]]
+- [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] —— **"排序瓶颈"的第四条路线（取消式）**：随机光栅化 + 时域神经去噪；全管线 2.1×、去噪 +1 ms 常数（与 TileGS 构成同题两端）★ 2026-09-24
 - [[Inverse Rendering for Modeling with Line Primitives]]（对比：显式线段 vs 体积基元）
 
 ## Personal Knowledge
@@ -83,3 +85,5 @@ Current Level: **Easy**（2026-09-11 标 Easy，4 条 Mastery 判据全过）
 ~~→ [[Learning Path — Gaussian Splatting]]~~ ✅ 2026-09-11 完成，标 **Easy**。
 
 后续按约定**停止基础推送**，只推建立在 GS 之上的新研究（动态 GS、GS 角色管线等）。
+
+> **2026-09-24 更新**：首篇"GS 之上的新研究"已入库 —— [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]]（**排序瓶颈的"取消式"解法**：把排序与混合从管线里删掉，用 ~1 ms 神经去噪器偿还噪声债；自由导航 PSNR 29.80 vs ST-TAA 21.48）。**Easy 标记不变** —— 该文不含 GS 基础内容，全部价值在"管线置换 + 去噪器设计"两层。

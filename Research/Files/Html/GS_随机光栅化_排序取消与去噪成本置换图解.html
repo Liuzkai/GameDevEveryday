@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GS 随机光栅化 — 排序取消与去噪成本置换图解</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1b1f24; --muted:#5b6572; --line:#d8dee6; --panel:#f6f8fa;
+    --accent:#c0392b; --accent2:#1f6feb; --ok:#1a7f37; --warn:#9a6700;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --fg:#e6edf3; --muted:#9aa6b2; --line:#2c333c; --panel:#1b2027;
+      --accent:#ff7b72; --accent2:#79c0ff; --ok:#3fb950; --warn:#d29922;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 22px 56px; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.72; font-size:15px; max-width:1000px; margin-inline:auto;
+  }
+  h1{font-size:23px; margin:0 0 4px; letter-spacing:.2px}
+  h2{font-size:17px; margin:38px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 6px}
+  p{margin:8px 0}
+  code,.mono{font-family:var(--mono); font-size:.93em}
+  table{border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px}
+  th,td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top}
+  th{background:var(--panel); font-weight:600}
+  .yes{color:var(--ok); font-weight:600}
+  .no{color:var(--accent); font-weight:600}
+  .mid{color:var(--warn); font-weight:600}
+  .note{border-left:3px solid var(--accent2); background:var(--panel); padding:9px 13px;
+        border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px}
+  .legend{color:var(--muted); font-size:12.5px; margin:-4px 0 10px}
+  svg{max-width:100%; height:auto; display:block}
+  .svgbox{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px}
+  ol,ul{padding-left:22px}
+  li{margin:5px 0}
+  hr{border:0; border-top:1px solid var(--line); margin:34px 0}
+</style>
+</head>
+<body>
+
+<h1>GS 随机光栅化 — 排序取消与去噪成本置换图解</h1>
+<p class="sub">建立于 2026-09-24 · 配套 [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] · 数字均取自原文表格（RTX 3090，7 条导航轨迹均值）</p>
+
+<p>
+GS 渲染的经典代价是<strong>每帧全局排序 + alpha 混合</strong> —— 成本随基元数、视锥、通道数一起涨。
+本文的路线不是把它调便宜，而是<strong>把它整个删掉</strong>：每个片元按不透明度概率"留 or 丢"，用普通 Z-buffer 解析。
+<strong>欠下的债只有一笔：1spp 的蒙特卡洛噪声。</strong>还债方式 = 一个 ~1 ms 的时域神经去噪器。
+</p>
+
+<h2>一、两条管线对照</h2>
+
+<div class="svgbox">
+<svg viewBox="0 0 680 250" role="img" aria-label="排序混合管线与随机管线对照">
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/>
+    </marker>
+  </defs>
+  <g font-family="-apple-system,Segoe UI,PingFang SC,sans-serif" font-size="12">
+    <!-- Left: classic -->
+    <text x="24" y="30" fill="var(--fg)" font-weight="700">经典管线（排序 + 混合）</text>
+    <rect x="24" y="44" width="120" height="44" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="84" y="71" text-anchor="middle" fill="var(--fg)">高斯投影</text>
+    <line x1="144" y1="66" x2="172" y2="66" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ar2)"/>
+    <rect x="174" y="44" width="130" height="44" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+    <text x="239" y="64" text-anchor="middle" fill="var(--accent)">全局深度排序</text>
+    <text x="239" y="80" text-anchor="middle" fill="var(--muted)" font-size="10.5">成本 ∝ 基元×overdraw×通道</text>
+    <line x1="304" y1="66" x2="332" y2="66" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ar2)"/>
+    <rect x="334" y="44" width="120" height="44" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="394" y="64" text-anchor="middle" fill="var(--fg)">alpha 混合</text>
+    <text x="394" y="80" text-anchor="middle" fill="var(--muted)" font-size="10.5">每像素几十层</text>
+    <text x="480" y="71" fill="var(--muted)">= 17.96 ms</text>
+
+    <!-- Right: stochastic -->
+    <text x="24" y="140" fill="var(--fg)" font-weight="700">随机管线（取消排序与混合）</text>
+    <rect x="24" y="154" width="120" height="44" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="84" y="181" text-anchor="middle" fill="var(--fg)">高斯投影</text>
+    <line x1="144" y1="176" x2="172" y2="176" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ar2)"/>
+    <rect x="174" y="154" width="130" height="44" rx="8" fill="none" stroke="var(--ok)" stroke-width="1.8"/>
+    <text x="239" y="174" text-anchor="middle" fill="var(--ok)">随机保留 + Z-buffer</text>
+    <text x="239" y="190" text-anchor="middle" fill="var(--muted)" font-size="10.5">按不透明度概率留/丢 → 无偏估计</text>
+    <line x1="304" y1="176" x2="332" y2="176" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ar2)"/>
+    <rect x="334" y="154" width="120" height="44" rx="8" fill="none" stroke="var(--accent2)" stroke-width="1.8"/>
+    <text x="394" y="174" text-anchor="middle" fill="var(--accent2)">神经去噪器</text>
+    <text x="394" y="190" text-anchor="middle" fill="var(--muted)" font-size="10.5">+1 ms，近乎常数</text>
+    <text x="480" y="181" fill="var(--ok)" font-weight="700">= 3.75 ms</text>
+
+    <text x="24" y="228" fill="var(--muted)" font-size="11.5">裸随机（无去噪）= 2.71 ms；排序混合 = 17.96 ms（官方实现，去辅助通道）→ 全管线保持 2.1× 优势</text>
+  </g>
+</svg>
+</div>
+
+<h2>二、成本条形账（每帧毫秒，7 轨迹均值）</h2>
+
+<div class="svgbox">
+<svg viewBox="0 0 680 210" role="img" aria-label="每帧成本条形图">
+  <g font-family="-apple-system,Segoe UI,PingFang SC,sans-serif" font-size="12">
+    <!-- bars: scale 1ms = 31px; max 17.96 -> 557px -->
+    <text x="150" y="30" text-anchor="end" fill="var(--fg)">2DGS 官方</text>
+    <rect x="160" y="16" width="557" height="20" rx="4" fill="var(--accent)" opacity="0.75"/>
+    <text x="727" y="30" fill="var(--fg)" font-weight="600">17.96</text>
+
+    <text x="150" y="66" text-anchor="end" fill="var(--fg)">2DGS（硬件光栅重写）</text>
+    <rect x="160" y="52" width="248" height="20" rx="4" fill="var(--warn)" opacity="0.75"/>
+    <text x="418" y="66" fill="var(--fg)">7.99</text>
+
+    <text x="150" y="102" text-anchor="end" fill="var(--fg)">裸随机 1spp</text>
+    <rect x="160" y="88" width="84" height="20" rx="4" fill="var(--ok)" opacity="0.7"/>
+    <text x="254" y="102" fill="var(--fg)">2.71</text>
+
+    <text x="150" y="138" text-anchor="end" fill="var(--fg)" font-weight="700">本文全管线</text>
+    <rect x="160" y="124" width="116" height="20" rx="4" fill="var(--accent2)" opacity="0.85"/>
+    <text x="286" y="138" fill="var(--fg)" font-weight="700">3.75</text>
+
+    <text x="160" y="170" fill="var(--muted)" font-size="11.5">净收益 2.1×；加速比随内容浮动 1.2×（厨房，低 overdraw）～ 3.5×（bicycle）</text>
+    <text x="160" y="190" fill="var(--muted)" font-size="11.5">去噪器开销 ≈ +1 ms 且几乎与场景无关 —— 这是"取消瓶颈 + 新增固定成本"的典型账</text>
+  </g>
+</svg>
+</div>
+
+<h2>三、去噪器数据流（双路径 + 方差门控）</h2>
+
+<div class="svgbox">
+<svg viewBox="0 0 680 240" role="img" aria-label="去噪器数据流">
+  <defs>
+    <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/>
+    </marker>
+  </defs>
+  <g font-family="-apple-system,Segoe UI,PingFang SC,sans-serif" font-size="12">
+    <rect x="16" y="96" width="104" height="52" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="68" y="118" text-anchor="middle" fill="var(--fg)">1spp 随机流</text>
+    <text x="68" y="135" text-anchor="middle" fill="var(--muted)" font-size="10.5">颜色+深度+payload</text>
+
+    <line x1="120" y1="110" x2="156" y2="66" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#ar3)"/>
+    <line x1="120" y1="134" x2="156" y2="180" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#ar3)"/>
+
+    <rect x="158" y="30" width="150" height="58" rx="8" fill="none" stroke="var(--accent2)" stroke-width="1.6"/>
+    <text x="233" y="52" text-anchor="middle" fill="var(--fg)">累积路径（无偏）</text>
+    <text x="233" y="70" text-anchor="middle" fill="var(--muted)" font-size="10.5">原始样本 EMA · 上限 128 帧</text>
+
+    <rect x="158" y="152" width="150" height="58" rx="8" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
+    <text x="233" y="174" text-anchor="middle" fill="var(--fg)">去噪路径（稳定）</text>
+    <text x="233" y="192" text-anchor="middle" fill="var(--muted)" font-size="10.5">空间滤波帧 EMA · 上限 24 帧</text>
+
+    <rect x="330" y="88" width="128" height="66" rx="8" fill="none" stroke="var(--warn)" stroke-width="1.6"/>
+    <text x="394" y="110" text-anchor="middle" fill="var(--fg)">方差门控 g</text>
+    <text x="394" y="128" text-anchor="middle" fill="var(--muted)" font-size="10.5">按累积路径的标准误</text>
+    <text x="394" y="143" text-anchor="middle" fill="var(--muted)" font-size="10.5">逐像素混合两条路径</text>
+
+    <line x1="308" y1="59" x2="330" y2="100" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#ar3)"/>
+    <line x1="308" y1="181" x2="330" y2="140" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#ar3)"/>
+
+    <rect x="500" y="96" width="120" height="52" rx="8" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="560" y="118" text-anchor="middle" fill="var(--fg)">STAB 稳定化</text>
+    <text x="560" y="135" text-anchor="middle" fill="var(--muted)" font-size="10.5">抖动↓ 少量 ghosting</text>
+    <line x1="458" y1="121" x2="498" y2="121" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ar3)"/>
+
+    <rect x="158" y="96" width="150" height="0" />
+    <text x="233" y="118" text-anchor="middle" fill="var(--warn)" font-size="11" transform="translate(0,-30)"></text>
+
+    <text x="163" y="228" fill="var(--muted)" font-size="11.5">学习 trust（小 CNN）决定"重投影历史该信多少" —— 消融里它是最关键组件（去掉：26.63 → 22.51 dB）</text>
+  </g>
+</svg>
+</div>
+
+<h2>四、导航画质阶梯（MipNeRF360 自由导航，PSNR）</h2>
+
+<table>
+  <tr><th>方法</th><th>PSNR↑</th><th>说明</th></tr>
+  <tr><td>Ref(1024)（上限）</td><td>32.96</td><td>每帧 1024 样本累积，蒙特卡洛天花板（非实用方法）</td></tr>
+  <tr><td><strong>本文（去噪后）</strong></td><td class="yes"><strong>29.80</strong></td><td>唯一"接近参考"的实时方案</td></tr>
+  <tr><td>SVGF（通用去噪器）</td><td>25.57</td><td>缺干净引导 → 被浮游高斯与空洞干扰</td></tr>
+  <tr><td>ST-TAA（原版+时域累积）</td><td class="no">21.48</td><td>未能保留有效历史 → 可见闪烁</td></tr>
+  <tr><td>Raw 1spp</td><td class="no">18.26</td><td>噪声水平是随机范式的固有下限（原版 StochasticSplats 同水平）</td></tr>
+</table>
+
+<div class="note">
+  <strong>可复用判据：</strong>① 排序可以被"<strong>取消</strong>"而不是"优化"（成本函数从 ∝ 场景复杂度 → 每像素 + 固定项）；
+  ② 没有干净 G-buffer 时，去噪的"trust"<strong>必须靠学</strong>（最强启发式仍差 0.8 dB）；
+  ③ 双路径 = "无偏慢收敛 + 有偏快稳定"，按不确定度混合 —— 一个可搬走的架构模式。
+</div>
+
+<h2>五、边界（原文自述）</h2>
+<ul>
+  <li>与高度工程化的排序管线（FlashGS 等）比，<strong>绝对吞吐尚不能称王</strong> —— 贡献被收窄为"去掉挡住随机路线的 MC 噪声"；</li>
+  <li>相对排序渲染器仍有 PSNR 缺口（29.80 vs 32.96）；宿主几何转换本身损失 ~1 dB；</li>
+  <li>仍有可见闪烁（trust 网络容量所限），STAB 以少量 ghosting 换稳定；</li>
+  <li>每场景需训练 payload（每高斯 10 float）；zero-shot 版质量略降但可用。</li>
+</ul>
+
+<hr>
+<p class="legend">
+来源：Hu et al., <em>Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising</em>（arXiv 2609.25604，北京大学）。
+入库于 2026-09-24。
+</p>
+
+</body>
+</html>

@@ -158,9 +158,10 @@ $$E_d=1-(F_{ss}E_{ss}+F_{ms}E_{ms}),\qquad K_d=\text{albedo}\cdot E_d$$
 ★ 2017  Kulla & Conty（把 Kelemen 公式工程化：32×32 表 = 4KB + 解析 F_avg + 忽略各向异性）
         —— 被多家引擎/工作室采用 ★ 本库已入库
         ↓
-2018  Hill（a：Fresnel 的几何级数展开；b：逐次弹射模拟 → 更准但每次弹射一张表，且不管 IBL）
-2018  Lagarde & Golubev（credit Emmanuel Turquin）：F_avg 进一步简化为 F_0 + 只缩放已有 lobe
-        —— 与 split-sum 共享同一张 DFG 表（本库第 ⑤ 条路线；原始书目条目待核实）
+2018  ★ Hill 系列（**2026-09-24 入库**）：Fms 修正 → EFms 预计算 → Schlick 拆分（Σ wi·F0^i）→ 单贴图 3 MAD
+        —— "更准 vs 能用"在方案内部再演两轮（3D LUT → 2D LUT → 1 贴图）
+2018  Lagarde & Golubev（credit Emmanuel Turquin）：F_avg 简化为 F_0 + 只缩放已有 lobe
+        —— **Turquin TR 已下载核对（2026-09-24）**；与 split-sum 共享同一张 DFG 表（本库第 ⑤ 条路线）
         ↓
 ★ 2019  Fdez-Agüera（JCGT，实时 IBL 版：缺口 = 1 − Ess，而 Ess 已经在表里）★ 2026-09-20 入库
         —— 零新增资源；**并且第一次处理了"低粗糙度端超额能量"**
@@ -189,9 +190,9 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 | [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] | **路线 ② 理论天花板**（精确闭式） | ✅ 入库 |
 | [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] | **路线 ① 精确真值（随机）**；"不可实时"这句话定义了后面所有工作 | ✅ **2026-09-20 入库** |
 | [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] | **路线 ④ 实时 IBL 版**（零新增资源；首次处理低粗糙度端超额能量） | ✅ **2026-09-20 入库** |
-| Lagarde & Golubev 2018（credit Emmanuel Turquin） | **路线 ⑤ 最便宜版**（只缩放已有 lobe） | ⚠️ 经 Filament 官方文档转述核实，**原始书目条目待核实** |
+| Lagarde & Golubev 2018（credit Emmanuel Turquin） | **路线 ⑤ 最便宜版**（只缩放已有 lobe：$\rho=\rho_{ss}+F_{ms}k_{ms}\rho_{ss}$，$k_{ms}=(1-E_{ss})/E_{ss}$） | ✅ **2026-09-24 原始文献落地**：Turquin TR《Practical multiple scattering compensation for microfacet models》（ILM，5 页）已下载核对（要点见 [[Hill — A Multi-Faceted Exploration (2018-2019)]]）；`[Lagarde18]` 条目 = SIGGRAPH 2018 Advances 课程页（Hill Part 4 脚注） |
 | Kelemen & Szirmay-Kalos 2001, Eurographics Short | 公式源头 | ❌ 未入库（较老，可只在本文引用） |
-| Hill 2018, *A Multi-Faceted Exploration* part 2 / part 3 | 比 ④ 更准（逐次弹射模拟），但每次弹射一张表、且不处理 IBL | ❌ 未入库，**可作为"更准 vs 能用"的又一实例** |
+| [[Hill — A Multi-Faceted Exploration (2018-2019)]] | **路线 ③ 的工程化中段**（Fms 修正 + EFms 预计算 + Schlick 拆分 → 单贴图 3 MAD）；"更准 vs 能用"的完整过程记录 | ✅ **2026-09-24 入库**（原文四篇逐篇核对；**两处"待核实"同日结案**） |
 | [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] | **系统性手册（746 页参考地图册）** | ✅ **2026-09-23 入库** —— 本书即"五条补法"谱系的**原文全谱**（VII.48）；13.3.4 给出 Heitz 式截面，13.7.1/13.8.1 给出**球面 albedo 的拟合闭式**（furnace test 的第一个客观对照基线）；14.2 节为 Kelemen 2001 归属提供手册级佐证 |
 | Hammon 2017, *PBR Diffuse Lighting for GGX+Smith Microsurfaces* | **漫反射侧**的同类问题 | ❌ 未入库，**优先级高** |
 
@@ -247,7 +248,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 1. **把 furnace test 做成一次真实的自测**（30 分钟内可完成）：
    纯金属球 → Roughness 0→1 → 只有环境光 → 截图；**再加一个光滑白电介质球查掠射亮边**；然后切换引擎侧的能量补偿开关对比。**做完这一条，本概念即可从 Normal 升 Easy**；
    **🔴 2026-09-23 更新：现在有客观对照基线了** —— 先在 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 的 **13.7.1（Beckmann）/ 13.8.1（GGX）** 查到对应 $\eta$、$\alpha$ 的**球面 albedo 拟合闭式值**，再与引擎实测对照（不再是"凭感觉看变暗/变亮"）；
-2. **经典候选排队（2026-09-23 更新）**：~~Heitz et al. 2016~~ ✅ 已入库 → ~~Fdez-Agüera 2019~~ ✅ 已入库 → ~~d'Eon, *A Hitchhiker's Guide to Multiple Scattering*~~ ✅ **已入库（9-23）** → 现在最高优先级是 **Hammon 2017**（`PBR Diffuse Lighting for GGX+Smith Microsurfaces` —— **漫反射侧也漏能量**，与 diffuse 认知直接相关；**原文阻塞中**：GDC Vault 403 已三试）> **Hill 2018 part 2/3**（"更准 vs 能用"的又一实例）；
+2. **经典候选排队（2026-09-24 更新）**：~~Heitz et al. 2016~~ ✅ → ~~Fdez-Agüera 2019~~ ✅ → ~~d'Eon《Hitchhiker's Guide》~~ ✅（9-23）→ ~~Hill 2018 part 2/3~~ ✅（**9-24 入库**）→ 现最高优先级：**Hammon 2017**（`PBR Diffuse Lighting for GGX+Smith Microsurfaces` —— **漫反射侧也漏能量**；**原文阻塞中**：GDC Vault 403 已三试）> 毛发侧 **Kajiya-Kay 1989**（需先确认原文可得）> PCG 侧 **Parish & Müller 2001**（候选）；
 3. 与 [[Split-Sum Approximation]] 合并成一张"IBL 镜面半边固定开销表"（cubemap 预滤波 + EnvBRDF LUT + 能量补偿），纳入 [[Real-Time VFX Performance Budgeting]] 的参考账。**④ 让这张表多了一行"成本 ≈ 0"**。
 
 ## Visualization
