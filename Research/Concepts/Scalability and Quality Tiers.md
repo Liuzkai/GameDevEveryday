@@ -117,6 +117,14 @@ Android_Low  保底，优先稳定帧率
 
 见 [[预算五维_1978-1983_源头图解]]。
 
+**🔴 一条横贯所有维度的"表示律"（2026-09-25 补，出自 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]）**：
+
+> **"细节表示跟着观察尺度走；当细节小到不该用几何时，预算从几何维度迁移到纹理维度。"**
+
+- 原文两句原话：**"the rendering time of a texel is independent of the geometric complexity of the surfaces that it extracts"**（渲染时间与几何复杂度**解耦** —— 档位预算能成立的前提）；**"We should switch from the texel representation to actual geometry when viewing the model at this resolution"**（**近看切回几何** —— 分档阶梯的 1989 版本）；
+- 当代同构：**发片 ⇄ 发丝**（[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]，自动升档）、**LSS 路径追踪毛发**（《巫师 3》重制版，2026-09 产业）——**"表示跟着尺度走"在 37 年后仍然是档位设计的底层原则**；
+- **对五维矩阵的含义**：每一档不仅要问"参数给多少"，还要问"**这一档用哪种表示**"——毛发/植被/远景是最先暴露这条问题的资产。
+
 ## Game Applications
 
 - [[AAA Real-Time VFX]]

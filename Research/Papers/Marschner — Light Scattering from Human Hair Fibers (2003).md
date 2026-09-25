@@ -33,7 +33,7 @@ tags: [hair, brdf, classic, scattering, pbr-boundary]
 | **TT**（p=1） | 折射进、折射出 | **明亮的背光透射**——发丝在逆光下"亮起来"的那道光 |
 | **TRT**（p=2） | 折射进、内壁反射一次、折射出 | **有色次级高光**（光穿过了有色素的内部；**黑发上看不到它**），且**离焦发散**（去偏） |
 
-**最有信息量的一条**：角质层鳞片相对柱面**朝发根方向倾斜约 3°**，这个倾斜把 R 与 TRT 的锥面**推向相反方向**——**这就是真实头发上"两条高光"的物理来源**，也是 [[Kajiya-Kay]] 式模型永远做不出来的东西。
+**最有信息量的一条**：角质层鳞片相对柱面**朝发根方向倾斜约 3°**，这个倾斜把 R 与 TRT 的锥面**推向相反方向**——**这就是真实头发上"两条高光"的物理来源**，也是 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)|Kajiya-Kay]] 式模型永远做不出来的东西。
 
 ## Problem
 
@@ -179,7 +179,7 @@ $$\eta^*_1=2(\eta-1)a^{2}-\eta+2,\qquad \eta^*_2=2(\eta-1)a^{-2}-\eta+2,\qquad
 ## Technology Evolution
 
 ```text
-Kajiya-Kay 1989 —— 各向异性经验模型（圆柱 + 恒定镜面锥），实时默认 30 年
+Kajiya-Kay 1989 —— 各向异性经验模型（圆柱 + 恒定镜面锥），实时默认 30 年（**2026-09-25 已入库**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]）
         ↓
 ★ Marschner et al. 2003 —— R/TT/TRT 半透明椭圆柱物理模型（本文）
         ↓
@@ -203,7 +203,7 @@ UE Groom / TressFX / HairWorks —— 进引擎，只服务高端档
 
 ### Replaces / Contrasts
 
-- **Kajiya & Kay 1989**（各向异性经验模型）：本文明确以"它预测不出实测现象"为立项理由（**Kajiya-Kay 1989 尚未入库，是本概念的下一个经典候选**）
+- [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]（各向异性经验模型）：本文明确以"它预测不出实测现象"为立项理由 —— **已入库（2026-09-25）**：它给出的是"失效后工程上用的是什么"（$\sin(t,l)$ 漫反射 + 圆锥 Phong 高光，实时用了 30 年）；与本文构成毛发着色的"经验侧 ⟷ 物理侧"两端
 - [[Microfacet Theory]]：**失效边界**——微面假设表面由面组成，而纤维是细长散射体且有透射
 
 ### Related

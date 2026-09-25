@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-24]]（昨日：[[2026-09-23]]）
-- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 4 天**；上一周：[[2026-W37]]）
+- **今日**：[[2026-09-25]]（昨日：[[2026-09-24]]）
+- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 5 天**；上一周：[[2026-W37]]）
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 17 天）
 
-## Papers（55）
+## Papers（58）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -74,6 +74,9 @@ created: 2026-09-07
 | [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] | A-  | Normal（GS 之上的新研究） | **高（"取消排序"第四条 GS 路线；成本函数置换样本：全管线 2.1×、去噪 +1 ms 常数；"无干净引导时 trust 必须靠学"）** ★ 2026-09-24 |
 | [[2026-09-22-PartLLM — A Unified Multimodal Foundation for 3D Part Segmentation]]             | A-  | Normal      | 中高（**分件 = 意图条件生成**；腾讯 Visvise / SIGGRAPH Asia 2026；**粒度可点单**；"生成只做决策层"第 5 例） ★ 2026-09-24 |
 | [[Hill — A Multi-Faceted Exploration (2018-2019)]]                                            | A（经典） | Normal      | **最高（能量账本谱系缺失中段：Fms 修正 → Schlick 线性性 2D LUT → 单贴图 3 MAD；Turquin TR / Lagarde18 两处待核实同日结案）** ★ 2026-09-24 |
+| [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]                        | S（经典） | **Normal（实时侧源头）** | **最高（★ 毛发实时侧源头：texel 三元组 / sin(t,l) 漫反射 + 圆锥高光 / "渲染时间与几何复杂度解耦"= 预算与几何解耦的最早表述 / "texel↔几何切换"= 分档原则的 1989 版本）** ★ 2026-09-25 |
+| [[2026-09-23-CuACD — A Fully GPU-Resident Approximate Convex Decomposition]]                  | A-  | Normal      | 高（**碰撞代理的凸分解全 GPU 常驻：~80–100×，单网格十几秒 → 0.2 秒级；"overnight bake → 交互式"；"取消式优化"第二例：取消 kernel 边界与 host 同步**） ★ 2026-09-25 |
+| [[2026-09-24-OREO — Fidelity Alignment in 3D Generation via On-The-Fly Rendering-Editing Optimization]] | B+  | Normal      | 中（**3D 生成器后训练：Render-Edit-Optimize 循环；消融表四种监督方式三种失败（on-policy / latent 对比 / 显式伪目标为唯一成立组合）；界定 DMD 的适用边界**） ★ 2026-09-25 |
 
 ## Concepts（30）
 
@@ -163,6 +166,6 @@ Research/
 
 ---
 
-最后更新：2026-09-24（Run #16：前沿窗口 9-23 ~ 9-24，**9-23 listing（5 条）+ API 交叉核验另捕获 5 条"已提交未公告"条目**全部评估，入库 **2 篇前沿**：**Stochastic GS Denoising**（A-，**"取消排序"第四条 GS 路线**：全管线 3.75 ms / 2.1×、去噪 +1 ms 常数、"无干净引导时 trust 必须靠学"）+ **PartLLM**（A-，**3D 分件统一为"意图条件生成"**：腾讯 Visvise / SIGGRAPH Asia 2026；联合分配 + 粒度可点单）+ 经典 **[[Hill — A Multi-Faceted Exploration (2018-2019)]]**（**能量账本谱系缺失中段**：Fms 修正 → Schlick 线性性 → 单贴图 3 MAD；**Turquin TR / Lagarde18 两处"待核实"同日结案**）+ 2 图解 + Daily；**产业侧头条：UE 5.8 MegaLights 官方口径一手核验完成** —— **Niagara 粒子光源已支持（更正 9-21 二手记录）**、**移动端/Switch/上代主机完全不支持（五档硬约束）**、开销恒定、`r.MegaLights.Allow` 官方档位开关 → **动态灯光维度复审材料全部到位**；另：《控制：共振》今日发售（DLSS 4.5 全套 + Dynamic MFG 6×；实测 5090 PT 4K 72→39）、E-Day 将带 MegaLights + RTX Mega Geometry（首个非 Remedy 样本））
+最后更新：2026-09-25（Run #17：前沿窗口 9-24 ~ 9-25，**9-24 listing（6 条，5 条已被 Run #16 提前评估）+ API 窗口另捕获 4 条全部评估**，入库 **2 篇前沿**：**CuACD**（A-，**凸分解全 GPU 常驻 ~80–100×**：单网格十几秒 → 0.2 秒级、warp 为设计单元 + 设备端堆分配器、"取消式优化"第二例）+ **OREO**（B+，**3D 生成器后训练**：Render-Edit-Optimize，**消融表四种监督三种失败**——on-policy / latent 对比 / 显式伪目标为唯一成立组合）**+ 1 篇经典（今日头条）：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]**（**毛发实时侧源头**：texel 三元组、"渲染时间与几何复杂度解耦"= **预算与几何解耦的最早表述**、"texel↔几何切换"= **分档原则的 1989 版本**；[[Hair Rendering]] 的 Next Step #1 结清 → **着色两头齐备，9 条自测待通过**）+ 1 图解 + Daily；**产业侧：《巫师 3》重制版（9-29）LSS 路径追踪毛发（HairWorks 增强）—— 毛发三代表示（texel / 物理 lobe / 光追基元）同日会齐**；Gears E-Day 规格确认（**RTX 3060 Ti = 1440p High → MegaLights 门槛"中端可达"**，10-6 正式版实测为最终检验））
+　　▸ **9-24 回顾**（Run #16）：Stochastic GS Denoising（"取消排序"第四条 GS 路线 + "取消式优化"首例）+ PartLLM（分件=意图条件生成）+ Hill 系列（能量账本中段）；UE 5.8 MegaLights 官方口径一手核验完成（Niagara 粒子光源已支持 / 移动端硬性无缘 / **动态灯光复审材料全齐**）
 　　▸ **9-23 回顾**（Run #15）：d'Eon《Hitchhiker's Guide》入库（**参考层落地**；furnace test 首获对照基线）+ WorldCrafter（**记忆=预算** 第一例）+ Mira-Scene（**有界才是关键**）+ 新概念 [[Linear Transport Theory]]
-　　▸ **9-22 回顾**（Run #14）：**PCG 域从零覆盖到"源头 + 前沿"双锚点** —— ProxyBuild（B+）+ Müller 2006（CGA shape，跨 20 年的直接问答）+ 新概念 [[Procedural Content Generation]] + 图解；产业侧：UE6 职业电竞实测（首作《火箭联盟》2027）、XeSS 3 官方 UE 插件（帧生成倍率成为引擎级参数）

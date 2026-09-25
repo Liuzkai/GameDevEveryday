@@ -142,7 +142,7 @@ user_level: Easy      # 或 Normal / Hard
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
   - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）+ [[Hill — A Multi-Faceted Exploration (2018-2019)]]（**谱系中段的完整过程记录**，9-24 入库）。**不计入 25 条**，标为"读了，不是会了"；
   - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。** **（9-23 更新：对照基线已就位——先查 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 13.7.1 / 13.8.1 的球面 albedo 拟合值，再对引擎实测。）**
-- **[[Hair Rendering]] — 5 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级）
+- **[[Hair Rendering]] — 9 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立 5 条：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级；**2026-09-25 随 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 增 4 条**：texel 三要素 / sin(t,l) 漫反射 / 高光为何是圆锥 / "渲染时间与几何复杂度解耦"对预算的意义。**9 条通过即可把"毛发着色"标 Easy**）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
 
@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 17 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 2 篇前沿（[[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]] / [[2026-09-22-PartLLM — A Unified Multimodal Foundation for 3D Part Segmentation|PartLLM]]）+ 1 篇经典（[[Hill — A Multi-Faceted Exploration (2018-2019)]]）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 18 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 2 篇前沿（[[2026-09-23-CuACD — A Fully GPU-Resident Approximate Convex Decomposition|CuACD]] / [[2026-09-24-OREO — Fidelity Alignment in 3D Generation via On-The-Fly Rendering-Editing Optimization|OREO]]）+ 1 篇经典（[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]）**，均落在既有学习线与专业域内，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -181,6 +181,11 @@ user_level: Easy      # 或 Normal / Hard
     - 详见 [[2026-09-24]] 产业信号 1 与 [[Scalability and Quality Tiers]]；
 15. **9-24 方法论库存 +1（"取消式优化"）**：[[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]] 证明**"排序可以被取消，而不是优化"**（成本函数置换：∝ 场景复杂度 → 每像素 + 固定项）。**体检问法**：面对任一瓶颈，先问"**它能不能不存在**"，再问"它能不能变便宜"；
 16. **9-24 补录（PartLLM，供资产流程参考）**：[[2026-09-22-PartLLM — A Unified Multimodal Foundation for 3D Part Segmentation|PartLLM]]（腾讯 Visvise / SIGGRAPH Asia 2026）把分件做成"**意图条件的粒度接口**"——同一资产可按不同下游需求生成不同粒度分解。观察项：Visvise 是否把该能力产品化（部件级批量材质 / 碰撞 / LOD 预处理）。
+17. **🔴 9-25 新增（毛发收口 + 两条新库存方法论）**：
+    - **毛发着色收口窗口已打开**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 入库 → 经验侧 + 物理侧两头齐备，**9 条自测（Marschner 5 + Kajiya-Kay 4）通过即可标 Easy**。**同时注意：它是"预算与几何解耦"的最早正式表述**（"渲染时间与其代表的几何复杂度无关"）——你的五维预算体系可以直接引用它作为原则溯源；
+    - **"取消式优化"第 2 例（GPU 工程版）**：[[2026-09-23-CuACD — A Fully GPU-Resident Approximate Convex Decomposition|CuACD]] 把凸分解的 kernel 边界与 host 同步**消掉而非优化**（~80–100×）。**体检问法扩展**：不只在算法层问"它能不能不存在"，在**执行层**（kernel 边界 / host 回环 / 数据搬运）同样适用；
+    - **"监督信号三原则"（OREO 消融表，评估任何 AI 工具时直接可用）**：① 监督必须跟着学生走（on-policy）；② 显式伪目标 > 隐式 score 梯度（**DMD"作加速器行、作老师不行"**）；③ 质量提升与结构漂移必须解耦（Mask IoU 分离器）。**且三个降级变体全部差于"不训练"基线**——看见 AI 工具宣传先找"降级消融"；
+    - **E-Day 规格给 MegaLights 门槛一个"中端"锚点**（RTX 3060 Ti = 1440p High）：动态灯光维度复审的最后一块拼图（**10-6 正式版实测为最终检验**）。
 
 ---
 

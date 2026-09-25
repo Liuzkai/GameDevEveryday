@@ -303,6 +303,7 @@ $$MeanParts_f = InitialMeanParts + DeltaMeanParts \times (f - f_0)$$
 ### Followed By
 
 - **Reeves & Blau 1985** —— 结构化粒子系统：把**整条轨迹**当静态形状画出来 → 头发、毛皮、草（**这是"static particles / strands"的源头，也是本库 [[Hair Rendering]] 资产表示的最早祖先**）；
+- **[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]** —— **"光线追踪侧的对偶"**（原文自述："this paper represents the extension of particle systems to ray tracing"）：粒子系统的"没有几何的渲染"被搬到微表面——texel 里存密度/帧/BRDF 场，沿光线**求和**；**"渲染时间与几何复杂度无关"由此成为正式原则**（2026-09-25 入库）；
 - **Reynolds 1987（Boids）** —— 在粒子之上加"外部状态交互"（目标追寻、碰撞避免、群体中心、有限感知）；
 - **Müller 2003（SPH）** —— 粒子 + 流体力学 → 有表面的水；
 - **GPU 粒子（2006+）→ Niagara（2016+）** —— 结论里那句"适合硬件实现"在 23 年后兑现。

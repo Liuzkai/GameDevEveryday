@@ -34,7 +34,7 @@ first_introduced: "Kajiya-Kay 1989（各向异性经验模型）；Marschner et 
 
 | 模型 | 年份 | 性质 | 说明 |
 |---|---|---|---|
-| **Kajiya-Kay** | 1989 | 经验 | 把头发当作**圆柱**处理：切向各向异性高光。极便宜，至今仍是大量游戏的默认 |
+| **Kajiya-Kay** | 1989 | 经验 | 把头发当作**圆柱**处理：切向各向异性高光。极便宜，至今仍是大量游戏的默认 → ★ **2026-09-25 已入库**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]（含 texel 三要素、$\sin(t,l)$ 漫反射与圆锥高光的推导、与 Reeves 粒子系统的"对偶"关系） |
 | **Marschner et al.** | 2003 | 物理 | 把头发当作**半透明圆柱**，拆出三个 lobe：**R**（直接反射，白高光）、**TT**（透射-透射，逆光亮边）、**TRT**（透射-反射-透射，有色次级高光 + 发丝透光）→ ★ **2026-09-18 已入库**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] |
 | 后续 | 2008+ | 工程化 | 双散射近似（补多次散射）、能量守恒修正、实时近似 |
 
@@ -83,7 +83,7 @@ Android_Mid/Low  只留 R（退化为各向异性高光带）
 ## Historical Evolution
 
 ```text
-Kajiya-Kay 1989 —— 各向异性经验模型（圆柱假设），成为实时默认
+Kajiya-Kay 1989 —— texel（密度场）+ 各向异性经验模型；"近看时切回真实几何"的分档原则（**2026-09-25 入库**）
         ↓
 ★ Marschner et al. 2003 —— R / TT / TRT 物理模型，影视级（**2026-09-18 入库**）
         ↓
@@ -95,18 +95,22 @@ UE Groom / TressFX / HairWorks —— 发丝进引擎，只服务高端档
         ↓
 DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
         （见 [[DLSS 5 — Generative Neural Rendering]]）
+        ↓
+★ 2026-09 《巫师 3》重制版（9-29）—— LSS 路径追踪毛发（HairWorks 增强）
+        → 毛发成为 GPU 光追的原生曲线基元（"光追档"成为新的最高档）
 ```
+
+> **"表示跟着观察尺度走"的完整三代**：texel ↔ 几何（1989，手动）→ 发片 ↔ 发丝（2026，HairCS 可自动升档）→ 光追曲线基元（2026，LSS）。**你的毛发分档表未来会多出一档：光追毛发。**
 
 ## Important Papers
 
 | 论文 | 角色 |
 |---|---|
-| Kajiya & Kay 1989 | 各向异性经验模型，至今仍是实时默认（**待入库**） |
+| [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] | ★ 2026-09-25 入库：**实时侧经验源头**（texel + $\sin(t,l)$ 漫反射 + 圆锥高光）；"渲染时间与几何复杂度无关"与"texel↔几何切换"两条原则的出处 |
 | [[Marschner — Light Scattering from Human Hair Fibers (2003)]] | ★ 2026-09-18 入库：R/TT/TRT 物理模型，**本概念的理论锚点**（含 Table 1 全套典型参数、$\alpha_{TT}=-\alpha_R/2$、$\alpha_{TRT}=-3\alpha_R/2$） |
 | [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] | 资产侧：发片 → 发丝 自动升档 |
 
-**待补（下一批经典候选）**：Kajiya-Kay 1989（实时侧的经验源头）、Scheuermann 2004（TRT 的实时近似）、dual scattering 类多次散射近似。
-**注**：**着色侧的源头（Marschner 2003）已于 2026-09-18 补齐**，本概念不再是"有尾无头"。
+**两头已齐**：实时侧（Kajiya-Kay 1989）与物理侧（Marschner 2003）均入库。**剩余待补（下一批经典候选）**：Scheuermann 2004（TRT 的实时近似）、dual scattering 类多次散射近似——属于"实时化工程文"层。
 
 ## Related Concepts
 
@@ -134,18 +138,19 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 ## Personal Knowledge
 
 - **user_level: Normal**。判断依据：你做角色 VFX 与分档预算，"发片便宜 / 发丝贵"这类结论显然在 Easy 区；但**毛发的着色模型（Kajiya-Kay / Marschner）与"发片↔发丝能否互转"**这两块是新的。
-- 与你当前学习线的交汇点：**毛发是 D·G·F 框架的失效边界**——学 PBR 时把它当作反例记住，比多记一个公式有用。
+- **（2026-09-25 更新）着色侧的两头现已齐备**：经验侧 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] + 物理侧 [[Marschner — Light Scattering from Human Hair Fibers (2003)]]，两条共 **9 条 Mastery 自测**——通过即可把"毛发着色"整体标 Easy。
+- 与你当前学习线的交汇点：**毛发是 D·G·F 框架的失效边界**——学 PBR 时把它当作反例记住，比多记一个公式有用。**同时它还是"预算与几何解耦"（Kajiya-Kay 1989）与"档位=换表示"（HairCS / LSS）的最佳案例库。**
 
 ## Learning Gap
 
 1. ~~**最大缺口：着色模型源头缺失。**~~ ✅ **2026-09-18 已补齐**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] 入库，R/TT/TRT 的物理来源、参数表、"白高光 / 有色次级高光 / 逆光亮边"的对应关系全部到位（含 5 条 Mastery 自测）。
 2. ~~**R / TT / TRT 三个 lobe 分别对应什么视觉现象**~~ ✅ 同篇补齐（见上表）。
-3. **仍然缺：实时近似那一段的工程细节**——Kajiya-Kay 1989（经验侧源头）、Scheuermann 2004（TRT 实时化）、dual scattering（多次散射近似）。**这一块决定"低档到底怎么降"，比物理模型更贴近你的日常。**
+3. ~~**实时侧源头缺失**~~ ✅ **2026-09-25 再补**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 入库（texel 三元组、两条着色公式、"预算与几何解耦"、"texel↔几何切换"；含 4 条 Mastery 自测）。**剩余缺口：实时化工程文**——Scheuermann 2004（TRT 实时化）、dual scattering（多次散射近似）。
 4. **实时毛发的真实成本结构**：发片 vs 发丝在同一角色上的 DrawCall / OverDraw / 显存对比。这一块没有公开基准，需要你自己测。
 
 ## Next Step
 
-1. **补实时侧经典**：Kajiya-Kay 1989（优先）、Scheuermann 2004（TRT 实时近似）——物理侧已闭合，剩下的缺口在"实时化"。
+1. ~~**补实时侧经典：Kajiya-Kay 1989（优先）**~~ ✅ **2026-09-25 完成**。剩余：Scheuermann 2004（TRT 实时近似）、dual scattering 类近似——属"实时化"层，优先级降低（着色公式的"两头"已齐）。
 2. **顺手可做的一次实测**（不需要读论文）：在 NGR 里挑一个代表性角色，测同一角色在发片与发丝两种表示下的 **OverDraw 与 GPUTime**，落成两个数字。这比任何论文都更能支撑你的分档判断。
 3. **一个可以直接试的降档实验**：把某个低档发片材质上的 TT（逆光亮边）关掉，看角色在逆光场景下的观感退化程度——**这是验证"TT 不能砍"这条判断的最快方式**。
 4. 跟踪 [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] 是否放出**输出发丝根数**——那是它对你是否有用的唯一硬门槛。
@@ -155,3 +160,4 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 - 2026-09-17 由 [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] 触发建立。
 - 有趣的会合：同一天，NVIDIA DLSS 5 官方 FAQ 把 hair 列为神经渲染增强对象。**毛发正在被两条路径同时攻击：资产侧升档（HairCS）与画面侧神经增强（DLSS 5）。**
 - **2026-09-18**：理论源头补齐（[[Marschner — Light Scattering from Human Hair Fibers (2003)]]），本概念不再是"有尾无头"；同时新增"着色侧降档顺序"与"σa 用颜色换预算"两条可直接用于分档的判断。剩余缺口从"理论"转到"实时化"（Kajiya-Kay 1989 / Scheuermann 2004 / dual scattering）。
+- **2026-09-25**：**实时侧源头补齐**（[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]）——texel 三要素、$\sin(t,l)$ 漫反射与圆锥高光、**"渲染时间与几何复杂度解耦"**（= 预算是"用表示换来的"）、**"近看时切回真实几何"**（= 分档的 1989 版本）。同日产业侧：《巫师 3》重制版（9-29）宣布 **LSS 路径追踪毛发**——"表示跟着观察尺度走"的第三代（光追曲线基元）落地。**毛发三代表示（texel / 物理 lobe / 光追基元）在同一天会齐。**

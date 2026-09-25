@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Texel 与毛发 —— Kajiya-Kay 1989 图解</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1d1f21; --ink-2: #4a4f55; --ink-3: #7b8288;
+    --line: #e3e3e0; --line-2: #efefec; --accent: #b3541e; --accent-soft: #fdf1e8;
+    --code: #f4f4f1; --blue: #2f5d8a; --blue-soft: #eef3f8; --green: #2e7d4f; --green-soft: #eaf4ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a; --panel: #1e2124; --ink: #e8eae7; --ink-2: #b6bcc0; --ink-3: #8a9196;
+      --line: #33383c; --line-2: #282c30; --accent: #e0a06a; --accent-soft: #2a221b;
+      --code: #24282b; --blue: #8ab4dd; --blue-soft: #1c2630; --green: #7fc79a; --green-soft: #1b2a21;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  h1 { font-size: 25px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 26px; }
+  h2 { font-size: 16px; margin: 38px 0 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; background: var(--code); padding: 1px 5px; border-radius: 4px; color: var(--ink); }
+  .lede { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 0 0 8px; color: var(--ink); }
+  .lede strong { color: var(--accent); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin: 0 0 14px; overflow-x: auto; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 11px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th { background: var(--code); color: var(--ink-2); font-weight: 600; font-size: 12.5px; border-bottom: 1px solid var(--line); }
+  tr:last-child td { border-bottom: none; }
+  td.kk { color: var(--accent); font-weight: 600; }
+  td.ms { color: var(--blue); font-weight: 600; }
+  .tag { display: inline-block; font-size: 11.5px; padding: 1px 8px; border-radius: 20px; border: 1px solid var(--line); color: var(--ink-3); margin-right: 6px; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; background: var(--code); border: 1px solid var(--line-2); border-radius: 8px; padding: 10px 14px; margin: 8px 0; color: var(--ink); }
+  .hint { font-size: 13px; color: var(--ink-3); }
+  .em { color: var(--accent); font-weight: 600; }
+  .kem { color: var(--blue); font-weight: 600; }
+  .tly { display: flex; gap: 0; align-items: stretch; }
+  .tl-item { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--panel); }
+  .tl-arrow { display: flex; align-items: center; color: var(--ink-3); padding: 0 8px; font-size: 18px; }
+  .tl-year { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; color: var(--accent); font-weight: 700; }
+  .tl-title { font-weight: 700; font-size: 14px; margin: 2px 0 4px; color: var(--ink); }
+  .tl-body { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Texel 与毛发 —— Kajiya-Kay 1989 图解</h1>
+  <p class="sub">Rendering Fur with Three Dimensional Textures · SIGGRAPH '89 · 本库 2026-09-25 入库 · 配 Hair Rendering 概念的实时侧源头</p>
+
+  <div class="lede">
+    <strong>一句话：</strong>当细节小到"不该用几何画"时，把它整体改画成一个三维纹理 —— <strong>texel</strong>。
+    texel 里不存几何，存三个场：<strong>密度 ρ</strong>（投影面积）、<strong>帧束 B</strong>（朝向）、<strong>BRDF 场 Ψ</strong>（材料）。
+    沿光线把"每个微表面"的贡献<strong>求和</strong>出来 —— 渲染时间从此与内部几何复杂度无关。<br>
+    <strong>毛发两条公式（沿用到了今天）：</strong>漫反射 = <code>Kd · sin(t, l)</code>，高光 = <code>ks · cos^p(θ−θ')</code>。
+  </div>
+
+  <h2>1 · texel = 三个场（不是几何）</h2>
+  <div class="card">
+    <svg viewBox="0 0 980 240" width="100%" style="max-width:980px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="texel 三元组示意">
+      <!-- 立方体 -->
+      <g transform="translate(80,30)">
+        <polygon points="60,40 200,40 200,160 60,160" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+        <polygon points="60,40 110,10 250,10 200,40" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+        <polygon points="200,40 250,10 250,130 200,160" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+        <!-- 内部微表面群 -->
+        <g stroke="var(--ink-3)" stroke-width="1">
+          <line x1="95" y1="120" x2="105" y2="80"/><line x1="130" y1="135" x2="140" y2="95"/>
+          <line x1="165" y1="118" x2="175" y2="78"/><line x1="120" y1="60" x2="130" y2="45"/>
+          <line x1="155" y1="150" x2="165" y2="110"/>
+        </g>
+        <text x="200" y="185" font-size="12.5" fill="var(--ink-3)">体积单元（体素）</text>
+      </g>
+      <!-- 三个场标注 -->
+      <g font-size="13.5">
+        <g transform="translate(400,52)">
+          <text fill="var(--accent)" font-weight="700">ρ — 投影面积密度</text>
+          <text x="0" y="20" fill="var(--ink-2)">该单元内微表面覆盖的投影面积比例</text>
+          <text x="0" y="38" fill="var(--ink-3)" font-size="12">（不是"体积占比"——见第 2 节）</text>
+        </g>
+        <g transform="translate(400,122)">
+          <text fill="var(--accent)" font-weight="700">B — 帧束 [n, t, b]</text>
+          <text x="0" y="20" fill="var(--ink-2)">微表面的代表朝向。毛发只用到切线 t</text>
+        </g>
+        <g transform="translate(400,186)">
+          <text fill="var(--accent)" font-weight="700">Ψ — 双向反射函数场</text>
+          <text x="0" y="20" fill="var(--ink-2)">材料：光如何从这片微表面散开（毛发中为常数）</text>
+        </g>
+      </g>
+      <text x="80" y="228" font-size="12.5" fill="var(--ink-3)">渲染时间 ∝ 光线穿过的体积与采样数 —— 与其内部"装了多少根毛"无关</text>
+    </svg>
+  </div>
+
+  <h2>2 · 为什么"体积密度"画不了表面（原文最漂亮的反证）</h2>
+  <div class="card">
+    <svg viewBox="0 0 980 250" width="100%" style="max-width:980px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="体积密度对薄表面的失败">
+      <!-- 左：球粒子体积 -->
+      <g transform="translate(60,20)">
+        <rect x="0" y="0" width="330" height="180" rx="10" fill="none" stroke="var(--line)" stroke-width="1.4"/>
+        <g fill="var(--blue)" opacity="0.35">
+          <circle cx="60" cy="60" r="16"/><circle cx="140" cy="40" r="13"/><circle cx="210" cy="80" r="18"/>
+          <circle cx="100" cy="120" r="14"/><circle cx="180" cy="140" r="16"/><circle cx="260" cy="120" r="12"/>
+        </g>
+        <line x1="-15" y1="100" x2="345" y2="100" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="7 5"/>
+        <text x="6" y="205" font-size="13" fill="var(--ink-2)">球粒子密度场（云、雾）：沿射线积分 ∫ρ ds</text>
+        <text x="6" y="224" font-size="12.5" fill="var(--green)">✓ 有效 —— 粒子有体积，处处非零</text>
+      </g>
+      <!-- 右：薄表面 -->
+      <g transform="translate(560,20)">
+        <rect x="0" y="0" width="330" height="180" rx="10" fill="none" stroke="var(--line)" stroke-width="1.4"/>
+        <line x1="165" y1="5" x2="165" y2="175" stroke="var(--accent)" stroke-width="2.5"/>
+        <line x1="-15" y1="100" x2="345" y2="100" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="7 5"/>
+        <circle cx="165" cy="100" r="5" fill="var(--accent)"/>
+        <text x="178" y="96" font-size="12" fill="var(--accent)">只在单点相交</text>
+        <text x="6" y="205" font-size="13" fill="var(--ink-2)">无限薄表面放进密度场：积分只在单点非零</text>
+        <text x="6" y="224" font-size="12.5" fill="var(--accent)">✗ 失效 —— 不透明度与亮度都算成 0：完全反射的表面，隐形了</text>
+      </g>
+      <text x="60" y="18" font-size="12" fill="var(--ink-3)">对比对象</text>
+    </svg>
+    <div class="formula">修正 = 把"体积"换成"投影面积"，把积分换成求和：T = Σ exp(−Σρ)，B = Σ [衰减 × Σᵢ Iᵢ·Ψ] × ρ</div>
+    <p class="hint">一句话记住：<span class="em">体积密度的物理量是"占了多少空间"；表面的不透明度与亮度根本不取决于空间。</span>所以必须换度量。</p>
+  </div>
+
+  <h2>3 · 毛发的两条公式（几何直觉）</h2>
+  <div class="card">
+    <svg viewBox="0 0 980 270" width="100%" style="max-width:980px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="毛发着色几何">
+      <!-- 左：发丝与向量 -->
+      <g transform="translate(40,30)">
+        <rect x="40" y="95" width="330" height="26" rx="13" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+        <!-- 切线 -->
+        <line x1="0" y1="108" x2="430" y2="108" stroke="var(--accent)" stroke-width="2"/>
+        <polygon points="430,108 416,102 416,114" fill="var(--accent)"/>
+        <text x="420" y="96" font-size="13" fill="var(--accent)" font-weight="700">t（切线）</text>
+        <!-- 光 -->
+        <line x1="150" y1="10" x2="205" y2="88" stroke="var(--blue)" stroke-width="2"/>
+        <polygon points="205,88 205,74 194,81" fill="var(--blue)"/>
+        <text x="105" y="16" font-size="13" fill="var(--blue)" font-weight="700">l（光）</text>
+        <!-- 视 -->
+        <line x1="205" y1="108" x2="330" y2="190" stroke="var(--green)" stroke-width="2"/>
+        <polygon points="330,190 318,184 322,174" fill="var(--green)"/>
+        <text x="332" y="205" font-size="13" fill="var(--green)" font-weight="700">e（视）</text>
+        <!-- 角 -->
+        <path d="M 205 88 A 40 40 0 0 1 240 98" fill="none" stroke="var(--blue)" stroke-width="1.4"/>
+        <text x="228" y="80" font-size="12" fill="var(--blue)">θ</text>
+        <path d="M 240 122 A 45 45 0 0 0 268 148" fill="none" stroke="var(--green)" stroke-width="1.4"/>
+        <text x="276" y="150" font-size="12" fill="var(--green)">θ'</text>
+      </g>
+      <!-- 右：说明 -->
+      <g transform="translate(500,46)" font-size="13.5">
+        <text fill="var(--ink)" font-weight="700">漫反射（对可见半圆柱积分 Lambert）</text>
+        <text y="24" fill="var(--ink-2)">结果是 <tspan font-family="ui-monospace,Menlo,Consolas,monospace" fill="var(--accent)">Kd · sin(t, l)</tspan></text>
+        <text y="46" fill="var(--ink-2)">＝ 光与切线夹角的正弦</text>
+        <text y="68" fill="var(--ink-3)" font-size="12.5">切线直指光源时该处最暗 —— 真实毛发可观察</text>
+        <text y="112" fill="var(--ink)" font-weight="700">高光（反射形成一个"圆锥"）</text>
+        <text y="134" fill="var(--ink-2)">法线绕切线一圈都有 → 反射光沿锥面分布</text>
+        <text y="156" fill="var(--ink-2)"><tspan font-family="ui-monospace,Menlo,Consolas,monospace" fill="var(--accent)">ks · cos^p(θ−θ')</tspan>　沿锥面用 Phong 衰减</text>
+        <text y="178" fill="var(--ink-3)" font-size="12.5">强度与视向量的"方位角"无关（圆柱对称）</text>
+      </g>
+    </svg>
+    <p class="hint"><span class="em">这就是"你沿发丝看到的那条高光带"的原始模型</span>：极便宜、实时可用，在低配档与存量 shader 里一直活到今天 —— 直到 Marschner 2003 用半透明圆柱 + R/TT/TRT 给出物理版本。</p>
+  </div>
+
+  <h2>4 · texel ↔ 几何：1989 年就写下的分档原则</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>尺度</th><th>用哪种表示</th><th>1989 原文</th><th>2026 年的同一个问题</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>近景 / 特写</td>
+          <td class="kk">真实几何</td>
+          <td>"We should switch from the texel representation to <b>actual geometry</b> when viewing the model at this resolution."</td>
+          <td>主角近景 → 发丝（Strand / Groom）</td>
+        </tr>
+        <tr>
+          <td>中远 / 群演 / 低配</td>
+          <td class="kk">texel（纹理场）</td>
+          <td>texel 的渲染时间与内部几何复杂度无关</td>
+          <td>NPC / 远景 / 移动端 → 发片（Hair Cards）</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="hint" style="margin-top:10px"><span class="em">同一个原则，相隔 37 年：</span>细节表示跟着观察尺度走。
+    今天你库里的 <b>HairCS</b>（发片 → 发丝自动升档）正是在 1989 这条原则的两端之间架了第一座自动桥。</p>
+  </div>
+
+  <h2>5 · 毛发表示的三代</h2>
+  <div class="tly">
+    <div class="tl-item">
+      <div class="tl-year">1989 · Kajiya-Kay</div>
+      <div class="tl-title">texel：密度场 + 两条经验公式</div>
+      <div class="tl-body">不存几何，存"多少、朝哪、什么材质"三个场。sin(t,l) 漫反射 + 圆锥高光。实时用了 30 年。</div>
+    </div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-item">
+      <div class="tl-year">2003 · Marschner</div>
+      <div class="tl-title">物理 lobe：R / TT / TRT</div>
+      <div class="tl-body">半透明椭圆柱 + 倾斜鳞片 + 内部吸收。给了"逆光亮边（TT）"和"双高光"的物理来源。</div>
+    </div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-item">
+      <div class="tl-year">2026 · LSS 路径追踪毛发</div>
+      <div class="tl-title">GPU 光追的原生曲线基元</div>
+      <div class="tl-body">《巫师 3》重制版（9-29）：Line Swept Sphere + HairWorks 增强 + DLSS 4.5 RR。毛发进入实时光追时代。</div>
+    </div>
+  </div>
+  <p class="hint" style="margin-top:12px">三代表示，同一目的：<span class="em">在"看起来对"与"算得起"之间找位置。</span>你的 S/A/B/C × 五档矩阵，就是这个位置表的当代版本。</p>
+
+</div>
+</body>
+</html>
