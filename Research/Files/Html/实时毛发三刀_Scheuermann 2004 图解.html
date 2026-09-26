@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实时毛发三刀 — Scheuermann 2004 图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a;
+    --code:#f0f3f7; --card:#fbfcfe;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61;
+      --code:#232a32; --card:#20262d;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:880px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:18px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px;color:var(--ink)}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  .figrow{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .figrow .fig{flex:1 1 320px;min-width:280px}
+  ul{margin:6px 0 6px 20px;padding:0}
+  li{margin:3px 0}
+  .tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 10px;color:var(--ink2);margin-right:6px}
+  .foot{font-size:13px;color:var(--ink2)}
+  svg{display:block;margin:0 auto;max-width:100%}
+  .svgtxt{font-family:"Segoe UI","PingFang SC",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>实时毛发三刀 — Scheuermann 2004</h1>
+  <div class="sub">Practical Real-Time Hair Rendering and Shading · ACM SIGGRAPH 2004 Sketches · ATI Research ·
+  用于实时动画《Ruby: The Double Cross》</div>
+
+  <div class="panel">
+    <p><b>它要解决的问题：</b>2003 年的 <b>Marschner 物理模型</b>（R / TT / TRT 三叶散射）很美，但三样东西都"太贵"——
+    <span class="tag">发丝几何太贵</span><span class="tag">半透明排序太贵</span><span class="tag">物理求值太贵</span></p>
+    <p><b>它的解法：</b>三刀，把物理观察的<b>结论</b>（而不是方程）参数化，塞进 2004 年的实时硬件。
+    全文只有两篇参考文献——继承 <b>Kajiya-Kay 1989</b>（经验侧），逼近 <b>Marschner 2003</b>（物理侧）。
+    <b>这篇就是两端之间的工程桥。</b></p>
+  </div>
+
+  <!-- 刀 1 -->
+  <div class="panel">
+    <h2><span class="num">1</span>模型刀：连续发丝 → 分层 2D 发片</h2>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 340 210" role="img" aria-label="分层发片示意">
+          <ellipse cx="170" cy="60" rx="52" ry="44" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="5 4"/>
+          <path d="M96 140 C 130 92, 210 92, 244 140 C 236 170, 104 170, 96 140 Z" fill="var(--accent)" opacity="0.16" stroke="var(--accent)" stroke-width="1.6"/>
+          <path d="M88 124 C 126 70, 214 70, 252 124 C 244 158, 96 158, 88 124 Z" fill="var(--accent2)" opacity="0.14" stroke="var(--accent2)" stroke-width="1.6"/>
+          <path d="M82 108 C 122 48, 218 48, 258 108 C 250 146, 90 146, 82 108 Z" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.6"/>
+          <text class="svgtxt" x="170" y="196" text-anchor="middle" font-size="12" fill="var(--ink2)">头 → 若干层发片（layered 2D polygon patches）</text>
+          <text class="svgtxt" x="170" y="24" text-anchor="middle" font-size="12" fill="var(--ink2)">用几层片近似"体积感"</text>
+        </svg>
+        <div class="cap">发片层叠 = 用最少的几何近似最多头发的视觉密度</div>
+      </div>
+      <div class="fig">
+        <h3>为什么选发片（原文三条理由）</h3>
+        <ul>
+          <li><b>顶点负载低</b>：比线渲染（每根头发一条曲线）便宜得多；</li>
+          <li><b>排序简化</b>：片数远少于三角形/发丝数——为刀 ③ 铺路；</li>
+          <li><b>贴美术管线</b>：多边形片 + 贴图，是美术的日常工具。</li>
+        </ul>
+        <p class="dim">代价：自阴影不做真的——每顶点 AO（预处理算好）顶替。近看会穿帮（2026 年发丝化的动机之一）。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 刀 2 -->
+  <div class="panel">
+    <h2><span class="num">2</span>着色刀：两个高光，一根"被掰弯"的切线</h2>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 360 220" role="img" aria-label="移位切线示意">
+          <line x1="30" y1="120" x2="330" y2="120" stroke="var(--ink2)" stroke-width="2.4"/>
+          <text class="svgtxt" x="336" y="124" font-size="12" fill="var(--ink2)">发丝</text>
+          <line x1="150" y1="120" x2="252" y2="120" stroke="var(--accent)" stroke-width="2.6" marker-end="url(#arr1)"/>
+          <text class="svgtxt" x="196" y="112" font-size="13" fill="var(--accent)">T（切线）</text>
+          <line x1="150" y1="120" x2="150" y2="56" stroke="var(--accent2)" stroke-width="2.2" marker-end="url(#arr2)"/>
+          <text class="svgtxt" x="156" y="60" font-size="13" fill="var(--accent2)">N（片法线）</text>
+          <line x1="150" y1="120" x2="262" y2="72" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="6 4" marker-end="url(#arr3)"/>
+          <text class="svgtxt" x="214" y="66" font-size="13" fill="var(--gold)">T′ = normalize(T + s·N)</text>
+          <ellipse cx="268" cy="120" rx="26" ry="10" fill="#fff" fill-opacity="0.9" stroke="var(--line)"/>
+          <text class="svgtxt" x="268" y="150" text-anchor="middle" font-size="12" fill="var(--ink2)">主高光（白 · 向发梢）</text>
+          <ellipse cx="92" cy="120" rx="24" ry="10" fill="var(--gold)" fill-opacity="0.35"/>
+          <text class="svgtxt" x="92" y="150" text-anchor="middle" font-size="12" fill="var(--ink2)">次高光（有色 · 向发根）</text>
+          <defs>
+            <marker id="arr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/></marker>
+            <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent2)"/></marker>
+            <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--gold)"/></marker>
+          </defs>
+        </svg>
+        <div class="cap">s 的大小从贴图里查（一张"切线偏移图"，相当于毛发的 normal map）；s 的正负号决定高光移向发梢还是发根</div>
+      </div>
+      <div class="fig">
+        <h3>两个高光 = Marschner 观察的"参数化翻拍"</h3>
+        <table>
+          <tr><th>组件</th><th>做法</th></tr>
+          <tr><td>漫反射</td><td><code>max(0, 0.75×N·L + 0.25)</code><br><span class="dim">缩放+偏置 → 背光侧不死黑</span></td></tr>
+          <tr><td>主高光（≈R）</td><td>白、尖、向发梢移位</td></tr>
+          <tr><td>次高光（≈TRT）</td><td>受发色调制、宽、向发根移位，乘噪声贴图 → 闪烁感</td></tr>
+        </table>
+        <p class="dim">不是仿真物理，而是<b>把"物理观察到的视觉结论"直接写成两个移位高光项</b>——这条"近似观察而非近似方程"的路子，此后被用了几十年。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 刀 3 -->
+  <div class="panel">
+    <h2><span class="num">3</span>排序刀：取消运行时排序（静态索引缓冲 + 四趟渲染）</h2>
+    <p>半透明发片要正确混合，需要 back-to-front。本文的做法：<b>把排序从"运行时每帧"搬进"预处理一次"</b>——
+    按距头距离排好<b>发片（连通分量，不是逐三角形）</b>，顺序固化进<b>静态索引缓冲</b>；运行时用四趟固定流程逼近。</p>
+    <table>
+      <tr><th>趟</th><th>Z 写</th><th>Z 测</th><th>剔除</th><th>内容</th></tr>
+      <tr><td>① prime-Z</td><td>✓（只写深度）</td><td>—</td><td>关背面剔除；alpha-test 掩掉透明区；不写颜色</td><td>给不透明区先铺深度</td></tr>
+      <tr><td>② 不透明着色</td><td>—</td><td><b>equal</b></td><td>—</td><td>完整毛发 shader，只给与①相同的像素</td></tr>
+      <tr><td>③ 背面透明</td><td>关</td><td>less</td><td><b>正面剔除</b></td><td>所有背面透明区</td></tr>
+      <tr><td>④ 正面透明</td><td>✓</td><td>less</td><td><b>背面剔除</b></td><td>所有正面透明区</td></tr>
+    </table>
+    <div class="callout warn">
+      <b>最值得记的一处：第①趟存在的理由不是"铺深度"，而是"避免后续趟使用 alpha-test"——因为 alpha-test 会禁用 early-Z。</b><br>
+      原文：<i>"the extra rendering pass is more than offset by the gains of early-Z culling in the following three passes."</i><br>
+      → 通用判据：<b>看到任何"加一步前置工作"的方案，先问它解锁了什么</b>。这里多渲染一趟，解锁了随后三趟的 early-Z。
+    </div>
+    <div class="callout gold">
+      <b>前提假设（原文明说）：</b><i>"we assume that the hair model only undergoes very moderate animation that doesn't move the hair patches much relative to each other."</i>
+      —— 静态排序成立的条件是<b>发片间相对运动足够小</b>；不成立时，回退到它刚省掉的 CPU 排序。
+      <b>任何"预计算方案"的规格里，都应该有一行"它在什么条件下失效"。</b>
+    </div>
+  </div>
+
+  <!-- 跨越 22 年 -->
+  <div class="panel">
+    <h2>跨越 22 年的回声：「取消式优化」</h2>
+    <table>
+      <tr><th>年份</th><th>工作</th><th>取消了什么</th><th>用什么替代</th></tr>
+      <tr><td>2004</td><td><b>Scheuermann（本文）</b></td><td>运行时 CPU 空间排序</td><td>静态索引缓冲 + 四趟固定流程</td></tr>
+      <tr><td>2026</td><td>Stochastic GS Denoising</td><td>高斯的显式排序</td><td>固定光栅化顺序 + 神经去噪</td></tr>
+      <tr><td>2026</td><td>CuACD</td><td>kernel 边界与 host 同步</td><td>全 GPU 常驻 + 设备端分配器</td></tr>
+    </table>
+    <p class="foot">共同句式：<b>「这个中间环节能不能不存在？」</b> —— 先问"能不能不存在"，再问"能不能更便宜"。</p>
+    <h3>毛发表示四代（本文处在第 3 代的起点）</h3>
+    <table>
+      <tr><th>代</th><th>表示</th><th>代表作</th></tr>
+      <tr><td>1989</td><td>texel（密度场）</td><td>Kajiya-Kay</td></tr>
+      <tr><td>2003</td><td>物理 lobe（R/TT/TRT）</td><td>Marschner</td></tr>
+      <tr><td>2004+</td><td><b>发片 + 双高光 + 固定排序（实时工程）</b></td><td><b>本文</b> → 此后十几年游戏默认</td></tr>
+      <tr><td>2026</td><td>发片 ⇄ 发丝自动升档 / 光追曲线基元（LSS）</td><td>HairCS / 《巫师 3》重制版</td></tr>
+    </table>
+  </div>
+
+  <div class="panel foot">
+    出处：ACM SIGGRAPH 2004 Sketches（Talks），p.147，DOI 10.1145/1186223.1186408；ATI Research。
+    原文 PDF（SIGGRAPH History Archive）与 23 页配套 slides 均已逐条核对。
+    关联笔记：<code>Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)</code> · <code>Hair Rendering</code> · <code>Kajiya-Kay 1989</code> · <code>Marschner 2003</code>
+  </div>
+
+</div>
+</body>
+</html>

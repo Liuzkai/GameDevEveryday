@@ -142,7 +142,7 @@ user_level: Easy      # 或 Normal / Hard
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
   - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）+ [[Hill — A Multi-Faceted Exploration (2018-2019)]]（**谱系中段的完整过程记录**，9-24 入库）。**不计入 25 条**，标为"读了，不是会了"；
   - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。** **（9-23 更新：对照基线已就位——先查 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 13.7.1 / 13.8.1 的球面 albedo 拟合值，再对引擎实测。）**
-- **[[Hair Rendering]] — 9 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立 5 条：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级；**2026-09-25 随 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 增 4 条**：texel 三要素 / sin(t,l) 漫反射 / 高光为何是圆锥 / "渲染时间与几何复杂度解耦"对预算的意义。**9 条通过即可把"毛发着色"标 Easy**）
+- **[[Hair Rendering]] — 12 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立 5 条：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级；**2026-09-25 随 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 增 4 条**：texel 三要素 / sin(t,l) 漫反射 / 高光为何是圆锥 / "渲染时间与几何复杂度解耦"对预算的意义；**2026-09-26 随 [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 再增 3 条**：两 lobe 的移位机制（扰动切线）/ "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟。**12 条通过即可把"毛发着色（含实时工程）"标 Easy**）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
 
@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 18 天**。当前不影响工作（推送已按推断值自动调权）。**本次新增 2 篇前沿（[[2026-09-23-CuACD — A Fully GPU-Resident Approximate Convex Decomposition|CuACD]] / [[2026-09-24-OREO — Fidelity Alignment in 3D Generation via On-The-Fly Rendering-Editing Optimization|OREO]]）+ 1 篇经典（[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]）**，均落在既有学习线与专业域内，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 19 天**。当前不影响工作（推送已按推断值自动调权）。**本次（W39 收官）新增 1 篇前沿（[[2026-09-01-ToCo-Mesh — Topology-Consistent Dynamic Mesh Reconstruction via Adaptive Tessellation and Surface-Aligned 2DGS|ToCo-Mesh]]）+ 1 篇经典（[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]]）**，均落在既有学习线与专业域内，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -186,6 +186,11 @@ user_level: Easy      # 或 Normal / Hard
     - **"取消式优化"第 2 例（GPU 工程版）**：[[2026-09-23-CuACD — A Fully GPU-Resident Approximate Convex Decomposition|CuACD]] 把凸分解的 kernel 边界与 host 同步**消掉而非优化**（~80–100×）。**体检问法扩展**：不只在算法层问"它能不能不存在"，在**执行层**（kernel 边界 / host 回环 / 数据搬运）同样适用；
     - **"监督信号三原则"（OREO 消融表，评估任何 AI 工具时直接可用）**：① 监督必须跟着学生走（on-policy）；② 显式伪目标 > 隐式 score 梯度（**DMD"作加速器行、作老师不行"**）；③ 质量提升与结构漂移必须解耦（Mask IoU 分离器）。**且三个降级变体全部差于"不训练"基线**——看见 AI 工具宣传先找"降级消融"；
     - **E-Day 规格给 MegaLights 门槛一个"中端"锚点**（RTX 3060 Ti = 1440p High）：动态灯光维度复审的最后一块拼图（**10-6 正式版实测为最终检验**）。
+18. **🔴 9-26 新增（W39 收官：毛发线三节点闭合 + 三条新判据）**：
+    - **[[Hair Rendering]] 的"实时化工程"缺口闭合**（[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]]）：**texel（1989）→ 物理 lobe（2003）→ 实时工程（2004）三节点齐**，Mastery 自测扩至 **12 条**（+3：两 lobe 移位机制 / 排序前提假设 / early-Z 权衡）——**通过即可把"毛发着色（含实时工程）"标 Easy**；
+    - **"取消式优化"追出 2004 年版本**：Scheuermann 用"**预处理静态索引缓冲 + 四趟渲染**"替代"运行时 CPU 空间排序"（原文 *"Instead of executing a spatial sorting step on the CPU at run-time…"*）——**与 2026 的两个样本（GS 排序取消 / host 同步取消）成链，跨 22 年**；
+    - **两条新判据**：① **"加一步前置工作，先问它解锁了什么"**（prime-Z 第①趟是为了避免 alpha-test 禁用 early-Z——"多一趟被随后三趟的 early-Z 收益盖过"）；② **"前提假设必须写在明面上"**（静态排序成立的前提是发片间相对运动足够小；不成立则回退 CPU 排序）——与 Karis 的"可预存需要什么假设"同一条体检；
+    - **方法侧**：双通道分工补全——"**早提交、晚公告**"条目（提交日在窗口外、公告日在窗口内）API 查不到，**只能靠 recent 页公告分组捕获**。
 
 ---
 
@@ -215,4 +220,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09-23]] · [[2026-09-22]] · [[2026-09-21]] · [[2026-W38]] · [[2026-09]] 技术雷达
+相关：[[2026-09-07]] · [[2026-09-26]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达

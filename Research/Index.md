@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-25]]（昨日：[[2026-09-24]]）
-- **本周综合**：[[2026-W38]]（覆盖 **9-14 ~ 9-20**；**W39 为 9-21 ~ 9-27，今日为第 5 天**；上一周：[[2026-W37]]）
+- **今日**：[[2026-09-26]]（昨日：[[2026-09-25]]）
+- **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-26**，本日产出；**9-27 若有运行将追加**；上一周：[[2026-W38]]）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 17 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 19 天）
 
-## Papers（58）
+## Papers（60）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -77,6 +77,8 @@ created: 2026-09-07
 | [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]                        | S（经典） | **Normal（实时侧源头）** | **最高（★ 毛发实时侧源头：texel 三元组 / sin(t,l) 漫反射 + 圆锥高光 / "渲染时间与几何复杂度解耦"= 预算与几何解耦的最早表述 / "texel↔几何切换"= 分档原则的 1989 版本）** ★ 2026-09-25 |
 | [[2026-09-23-CuACD — A Fully GPU-Resident Approximate Convex Decomposition]]                  | A-  | Normal      | 高（**碰撞代理的凸分解全 GPU 常驻：~80–100×，单网格十几秒 → 0.2 秒级；"overnight bake → 交互式"；"取消式优化"第二例：取消 kernel 边界与 host 同步**） ★ 2026-09-25 |
 | [[2026-09-24-OREO — Fidelity Alignment in 3D Generation via On-The-Fly Rendering-Editing Optimization]] | B+  | Normal      | 中（**3D 生成器后训练：Render-Edit-Optimize 循环；消融表四种监督方式三种失败（on-policy / latent 对比 / 显式伪目标为唯一成立组合）；界定 DMD 的适用边界**） ★ 2026-09-25 |
+| [[2026-09-01-ToCo-Mesh — Topology-Consistent Dynamic Mesh Reconstruction via Adaptive Tessellation and Surface-Aligned 2DGS]] | A-  | Normal      | 中高（**动态网格重建：固定拓扑 + 误差驱动 split/merge + Surface-Aligned 2DGS；USTC / SIGGRAPH Asia 2026；"拓扑一致性 = 可动画的货币"；13K 顶点 vs 729K 高斯**） ★ 2026-09-26 |
+| [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] | A（经典） | **Normal（实时工程侧）** | **最高（★ 实时毛发工程源头：发片模型 + 两 lobe 移位近似（扰动切线）+ "取消运行时排序"（静态索引缓冲 + 四趟渲染 + early-Z）——"取消式优化"的 2004 年版本；毛发线三节点齐全、12 条自测）** ★ 2026-09-26 |
 
 ## Concepts（30）
 
@@ -166,6 +168,6 @@ Research/
 
 ---
 
-最后更新：2026-09-25（Run #17：前沿窗口 9-24 ~ 9-25，**9-24 listing（6 条，5 条已被 Run #16 提前评估）+ API 窗口另捕获 4 条全部评估**，入库 **2 篇前沿**：**CuACD**（A-，**凸分解全 GPU 常驻 ~80–100×**：单网格十几秒 → 0.2 秒级、warp 为设计单元 + 设备端堆分配器、"取消式优化"第二例）+ **OREO**（B+，**3D 生成器后训练**：Render-Edit-Optimize，**消融表四种监督三种失败**——on-policy / latent 对比 / 显式伪目标为唯一成立组合）**+ 1 篇经典（今日头条）：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]**（**毛发实时侧源头**：texel 三元组、"渲染时间与几何复杂度解耦"= **预算与几何解耦的最早表述**、"texel↔几何切换"= **分档原则的 1989 版本**；[[Hair Rendering]] 的 Next Step #1 结清 → **着色两头齐备，9 条自测待通过**）+ 1 图解 + Daily；**产业侧：《巫师 3》重制版（9-29）LSS 路径追踪毛发（HairWorks 增强）—— 毛发三代表示（texel / 物理 lobe / 光追基元）同日会齐**；Gears E-Day 规格确认（**RTX 3060 Ti = 1440p High → MegaLights 门槛"中端可达"**，10-6 正式版实测为最终检验））
+最后更新：2026-09-26（Run #18：前沿窗口 9-25 ~ 9-26，**9-25 listing（周五，7 条）：4 条已覆盖、3 条新条目全评估**（入库 1 篇）；**API 窗口 9-23 ~ 9-26 的 8 条全部已在库**；**新方法：双通道分工补全——"早提交、晚公告"条目只能靠 recent 页捕获**）—— 入库 **1 篇前沿 [[2026-09-01-ToCo-Mesh — Topology-Consistent Dynamic Mesh Reconstruction via Adaptive Tessellation and Surface-Aligned 2DGS|ToCo-Mesh]]**（A-，**动态网格重建**：固定拓扑 + 误差驱动 split/merge + Surface-Aligned 2DGS；**13K 顶点 vs 4D-GS 729K**、75 min / 72 FPS、SIGGRAPH Asia 2026；**"拓扑一致性 = 可动画的货币"**）+ **1 篇经典（今日头条）[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]]**（**实时毛发工程三刀**：发片模型 / 两 lobe 移位近似 / **取消运行时排序（静态索引缓冲 + 四趟渲染 + early-Z 权衡）** —— **毛发线"实时工程"缺口闭合（三节点齐全，12 条自测）**；"取消式优化"追出 2004 年版本）+ 1 图解 + Daily + **首份 [[2026-W39]] Weekly（覆盖 9-21 ~ 9-26）**；**产业侧：Epic Lore VCS 官方仓库核实（结案）；《控制：共振》"帧生成倍率"数据点（22→224 fps）补记**）
+　　▸ **9-25 回顾**（Run #17）：CuACD（凸分解全 GPU 常驻 ~80–100×，"取消式优化"第二例）+ OREO（生成器后训练；DMD 适用边界）+ Kajiya-Kay 1989（毛发实时侧源头；"预算与几何解耦"最早表述）；《巫师 3》重制版 LSS 光追毛发（9-29）+ E-Day 规格（3060 Ti = 1440p High）
 　　▸ **9-24 回顾**（Run #16）：Stochastic GS Denoising（"取消排序"第四条 GS 路线 + "取消式优化"首例）+ PartLLM（分件=意图条件生成）+ Hill 系列（能量账本中段）；UE 5.8 MegaLights 官方口径一手核验完成（Niagara 粒子光源已支持 / 移动端硬性无缘 / **动态灯光复审材料全齐**）
-　　▸ **9-23 回顾**（Run #15）：d'Eon《Hitchhiker's Guide》入库（**参考层落地**；furnace test 首获对照基线）+ WorldCrafter（**记忆=预算** 第一例）+ Mira-Scene（**有界才是关键**）+ 新概念 [[Linear Transport Theory]]
