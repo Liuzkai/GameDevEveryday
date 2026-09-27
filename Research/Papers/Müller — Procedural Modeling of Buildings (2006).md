@@ -170,7 +170,7 @@ id: predecessor : cond ; successor : prob
   ↓
 1982 Stiny set grammar 简化 / 1991 L-system 植物（并行文法）
   ↓
-2001 Parish & Müller 城市（简单体块 + shader）/ 2003 Wonka 立面（split 规则）
+2001 [[Parish-Müller — Procedural Modeling of Cities (2001)]] 城市（简单体块 + shader）/ 2003 Wonka 立面（split 规则）
   ↓
 2006 ★ CGA shape（本文）：复杂体块 + 一致细节的两阶段解法
   ↓
@@ -191,7 +191,7 @@ id: predecessor : cond ; successor : prob
 - L-system（Prusinkiewicz & Lindenmayer 1991）：**记号启发**（scope 是龟形记号的演化），但文法类型刻意不同（顺序 vs 并行）
 
 ### Extends
-- Parish & Müller 2001：从"简单体块 + shader 细节"扩展到"复杂体块 + 真实几何细节"
+- [[Parish-Müller — Procedural Modeling of Cities (2001)]]：从"简单体块 + shader 细节"扩展到"复杂体块 + 真实几何细节"——**同一作者团队相隔 5 年的直接接力**；本文是 2001 论文 Future Work（"把房屋空间分为功能单元、用类似产生式系统组合"）的原话兑现；且本文的 occlusion 查询解决的正是 2001 遗留的"体块互不感知"问题 ★ 2001 已于 2026-09-27 入库
 
 ### Enabled
 - **CityEngine（Esri）**：本文是它的理论基础与规则语言（CGA）来源

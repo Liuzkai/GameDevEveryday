@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 19 天**。当前不影响工作（推送已按推断值自动调权）。**本次（W39 收官）新增 1 篇前沿（[[2026-09-01-ToCo-Mesh — Topology-Consistent Dynamic Mesh Reconstruction via Adaptive Tessellation and Surface-Aligned 2DGS|ToCo-Mesh]]）+ 1 篇经典（[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]]）**，均落在既有学习线与专业域内，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 20 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-27，W39 收官日）新增 1 篇经典（[[Parish-Müller — Procedural Modeling of Cities (2001)]]）**，落在既有 PCG 学习线（Normal）内，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -191,6 +191,11 @@ user_level: Easy      # 或 Normal / Hard
     - **"取消式优化"追出 2004 年版本**：Scheuermann 用"**预处理静态索引缓冲 + 四趟渲染**"替代"运行时 CPU 空间排序"（原文 *"Instead of executing a spatial sorting step on the CPU at run-time…"*）——**与 2026 的两个样本（GS 排序取消 / host 同步取消）成链，跨 22 年**；
     - **两条新判据**：① **"加一步前置工作，先问它解锁了什么"**（prime-Z 第①趟是为了避免 alpha-test 禁用 early-Z——"多一趟被随后三趟的 early-Z 收益盖过"）；② **"前提假设必须写在明面上"**（静态排序成立的前提是发片间相对运动足够小；不成立则回退 CPU 排序）——与 Karis 的"可预存需要什么假设"同一条体检；
     - **方法侧**：双通道分工补全——"**早提交、晚公告**"条目（提交日在窗口外、公告日在窗口内）API 查不到，**只能靠 recent 页公告分组捕获**。
+19. **🔴 9-27 新增（PCG 谱系日：三节点齐全 + 三条可迁移抽象）**：
+    - **[[Procedural Content Generation]] 三节点齐全**：[[Parish-Müller — Procedural Modeling of Cities (2001)]]（城市）→ [[Müller — Procedural Modeling of Buildings (2006)]]（建筑）→ [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies|ProxyBuild]]（推断）——源头/中段/前沿首次全部落库；**2001 ↔ 2006 的"同作者接力"关系**（2006 兑现 2001 的 Future Work，并以 occlusion 查询回应其"体块互不感知"问题）；
+    - **三条可迁移抽象（不需要读全文，可直接用于分档体检）**：① **规则只描述结构、参数由外部策略决定**（ideal successor）——判据："任何规则系统，先问哪些部分该从规则里移出去"；② **约束三档处置**：拒绝 / 修正 / **有条件接受 + 标记 + 后期替换**（高速跨水 → 桥或隧道）；③ **细节层次 = 迭代深度**（decreasing apices）——**与 ToCo-Mesh 的"固定拓扑 + 自适应细分"同源：降档应换表示的深度/密度，而不是硬缩参数**（对分档工作的又一次确认）；
+    - **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 <10 秒 + 建筑约 10 分钟——"database amplification"（少量规则 → 大量数据）的另一面是**生成时间成本**；与 [[Müller — Procedural Modeling of Buildings (2006)]] 的"离线生成量 ≠ 运行时负载"合流；
+    - **产业侧新样本（艺术意图维度）**：《巫师 3》重制版（9-29）发售前"**氛围 vs 准确**"画质争议（CDPR 确认原版不强制替换）→ 记为 [[Temporal Stability and Artistic Intent]] 的一手样本：**"更准确的光"与"记忆里的味道"不总是重合；旧观感保留 = 事实上的"艺术意图档位"**。
 
 ---
 
@@ -220,4 +225,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09-26]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达
+相关：[[2026-09-07]] · [[2026-09-27]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达

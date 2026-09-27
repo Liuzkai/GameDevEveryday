@@ -42,11 +42,15 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 1975       形状文法线：Stiny《Shape Grammars》（建筑学，人工推导）
 1980s–90s  生长模拟线：L-system 植物（Prusinkiewicz & Lindenmayer 1991）
            → "规则生成自然形态"的范式确立
-2001       城市：Parish & Müller《Procedural Modeling of Cities》
-           （L-system + 简单体块 + shader 细节；CityEngine 前身）
+2001       ★ 城市：[[Parish-Müller — Procedural Modeling of Cities (2001)]]
+           （**扩展 L-system**：参数从规则外移（ideal successor + globalGoals +
+           localConstraints，9 条规则覆盖全部示例）；**self-sensitive**：树状→网络；
+           layered grids 半程序化立面；LOD = 迭代深度；CityEngine 前身）
+           ★ 2026-09-27 入库
 2003       立面：Wonka《Instant Architecture》（split 规则）
 2006       ★ CGA shape：[[Müller — Procedural Modeling of Buildings (2006)]]
-           （复杂体块 + 一致细节；两阶段推导；CityEngine 的理论基础）
+           （复杂体块 + 一致细节；两阶段推导；CityEngine 的理论基础；
+           同一作者团队——Müller 于 2001 论文任二作）
 2007–2011  生产化：Procedural Inc. → CityEngine 商用 → Esri 收购
 2010s      （关卡线）WFC / 约束求解进入独立游戏生态；
            Houdini 成为影视/游戏程序化管线主力；
@@ -62,10 +66,11 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 
 ## Important Papers
 
-- [[Müller — Procedural Modeling of Buildings (2006)]] —— **本文库的程序化建筑源头**（CGA shape；CityEngine 理论基础）
-- [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]] —— **2026 前沿样本**（推理 + 检索的混合范式；"结构锚定拓扑"原则）
+- [[Parish-Müller — Procedural Modeling of Cities (2001)]] —— **城市级源头**（扩展 L-system：参数外移；self-sensitive 网络拓扑；四段流水线 = 今天"地形→路网→地块→建筑"生成链的原型；CityEngine 最早出处）★ 2026-09-27 入库
+- [[Müller — Procedural Modeling of Buildings (2006)]] —— **程序化建筑的源头**（CGA shape；CityEngine 理论基础；**与 2001 同一作者团队、相隔 5 年的直接接力**——2006 兑现了 2001 的 Future Work）
+- [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]] —— **2026 前沿样本**（推理 + 检索的混合范式；"结构锚定拓扑"原则；回应 2001 起就存在的"规则编写费力"）
 - [[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]] —— **2026 前沿样本（续）**（单图→场景；"稠密有界对应"替代"稀疏无界位姿"）
-- 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Parish & Müller 2001《Procedural Modeling of Cities》；Wonka et al. 2003《Instant Architecture》；Perlin 1985《An Image Synthesizer》
+- 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Wonka et al. 2003《Instant Architecture》；Perlin 1985《An Image Synthesizer》
 
 > **"结构锚定"母题三例**（9-21 ~ 9-23 连续入库）：Müller 2006 锚在"二维 scope" → ProxyBuild 锚在"面-边拓扑" → Mira-Scene 锚在"像素 ↔ 规范坐标"。**锚什么可以变，但"生成必须作用在可对齐、可查询、可修正的中间表示上"不变。** Mira-Scene 还给出本母题目前最干净的量化判据：**稠密化不够，"有界"才是关键**（场景空间稠密预测 3D-IoU 0.379 vs 有界规范空间 0.727）。
 
@@ -96,6 +101,11 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 - `user_level: Normal`（推断：游戏开发背景对"程序化生成"概念不陌生；**形状文法形式化细节与图神经网络不做要求**）
 - **库内重要连接**：用户工作（NGR / 开放世界）中 **PCG 生成的场景 = VFX 的承载容器**——PCG 产出多少几何/多少半透明植被，会直接影响运行时特效预算的"底噪"。**这是 PCG 域与你的预算工作的真实交叉点。**
 - 另：用户在整理游戏开发知识库时已涉及 Houdini 方向 → 本概念的"技术"清单可直接对接
+- **三条可迁移抽象（2001 入库时提炼，均不需要读全文）**：
+  1. **规则只描述结构、参数由外部策略决定**（ideal successor）——判据：任何规则/生成系统，先问"**哪些部分该从规则里移出去**"；
+  2. **约束"有条件通过"：允许 + 标记 + 后期替换**（高速跨水 → 桥/隧道）——约束处置是三档（拒绝/修正/条件接受），不是二值；
+  3. **细节层次 = 迭代深度**（decreasing apices）——LOD 可以是生成语法的副产品，不必是独立资产链。
+- **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 <10 秒 + 建筑约 10 分钟（2001 硬件）——"database amplification"的另一面是**生成时间成本**；与"离线生成量 ≠ 运行时负载"是同一条账本。
 
 ## Learning Gap
 
@@ -106,4 +116,5 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 ## Next Step
 
 1. （可选，30 分钟）如果在项目中用过 UE PCG：对照 Müller 2006 的"两阶段"（体块 → 表面 → 细节），检查自己图里"结构决策"与"细节填充"是否分离——**分离则改档/换风格便宜，耦合则贵**。
-2. （观察项）ProxyBuild 式的"推断 + 检索"是否渗入引擎工具链（UE PCG 的自动规则生成一类）。
+2. （可选，10 分钟对照）打开手边任意一个生成工具的图/节点网络，找一找 **"结构"与"参数"的边界**在哪——2001 的 ideal successor 机制就是这个边界的最早形态（规则只管结构、函数管参数）。
+3. （观察项）ProxyBuild 式的"推断 + 检索"是否渗入引擎工具链（UE PCG 的自动规则生成一类）。

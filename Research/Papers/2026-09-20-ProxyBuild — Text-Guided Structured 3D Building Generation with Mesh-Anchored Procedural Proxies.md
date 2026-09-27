@@ -44,7 +44,7 @@ status: unread
 ```text
 1975 Stiny 形状文法（人工推导）
    ↓
-2001 Parish & Müller 城市（L-system + 简单体块 + shader 细节）
+2001 [[Parish-Müller — Procedural Modeling of Cities (2001)]] 城市（L-system + 简单体块 + shader 细节）
    ↓
 2003 Wonka 立面（split 规则）
    ↓
@@ -150,7 +150,7 @@ $$P = (\mathcal{G},\, \Pi_f,\, \Pi_e)$$
 
 ### Based On
 - [[Müller — Procedural Modeling of Buildings (2006)]] —— **同日入库、互为前后**：CGA shape 定义"规则驱动的两阶段生成（质量模型 → 立面细节）"；ProxyBuild 保留"两阶段"骨架，把"人写规则"换成"网络推断角色 + LLM 解析属性 + 检索组装"。
-- 形状文法 / 程序化建筑线（Parish & Müller 2001、Wonka 2003）：PCG 侧的祖先（记名，未单独入库）。
+- 形状文法 / 程序化建筑线（[[Parish-Müller — Procedural Modeling of Cities (2001)]]、Wonka 2003）：PCG 侧的祖先——2001 已于 **2026-09-27 入库**；与本篇构成"**25 年同题问答**"：2001 写下 *"each style texture has to be defined manually"* 与规则编写的人工瓶颈，本篇用"LLM 解析属性 + 网络推断角色 + 检索组装"作答（Wonka 2003 仍记名）。
 
 ### Related
 - [[Magpie — Real-Time World Renderer for Interactive Games]] —— **同一个"分层收敛"母题的远亲**：Magpie 里"引擎管规则、生成模型只重画白模"；ProxyBuild 里"结构语义靠推断、几何靠检索复用，谁都不从零生成"。两者的共同点：**让生成模型只碰它最擅长的那一层**。

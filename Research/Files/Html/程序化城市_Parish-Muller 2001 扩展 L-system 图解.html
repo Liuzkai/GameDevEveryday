@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>程序化城市 — Parish &amp; Müller 2001 扩展 L-system 图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a; --purple:#7a4fbf;
+    --code:#f0f3f7; --card:#fbfcfe;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61; --purple:#b393e8;
+      --code:#232a32; --card:#20262d;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:18px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px;color:var(--ink)}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .callout.purple{border-left-color:var(--purple)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  .figrow{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+  .figrow .fig{flex:1 1 320px;min-width:280px}
+  ul{margin:6px 0 6px 20px;padding:0}
+  li{margin:3px 0}
+  .tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 10px;color:var(--ink2);margin-right:6px}
+  .foot{font-size:13px;color:var(--ink2)}
+  svg{display:block;margin:0 auto;max-width:100%}
+  .svgtxt{font-family:"Segoe UI","PingFang SC",sans-serif}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+  .kpi .k{flex:1 1 150px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  .kpi .k b{display:block;font-size:19px;color:var(--accent)}
+  .kpi .k span{font-size:12.5px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>程序化城市 — Parish &amp; Müller 2001</h1>
+  <div class="sub">Procedural Modeling of Cities · ACM SIGGRAPH 2001, pp. 301–308 · ETH Zürich + Central Pictures ·
+  <b>CityEngine 最早的出处</b>（学术原型）</div>
+
+  <div class="panel">
+    <p><b>它要解决的问题：</b>2001 年做"虚拟城市"的路都各缺一角——航拍重建要照片、可视化研究只管画得快、建筑模式语言（Alexander）没被形式化。
+    没有系统能<b>从少量统计/地理输入"从零"生成一整座城市</b>。</p>
+    <p><b>它的答案：</b>一条四段流水线 + 一次<b>对生长语法的改造</b>。
+    <span class="tag">扩展 L-system——参数外移</span><span class="tag">self-sensitive——树状变网络</span><span class="tag">LOD = 迭代深度</span></p>
+  </div>
+
+  <!-- 1. 流水线 -->
+  <div class="panel">
+    <h2><span class="num">1</span>四段流水线：今天所有"地形→路网→地块→建筑"生成链的原型</h2>
+    <svg viewBox="0 0 860 200" role="img" aria-label="四段流水线">
+      <defs>
+        <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+          <path d="M0,0 L7,3.2 L0,6.4 z" fill="var(--ink2)"/>
+        </marker>
+      </defs>
+      <!-- 输入 -->
+      <rect x="8" y="46" width="128" height="76" rx="9" fill="var(--card)" stroke="var(--line)" stroke-width="1.6"/>
+      <text class="svgtxt" x="72" y="72" text-anchor="middle" font-size="12.5" fill="var(--ink)">Image Maps</text>
+      <text class="svgtxt" x="72" y="90" text-anchor="middle" font-size="11" fill="var(--ink2)">高程/水体 地理图</text>
+      <text class="svgtxt" x="72" y="106" text-anchor="middle" font-size="11" fill="var(--ink2)">人口/区划/模式 统计图</text>
+      <line x1="136" y1="84" x2="176" y2="84" stroke="var(--ink2)" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 路网 -->
+      <rect x="178" y="46" width="150" height="76" rx="9" fill="var(--accent)" opacity="0.12" stroke="var(--accent)" stroke-width="1.6"/>
+      <text class="svgtxt" x="253" y="72" text-anchor="middle" font-size="12.5" fill="var(--ink)">① 路网 Roadmap</text>
+      <text class="svgtxt" x="253" y="90" text-anchor="middle" font-size="11" fill="var(--ink2)">扩展 L-system</text>
+      <text class="svgtxt" x="253" y="106" text-anchor="middle" font-size="11" fill="var(--accent2)">highways + streets</text>
+      <line x1="328" y1="84" x2="368" y2="84" stroke="var(--ink2)" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 地块 -->
+      <rect x="370" y="46" width="140" height="76" rx="9" fill="var(--card)" stroke="var(--line)" stroke-width="1.6"/>
+      <text class="svgtxt" x="440" y="72" text-anchor="middle" font-size="12.5" fill="var(--ink)">② 地块 Lots</text>
+      <text class="svgtxt" x="440" y="90" text-anchor="middle" font-size="11" fill="var(--ink2)">递归分割（最长/平行边）</text>
+      <text class="svgtxt" x="440" y="106" text-anchor="middle" font-size="11" fill="var(--ink2)">剔除太小/无街口</text>
+      <line x1="510" y1="84" x2="550" y2="84" stroke="var(--ink2)" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 建筑 -->
+      <rect x="552" y="46" width="140" height="76" rx="9" fill="var(--accent2)" opacity="0.12" stroke="var(--accent2)" stroke-width="1.6"/>
+      <text class="svgtxt" x="622" y="72" text-anchor="middle" font-size="12.5" fill="var(--ink)">③ 建筑 Buildings</text>
+      <text class="svgtxt" x="622" y="90" text-anchor="middle" font-size="11" fill="var(--ink2)">随机参数化 L-system</text>
+      <text class="svgtxt" x="622" y="106" text-anchor="middle" font-size="11" fill="var(--ink2)">从 ground plan 挤出</text>
+      <line x1="692" y1="84" x2="732" y2="84" stroke="var(--ink2)" stroke-width="1.6" marker-end="url(#arr)"/>
+      <!-- 纹理 -->
+      <rect x="734" y="46" width="118" height="76" rx="9" fill="var(--gold)" opacity="0.12" stroke="var(--gold)" stroke-width="1.6"/>
+      <text class="svgtxt" x="793" y="72" text-anchor="middle" font-size="12.5" fill="var(--ink)">④ 立面纹理</text>
+      <text class="svgtxt" x="793" y="90" text-anchor="middle" font-size="11" fill="var(--ink2)">layered grids</text>
+      <text class="svgtxt" x="793" y="106" text-anchor="middle" font-size="11" fill="var(--ink2)">半程序化</text>
+      <text class="svgtxt" x="430" y="26" text-anchor="middle" font-size="12" fill="var(--ink2)">每一级的输出是下一级的输入 —— 图依赖链的最早形态</text>
+      <text class="svgtxt" x="430" y="166" text-anchor="middle" font-size="11.5" fill="var(--ink2)">中间数据结构：Roadmap Graph → Allotments Polygons → Buildings Strings → Geometry</text>
+    </svg>
+    <div class="cap">论文 Figure 1 的管线：深色框是每级工具产出的数据结构（原文图注）</div>
+  </div>
+
+  <!-- 2. 扩展 L-system -->
+  <div class="panel">
+    <h2><span class="num">2</span>核心贡献：扩展 L-system —— 把"参数计算"从规则里整体搬出去</h2>
+    <p><b>动机（原文）：</b>把参数与条件写进产生式，规则数量与复杂度会爆炸——<i>"每实现一个新约束，大量规则都要重写"</i>。这是规则系统的扩展性灾难。</p>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 400 240" role="img" aria-label="ideal successor 三步机制">
+          <defs>
+            <marker id="arr2" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+              <path d="M0,0 L7,3.2 L0,6.4 z" fill="var(--ink2)"/>
+            </marker>
+          </defs>
+          <rect x="24" y="20" width="352" height="52" rx="9" fill="var(--card)" stroke="var(--line)" stroke-width="1.5"/>
+          <text class="svgtxt" x="40" y="42" font-size="12.5" fill="var(--ink)">① L-system 生成 <tspan font-weight="700" fill="var(--accent)">ideal successor</tspan>（理想后继）</text>
+          <text class="svgtxt" x="40" y="60" font-size="11.5" fill="var(--ink2)">结构正确、参数 UNASSIGNED —— 规则只管"什么后继"</text>
+          <line x1="200" y1="72" x2="200" y2="94" stroke="var(--ink2)" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <rect x="24" y="96" width="352" height="52" rx="9" fill="var(--accent)" opacity="0.10" stroke="var(--accent)" stroke-width="1.5"/>
+          <text class="svgtxt" x="40" y="118" font-size="12.5" fill="var(--ink)">② <tspan font-weight="700" fill="var(--accent)">globalGoals()</tspan> —— 按全局目标写入参数</text>
+          <text class="svgtxt" x="40" y="136" font-size="11.5" fill="var(--ink2)">人口密度寻峰 / 路网模式选择 → 角度、长度、分支延迟</text>
+          <line x1="200" y1="148" x2="200" y2="170" stroke="var(--ink2)" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <rect x="24" y="172" width="352" height="52" rx="9" fill="var(--accent2)" opacity="0.10" stroke="var(--accent2)" stroke-width="1.5"/>
+          <text class="svgtxt" x="40" y="194" font-size="12.5" fill="var(--ink)">③ <tspan font-weight="700" fill="var(--accent2)">localConstraints()</tspan> —— 按局部环境修正参数</text>
+          <text class="svgtxt" x="40" y="212" font-size="11.5" fill="var(--ink2)">越界裁剪/旋转、交叉检测；无解 → 置 FAILED → 下轮删除</text>
+        </svg>
+        <div class="cap">"理想后继 + 外部函数"三步 —— 规则层永远不需要知道策略</div>
+      </div>
+      <div class="fig">
+        <h3>收益：整套路网 = 9 条规则</h3>
+        <p>公理 <code>w</code> + 产生式 <code>p1–p9</code>，<b>全部示例（含四种模式、混合过渡）共用同一组规则</b>。</p>
+        <div class="callout gold">
+          <b>可迁移判据（本文最值钱）：</b>任何规则/生成系统，先问 <b>"哪些部分该从规则里移出去"</b>——因为"每加约束就要改规则"是扩展性的头号杀手。
+        </div>
+        <p class="dim">今天的对应物：UE PCG 把"结构（图）"与"参数（表/噪声/mask）"分离；Houdini 把规则与参数分成节点与属性——同一设计哲学。</p>
+      </div>
+    </div>
+
+    <h3>self-sensitive L-system —— 让生长语法长出"网络"而不是"树"</h3>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 360 180" role="img" aria-label="树状 vs 网络拓扑">
+          <!-- 树状 -->
+          <g>
+            <text class="svgtxt" x="90" y="22" text-anchor="middle" font-size="12" fill="var(--ink2)">植物 L-system：树状（无环）</text>
+            <circle cx="90" cy="48" r="5" fill="var(--ink2)"/>
+            <line x1="90" y1="53" x2="62" y2="86" stroke="var(--ink2)" stroke-width="1.8"/>
+            <line x1="90" y1="53" x2="118" y2="86" stroke="var(--ink2)" stroke-width="1.8"/>
+            <line x1="62" y1="86" x2="44" y2="120" stroke="var(--ink2)" stroke-width="1.8"/>
+            <line x1="62" y1="86" x2="80" y2="120" stroke="var(--ink2)" stroke-width="1.8"/>
+            <line x1="118" y1="86" x2="110" y2="120" stroke="var(--ink2)" stroke-width="1.8"/>
+            <line x1="118" y1="86" x2="136" y2="120" stroke="var(--ink2)" stroke-width="1.8"/>
+            <circle cx="62" cy="86" r="4" fill="var(--ink2)"/><circle cx="118" cy="86" r="4" fill="var(--ink2)"/>
+            <circle cx="44" cy="120" r="3.5" fill="var(--ink2)"/><circle cx="80" cy="120" r="3.5" fill="var(--ink2)"/>
+            <circle cx="110" cy="120" r="3.5" fill="var(--ink2)"/><circle cx="136" cy="120" r="3.5" fill="var(--ink2)"/>
+          </g>
+          <!-- 网络 -->
+          <g>
+            <text class="svgtxt" x="268" y="22" text-anchor="middle" font-size="12" fill="var(--ink2)">道路：网络状（交叉 + 闭环）</text>
+            <path d="M200 80 L 250 52 L 318 66 L 340 108 L 296 142 L 232 134 L 200 80 Z" fill="none" stroke="var(--accent2)" stroke-width="2"/>
+            <line x1="250" y1="52" x2="296" y2="142" stroke="var(--accent2)" stroke-width="1.6"/>
+            <line x1="200" y1="80" x2="318" y2="66" stroke="var(--accent2)" stroke-width="1.6"/>
+            <circle cx="200" cy="80" r="3.6" fill="var(--accent2)"/><circle cx="250" cy="52" r="3.6" fill="var(--accent2)"/>
+            <circle cx="318" cy="66" r="3.6" fill="var(--accent2)"/><circle cx="340" cy="108" r="3.6" fill="var(--accent2)"/>
+            <circle cx="296" cy="142" r="3.6" fill="var(--accent2)"/><circle cx="232" cy="134" r="3.6" fill="var(--accent2)"/>
+            <circle cx="270" cy="97" r="3.6" fill="var(--accent2)"/>
+          </g>
+        </svg>
+        <div class="cap">拓扑必须从 tree-like 变成 net-like —— "交通系统里死胡同是例外"</div>
+      </div>
+      <div class="fig">
+        <ul>
+          <li><b>修法：</b>生长时<b>查询已有道路、修改自身</b>——新段相交 → 裁剪并生成交叉口；端点靠近既有交叉 → 延伸接入；接近相交 → 延伸成十字；</li>
+          <li><b>灵感旁证：</b>血管生成（Meier 1999）；</li>
+          <li><b>跨域价值：</b>任何"用生长语法生成<b>非树</b>结构"的场合——路网、管线、地下城、任务图——都要补这一维。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 路网模式与约束 -->
+  <div class="panel">
+    <h2><span class="num">3</span>四种路网模式 + 约束的三档处置</h2>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 390 150" role="img" aria-label="四种路网模式">
+          <!-- Basic -->
+          <g>
+            <rect x="10" y="26" width="80" height="80" rx="7" fill="var(--card)" stroke="var(--line)"/>
+            <path d="M20 90 C 40 62, 46 48, 62 44 M 30 96 C 52 84, 64 66, 80 58 M 22 60 C 40 62, 58 76, 76 92" stroke="var(--accent)" stroke-width="1.8" fill="none"/>
+            <text class="svgtxt" x="50" y="18" text-anchor="middle" font-size="11.5" fill="var(--ink2)">Basic 自然生长</text>
+          </g>
+          <!-- New York -->
+          <g>
+            <rect x="104" y="26" width="80" height="80" rx="7" fill="var(--card)" stroke="var(--line)"/>
+            <g stroke="var(--accent)" stroke-width="1.6">
+              <line x1="114" y1="40" x2="174" y2="40"/><line x1="114" y1="56" x2="174" y2="56"/>
+              <line x1="114" y1="72" x2="174" y2="72"/><line x1="114" y1="88" x2="174" y2="88"/>
+              <line x1="124" y1="32" x2="124" y2="100"/><line x1="142" y1="32" x2="142" y2="100"/>
+              <line x1="160" y1="32" x2="160" y2="100"/>
+            </g>
+            <text class="svgtxt" x="144" y="18" text-anchor="middle" font-size="11.5" fill="var(--ink2)">New York 方格</text>
+          </g>
+          <!-- Paris -->
+          <g>
+            <rect x="198" y="26" width="80" height="80" rx="7" fill="var(--card)" stroke="var(--line)"/>
+            <g stroke="var(--accent)" stroke-width="1.6" fill="none">
+              <circle cx="238" cy="66" r="9"/><circle cx="238" cy="66" r="20"/>
+              <circle cx="238" cy="66" r="31"/>
+              <line x1="238" y1="30" x2="238" y2="102"/><line x1="202" y1="66" x2="274" y2="66"/>
+              <line x1="213" y1="41" x2="263" y2="91"/><line x1="263" y1="41" x2="213" y2="91"/>
+            </g>
+            <text class="svgtxt" x="238" y="18" text-anchor="middle" font-size="11.5" fill="var(--ink2)">Paris 放射</text>
+          </g>
+          <!-- SF -->
+          <g>
+            <rect x="292" y="26" width="80" height="80" rx="7" fill="var(--card)" stroke="var(--line)"/>
+            <g stroke="var(--accent)" stroke-width="1.7" fill="none">
+              <path d="M300 88 C 320 82, 340 80, 366 84"/>
+              <path d="M300 68 C 322 62, 344 60, 368 64"/>
+              <path d="M300 48 C 320 44, 342 42, 366 46"/>
+              <path d="M312 92 L 316 44 M 334 86 L 338 40 M 354 84 L 358 42" stroke-width="1.2"/>
+            </g>
+            <text class="svgtxt" x="332" y="18" text-anchor="middle" font-size="11.5" fill="var(--ink2)">San Francisco 等高线</text>
+          </g>
+        </svg>
+        <div class="cap">四模式可<b>按输入灰度图权重混合</b>——混合发生在参数层（因参数已外移），规则层无感</div>
+      </div>
+    </div>
+    <table>
+      <tr><th>局部约束遇到"非法区域"（水/公园）</th><th>处置</th></tr>
+      <tr><td>① 裁剪 <code>prune</code></td><td>缩短路段至合法范围</td></tr>
+      <tr><td>② 旋转 <code>rotate</code></td><td>在最大角度内转至合法区 —— <b>自动产生"沿河/沿公园边界走"的道路</b></td></tr>
+      <tr><td>③ 有条件接受 + 标记</td><td>仅高速公路：允许跨越一定长度、打 flag，几何阶段<b>替换为桥或隧道入口</b></td></tr>
+    </table>
+    <div class="callout warn">第三档是通用模式：<b>约束处理不是二值（拒绝/接受），而是三档</b>——"允许 + 标记 + 后期替换"把解决推迟到手上有更多信息的阶段。</div>
+  </div>
+
+  <!-- 4. 数字 -->
+  <div class="panel">
+    <h2><span class="num">4</span>工程账本与 LOD 的语法级方案</h2>
+    <div class="kpi">
+      <div class="k"><b>9 条</b><span>规则（w + p1–p9）覆盖全部示例</span></div>
+      <div class="k"><b>&lt;10 秒</b><span>虚拟曼哈顿路网图生成</span></div>
+      <div class="k"><b>≈10 分钟</b><span>13,000 栋建筑（地块 + 几何）</span></div>
+      <div class="k"><b>26,000 栋</b><span>第二例（Maya 离线渲染）</span></div>
+    </div>
+    <p><b>LOD = 语法迭代深度：</b>建筑 L-system 采用 Hart 1992 的 "decreasing apices" 受限类——<b>公理是建筑 bounding box，每一轮迭代 = 一次几何细化</b>。
+    由此 LOD 链是生成过程的副产品，而不是一套独立资产。</p>
+    <div class="callout">
+      <b>"database amplification"（Smith 1984，原文引用）：</b>规则是压缩形式、城市是解压形式——<b>少量规则放大出大量数据</b>。
+      另一面是生成时间成本（13K 建筑 ≈ 10 分钟）——<b>离线生成量与运行时负载是两本账</b>。
+    </div>
+    <p><b>曼哈顿实验的彩蛋：</b>老城用 Basic、新城用 New York；局部约束让高速沿岛的海岸线转向；<b>系统提出的桥位与真实桥梁位置非常接近</b>——规则系统自发逼近真实城市的组织逻辑。</p>
+  </div>
+
+  <!-- 5. 谱系 -->
+  <div class="panel">
+    <h2><span class="num">5</span>谱系：与 Müller 2006 是同一作者相隔 5 年的直接接力</h2>
+    <svg viewBox="0 0 860 132" role="img" aria-label="PCG 谱系时间线">
+      <line x1="30" y1="76" x2="836" y2="76" stroke="var(--line)" stroke-width="2"/>
+      <g class="svgtxt" font-size="11.5" fill="var(--ink2)">
+        <circle cx="60" cy="76" r="5" fill="var(--ink2)"/>
+        <text x="60" y="58" text-anchor="middle">1975</text><text x="60" y="100" text-anchor="middle">Stiny 形状文法</text>
+        <circle cx="152" cy="76" r="5" fill="var(--ink2)"/>
+        <text x="152" y="58" text-anchor="middle">1990</text><text x="152" y="100" text-anchor="middle">L-system 植物</text>
+        <circle cx="244" cy="76" r="5" fill="var(--ink2)"/>
+        <text x="244" y="58" text-anchor="middle">1996</text><text x="244" y="100" text-anchor="middle">Open L-system</text>
+        <circle cx="352" cy="76" r="7.5" fill="var(--accent)"/>
+        <text x="352" y="54" text-anchor="middle" font-weight="700" fill="var(--accent)">2001 ★</text>
+        <text x="352" y="104" text-anchor="middle" font-weight="700" fill="var(--ink)">本文（城市）</text>
+        <circle cx="472" cy="76" r="5" fill="var(--ink2)"/>
+        <text x="472" y="58" text-anchor="middle">2003</text><text x="472" y="100" text-anchor="middle">Wonka 立面</text>
+        <circle cx="580" cy="76" r="7.5" fill="var(--accent2)"/>
+        <text x="580" y="54" text-anchor="middle" font-weight="700" fill="var(--accent2)">2006 ★</text>
+        <text x="580" y="104" text-anchor="middle" font-weight="700" fill="var(--ink)">CGA shape（同作者）</text>
+        <circle cx="688" cy="76" r="5" fill="var(--ink2)"/>
+        <text x="688" y="58" text-anchor="middle">2007–11</text><text x="688" y="100" text-anchor="middle">CityEngine 商用</text>
+        <circle cx="790" cy="76" r="5" fill="var(--ink2)"/>
+        <text x="790" y="58" text-anchor="middle">2026</text><text x="790" y="100" text-anchor="middle">ProxyBuild（LLM+检索）</text>
+      </g>
+    </svg>
+    <table>
+      <tr><th>2001 原文 *Future Work* 的愿望</th><th>后来的兑现</th></tr>
+      <tr><td>"把房屋空间分为功能单元，用类似路网的产生式系统组合"</td><td><b>2006 CGA shape</b>（同作者）——scope 上的顺序文法</td></tr>
+      <tr><td>"用计算机视觉帮用户找网格结构与立面元素、自动生成 texture style shader"</td><td>2006/2007 立面建模线；<b>2026 ProxyBuild</b>（LLM 推断 + 检索）</td></tr>
+    </table>
+    <p class="dim">关系是<b>批评性接力</b>：2006 明确指出 2001 的建筑是"简单体块 + shader 假装细节"，且体块互不感知（窗/门会被邻栋切开）——2006 的 occlusion 查询解决的正是这个问题。</p>
+  </div>
+
+  <!-- 6. 抽象 -->
+  <div class="panel">
+    <h2><span class="num">6</span>三条可迁移抽象（不需要读全文）</h2>
+    <ul>
+      <li><b>① 规则只描述结构，参数由外部策略决定</b>（ideal successor）——判据：任何规则系统，先问"哪些部分该从规则里移出去"；</li>
+      <li><b>② 约束'有条件通过'：允许 + 标记 + 后期替换</b>（高速跨水 → 桥/隧道）——约束处理不是二值；</li>
+      <li><b>③ 细节层次 = 迭代深度</b>（decreasing apices）——LOD 可以是生成语法的副产品。</li>
+    </ul>
+  </div>
+
+  <p class="foot">原文核对：2026-09-27，PDF 全文逐节核对（Berkeley CS285 课程镜像）。图示为机制示意，非论文原图。
+  笔记：[[Parish-Müller — Procedural Modeling of Cities (2001)]]</p>
+
+</div>
+</body>
+</html>
