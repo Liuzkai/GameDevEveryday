@@ -203,6 +203,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 - [[Participating Media]] — 多次散射的**理论通道**：Dupuy 2026 的整个推导就是把表面写成半无限微片介质；
 - [[Linear Transport Theory]] — **共同的母题（2026-09-23 随 d'Eon 手册入库而建立）**：本概念的"五条补法"正是该理论 **VII.48 章的内部结构**；"**表面问题 = 半空间随机游走**"是两概念间的总翻译规则；
 - [[Hair Rendering]] — **另一个"微面 BRDF 失效"的边界**（单位不同）；毛发里的多次散射由 Marschner 的 TRT 等明确路径处理，因为纤维内部吸收是主要的、可以显式建模；
+  - **🆕 2026-09-28 追加（同构升级）**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库后，"毛发多次散射"与本文的对应从"类比"升级为**结构同构**——本文的 **"补能量 vs 推输运是两件事"**（只补一个标量 / 从假设推分布），在发束尺度有精确对应物：**"局部响应 vs 全局输运"**（`fback` 材质属性 / 沿原型路径的透射+方差统计）。**同一分解哲学，两个尺度：微面尺度拆能量与分布，发束尺度拆输运与响应。**
 - 🔴 **一条 2026-09-20 新发现的跨领域合流**：[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] 把粗糙电介质 BSDF 按 **R/T 事件序列** 分解（TRT、TTR 等 lobe），而 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 按 **R/TT/TRT** 分解毛发散射 —— **两个完全不同的物理场景，独立收敛到"按散射事件序列分解 BSDF"**。
   → **可操作结论：[[Hair Rendering]] 里那条"TRT 先砍、TT 最后砍"的分档判据，其底层手法不是毛发专属的。**"哪个 lobe 可以先砍"的通用判据是"事件序列的可见性"。
 - **Chandrasekhar 单次散射项** — 长期基准；Dupuy 2026 证明它的 2 倍恰是单位粗糙度的单次散射 GGX。

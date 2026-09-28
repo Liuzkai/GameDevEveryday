@@ -36,7 +36,7 @@ first_introduced: "Kajiya-Kay 1989（各向异性经验模型）；Marschner et 
 |---|---|---|---|
 | **Kajiya-Kay** | 1989 | 经验 | 把头发当作**圆柱**处理：切向各向异性高光。极便宜，至今仍是大量游戏的默认 → ★ **2026-09-25 已入库**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]（含 texel 三要素、$\sin(t,l)$ 漫反射与圆锥高光的推导、与 Reeves 粒子系统的"对偶"关系） |
 | **Marschner et al.** | 2003 | 物理 | 把头发当作**半透明圆柱**，拆出三个 lobe：**R**（直接反射，白高光）、**TT**（透射-透射，逆光亮边）、**TRT**（透射-反射-透射，有色次级高光 + 发丝透光）→ ★ **2026-09-18 已入库**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] |
-| 后续 | 2008+ | 工程化 | 双散射近似（补多次散射）、能量守恒修正、实时近似 |
+| **双散射（Dual Scattering）** | 2008 | 物理近似 | **多次散射的实时近似**：全局（穿过体积到达邻域，沿单条原型路径统计）+ 局部（邻域内回散射 → 材质属性）→ ★ **2026-09-28 已入库**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]——**单散射只对深色发够用；浅色发的发色由多散射主导** |
 
 **三个 lobe 对应的视觉现象（这是判断"能不能砍"的唯一依据）：**
 
@@ -89,6 +89,8 @@ Kajiya-Kay 1989 —— texel（密度场）+ 各向异性经验模型；"近看�
         ↓
 ★ Scheuermann 2004 —— **实时工程首次落地**：发片模型 + 两 lobe 移位近似 + **取消运行时排序**（静态索引缓冲 + 四趟渲染）（**2026-09-26 入库**）
         ↓
+★ Zinke-Yuksel 2008 —— **多散射实时近似**：全局/局部分解 + "一条原型路径代表全部路径"；7.8h → 5.2min → 实时 14fps（**2026-09-28 入库**）
+        ↓
 发片 + 双高光 + 固定排序成为实时默认（此后十几年游戏毛发的主流做法）
         ↓
 UE Groom / TressFX / HairWorks —— 发丝进引擎，只服务高端档
@@ -112,8 +114,9 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 | [[Marschner — Light Scattering from Human Hair Fibers (2003)]] | ★ 2026-09-18 入库：R/TT/TRT 物理模型，**本概念的理论锚点**（含 Table 1 全套典型参数、$\alpha_{TT}=-\alpha_R/2$、$\alpha_{TRT}=-3\alpha_R/2$） |
 | [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] | 资产侧：发片 → 发丝 自动升档 |
 | [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] | ★ 2026-09-26 入库：**实时工程侧**——"怎么把 2003 的物理模型塞进 2004 的硬件"：发片模型 / 两 lobe 移位近似（扰动切线 + shift 贴图）/ **取消运行时排序**（静态索引缓冲 + 四趟渲染） |
+| [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] | ★ 2026-09-28 入库：**多次散射实时近似**——全局/局部分解、原型路径（透射连乘 + 方差求和）、fback 材质属性、三档实现；"浅色发"账本的闭合项 |
 
-**三节点已齐**：经验侧（Kajiya-Kay 1989）、物理侧（Marschner 2003）、实时工程侧（Scheuermann 2004）均入库。**剩余可选**：dual scattering 类多次散射近似（优先级低——着色与工程的主干已闭合）。
+**四节点已齐**：经验侧（Kajiya-Kay 1989）、物理侧（Marschner 2003）、实时工程侧（Scheuermann 2004）、**多散射近似（Zinke-Yuksel 2008）** 均入库。**物理与工程主干全部闭合**；剩余为可选深挖（双散射的后续演进、离线侧更多近似）。
 
 ## Related Concepts
 
@@ -142,19 +145,20 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 
 - **user_level: Normal**。判断依据：你做角色 VFX 与分档预算，"发片便宜 / 发丝贵"这类结论显然在 Easy 区；但**毛发的着色模型（Kajiya-Kay / Marschner）与"发片↔发丝能否互转"**这两块是新的。
 - **（2026-09-25 更新）着色侧的两头现已齐备**：经验侧 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] + 物理侧 [[Marschner — Light Scattering from Human Hair Fibers (2003)]]，两条共 **9 条 Mastery 自测**。
-- **（2026-09-26 更新）实时工程侧补齐**：[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 入库，自测扩至 **12 条**（+3：两 lobe 移位机制 / "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟）——**12 条通过即可把"毛发着色（含实时工程）"整体标 Easy**。
+- **（2026-09-26 更新）实时工程侧补齐**：[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 入库，自测扩至 **12 条**（+3：两 lobe 移位机制 / "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟）。
+- **（2026-09-28 更新）多散射节点补齐**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库，自测扩至 **15 条**（+3：单散射为何对浅色发不够 / "原型路径代表全部路径"的成立条件 / 全局局部为何像"阴影"与"材质"）——**15 条通过即可把"毛发着色（含实时工程与多散射）"整体标 Easy**；明日（9-29）《巫师 3》重制版实测可作第 13 条"实战观察"。
 - 与你当前学习线的交汇点：**毛发是 D·G·F 框架的失效边界**——学 PBR 时把它当作反例记住，比多记一个公式有用。**同时它还是"预算与几何解耦"（Kajiya-Kay 1989）与"档位=换表示"（HairCS / LSS）的最佳案例库。**
 
 ## Learning Gap
 
 1. ~~**最大缺口：着色模型源头缺失。**~~ ✅ **2026-09-18 已补齐**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] 入库，R/TT/TRT 的物理来源、参数表、"白高光 / 有色次级高光 / 逆光亮边"的对应关系全部到位（含 5 条 Mastery 自测）。
 2. ~~**R / TT / TRT 三个 lobe 分别对应什么视觉现象**~~ ✅ 同篇补齐（见上表）。
-3. ~~**实时侧源头缺失**~~ ✅ **2026-09-25 再补**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 入库（texel 三元组、两条着色公式、"预算与几何解耦"、"texel↔几何切换"；含 4 条 Mastery 自测）。~~**剩余缺口：实时化工程文**~~ ✅ **2026-09-26 闭合**：[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 入库（发片模型 / 两 lobe 移位近似 / 取消运行时排序 + early-Z 权衡；含 3 条 Mastery 自测）。**残余仅剩** dual scattering 类多次散射近似（可选）。
+3. ~~**实时侧源头缺失**~~ ✅ **2026-09-25 再补**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 入库（texel 三元组、两条着色公式、"预算与几何解耦"、"texel↔几何切换"；含 4 条 Mastery 自测）。~~**剩余缺口：实时化工程文**~~ ✅ **2026-09-26 闭合**：[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 入库（发片模型 / 两 lobe 移位近似 / 取消运行时排序 + early-Z 权衡；含 3 条 Mastery 自测）。~~残余仅剩 dual scattering 类多次散射近似（可选）~~ ✅ **2026-09-28 闭合**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库（全局/局部分解 + 原型路径 + 三档实现；含 3 条 Mastery 自测）。**毛发着色谱系（1989 → 2003 → 2004 → 2008）全部闭合。**
 4. **实时毛发的真实成本结构**：发片 vs 发丝在同一角色上的 DrawCall / OverDraw / 显存对比。这一块没有公开基准，需要你自己测。
 
 ## Next Step
 
-1. ~~**补实时侧经典：Kajiya-Kay 1989（优先）**~~ ✅ **2026-09-25**。~~Scheuermann 2004（TRT 实时近似）~~ ✅ **2026-09-26**——**经验 / 物理 / 实时工程三层已齐**；剩余仅 dual scattering 类近似（可选）。
+1. ~~**补实时侧经典：Kajiya-Kay 1989（优先）**~~ ✅ **2026-09-25**。~~Scheuermann 2004（TRT 实时近似）~~ ✅ **2026-09-26**——**经验 / 物理 / 实时工程三层已齐**。~~dual scattering 类近似（可选）~~ ✅ **2026-09-28**——**多散射层也齐，着色谱系全闭合**。剩余完全可选：双散射后续（影视侧变体）、离线近似家族。
 2. **顺手可做的一次实测**（不需要读论文）：在 NGR 里挑一个代表性角色，测同一角色在发片与发丝两种表示下的 **OverDraw 与 GPUTime**，落成两个数字。这比任何论文都更能支撑你的分档判断。
 3. **一个可以直接试的降档实验**：把某个低档发片材质上的 TT（逆光亮边）关掉，看角色在逆光场景下的观感退化程度——**这是验证"TT 不能砍"这条判断的最快方式**。
 4. 跟踪 [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] 是否放出**输出发丝根数**——那是它对你是否有用的唯一硬门槛。
@@ -166,3 +170,4 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 - **2026-09-18**：理论源头补齐（[[Marschner — Light Scattering from Human Hair Fibers (2003)]]），本概念不再是"有尾无头"；同时新增"着色侧降档顺序"与"σa 用颜色换预算"两条可直接用于分档的判断。剩余缺口从"理论"转到"实时化"（Kajiya-Kay 1989 / Scheuermann 2004 / dual scattering）。
 - **2026-09-25**：**实时侧源头补齐**（[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]）——texel 三要素、$\sin(t,l)$ 漫反射与圆锥高光、**"渲染时间与几何复杂度解耦"**（= 预算是"用表示换来的"）、**"近看时切回真实几何"**（= 分档的 1989 版本）。同日产业侧：《巫师 3》重制版（9-29）宣布 **LSS 路径追踪毛发**——"表示跟着观察尺度走"的第三代（光追曲线基元）落地。**毛发三代表示（texel / 物理 lobe / 光追基元）在同一天会齐。**
 - **2026-09-26**：**实时工程缺口闭合**（[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]]）——"发片 + 双高光 + 固定排序"这套**游戏毛发默认做法的源头文档**；同时是"**取消式优化**"的 2004 年版本（取消运行时 CPU 空间排序）。**三节点（1989 / 2003 / 2004）齐全，自测 12 条。**
+- **2026-09-28**：**多散射节点闭合**（[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]）——"浅色发的发色由多散射主导"这一整类现象的解法；三条可迁移抽象入库（原型路径的合法性检查 / 方差可加 / 三档实现=换采样与存储）；**与 PBR 能量账本"补能量 vs 推输运"跨域同构**。**四节点（1989 / 2003 / 2004 / 2008）齐全，自测 15 条。**

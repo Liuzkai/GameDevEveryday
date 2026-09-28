@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双散射 — Zinke/Yuksel 2008 全局·局部与原型路径图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a; --violet:#6f42c1;
+    --code:#f0f3f7; --card:#fbfcfe;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61; --violet:#b39ddb;
+      --code:#232a32; --card:#20262d;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:880px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:18px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px;color:var(--ink)}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  ul{margin:6px 0 6px 20px;padding:0}
+  li{margin:3px 0}
+  .tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 10px;color:var(--ink2);margin-right:6px}
+  svg{display:block;margin:0 auto;max-width:100%}
+  .svgtxt{font-family:"Segoe UI","PingFang SC",sans-serif}
+  .ladder{display:flex;gap:0;align-items:stretch;margin:10px 0}
+  .lad{flex:1;border:1px solid var(--line);border-radius:0;padding:10px 12px;text-align:center;background:var(--card)}
+  .lad:first-child{border-radius:10px 0 0 10px}
+  .lad:last-child{border-radius:0 10px 10px 0}
+  .lad .v{font-size:17px;font-weight:700}
+  .lad .k{font-size:12px;color:var(--ink2)}
+  .arrow{display:flex;align-items:center;font-size:18px;color:var(--ink2);padding:0 2px}
+  .foot{font-size:13px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>双散射 — 全局 · 局部 · 一条原型路径</h1>
+  <div class="sub">Dual Scattering Approximation for Fast Multiple Scattering in Hair ·
+  Zinke / Yuksel / Weber / Keyser · ACM SIGGRAPH 2008 · TOG 27(3)</div>
+
+  <div class="panel">
+    <p><b>它要解决的问题：</b>浅色头发必须算<b>多次纤维散射</b>（光穿透深、多散射主导发色），但 2008 年时：
+    路径追踪单帧 <b>7.8–22 小时</b>；光子映射数十分钟且吃内存；实时做法把多散射当成"半透明阴影 + 手工 diffuse"，
+    复现不了<b>方向性 / 色彩偏移 / 连续模糊</b>三种现象，还要反复调参。</p>
+    <p><b>它给出的答案：</b>把多次散射拆成两半——</p>
+    <p style="font-size:16px"><code>Ψ(x,ωd,ωi) = ΨG(x,ωd,ωi) · (1 + ΨL(x,ωd,ωi))</code></p>
+    <ul>
+      <li><b>ΨG 全局</b>：光<b>穿过发束体积、到达 x 邻域</b>——近似为"沿单条阴影路径的事件序列统计"，
+      实现上"非常类似标准半透明毛发阴影技术"；</li>
+      <li><b>ΨL 局部</b>：到达邻域<b>之后</b>的多次回散射——建模为<b>不含位置</b>的材质属性 <code>fback</code>，查预计算表。</li>
+    </ul>
+    <div class="callout"><b>一句话</b>：全局管"光怎么走到这里"（输运），局部管"到了之后怎么散开"（响应）——
+    两半分别用各自最便宜的技术（阴影式管线 / 材质式查表）。</div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">1</span>核心图：一条阴影路径代表全部路径</h2>
+
+    <svg viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="双散射核心示意">
+      <defs>
+        <marker id="arw" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="var(--ink2)"/>
+        </marker>
+        <marker id="arwB" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="var(--violet)"/>
+        </marker>
+        <marker id="arwG" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="var(--accent)"/>
+        </marker>
+      </defs>
+
+      <!-- 发束体积 -->
+      <ellipse cx="420" cy="185" rx="180" ry="105" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="420" y="310" text-anchor="middle" class="svgtxt" font-size="12.5" fill="var(--ink2)">发束体积（hair volume）· 内部散布发丝（略）</text>
+      <!-- 内部发丝暗示 -->
+      <g stroke="var(--line)" stroke-width="1.2" fill="none" opacity="0.9">
+        <path d="M300 150 q60 -40 120 -10 t130 -30"/>
+        <path d="M285 190 q70 -20 140 5 t150 -35"/>
+        <path d="M310 235 q60 20 130 -5 t140 25"/>
+        <path d="M350 130 q50 30 110 10"/>
+      </g>
+
+      <!-- 光源 -->
+      <circle cx="90" cy="70" r="16" fill="none" stroke="var(--gold)" stroke-width="2"/>
+      <g stroke="var(--gold)" stroke-width="2">
+        <line x1="90" y1="42" x2="90" y2="50"/><line x1="90" y1="90" x2="90" y2="98"/>
+        <line x1="62" y1="70" x2="70" y2="70"/><line x1="110" y1="70" x2="118" y2="70"/>
+        <line x1="70" y1="50" x2="76" y2="56"/><line x1="104" y1="84" x2="110" y2="90"/>
+        <line x1="110" y1="50" x2="104" y2="56"/><line x1="70" y1="90" x2="76" y2="84"/>
+      </g>
+      <text x="90" y="122" text-anchor="middle" class="svgtxt" font-size="12.5" fill="var(--gold)">光源（方向 ωd）</text>
+
+      <!-- shadow path 虚线 -->
+      <line x1="115" y1="92" x2="600" y2="228" stroke="var(--ink2)" stroke-width="1.8" stroke-dasharray="7 5"/>
+      <text x="620" y="222" class="svgtxt" font-size="12.5" fill="var(--ink2)" text-anchor="end">原型路径（shadow path）</text>
+
+      <!-- 入射箭头 -->
+      <line x1="130" y1="97" x2="230" y2="130" stroke="var(--gold)" stroke-width="2" marker-end="url(#arw)"/>
+
+      <!-- 散射事件点 -->
+      <circle cx="255" cy="139" r="5.5" fill="var(--warn)"/>
+      <circle cx="330" cy="166" r="5.5" fill="var(--warn)"/>
+      <circle cx="410" cy="194" r="5.5" fill="var(--warn)"/>
+      <circle cx="492" cy="223" r="5.5" fill="var(--warn)"/>
+      <text x="262" y="128" class="svgtxt" font-size="12" fill="var(--warn)">事件 k：āf（衰减）× β̄²f（扩散）</text>
+
+      <!-- 兴趣点 x -->
+      <circle cx="560" cy="248" r="6" fill="var(--accent)"/>
+      <text x="572" y="268" class="svgtxt" font-size="13" font-weight="700" fill="var(--accent)">x（兴趣点）</text>
+
+      <!-- 全局到达：沿路径 -->
+      <text x="200" y="105" class="svgtxt" font-size="12.5" fill="var(--accent)">沿路径统计：透射 = ∏āf（连乘）· 扩散 = Σβ̄²f（方差相加）</text>
+
+      <!-- 局部回散射箭头（violet） -->
+      <path d="M560 248 q-20 -42 -58 -30" fill="none" stroke="var(--violet)" stroke-width="1.8" marker-end="url(#arwB)"/>
+      <path d="M560 248 q-44 -18 -70 -2" fill="none" stroke="var(--violet)" stroke-width="1.8" marker-end="url(#arwB)"/>
+      <path d="M560 248 q-30 -52 -80 -46" fill="none" stroke="var(--violet)" stroke-width="1.8" marker-end="url(#arwB)"/>
+      <text x="468" y="180" class="svgtxt" font-size="12.5" fill="var(--violet)" text-anchor="end">局部多散射（回散射 → 材质属性 fback）</text>
+
+      <!-- 出射 -->
+      <line x1="566" y1="252" x2="680" y2="288" stroke="var(--accent)" stroke-width="2" marker-end="url(#arwG)"/>
+      <text x="690" y="300" class="svgtxt" font-size="12.5" fill="var(--accent)" text-anchor="end">→ ωo（视方向）</text>
+    </svg>
+    <div class="cap">沿一条原型路径统计"每个散射事件的衰减与扩散"两个标量——路径的几何细节被统计量吸收</div>
+
+    <div class="callout gold"><b>为什么一条路径能代表全部路径？</b>两条原文假设：① <b>散射事件统计独立</b>——光到达某点的能量
+    "不依赖实际路径，而依赖路径上散射事件的质量"；② <b>相邻发丝方向强相似</b>（真实发型的最强统计特征）。</div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">2</span>前向 / 后向散射：两类光路，两种技术</h2>
+    <table>
+      <tr><th>散射类型</th><th>物理成分</th><th>划给哪个分量</th><th>工程形态</th></tr>
+      <tr>
+        <td><b>前向</b>（前半锥）</td>
+        <td>≈ TT（透射两次），浅色发下显著更强</td>
+        <td><b>全局 ΨG</b>：忽略双后向及以上路径，只保留前向散射</td>
+        <td>"加强版半透明阴影"：光视角分层图，每层存 7 值（RGB·Tf + RGB·σ̄²f + direct fraction）</td>
+      </tr>
+      <tr>
+        <td><b>后向</b></td>
+        <td>R / TRT 类回散射；概率低（ā b 小）→ 只计 1 次与 3 次</td>
+        <td><b>局部 ΨL</b>：fback(ωi,ωo)，<b>不含 x</b></td>
+        <td>"材质属性"：预计算表 Āb(θ)、Δ̄b(θ)、σ̄²b(θ) 查值</td>
+      </tr>
+    </table>
+    <p class="dim">局部回散射的级数闭式（1 次与 3 次后向）：<code>Ā1 = āb · ā²f / (1 − ā²f)</code>、
+    <code>Ā3 = ā³b · ā²f / (1 − ā²f)³</code>——等比级数求和直接闭式化，"更多次"物理上可忽略。</p>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">3</span>三档实现：同一近似，三个成本质量点</h2>
+    <table>
+      <tr><th>档</th><th>做法</th><th>关键细节</th><th>原文性能（同一场景）</th></tr>
+      <tr>
+        <td><b>① Ray shooting</b></td>
+        <td>从 x 沿 ωd 打光线，交点即事件</td>
+        <td>最简最准；需多点采样消噪</td>
+        <td>9.6 分钟（Figure 10 场景）／15 分钟（Figure 11）</td>
+      </tr>
+      <tr>
+        <td><b>② Forward scattering maps</b></td>
+        <td>体素网格（0.5 cm）预计算，双 pass</td>
+        <td><b>多光源共享同一结构</b>——光源越多越划算</td>
+        <td>4.6 分钟 / 7 分钟</td>
+      </tr>
+      <tr>
+        <td><b>③ GPU（deep opacity maps 式）</b></td>
+        <td>光视角深度图 → 分层；每层 7 值 → 4 层 / 8 张纹理</td>
+        <td>消费级显卡可单 pass 多渲染目标一次生成</td>
+        <td><b>14 fps / 12 fps / 5.8 fps</b>（2008 年 GeForce 8800 GTX）</td>
+      </tr>
+    </table>
+    <div class="callout"><b>分档含义</b>：三档换的全是"输运信息的采样与存储方式"，<b>公式与着色器一字不改</b>——
+    与"降档 = 换表示层级"（PBR 多次散射谱系 / ToCo-Mesh / CGA LOD）同源的又一实证。</div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">4</span>成本阶梯（原文 Figure 1 场景：50K 发丝 / 1.4M 线段）</h2>
+    <div class="ladder">
+      <div class="lad"><div class="v">7.8 小时</div><div class="k">路径追踪（真值）</div></div>
+      <div class="arrow">→</div>
+      <div class="lad"><div class="v">5.2 分钟</div><div class="k">离线双散射（ray shooting）</div></div>
+      <div class="arrow">→</div>
+      <div class="lad"><div class="v">14 fps</div><div class="k">实时双散射（GPU，2008）</div></div>
+    </div>
+    <p class="dim">其他场景：22 小时 → 4.6 分钟（FSM）；17 小时 → 7 分钟（FSM，对比光子映射 67 分钟）；
+    预计算全部只在<b>几秒</b>级。全篇<b>无参数调整</b>——唯一"可调"的 density factor 有物理含义（实验区间 0.6–0.8，全文取 0.7）。</p>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">5</span>跨域定位：它在哪两条线上？</h2>
+    <table>
+      <tr><th>线索</th><th>连接</th></tr>
+      <tr>
+        <td><b>毛发谱系</b></td>
+        <td>1989 texel（Kajiya-Kay）→ 2003 单散射物理（Marschner）→ 2004 工程三刀（Scheuermann）→ <b>2008 本文（多散射）</b>——"浅色发"的账本到此闭合</td>
+      </tr>
+      <tr>
+        <td><b>能量账本（PBR 跨域同构）</b></td>
+        <td>微面尺度："补能量 vs 推输运是两件事"；毛发尺度："局部响应 vs 全局输运"——<b>同一分解哲学，两个尺度</b></td>
+      </tr>
+      <tr>
+        <td><b>阴影技术血缘</b></td>
+        <td>全局分量的实现 = 深度不透明度映射族（Deep Shadow → Opacity Shadow → Deep Opacity Maps）的直系扩展：每像素 1 个 opacity → 7 个值</td>
+      </tr>
+      <tr>
+        <td><b>可迁移判据</b></td>
+        <td>"一条原型路径代表全部"的合法性检查：<b>结果的哪些成分依赖路径几何、哪些只依赖事件质量？</b>——只依赖后者的，几何整体丢给统计量</td>
+      </tr>
+    </table>
+    <p class="foot">局限（原文自述）：硬阴影边界穿过头发时原型路径近似不准；稀疏发型 / 极低衰减有偏差；混乱发型违反相邻假设。</p>
+  </div>
+
+  <p class="foot">本图解依据原文（作者主页 Preprint，10 页）逐节核对生成 · 入库：2026-09-28（Run #20）·
+  见论文笔记 [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]</p>
+
+</div>
+</body>
+</html>

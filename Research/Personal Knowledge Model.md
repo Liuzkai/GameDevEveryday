@@ -142,7 +142,7 @@ user_level: Easy      # 或 Normal / Hard
 - **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
   - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）+ [[Hill — A Multi-Faceted Exploration (2018-2019)]]（**谱系中段的完整过程记录**，9-24 入库）。**不计入 25 条**，标为"读了，不是会了"；
   - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。** **（9-23 更新：对照基线已就位——先查 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 13.7.1 / 13.8.1 的球面 albedo 拟合值，再对引擎实测。）**
-- **[[Hair Rendering]] — 12 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立 5 条：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级；**2026-09-25 随 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 增 4 条**：texel 三要素 / sin(t,l) 漫反射 / 高光为何是圆锥 / "渲染时间与几何复杂度解耦"对预算的意义；**2026-09-26 随 [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 再增 3 条**：两 lobe 的移位机制（扰动切线）/ "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟。**12 条通过即可把"毛发着色（含实时工程）"标 Easy**）
+- **[[Hair Rendering]] — 15 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立 5 条：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级；**2026-09-25 随 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 增 4 条**：texel 三要素 / sin(t,l) 漫反射 / 高光为何是圆锥 / "渲染时间与几何复杂度解耦"对预算的意义；**2026-09-26 随 [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 再增 3 条**：两 lobe 的移位机制（扰动切线）/ "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟；**2026-09-28 随 [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 再增 3 条**：单散射为何对浅色发不够 / "原型路径代表全部路径"的成立条件 / 全局局部为何像"阴影"与"材质"。**15 条通过即可把"毛发着色（含实时工程与多散射）"标 Easy**；**9-29《巫师 3》重制版实测可作第 13 条"实战观察"**）
 - [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
 - [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
 
@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 20 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-27，W39 收官日）新增 1 篇经典（[[Parish-Müller — Procedural Modeling of Cities (2001)]]）**，落在既有 PCG 学习线（Normal）内，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 21 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-28）新增 1 篇经典（[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]，落在既有毛发线）+ 1 篇前沿（[[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering]]，仅取一条抽象）**，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -196,6 +196,12 @@ user_level: Easy      # 或 Normal / Hard
     - **三条可迁移抽象（不需要读全文，可直接用于分档体检）**：① **规则只描述结构、参数由外部策略决定**（ideal successor）——判据："任何规则系统，先问哪些部分该从规则里移出去"；② **约束三档处置**：拒绝 / 修正 / **有条件接受 + 标记 + 后期替换**（高速跨水 → 桥或隧道）；③ **细节层次 = 迭代深度**（decreasing apices）——**与 ToCo-Mesh 的"固定拓扑 + 自适应细分"同源：降档应换表示的深度/密度，而不是硬缩参数**（对分档工作的又一次确认）；
     - **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 <10 秒 + 建筑约 10 分钟——"database amplification"（少量规则 → 大量数据）的另一面是**生成时间成本**；与 [[Müller — Procedural Modeling of Buildings (2006)]] 的"离线生成量 ≠ 运行时负载"合流；
     - **产业侧新样本（艺术意图维度）**：《巫师 3》重制版（9-29）发售前"**氛围 vs 准确**"画质争议（CDPR 确认原版不强制替换）→ 记为 [[Temporal Stability and Artistic Intent]] 的一手样本：**"更准确的光"与"记忆里的味道"不总是重合；旧观感保留 = 事实上的"艺术意图档位"**。
+20. **🔴 9-28 新增（毛发多散射日 + 跨域同构升级 + 产业双信号）**：
+    - **毛发自测扩至 15 条（窗口强化）**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库（**全局/局部分解 + "一条原型路径代表全部路径" + 三档实现**；7.8h → 5.2min → 14fps 且零调参）——**毛发着色谱系四节点（1989/2003/2004/2008）全闭合**；新增 3 条自测：单散射为何对浅色发不够 / 原型路径的成立条件 / 全局局部为何像"阴影"与"材质"。**9-29 巫 3 重制版实测可作实战观察（第 13 项）**；
+    - **跨域同构升级（今天最值钱的一条）**：毛发"**全局输运 vs 局部响应**" ⟷ PBR"**推输运 vs 补能量**"——**同一分解哲学在两个尺度成立**（微面拆能量与分布、发束拆输运与响应）。**入库为可迁移判据：复杂问题先问"能不能拆成'怎么到达'与'到达后怎么响应'两半，各自选最便宜的技术"**；
+    - **两条新判据**（9-28 入库，均已写入论文笔记）：① "**一条原型路径代表全部路径**"的合法性检查——先问"结果的哪些成分依赖路径几何、哪些只依赖事件质量"，只依赖后者的可整体丢给统计量；② "**方差可加**"——选对表示（高斯族）让"多次"不升复杂度（与 Karis"为可预存额外假设什么"同族，都是"选择即代价/收益"的样本）；
+    - **产业双信号**：① **RTX Mega Geometry 2.0**（流式光追几何 + 优雅降级；**E-Day 10-6 升级为"动态灯光 × 几何流式"双首发检验**；另：≥10GB VRAM 门槛——**显存成为分档硬约束的第二例**）；② **《巫师 3》重制版评测今日解禁、9-29 上线**——**Steam/GOG 保留三个 build（Classic / Next-Gen / Remastered）**：**"艺术意图档位"从概念变为产品形态**（玩家可回退旧观感）；
+    - **预计算存法谱系补第四种**（[[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering|DiffusionShadow]]）：全存 → 解析表（Karis/Kulla-Conty）→ 复用（Fdez-Agüera）→ **生成式记忆**。判据：*面对"存不下"的预计算数据，先问"它是对所有输入都查、还是对密集采样集查"*。
 
 ---
 

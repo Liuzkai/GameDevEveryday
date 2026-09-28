@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-27]]（昨日：[[2026-09-26]]）
-- **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 [[2026-W40]] 待产出）
+- **今日**：[[2026-09-28]]（昨日：[[2026-09-27]]）
+- **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 [[2026-W40]] 待产出，覆盖 9-28 ~ 10-4）
 - **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 20 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 21 天）
 
-## Papers（61）
+## Papers（63）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -80,6 +80,8 @@ created: 2026-09-07
 | [[2026-09-01-ToCo-Mesh — Topology-Consistent Dynamic Mesh Reconstruction via Adaptive Tessellation and Surface-Aligned 2DGS]] | A-  | Normal      | 中高（**动态网格重建：固定拓扑 + 误差驱动 split/merge + Surface-Aligned 2DGS；USTC / SIGGRAPH Asia 2026；"拓扑一致性 = 可动画的货币"；13K 顶点 vs 729K 高斯**） ★ 2026-09-26 |
 | [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] | A（经典） | **Normal（实时工程侧）** | **最高（★ 实时毛发工程源头：发片模型 + 两 lobe 移位近似（扰动切线）+ "取消运行时排序"（静态索引缓冲 + 四趟渲染 + early-Z）——"取消式优化"的 2004 年版本；毛发线三节点齐全、12 条自测）** ★ 2026-09-26 |
 | [[Parish-Müller — Procedural Modeling of Cities (2001)]] | S（经典） | **Normal** | **高（★ PCG 域第二锚点 / CityEngine 最早出处：扩展 L-system（参数外移，9 条规则）+ self-sensitive（树状→网络）+ LOD = 迭代深度；与 Müller 2006 同一作者团队的接力关系；13K 建筑 ≈ 10 分钟）** ★ 2026-09-27 |
+| [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] | A（经典） | **Normal（实时侧多散射）** | **最高（★ 毛发谱系"多散射"节点落库：全局/局部分解 + "一条原型路径代表全部路径"（透射连乘 + 方差求和）+ fback 材质属性 + 三档实现；7.8h → 5.2min → 14fps 且零调参；与 PBR"补能量 vs 推输运"跨域同构）** ★ 2026-09-28 |
+| [[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering]] | B+  | Normal（只取一条抽象） | 中（**"预计算数据的第四种存法"：生成式记忆（扩散模型作压缩缓存）；立场声明"不泛化、要记忆"；UC Davis × Argonne / SciVis 领域**） ★ 2026-09-28 |
 
 ## Concepts（30）
 
@@ -169,6 +171,6 @@ Research/
 
 ---
 
-最后更新：2026-09-27（Run #19：前沿窗口 9-25 ~ 9-27，**三通道交叉确认 0 新条目**（recent 页最新分组 = 9-25 且已被全覆盖；API `submittedDate` 窗口 0 条）→ **前沿线按 No-Filler Rule 空转，未凑数**）—— 入库 **1 篇经典（今日头条）[[Parish-Müller — Procedural Modeling of Cities (2001)]]**（**PCG 域第二锚点 / CityEngine 最早出处**：**扩展 L-system**（参数从规则外移：ideal successor + globalGoals + localConstraints，**9 条规则覆盖全部示例**）+ **self-sensitive**（树状→网络拓扑）+ **LOD = 迭代深度**；与 [[Müller — Procedural Modeling of Buildings (2006)]] 的**同作者接力关系落库**；13K 建筑 ≈ 10 分钟 → **PCG 三节点齐全**）+ 1 图解 + Daily + **[[2026-W39]] 收官追加（覆盖 9-21 ~ 9-27，7 天全）**；**产业侧：《巫师 3》重制版 9-29 前最后信号（NVIDIA blog：LSS 毛发 + DLSS 4.5 RR）；"氛围 vs 准确"画质争议（艺术意图维度新样本）**）
-　　▸ **9-26 回顾**（Run #18）：ToCo-Mesh（拓扑一致动态网格：固定拓扑 + 误差驱动细分 + Surface-Aligned 2DGS；13K 顶点 vs 4K-GS 729K）+ Scheuermann 2004（实时毛发工程三刀：发片 / 两 lobe 移位 / 取消运行时排序——毛发线三节点齐全、12 条自测）+ W39 首版；Epic Lore VCS 结案
-　　▸ **9-25 回顾**（Run #17）：CuACD（凸分解全 GPU 常驻 ~80–100×，"取消式优化"第二例）+ OREO（生成器后训练；DMD 适用边界）+ Kajiya-Kay 1989（毛发实时侧源头；"预算与几何解耦"最早表述）；《巫师 3》重制版 LSS 光追毛发（9-29）+ E-Day 规格（3060 Ti = 1440p High）
+最后更新：2026-09-28（Run #20，**W40 首日**：前沿窗口 9-25 ~ 9-28（周末积压窗口）——recent 页最新公告分组仍为 9-25（已被前两轮全覆盖）、9-28 listing 运行期间未放出；**API `submittedDate` 捕获 3 条"已提交、未公告"条目**（DiffusionShadow 入库 B+；ChronoFuseGS 记名 B；SUCRe 记名 C 误分类）——**入库 1 篇前沿 + 1 篇经典，未凑数**）—— 经典为今日头条 **[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]**（**毛发谱系"多散射"节点落库**：全局/局部分解 + 原型路径（透射连乘 + 方差求和）+ fback 材质属性 + **三档实现**；7.8h → 5.2min → **14fps** 且零调参；**与 PBR"补能量 vs 推输运"跨域同构**；毛发自测 12 → **15 条**）+ 1 图解 + Daily；**产业侧双重磅：RTX Mega Geometry 2.0 发布（流式光追几何 + 优雅降级，E-Day 双首发之一，10-6）+ 《巫师 3》重制版评测今日解禁（9-29 上线，毛发第四代大样本检验）**；另 AMD DGFS 补录（开放 vs 封闭对照））
+　　▸ **9-27 回顾**（Run #19）：Parish & Müller 2001（PCG 第二锚点 / CityEngine 最早出处：扩展 L-system + self-sensitive + LOD=迭代深度）→ PCG 三节点齐全；W39 收官（9-21~9-27）
+　　▸ **9-26 回顾**（Run #18）：ToCo-Mesh（拓扑一致动态网格）+ Scheuermann 2004（实时毛发工程三刀）→ 毛发三节点齐全、12 条自测；W39 首版
