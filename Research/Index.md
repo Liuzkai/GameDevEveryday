@@ -10,12 +10,12 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-28]]（昨日：[[2026-09-27]]）
+- **今日**：[[2026-09-29]]（昨日：[[2026-09-28]]）
 - **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 [[2026-W40]] 待产出，覆盖 9-28 ~ 10-4）
 - **本月雷达**：[[2026-09]]
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 21 天）
 
-## Papers（63）
+## Papers（66）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -82,6 +82,9 @@ created: 2026-09-07
 | [[Parish-Müller — Procedural Modeling of Cities (2001)]] | S（经典） | **Normal** | **高（★ PCG 域第二锚点 / CityEngine 最早出处：扩展 L-system（参数外移，9 条规则）+ self-sensitive（树状→网络）+ LOD = 迭代深度；与 Müller 2006 同一作者团队的接力关系；13K 建筑 ≈ 10 分钟）** ★ 2026-09-27 |
 | [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] | A（经典） | **Normal（实时侧多散射）** | **最高（★ 毛发谱系"多散射"节点落库：全局/局部分解 + "一条原型路径代表全部路径"（透射连乘 + 方差求和）+ fback 材质属性 + 三档实现；7.8h → 5.2min → 14fps 且零调参；与 PBR"补能量 vs 推输运"跨域同构）** ★ 2026-09-28 |
 | [[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering]] | B+  | Normal（只取一条抽象） | 中（**"预计算数据的第四种存法"：生成式记忆（扩散模型作压缩缓存）；立场声明"不泛化、要记忆"；UC Davis × Argonne / SciVis 领域**） ★ 2026-09-28 |
+| [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting]] | A-  | Normal      | **中高（★ "初始化解降级"：复制动作/ HumanIK 输出只是起点、目标由四能量定义；Autodesk；欠定问题的正确形式化）** ★ 2026-09-29 |
+| [[2026-09-25-ControlGS — Conditioning Neural Gaussians for Downstream-Processing-Aware XR Rendering]] | B+  | Normal      | 中（**"优化到眼睛"：后处理+显示光学纳入目标；运行时状态（含功耗预算）条件化生成；SIGGRAPH Asia 2026；"档位条件化"第三线索**） ★ 2026-09-29 |
+| [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]                | S（经典） | **Easy（机制）/ Normal（成本模型）** | **最高（★ 分档的祖先：LOD / 可见复杂度固定上限 / working set / 递归下降；"预算起源三件套"最上游）** ★ 2026-09-29 |
 
 ## Concepts（30）
 
@@ -171,6 +174,6 @@ Research/
 
 ---
 
-最后更新：2026-09-28（Run #20，**W40 首日**：前沿窗口 9-25 ~ 9-28（周末积压窗口）——recent 页最新公告分组仍为 9-25（已被前两轮全覆盖）、9-28 listing 运行期间未放出；**API `submittedDate` 捕获 3 条"已提交、未公告"条目**（DiffusionShadow 入库 B+；ChronoFuseGS 记名 B；SUCRe 记名 C 误分类）——**入库 1 篇前沿 + 1 篇经典，未凑数**）—— 经典为今日头条 **[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]**（**毛发谱系"多散射"节点落库**：全局/局部分解 + 原型路径（透射连乘 + 方差求和）+ fback 材质属性 + **三档实现**；7.8h → 5.2min → **14fps** 且零调参；**与 PBR"补能量 vs 推输运"跨域同构**；毛发自测 12 → **15 条**）+ 1 图解 + Daily；**产业侧双重磅：RTX Mega Geometry 2.0 发布（流式光追几何 + 优雅降级，E-Day 双首发之一，10-6）+ 《巫师 3》重制版评测今日解禁（9-29 上线，毛发第四代大样本检验）**；另 AMD DGFS 补录（开放 vs 封闭对照））
+最后更新：2026-09-29（Run #21，**溯源日**：前沿窗口 9-28 ~ 9-29 —— **9-28 listing 补覆盖**（4 条：3 条已熟 + Seeing Speech 记名 B+）；**API 交叉窗口捕获 4 条 cs.CV 主分类新条目**（ReFM 入库 A- / ControlGS 入库 B+ / Depth Any Seen 记名 B- / Gaussian Steganography 记名 C）——**入库 2 篇前沿 + 1 篇经典，未凑数**）—— 经典为今日头条 **[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]**（**"分档的祖先"落库**：LOD / 可见复杂度固定上限 / working set / 递归下降；**"预算起源三件套"（1976 + 1978 + 1983）齐全**；⚠️ 原文扫描件被 Wayback 429 拦截，内容以 ACM 摘要 + SIGGRAPH '76 + UCSC 技术报告三层核验、复核清单已入笔记）+ 1 图解 + Daily；**产业侧头条：《巫师 3》重制版今日 18:00 上线（LSS 路径追踪毛发首发 + RTX 5080 @4K PT 30fps 裸数 / 帧生成扛到 59）——毛发"实战观察"窗口打开**
+　　▸ **9-28 回顾**（Run #20）：Zinke-Yuksel 2008（毛发多散射节点：全局/局部分解 + 原型路径 + 三档实现，7.8h → 5.2min → 14fps）→ 毛发自测 15 条；Mega Geometry 2.0（流式光追几何 + drop-detail，E-Day 双首发之一）；巫 3 评测解禁
 　　▸ **9-27 回顾**（Run #19）：Parish & Müller 2001（PCG 第二锚点 / CityEngine 最早出处：扩展 L-system + self-sensitive + LOD=迭代深度）→ PCG 三节点齐全；W39 收官（9-21~9-27）
-　　▸ **9-26 回顾**（Run #18）：ToCo-Mesh（拓扑一致动态网格）+ Scheuermann 2004（实时毛发工程三刀）→ 毛发三节点齐全、12 条自测；W39 首版

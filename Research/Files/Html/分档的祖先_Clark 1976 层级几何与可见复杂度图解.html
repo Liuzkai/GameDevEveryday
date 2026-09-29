@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分档的祖先 —— Clark 1976 层级几何与"可见复杂度"图解</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #b3541e;
+    --accent-soft: #fdf1e8;
+    --g1: #2e7d4f;
+    --g2: #b79114;
+    --g3: #c7701a;
+    --code: #f4f4f1;
+    --box: #ffffff;
+    --box-line: #c9c9c4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #e0a06a;
+      --accent-soft: #2a221b;
+      --g1: #6bbf8a;
+      --g2: #d6c243;
+      --g3: #e0a04a;
+      --code: #24282b;
+      --box: #1e2124;
+      --box-line: #4a4f55;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 25px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 26px; }
+  h2 { font-size: 16px; margin: 36px 0 12px; padding-left: 10px;
+       border-left: 3px solid var(--accent); letter-spacing: -0.005em; }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--accent-soft); border: 1px solid var(--line);
+          border-radius: 10px; padding: 16px 18px; margin: 0 0 6px; color: var(--ink); }
+  .lede strong { color: var(--accent); }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 4px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 15px 17px; }
+  .card h3 { margin: 0 0 6px; font-size: 14px; color: var(--ink); }
+  .card .n { display: inline-block; font-size: 11.5px; color: var(--accent);
+             border: 1px solid var(--accent); border-radius: 4px; padding: 0 6px;
+             margin-right: 8px; letter-spacing: 0.02em; }
+  .card p { font-size: 13px; margin: 0 0 8px; }
+  .card .now { font-size: 12.5px; color: var(--ink-3); border-top: 1px dashed var(--line);
+               padding-top: 8px; margin-top: 8px; }
+  .card .now b { color: var(--accent); font-weight: 600; }
+
+  figure { margin: 0 0 8px; background: var(--panel); border: 1px solid var(--line);
+           border-radius: 10px; padding: 18px; overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  figcaption { color: var(--ink-3); font-size: 12.5px; margin-top: 10px; text-align: center; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th { background: var(--code); color: var(--ink-2); font-weight: 600; font-size: 12.5px; }
+  tr:last-child td { border-bottom: none; }
+  td.dim { font-weight: 600; color: var(--ink); }
+  .foot { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--line);
+          color: var(--ink-3); font-size: 12px; }
+  .kv { color: var(--ink-3); font-size: 12.5px; }
+  .hl { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>分档的祖先 —— Clark 1976 的层级几何与"可见复杂度"</h1>
+<p class="sub">Hierarchical Geometric Models for Visible Surface Algorithms · CACM 19(10), 1976 · 本库"分档/五档/LOD/流式"共同的上游出处</p>
+
+<div class="lede">
+  <strong>一句话：</strong>把场景组织成<b>树（几何层级）</b>、每个节点带<b>包围体</b>、每个物体准备<b>多个细节层级</b>——于是"画什么、画多细、驻留多少"全部变成<b>按观察条件实时的选择</b>。<br>
+  原文摘要的目标句：<span class="mono">"a visibility algorithm in which the computation time grows linearly with the visible complexity of the scene"</span>
+  —— <strong>成本从此关于"可见复杂度"，而不是关于"场景总量"。</strong>
+</div>
+
+<h2>五个改进了什么（摘要逐条）</h2>
+<div class="cards">
+  <div class="card">
+    <h3><span class="n">1</span>总量松、单帧紧</h3>
+    <p>"环境的复杂度范围大幅增加，而任一场景的<b>可见复杂度保持固定上限</b>。"</p>
+    <div class="now">今天的对应物：<b>五档画质的第一原理</b>——每档定义的不是"资产总量"，而是"单帧可见量的上限"。</div>
+  </div>
+  <div class="card">
+    <h3><span class="n">2</span>细节随观察条件变</h3>
+    <p>"提供有意义的方式来<b>变化细节量</b>：随物体<b>屏幕占比</b>、随<b>相机与物体运动</b>。"</p>
+    <div class="now">这就是 <b>LOD 的定义句</b>——注意"运动"一项：细节选择从一开始就是<b>时变</b>问题。</div>
+  </div>
+  <div class="card">
+    <h3><span class="n">3</span>裁剪 = 对数搜索</h3>
+    <p>"借助几何层级，'裁剪'变成对视野内<b>可分辨部分</b>的非常快的<b>对数搜索</b>。"</p>
+    <div class="now">对应物：层级剔除 / 簇剔除（cluster culling）——<b>GPU-Driven Rendering</b> 的史前版本。</div>
+  </div>
+  <div class="card">
+    <h3><span class="n">4</span>working set</h3>
+    <p>"帧间连贯 + 裁剪定义了图形的 <b>'工作集'</b>——总结构中<b>该驻留在主存</b>（primary store）的那一份。"</p>
+    <div class="now">对应物：流式加载 / World Partition / 虚拟纹理 / Mega Geometry 2.0 的"驻留预算"。概念借自 <b>Denning 1968</b> 的虚拟内存 working set。</div>
+  </div>
+  <div class="card">
+    <h3><span class="n">5</span>递归下降</h3>
+    <p>"结构框架导出一个<b>递归下降的可见面算法</b>：计算时间<b>线性于可见复杂度</b>（而非超线性于物体空间复杂度）。"</p>
+    <div class="now">本库反复使用的问法——<b>"成本函数现在关于哪个变量线性？"</b>——1976 年就在问。</div>
+  </div>
+  <div class="card">
+    <h3><span class="n">+</span>当时未实现</h3>
+    <p>原文是"短理论论文"，方法当时<b>未被实现</b>（UCSC 技术报告史述）；递归下降对隐藏面的实际剔除收效有限。</p>
+    <div class="now">但它"预示了后世"——五十年后的每一条主流管线都在这五条里面。</div>
+  </div>
+</div>
+
+<h2>机制图：层级树 × 屏幕占比 → 选表示</h2>
+<figure>
+<svg viewBox="0 0 1000 430" role="img" aria-label="层级几何与 LOD 选择机制图">
+  <!-- ============ LEFT: hierarchy tree ============ -->
+  <text x="24" y="28" font-size="13.5" fill="var(--ink)" font-weight="600">① 场景 = 树 + 包围体 + 每物体多层级表示</text>
+
+  <!-- root -->
+  <rect x="150" y="48" width="120" height="34" rx="7" fill="var(--panel)" stroke="var(--box-line)" stroke-width="1.5"/>
+  <text x="210" y="69" font-size="12.5" fill="var(--ink)" text-anchor="middle">Scene（根）</text>
+
+  <!-- level1 group -->
+  <rect x="70" y="120" width="280" height="270" rx="10" fill="none" stroke="var(--g2)" stroke-width="1.3" stroke-dasharray="5 4"/>
+  <text x="82" y="140" font-size="11.5" fill="var(--g2)">包围体（区域组）</text>
+
+  <!-- two buildings + one character -->
+  <rect x="100" y="160" width="96" height="30" rx="6" fill="var(--panel)" stroke="var(--box-line)" stroke-width="1.3"/>
+  <text x="148" y="179" font-size="12" fill="var(--ink)" text-anchor="middle">Building A</text>
+  <rect x="108" y="200" width="80" height="13" rx="3" fill="var(--g1)" opacity="0.85"/>
+  <text x="148" y="210" font-size="10" fill="#fff" text-anchor="middle">L0 高细节</text>
+  <rect x="114" y="217" width="68" height="13" rx="3" fill="var(--g2)" opacity="0.85"/>
+  <text x="148" y="227" font-size="10" fill="#fff" text-anchor="middle">L1 中</text>
+  <rect x="120" y="234" width="56" height="13" rx="3" fill="var(--g3)" opacity="0.85"/>
+  <text x="148" y="244" font-size="10" fill="#fff" text-anchor="middle">L2 低</text>
+
+  <rect x="230" y="160" width="96" height="30" rx="6" fill="var(--panel)" stroke="var(--box-line)" stroke-width="1.3"/>
+  <text x="278" y="179" font-size="12" fill="var(--ink)" text-anchor="middle">Building B</text>
+  <rect x="238" y="200" width="80" height="13" rx="3" fill="var(--g1)" opacity="0.85"/>
+  <text x="278" y="210" font-size="10" fill="#fff" text-anchor="middle">L0</text>
+  <rect x="244" y="217" width="68" height="13" rx="3" fill="var(--g2)" opacity="0.85"/>
+  <text x="278" y="227" font-size="10" fill="#fff" text-anchor="middle">L1</text>
+  <rect x="250" y="234" width="56" height="13" rx="3" fill="var(--g3)" opacity="0.85"/>
+  <text x="278" y="244" font-size="10" fill="#fff" text-anchor="middle">L2</text>
+
+  <rect x="176" y="300" width="96" height="30" rx="6" fill="var(--panel)" stroke="var(--box-line)" stroke-width="1.3"/>
+  <text x="224" y="319" font-size="12" fill="var(--ink)" text-anchor="middle">Character</text>
+  <rect x="184" y="340" width="80" height="13" rx="3" fill="var(--g1)" opacity="0.85"/>
+  <text x="224" y="350" font-size="10" fill="#fff" text-anchor="middle">L0</text>
+  <rect x="190" y="357" width="68" height="13" rx="3" fill="var(--g2)" opacity="0.85"/>
+  <text x="224" y="367" font-size="10" fill="#fff" text-anchor="middle">L1</text>
+  <rect x="196" y="374" width="56" height="13" rx="3" fill="var(--g3)" opacity="0.85"/>
+  <text x="224" y="384" font-size="10" fill="#fff" text-anchor="middle">L2</text>
+
+  <!-- tree edges -->
+  <line x1="210" y1="82" x2="150" y2="160" stroke="var(--box-line)" stroke-width="1.2"/>
+  <line x1="210" y1="82" x2="276" y2="160" stroke="var(--box-line)" stroke-width="1.2"/>
+  <line x1="210" y1="82" x2="224" y2="300" stroke="var(--box-line)" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="238" y="255" font-size="11" fill="var(--ink-3)">…</text>
+
+  <!-- ============ MIDDLE: camera + screen size ============ -->
+  <text x="420" y="28" font-size="13.5" fill="var(--ink)" font-weight="600">② 观察条件（屏幕占比 / 运动）</text>
+
+  <!-- camera -->
+  <circle cx="450" cy="140" r="10" fill="var(--accent)"/>
+  <text x="450" y="168" font-size="11" fill="var(--ink-3)" text-anchor="middle">相机</text>
+  <line x1="460" y1="132" x2="600" y2="90" stroke="var(--accent)" stroke-width="1.4"/>
+  <line x1="460" y1="148" x2="600" y2="250" stroke="var(--accent)" stroke-width="1.4"/>
+
+  <!-- near object big -->
+  <circle cx="560" cy="130" r="26" fill="var(--g1)" opacity="0.9"/>
+  <text x="560" y="135" font-size="11.5" fill="#fff" text-anchor="middle">近</text>
+
+  <!-- mid -->
+  <circle cx="640" cy="150" r="14" fill="var(--g2)" opacity="0.9"/>
+  <text x="640" y="154" font-size="10.5" fill="#fff" text-anchor="middle">中</text>
+
+  <!-- far -->
+  <circle cx="710" cy="170" r="7" fill="var(--g3)" opacity="0.9"/>
+  <text x="726" y="174" font-size="10.5" fill="var(--ink-3)">远</text>
+
+  <!-- ============ RIGHT: selection rules ============ -->
+  <text x="790" y="28" font-size="13.5" fill="var(--ink)" font-weight="600">③ 用哪个表示？</text>
+
+  <rect x="790" y="48" width="180" height="46" rx="8" fill="var(--g1)" opacity="0.16" stroke="var(--g1)"/>
+  <text x="800" y="68" font-size="12" fill="var(--ink)">屏幕占比大 →</text>
+  <text x="800" y="85" font-size="12" fill="var(--ink)"><tspan font-weight="700" fill="var(--g1)">L0 高细节</tspan></text>
+
+  <rect x="790" y="106" width="180" height="46" rx="8" fill="var(--g2)" opacity="0.16" stroke="var(--g2)"/>
+  <text x="800" y="126" font-size="12" fill="var(--ink)">屏幕占比中 →</text>
+  <text x="800" y="143" font-size="12" fill="var(--ink)"><tspan font-weight="700" fill="var(--g2)">L1 中</tspan></text>
+
+  <rect x="790" y="164" width="180" height="46" rx="8" fill="var(--g3)" opacity="0.16" stroke="var(--g3)"/>
+  <text x="800" y="184" font-size="12" fill="var(--ink)">屏幕占比小 / 将被裁剪 →</text>
+  <text x="800" y="201" font-size="12" fill="var(--ink)"><tspan font-weight="700" fill="var(--g3)">L2 低（或整棵子树跳过）</tspan></text>
+
+  <rect x="790" y="222" width="180" height="72" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+  <text x="800" y="243" font-size="12" fill="var(--ink-2)">选择依据（原文）：</text>
+  <text x="800" y="261" font-size="12" fill="var(--ink)">· 屏幕占比</text>
+  <text x="800" y="279" font-size="12" fill="var(--ink)">· 相机 / 物体运动（帧间连贯）</text>
+
+  <!-- bottom band -->
+  <rect x="24" y="404" width="952" height="2" rx="1" fill="var(--line)"/>
+  <text x="24" y="424" font-size="12" fill="var(--ink-3)">结果：环境总量可以无限增长，而"这一帧真正被处理的量"（可见复杂度）保持上限——成本关于可见复杂度增长，而不是关于场景总量。</text>
+</svg>
+<figcaption>机制三层：层级树（含包围体与多细节表示）→ 观察条件（屏幕占比 / 运动）→ 表示选择（LOD / 裁剪）。图中颜色深浅仅表示细节层级高低。</figcaption>
+</figure>
+
+<h2>五十年后的四个出口</h2>
+<div class="tablewrap">
+<table>
+  <tr><th>Clark 1976 的原始表述</th><th>今天的工程出口</th><th>同源判据</th></tr>
+  <tr>
+    <td class="dim">细节随屏幕占比变化</td>
+    <td>模型 LOD / Mip（纹理流送）/ Nanite（虚拟几何）/ 植被分级</td>
+    <td>细节不可分辨时，多余细节无价值</td>
+  </tr>
+  <tr>
+    <td class="dim">working set（主存该驻留多少）</td>
+    <td>World Partition / 虚拟纹理 / Mega Geometry 2.0 流式几何（drop detail 而非抖动）</td>
+    <td>驻留量 = 一个可按帧讨论的预算</td>
+  </tr>
+  <tr>
+    <td class="dim">可见复杂度固定上限</td>
+    <td>画质档位（本库五档矩阵）/ 主机锁帧体系</td>
+    <td>每档限制的是"单帧可见量"，不是"资产总量"</td>
+  </tr>
+  <tr>
+    <td class="dim">裁剪 = 对数搜索 / 递归下降</td>
+    <td>层级剔除 / 簇剔除（GPU-Driven Rendering）/ 光追 BVH 层级遍历</td>
+    <td>把线性搜索换成层级搜索</td>
+  </tr>
+</table>
+</div>
+
+<h2>与本库的连接</h2>
+<p>
+· <b>[[Scalability and Quality Tiers]]</b>：本文是该概念的"第一原理"——"可见复杂度固定上限"是五档定义的上游依据；<br>
+· <b>[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]</b>：本库 9-25 归纳的"表示律"（细节表示跟着观察尺度走；小到不该用几何时切纹理）正是第 2 条改进在 13 年后的具体化；<br>
+· <b>[[Reeves — Particle Systems (1983)]] / [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]]</b>：与本文构成"预算起源三件套"（1976 分档原理 + 1978/1983 成本法则）；<br>
+· <b>[[Shadow Mapping]]</b>：共用同一种问法——"成本函数现在关于哪个变量线性？"
+</p>
+
+<div class="foot">
+  来源与核验：ACM 官方摘要（CACM 19(10): 547–554, DOI 10.1145/360349.360354，逐条引用）+ SIGGRAPH '76 同题摘要（p.267）+ UCSC-CRL-95-27 技术报告史述段（树结构 / 包围体 / LOD / 裁剪 / 递归下降、"当时未实现"）。
+  <b>原文扫描件本次未能获取</b>（Wayback 对 ACCAD 历史档案限流），细节级复核清单见论文笔记 Notes 一节。<br>
+  本图解 · GameDevEveryday Research · 2026-09-29
+</div>
+
+</div>
+</body>
+</html>

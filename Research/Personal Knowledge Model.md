@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 21 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-28）新增 1 篇经典（[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]，落在既有毛发线）+ 1 篇前沿（[[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering]]，仅取一条抽象）**，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 22 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-29）新增 2 篇前沿（[[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]] / [[2026-09-25-ControlGS — Conditioning Neural Gaussians for Downstream-Processing-Aware XR Rendering|ControlGS]]，均为 Normal 读法）+ 1 篇经典（[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]，按 Easy/Normal 分层入库）**，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -202,6 +202,11 @@ user_level: Easy      # 或 Normal / Hard
     - **两条新判据**（9-28 入库，均已写入论文笔记）：① "**一条原型路径代表全部路径**"的合法性检查——先问"结果的哪些成分依赖路径几何、哪些只依赖事件质量"，只依赖后者的可整体丢给统计量；② "**方差可加**"——选对表示（高斯族）让"多次"不升复杂度（与 Karis"为可预存额外假设什么"同族，都是"选择即代价/收益"的样本）；
     - **产业双信号**：① **RTX Mega Geometry 2.0**（流式光追几何 + 优雅降级；**E-Day 10-6 升级为"动态灯光 × 几何流式"双首发检验**；另：≥10GB VRAM 门槛——**显存成为分档硬约束的第二例**）；② **《巫师 3》重制版评测今日解禁、9-29 上线**——**Steam/GOG 保留三个 build（Classic / Next-Gen / Remastered）**：**"艺术意图档位"从概念变为产品形态**（玩家可回退旧观感）；
     - **预计算存法谱系补第四种**（[[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering|DiffusionShadow]]）：全存 → 解析表（Karis/Kulla-Conty）→ 复用（Fdez-Agüera）→ **生成式记忆**。判据：*面对"存不下"的预计算数据，先问"它是对所有输入都查、还是对密集采样集查"*。
+21. **🔴 9-29 新增（溯源日：分档祖先 + 两条新判据 + 毛发进入实战数据期）**：
+    - **"分档的祖先"落库**：[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 入库——**LOD / "可见复杂度固定上限" / working set / 递归下降**；本库五维预算自此有 **1976（分档原理）+ 1978（灯光/贴图成本）+ 1983（粒子成本）** 的完整上游链。**一条自查（可直接做）**：*我的档位在限制"资源总量"，还是在限制"单帧可见量"？* — 后者才是 Clark 的原始表述；**一条判据**：*成本 ∝ 物体空间复杂度是原罪，每次优化都是在把它改写成"成本 ∝ 可见复杂度"*（⚠️ 原文扫描件被 Wayback 429 拦截，三层核验 + 复核清单见笔记）；
+    - **两条新判据（今日两篇前沿）**：① **"廉价参考解该当初始化还是当目标？"**（[[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]：看它的错误是否与正确信息缠在一起——复制动作/HumanIK 输出都只能当起点，目标由四能量定义；**"降级式优化"**：先问它该扮演什么角色）；② **"优化的是中间产物还是最终产物？"**（[[2026-09-25-ControlGS — Conditioning Neural Gaussians for Downstream-Processing-Aware XR Rendering|ControlGS]]："优化到眼睛"；**运行时状态（含功耗预算）作为生成条件**——"档位条件化"第三线索：`Dynamic` 闭环 + XeSS 3 倍率 + ControlGS）；
+    - **毛发进入实战数据期**：**《巫师 3》重制版今日 18:00 上线**——LSS 路径追踪毛发首发（HairWorks 演进形态）；实测：RTX 5080 @4K PT+HairWorks+DLSS Perf = **30 fps 裸数**（帧生成 59）、**关 HairWorks 44**、关 PT 55 → **"毛发仍是帧预算重项"十一年未变；"换表示（LSS）降不了成本量级，但换来了观感"**。[[Hair Rendering]] 第 13 项"实战观察"现在可做；
+    - **"帧生成被官方规格扶正"**：CDPR/NVIDIA 把 4K PT 的 60fps 目标**建立在 DLSS+帧生成之上**（"30fps 基数 + FG"的伪影问题被点名——**基数不能太低是 FG 使用硬前提**）。
 
 ---
 
