@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>可微渲染的"记忆问题" —— 从 PRB 到常数内存光迹追踪（2021 → 2026）</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #1f5fa8;
+    --accent-soft: #eef4fb;
+    --warn: #b3541e;
+    --warn-soft: #fdf1e8;
+    --ok: #2e7d4f;
+    --ok-soft: #eaf6ee;
+    --code: #f4f4f1;
+    --cam: #1f5fa8;
+    --cam-soft: #e8f1fa;
+    --lit: #b3541e;
+    --lit-soft: #fdf1e8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #7db4e8;
+      --accent-soft: #1c2834;
+      --warn: #e0a06a;
+      --warn-soft: #2a221b;
+      --ok: #6bbf8a;
+      --ok-soft: #1c2b22;
+      --code: #24282b;
+      --cam: #7db4e8;
+      --cam-soft: #1c2834;
+      --lit: #e0a06a;
+      --lit-soft: #2a221b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 28px 20px 48px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 24px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 22px; }
+  h2 {
+    font-size: 16px; margin: 34px 0 12px; padding-left: 10px;
+    border-left: 3px solid var(--accent); letter-spacing: -0.005em;
+  }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede {
+    background: var(--accent-soft); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 18px; margin: 0 0 6px;
+    color: var(--ink); font-size: 14.5px;
+  }
+  .lede strong { color: var(--accent); }
+  .cards { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 4px; }
+  .card {
+    flex: 1 1 240px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px 12px; min-width: 240px;
+  }
+  .card h3 { margin: 0 0 4px; font-size: 15px; letter-spacing: -0.005em; }
+  .card .yr { color: var(--ink-3); font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; }
+  .card p { font-size: 13.5px; margin: 8px 0; }
+  .chip {
+    display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 20px;
+    border: 1px solid var(--line); background: var(--code); color: var(--ink-2); margin: 0 4px 4px 0;
+  }
+  .chip.bad { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+  .chip.good { border-color: var(--ok); color: var(--ok); background: var(--ok-soft); }
+  .panel {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px 18px; margin: 12px 0;
+  }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { text-align: left; padding: 8px 10px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th { background: var(--code); color: var(--ink-2); font-weight: 600; }
+  .note { color: var(--ink-3); font-size: 12.5px; margin-top: 8px; }
+  .duo { display: flex; flex-wrap: wrap; gap: 12px; }
+  .duo .half { flex: 1 1 420px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .half h3 { margin: 0 0 8px; font-size: 14px; }
+  .kbd { background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+  .footer { color: var(--ink-3); font-size: 12.5px; margin-top: 26px; border-top: 1px solid var(--line); padding-top: 12px; }
+  svg text { font-family: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>可微渲染的"记忆问题" —— 从 PRB 到常数内存光迹追踪</h1>
+  <p class="sub">2020 Radiative Backpropagation → 2021 Path Replay Backpropagation → 2026 光源侧两个解法 · 配套笔记：[[Vicini — Path Replay Backpropagation (2021)]] · [[2026-09-26-Constant-Memory Differentiable Light Tracing]]</p>
+
+  <div class="lede">
+    <strong>一句话问题：</strong>反向模式微分要求"逆序访问中间状态"——原版（primal）算完才轮到微分，顺序相反，
+    中间量既不能随手重算（还没走到）、也不能全存（渲染的中间状态是 TB/s 量级）。
+    <strong>整条 2020→2026 的路线，就是把这个"存不起"一笔一笔换掉的过程。</strong>
+  </div>
+
+  <h2>一、四代路线的账本（每代只换一栏成本）</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="yr">2020 之前</div>
+      <h3>Naive AD（全存）</h3>
+      <p>记录整个计算图，逆序遍历。内存 ∝ 路径长度 × 采样数。</p>
+      <p><span class="chip bad">内存：线性增长</span><span class="chip">时间：线性</span><span class="chip">梯度：精确</span></p>
+      <p class="note">实测量级：640×360、1spp 的次表面散射场景，单次梯度即耗尽 23 GB 显卡。</p>
+    </div>
+    <div class="card">
+      <div class="yr">2020</div>
+      <h3>RB：伴随输运</h3>
+      <p>把梯度改写成"从相机出发的辐射输运"——不存中间状态，改为独立的伴随模拟。</p>
+      <p><span class="chip good">内存：常数</span><span class="chip bad">时间：二次</span><span class="chip bad">不支持理想镜面</span></p>
+      <p class="note">简化版（把入射辐射设为 1）连梯度符号都可能错——"有偏但方向对"被证伪。</p>
+    </div>
+    <div class="card">
+      <div class="yr">2021 · PRB</div>
+      <h3>种子重放（相机侧）</h3>
+      <p>只存 (PRNG 种子, 最终辐射 L)；重放同一条路径，逐顶点开<b>局部</b> AD 作用域反传。</p>
+      <p><span class="chip good">内存：常数</span><span class="chip good">时间：线性</span><span class="chip good">无偏 + 支持镜面</span></p>
+      <p class="note">21.6 GB → 0.3 GB；时间与常规 AD 相当。噪声模式都与常规 AD 一致。</p>
+    </div>
+    <div class="card">
+      <div class="yr">2026 · 本文</div>
+      <h3>光源侧（1:k 连接）</h3>
+      <p>光路每个顶点都能 splat 到传感器 → 没有单一 adjoint → PRB 两趟结构<b>结构性失效</b>。两解法：压实 / 累积。</p>
+      <p><span class="chip good">内存：常数</span><span class="chip">时间：+1 趟</span><span class="chip">质量：期望一致 / 方差可选</span></p>
+      <p class="note">16 GB 卡上把可微光输运推到了 naive AD 到不了的路径深度（32–128）。</p>
+    </div>
+  </div>
+
+  <h2>二、为什么"重放"能成立：三个前提</h2>
+  <div class="panel">
+    <table>
+      <tr><th style="width:34%">前提</th><th>含义</th><th style="width:30%">失效时怎么办</th></tr>
+      <tr>
+        <td><b>① 随机源可重播</b></td>
+        <td>Monte Carlo 的随机性来自伪随机流；重置种子即可走出<b>同一条路径</b></td>
+        <td>随机源不可控 → 重放失效（需换机制）</td>
+      </tr>
+      <tr>
+        <td><b>② 路径可精确重建</b></td>
+        <td>第一趟留下的全部必要信息只是一个标量 L（+种子）</td>
+        <td>含"不可重播"的外部状态时退化</td>
+      </tr>
+      <tr>
+        <td><b>③ 相邻顶点的雅可比低维可逆</b></td>
+        <td>渲染循环状态只有 (L, β)，雅可比 4×4 级；<b>反雅可比而非反程序</b>（神经网络不能这么干——中间层千维）</td>
+        <td>雅可比奇异（漫反射）→ 零均值随机正则，两趟同噪声，保持无偏</td>
+      </tr>
+    </table>
+    <p class="note">右栏说明：为什么这招"只能在渲染里成立"，以及它被推向新领域时最先断裂的地方。</p>
+  </div>
+
+  <h2>三、相机侧 1:1 vs 光源侧 1:k —— 2026 年补的那一格</h2>
+  <div class="duo">
+    <div class="half">
+      <h3 style="color:var(--cam)">相机侧路径追踪（PRB 2021 可直接重放）</h3>
+      <svg viewBox="0 0 460 190" width="100%" role="img" aria-label="相机侧路径贡献单个像素">
+        <rect x="10" y="14" width="88" height="26" rx="6" fill="var(--cam-soft)" stroke="var(--cam)"/>
+        <text x="54" y="31" font-size="12.5" text-anchor="middle" fill="var(--cam)">相机 / 像素</text>
+        <circle cx="170" cy="27" r="7" fill="none" stroke="var(--ink-2)"/>
+        <circle cx="250" cy="52" r="7" fill="none" stroke="var(--ink-2)"/>
+        <circle cx="330" cy="88" r="7" fill="none" stroke="var(--ink-2)"/>
+        <rect x="382" y="104" width="66" height="26" rx="6" fill="var(--code)" stroke="var(--ink-3)"/>
+        <text x="415" y="121" font-size="12.5" text-anchor="middle" fill="var(--ink-2)">光源</text>
+        <path d="M98 27 L163 27" stroke="var(--cam)" stroke-width="1.6" fill="none"/>
+        <path d="M177 30 L243 49" stroke="var(--ink-3)" stroke-width="1.4" fill="none"/>
+        <path d="M257 55 L323 85" stroke="var(--ink-3)" stroke-width="1.4" fill="none"/>
+        <path d="M337 91 L382 112" stroke="var(--ink-3)" stroke-width="1.4" fill="none"/>
+        <text x="230" y="150" font-size="12.5" fill="var(--ink-2)">一条路径 → <tspan font-weight="700" fill="var(--cam)">恰好一个像素</tspan></text>
+        <text x="230" y="170" font-size="12.5" fill="var(--ink-3)">→ 图像空间 adjoint L̄ 是<tspan font-weight="700">单个标量</tspan>，重放前即可查</text>
+      </svg>
+    </div>
+    <div class="half">
+      <h3 style="color:var(--lit)">光源侧光迹追踪（2026 要新机制）</h3>
+      <svg viewBox="0 0 460 190" width="100%" role="img" aria-label="光源侧路径贡献多个像素">
+        <rect x="10" y="14" width="66" height="26" rx="6" fill="var(--lit-soft)" stroke="var(--lit)"/>
+        <text x="43" y="31" font-size="12.5" text-anchor="middle" fill="var(--lit)">光源</text>
+        <circle cx="150" cy="27" r="7" fill="none" stroke="var(--ink-2)"/>
+        <circle cx="240" cy="54" r="7" fill="none" stroke="var(--ink-2)"/>
+        <circle cx="330" cy="84" r="7" fill="none" stroke="var(--ink-2)"/>
+        <path d="M76 27 L143 27" stroke="var(--lit)" stroke-width="1.6" fill="none"/>
+        <path d="M157 30 L233 51" stroke="var(--ink-3)" stroke-width="1.4" fill="none"/>
+        <path d="M247 57 L323 81" stroke="var(--ink-3)" stroke-width="1.4" fill="none"/>
+        <rect x="386" y="18" width="24" height="18" rx="3" fill="var(--lit-soft)" stroke="var(--lit)"/>
+        <rect x="386" y="46" width="24" height="18" rx="3" fill="var(--lit-soft)" stroke="var(--lit)"/>
+        <rect x="386" y="74" width="24" height="18" rx="3" fill="var(--lit-soft)" stroke="var(--lit)"/>
+        <text x="438" y="32" font-size="10.5" text-anchor="middle" fill="var(--ink-3)">像素</text>
+        <text x="438" y="60" font-size="10.5" text-anchor="middle" fill="var(--ink-3)">像素</text>
+        <text x="438" y="88" font-size="10.5" text-anchor="middle" fill="var(--ink-3)">像素</text>
+        <path d="M150 34 L386 27" stroke="var(--lit)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+        <path d="M240 61 L386 55" stroke="var(--lit)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+        <path d="M330 91 L386 83" stroke="var(--lit)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+        <text x="230" y="134" font-size="12.5" fill="var(--ink-2)">一条路径 → 最多 <tspan font-weight="700" fill="var(--lit)">k 个像素</tspan>（每个顶点都能连传感器）</text>
+        <text x="230" y="154" font-size="12.5" fill="var(--ink-3)">→ 每顶点的 adjoint 不同、且依赖"未来"连接 → 重放拿不到</text>
+        <text x="230" y="174" font-size="12.5" fill="var(--lit)">→ 解法：<tspan font-weight="700">压实成一个代表</tspan>（ResLRB）或 <tspan font-weight="700">多趟累加-减法</tspan>（LRB-3-pass）</text>
+      </svg>
+    </div>
+  </div>
+
+  <h2>四、2026 的两个策略：压缩 vs 累积</h2>
+  <div class="panel">
+    <table>
+      <tr><th></th><th>ResLRB（蓄水池压缩）</th><th>LRB-3-pass（累加-减法）</th></tr>
+      <tr>
+        <td><b>机制</b></td>
+        <td>把 k 个传感器连接以权重流式送入容量 1 的蓄水池，只保留一个代表并重加权</td>
+        <td>Pass 2 累加 Σ L̄ᵢ·Lᵢ → Pass 3 重放时逐顶点<b>减法消耗</b>，剩下的恰是"下游和"</td>
+      </tr>
+      <tr>
+        <td><b>趟数</b></td>
+        <td>2 趟（保住 PRB 结构）</td>
+        <td>3 趟（多一趟遍历）</td>
+      </tr>
+      <tr>
+        <td><b>梯度</b></td>
+        <td>期望无偏；<b>方差随丢弃连接数上升</b></td>
+        <td><b>与 naive AD 期望一致</b>（同噪声模式）</td>
+      </tr>
+      <tr>
+        <td><b>何时赢</b></td>
+        <td>高连接密度 + 每迭代时间紧（唯一实测优势场景：Living Room）</td>
+        <td>多数配置（稀疏焦散时两者等价，但 LRB-3-pass 有保证）</td>
+      </tr>
+      <tr>
+        <td><b>实测</b></td>
+        <td colspan="2">16 GB 卡：naive AD 在 path length 32 爆显存；两个新方法在 4–128 全程<b>内存平线</b>。焦散优化任务（length 4）里 naive AD 反而最快——<b>常数内存不是更快，是"还能跑"</b>。</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>五、两条带走用的判据</h2>
+  <div class="panel">
+    <p><b>判据 1 —— "它能不能不存？"</b><br>
+    确定性系统里，中间状态的存储可以被"重放"替代。检查三件事：随机源可重播、状态可从种子重建、逆操作存在且便宜（低维雅可比可逆）。渲染满足，所以 PRB 成立；神经网络不满足（千维中间层），所以不行。</p>
+    <p style="margin-bottom:0"><b>判据 2 —— 重放法的适用边界 = "路径与输出的连接结构"。</b><br>
+    1:1（相机路径→单像素）可以直接重放；1:k（光路→多像素；双向 / 光子映射 / multi-light 同理）必须在"<b>压实（随机换结构）</b>"与"<b>累积（遍历换精确）</b>"之间选一个。评估任何"存不起"的模拟（粒子 / 流体 / 布料），先数它的连接结构。</p>
+  </div>
+
+  <p class="footer">
+    数据来源：Vicini, Speierer &amp; Jakob, <i>Path Replay Backpropagation</i>, ACM TOG 40(4):108 (SIGGRAPH 2021) ·
+    Beresna &amp; Fiume, <i>Constant-Memory Differentiable Light Tracing</i>, arXiv:2609.32920 (2026)。
+    本图解为 GameDevEveryday 研究库 2026-09-30 产出的知识可视化。
+  </p>
+</div>
+</body>
+</html>

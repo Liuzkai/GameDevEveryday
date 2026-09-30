@@ -39,7 +39,7 @@ tags: [classic, lod, scalability, visibility, rendering, engine-architecture, bu
 
 **对库的意义**：本库五维预算、五档画质、以及反复出现的"降档 = 换表示层级"判据，**共同的祖先这一篇**。原文摘要的目标句（可引用）：*"…designing a visibility algorithm in which the computation time grows linearly with the visible complexity of the scene."*
 
-> ⚠️ **核验状态（重要）**：**原文扫描件本次未能获取**（Wayback Machine 对 ACCAD 历史档案的扫描件 429 限流，8 次尝试失败）。本笔记内容基于三层可查来源：① **ACM 官方摘要**（全文逐条引用）；② **SIGGRAPH '76 同题摘要**；③ **UCSC-CRL-95-27 技术报告**的史述段（明确引用 [Clark76]，描述树结构 / 包围体 / LOD / 裁剪 / 递归下降，并注"当时未实现、预示后世"）。**细节级复核（如论文内具体的分辨率论证数字）待扫描件可得后补**——已记入待办。
+> ✅ **核验状态（2026-09-30 结清）**：**原文扫描件已获取并逐段核对**——OSU Pressbooks 镜像（`ohiostate.pressbooks.pub/app/uploads/sites/45/2017/09/clark-vis-surface.pdf`，8 页全文，与 Wayne Carlson 历史档案同源扫描件的站内镜像；Wayback 此前 429 的同一个文件，无需经过 Wayback）。核验方式：全文文本抽取 + 关键段落逐条核对。**9-29 挂账的三项复核清单已全部完成**（见笔记末尾 Notes）；本笔记以下内容为一手材料。
 
 ## Problem
 
@@ -72,12 +72,21 @@ tags: [classic, lod, scalability, visibility, rendering, engine-architecture, bu
 | 4 | "Frame to frame coherence and clipping define a graphical **'working set'**, or fraction of the total structure that should be present in **primary store** for immediate access" | **流式加载 / 驻留预算的祖先**（World Partition、虚拟纹理、Mega Geometry 2.0 streaming 的史前版本） |
 | 5 | "A **recursive descent** visible surface algorithm in which the computation time potentially grows **linearly with the visible complexity** of the scene" | "成本函数关于什么线性"思维——本库从 [[Shadow Mapping]] 到 Mega Geometry 反复使用的同一问法 |
 
-### 结构（据 UCSC 技术报告的史述，明确标注为二手）
+### 结构（一手核对，2026-09-30）
 
-- **树状层级（tree-structured hierarchy）**：场景组织为树；
-- **节点带包围体（bounding volumes）**：剔除逻辑顺着树走；
-- **LOD 表示**：把"屏幕占比小的物体"画简单版本（原文指出了飞行模拟器是其最直接的受益场景）；
-- **递归下降**：从根开始，逐步下探；可剔除的（被遮挡/过小的）不下探。
+- **树状层级**：整个环境本身是一个 "object"，表示为**根树（rooted tree）**；弧有两类——**变换（transformations）**与**指向更精细结构的指针（恒等变换）**；
+- **节点的"充分性"定义（原文）**：每个非终端节点在"**其在屏幕上覆盖不超过某个小面积**"时即构成该物体的 *sufficient* 描述；覆盖超过 *critical maximum area* 时，用其子节点（更精细版本）替换；终端节点 = 多边形或曲面片。人体验证例：远到 3–4 个光栅单位 → 单个体块；约 16 个光栅单位 → 四肢/头/躯干一组体块；近到指尖 → 若干曲面片；
+- **最小包围信息**：裁剪所需的最小信息 = **包围球的中心与半径**（原文："The minimum necessary information is the center and radius of a bounding sphere."）；
+- **裁剪 = 被面积测试截断的对数搜索**：下降一层的判据是**面积测试**，纳入/剔除的判据是**视锥边界测试**（"Clipping therefore resembles a logarithmic search that is truncated by the area (resolvability) test."）；
+- **遮挡剔除的两个体（术语细节）**：每个 object 定义 **occluded volume A**（A 被遮 → 整个 object 被遮；所有 object 都存在）与 **occluding volume B**（B 遮挡某物 → 该物必被此 object 遮挡；开圆柱 / 透明物体可能不存在）；
+- **递归下降算法的具体形态**：每层对所有 object 按其包围体排序；遮挡测试可整体消去子树；若两包围体**在三个维度上都重叠**（可能相交），其子代在下一层递归中"当作有相同父节点"处理；递归到终端节点 → 原语的快速排序；**理想条件下计算时间随可见复杂度线性**。原文还建议把"裁剪"与"递归下降"两段下降**合并**（减少被遮挡对象的面积测试、减小 working set）。**并行性备注（1976）**：单处理器时合并为一个算法；多处理器时按流水线与否决定合并或分离——GPU 时代的预演。
+
+### 一手核对新增的四条细节（2026-09-30）
+
+1. **中心加权细节（foveation 的 1976 先声）**：分辨率上限不必均匀——"**允许物体覆盖的最大面积，越靠近视场边缘可以放得越大**"，原文自比"相机的中心加权测光"；
+2. **运动自适应细节**：运动物体"**细节量与其速度成反比**"（依据：人眼扫视抑制 + 相机运动模糊）；"**整幅画面在相机运动时都可以用更少的细节**"；
+3. **排序改进的精确账（原文自算）**：理想无重叠二叉层级中，朴素做法是 m log₂m（m = 2ⁿ 个终端节点）；利用结构逐层测试只需 **p(2ⁿ−1) ≈ pm** 次——**排序时间从 m log₂m 降到线性**；
+4. **数据库构建管线（1976 就给了）**：更粗的高层描述用 *bottom-up pruning*（由最精细版本向下剪枝）；更细的低层描述用 *top-down splitting*（Catmull 式曲面片细分）；何时生成（显示时 vs 离线）是"**传统的 time/space tradeoff**"——LOD 自动生成与烘焙策略的祖先。
 
 ## Why It Works（为什么这是"第一原理"级论文）
 
@@ -151,5 +160,8 @@ tags: [classic, lod, scalability, visibility, rendering, engine-architecture, bu
 ## Notes
 
 - 文献信息（ACM DL 核实）：Commun. ACM 19(10): 547–554, Oct. 1976；DOI 10.1145/360349.360354；SIGGRAPH '76 版为 1 页摘要（p.267，DOI 10.1145/563274.563323）；作者当时单位 **University of California, Santa Cruz**；后于 1982 年创办 SGI（背景信息）；
-- **原文扫描件获取失败记录**：已知自由扫描件在 `accad.osu.edu/~waynec/history/PDFs/clark-vis-surface.pdf`（Wayne Carlson 历史档案，经 Wayback 存档）——本次运行时 Wayback 全程 429（8 次尝试，多个端点/快照变体），**待下次运行或用户网络环境复核**；核验替代来源：ACM 摘要（逐条引用）+ SIGGRAPH'76 摘要 + UCSC-CRL-95-27 技术报告史述；
-- **核验清单（拿到扫描件后要做的 3 件事）**：① 论文内的"分辨率上限"论证（是否有具体数字/位数表述）；② 层级结构的精确定义（节点内容、包围体类型）；③ 递归下降算法的具体形态与剔除条件的原文表述。
+- **原文扫描件获取记录**：9-29 运行时 Wayback 全程 429（8 次尝试，多端点/多快照变体）→ **9-30 换路径结清**：OSU Pressbooks 站内镜像直接可得（`ohiostate.pressbooks.pub/app/uploads/sites/45/2017/09/clark-vis-surface.pdf`，无需经过 Wayback），8 页全文可抽取（含 CACM 547–554 全篇）；扫描件文件名 `clark-vis-surface.pdf`（与 Wayne Carlson 历史档案同源）。**方法记录：老论文"大学站内镜像"路径第 5 次生效**（Kajiya-Kay → Scheuermann → Parish → Clark 前序失败 → 本次 OSU 站内）；
+- **核验清单（9-29 提出 → 9-30 完成，三项全结）**：
+  - ① **"分辨率上限"论证**：没有具体位数/数字门槛，机制是 **area test**——节点覆盖超过 *critical maximum area* 才下探；原文教具式数字：**500 个多边形 vs 屏幕 20 个光栅单位**（"makes no sense"）、人体例 **3–4 / 16 个光栅单位**分档；
+  - ② **层级结构定义**：根树 + 两类弧（变换 / 指向更精细结构的恒等指针）+ 非终端节点 "sufficient" 定义 + 终端 = 多边形/曲面片；最小包围信息 = 包围球（中心 + 半径）；
+  - ③ **递归下降算法形态**：逐层排序 + 遮挡测试消去子树 + 三维重叠时子代"共享父节点"下探 + 终端快速排序；计算时间随可见复杂度线性（理想条件下）；与裁剪合并的建议见"结构"节。

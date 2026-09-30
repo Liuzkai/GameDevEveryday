@@ -24,8 +24,8 @@ tags: [gi, neural, real-time]
 
 ## Prerequisites
 
-- [[Global Illumination]]
-- [[Reflective Shadow Maps]] / 虚拟点光源（VPL）
+- [[Global Illumination]]（**问题与八代近似谱系**；其中"缓存族（RSM / VPL / Irradiance Caching / DDGI）"即本概念桥的具名缺口）
+- Reflective Shadow Maps（RSM）/ 虚拟点光源（VPL）——机制表见上
 - [[Neural Rendering]]
 - 实时渲染管线结构（G-buffer、deferred）
 
@@ -51,7 +51,7 @@ Neural Radiance Caching（NRC，2021，已在 RTX Remix 中产品化）
 
 - [[Neural Rendering]]
 - [[Global Illumination]]
-- [[Reflective Shadow Maps]]
+- [[Real-Time Global Illumination]]
 
 ## Game Applications
 
@@ -77,4 +77,4 @@ Current Level: **Hard**
 
 ## Next Learning Step
 
-先补 [[Reflective Shadow Maps]] 与 iVPL，再回来看神经方法。顺序反了会浪费大量时间。
+先补 Reflective Shadow Maps（RSM）与 iVPL（机制表见 [[Global Illumination]] 谱系第 6 行），再回来看神经方法。顺序反了会浪费大量时间。

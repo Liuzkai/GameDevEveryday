@@ -10,12 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-09-29]]（昨日：[[2026-09-28]]）
-- **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 [[2026-W40]] 待产出，覆盖 9-28 ~ 10-4）
-- **本月雷达**：[[2026-09]]
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 21 天）
+- **今日**：[[2026-09-30]]（昨日：[[2026-09-29]]）
+- **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 W40 待产出，覆盖 9-28 ~ 10-4）
+- **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
+- **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 23 天）
 
-## Papers（66）
+## Papers（68）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -84,13 +85,15 @@ created: 2026-09-07
 | [[2026-09-25-DiffusionShadow — Diffusion-based Shadow Caching for Neural Volume Rendering]] | B+  | Normal（只取一条抽象） | 中（**"预计算数据的第四种存法"：生成式记忆（扩散模型作压缩缓存）；立场声明"不泛化、要记忆"；UC Davis × Argonne / SciVis 领域**） ★ 2026-09-28 |
 | [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting]] | A-  | Normal      | **中高（★ "初始化解降级"：复制动作/ HumanIK 输出只是起点、目标由四能量定义；Autodesk；欠定问题的正确形式化）** ★ 2026-09-29 |
 | [[2026-09-25-ControlGS — Conditioning Neural Gaussians for Downstream-Processing-Aware XR Rendering]] | B+  | Normal      | 中（**"优化到眼睛"：后处理+显示光学纳入目标；运行时状态（含功耗预算）条件化生成；SIGGRAPH Asia 2026；"档位条件化"第三线索**） ★ 2026-09-29 |
-| [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]                | S（经典） | **Easy（机制）/ Normal（成本模型）** | **最高（★ 分档的祖先：LOD / 可见复杂度固定上限 / working set / 递归下降；"预算起源三件套"最上游）** ★ 2026-09-29 |
+| [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]                | S（经典） | **Easy（机制）/ Normal（成本模型）** | **最高（★ 分档的祖先：LOD / 可见复杂度固定上限 / working set / 递归下降；"预算起源三件套"最上游；✅ 9-30 扫描件补核结清——中心加权细节 / 运动自适应细节 / 排序 m log₂m→≈pm / LOD 构建管线）** ★ 2026-09-29 |
+| [[Vicini — Path Replay Backpropagation (2021)]]                                                | S（经典） | **Hard（推导层）/ Normal（结论层 4 条）** | **最高（★ 可微渲染"记忆与时间轴"起点：种子重放 + 局部 AD = 常数内存 + 线性时间；21.6GB→0.3GB；"用确定性换存储"的 2021 形态；[[LightOpt — Lights Optimization for Real-Time Rendering\|LightOpt]] 前置）** ★ 2026-09-30 |
+| [[2026-09-26-Constant-Memory Differentiable Light Tracing]]                                    | A-  | **Hard（推导层）/ Normal（结论层）** | 中高（**光源侧补全：ResLRB / LRB-3-pass；"重放边界的判据 = 路径-输出连接结构（1:1 vs 1:k）"；体检新分支"它能不能不存？"**） ★ 2026-09-30 |
 
-## Concepts（30）
+## Concepts（32）
 
 **基础锚点**
-- [[Real-Time Rendering]]
-- [[Global Illumination]]
+- [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
+- [[Global Illumination]] ★ 2026-09-30 补齐（**八代近似谱系表**：环境光 → SH → 辐射度 → PRT → 屏幕空间 → 缓存族(RSM/VPL) → 光追 → 神经；[[Neural Global Illumination]] 桥的具名前置就在此）
 - [[Rendering Equation]] ★ 2026-09-15 入库（谱系最大锚点补齐）
 - [[Microfacet Theory]] ★ 2026-09-16 入库（当前学习目标节点：D·G·F）
 - [[Participating Media]] ★ 2026-09-16 入库（VFX/OverDraw Easy 域 ↔ 理论的最大缺口）★ **2026-09-21 找到历史入口：[[Reeves — Particle Systems (1983)]] §5 的两个"做不到"（粒子被打亮 / 云的自阴影）正是它的起点**
@@ -174,6 +177,6 @@ Research/
 
 ---
 
-最后更新：2026-09-29（Run #21，**溯源日**：前沿窗口 9-28 ~ 9-29 —— **9-28 listing 补覆盖**（4 条：3 条已熟 + Seeing Speech 记名 B+）；**API 交叉窗口捕获 4 条 cs.CV 主分类新条目**（ReFM 入库 A- / ControlGS 入库 B+ / Depth Any Seen 记名 B- / Gaussian Steganography 记名 C）——**入库 2 篇前沿 + 1 篇经典，未凑数**）—— 经典为今日头条 **[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]**（**"分档的祖先"落库**：LOD / 可见复杂度固定上限 / working set / 递归下降；**"预算起源三件套"（1976 + 1978 + 1983）齐全**；⚠️ 原文扫描件被 Wayback 429 拦截，内容以 ACM 摘要 + SIGGRAPH '76 + UCSC 技术报告三层核验、复核清单已入笔记）+ 1 图解 + Daily；**产业侧头条：《巫师 3》重制版今日 18:00 上线（LSS 路径追踪毛发首发 + RTX 5080 @4K PT 30fps 裸数 / 帧生成扛到 59）——毛发"实战观察"窗口打开**
-　　▸ **9-28 回顾**（Run #20）：Zinke-Yuksel 2008（毛发多散射节点：全局/局部分解 + 原型路径 + 三档实现，7.8h → 5.2min → 14fps）→ 毛发自测 15 条；Mega Geometry 2.0（流式光追几何 + drop-detail，E-Day 双首发之一）；巫 3 评测解禁
-　　▸ **9-27 回顾**（Run #19）：Parish & Müller 2001（PCG 第二锚点 / CityEngine 最早出处：扩展 L-system + self-sensitive + LOD=迭代深度）→ PCG 三节点齐全；W39 收官（9-21~9-27）
+最后更新：2026-09-30（Run #22，**月结日**：前沿窗口 9-29 ~ 9-30 —— **9-29 listing 12 条**（4 条已熟 + 8 条新评估）；**API 窗口另捕获 3 条"已提交未公告"**；**入库 1 篇前沿 + 1 篇经典 + 结清 1 处补核**，未凑数）—— 前沿为 **[[2026-09-26-Constant-Memory Differentiable Light Tracing]]**（**光源侧补全"可微渲染记忆问题"**：ResLRB / LRB-3-pass；判据"重放边界 = 路径-输出连接结构"）；经典为 **[[Vicini — Path Replay Backpropagation (2021)]]**（**"常数内存 + 线性时间"起点**：种子重放 + 局部 AD；21.6GB→0.3GB）；**同日结清 [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 扫描件补核**（OSU 站内镜像一次成功；三条复核全结 + 中心加权/运动自适应/排序账/LOD 构建管线四条新细节）；**产出首月月报 [[2026-09-Monthly|Monthly 2026-09]] + 刷新 [[2026-09]] 雷达（新增 4 行）**；**产业侧：巫 3 重制版 48h（DX12-only / LSS 原理 / 30-44-55 数据 / FSR4+XeSS2 同捆）+ E-Day 终极规格复核（硬件光追"必需"，10-1 早期访问）**
+　　▸ **9-29 回顾**（Run #21）：Clark 1976 入库（分档的祖先；预算起源三件套齐全）+ ReFM / ControlGS 两篇前沿（初始化解降级 / 优化到眼睛）
+　　▸ **9-28 回顾**（Run #20）：Zinke-Yuksel 2008（毛发多散射：全局/局部分解 + 原型路径，7.8h→14fps）→ 毛发自测 15 条；Mega Geometry 2.0（显存硬约束）；巫 3 评测解禁

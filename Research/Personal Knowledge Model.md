@@ -100,7 +100,7 @@ user_level: Easy      # 或 Normal / Hard
         │
         └─ [[GPU-Driven Rendering]] (Normal)
                     │
-[[Neural Upscaling]] (Normal)
+[[Neural Upscaling and Frame Generation]] (Normal)
         │
         ↓
 [[Motion Matching]] (Normal)  ←── ★ 关键瓶颈
@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 22 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-29）新增 2 篇前沿（[[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]] / [[2026-09-25-ControlGS — Conditioning Neural Gaussians for Downstream-Processing-Aware XR Rendering|ControlGS]]，均为 Normal 读法）+ 1 篇经典（[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]]，按 Easy/Normal 分层入库）**，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 23 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-30）新增 1 篇前沿（[[2026-09-26-Constant-Memory Differentiable Light Tracing]]）+ 1 篇经典（[[Vicini — Path Replay Backpropagation (2021)]]），均按 Hard 推导层 / Normal 结论层分层入库；同日结清 [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 扫描件补核**，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -207,6 +207,12 @@ user_level: Easy      # 或 Normal / Hard
     - **两条新判据（今日两篇前沿）**：① **"廉价参考解该当初始化还是当目标？"**（[[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]：看它的错误是否与正确信息缠在一起——复制动作/HumanIK 输出都只能当起点，目标由四能量定义；**"降级式优化"**：先问它该扮演什么角色）；② **"优化的是中间产物还是最终产物？"**（[[2026-09-25-ControlGS — Conditioning Neural Gaussians for Downstream-Processing-Aware XR Rendering|ControlGS]]："优化到眼睛"；**运行时状态（含功耗预算）作为生成条件**——"档位条件化"第三线索：`Dynamic` 闭环 + XeSS 3 倍率 + ControlGS）；
     - **毛发进入实战数据期**：**《巫师 3》重制版今日 18:00 上线**——LSS 路径追踪毛发首发（HairWorks 演进形态）；实测：RTX 5080 @4K PT+HairWorks+DLSS Perf = **30 fps 裸数**（帧生成 59）、**关 HairWorks 44**、关 PT 55 → **"毛发仍是帧预算重项"十一年未变；"换表示（LSS）降不了成本量级，但换来了观感"**。[[Hair Rendering]] 第 13 项"实战观察"现在可做；
     - **"帧生成被官方规格扶正"**：CDPR/NVIDIA 把 4K PT 的 60fps 目标**建立在 DLSS+帧生成之上**（"30fps 基数 + FG"的伪影问题被点名——**基数不能太低是 FG 使用硬前提**）。
+22. **🔴 9-30 新增（月结日：可微渲染开线 + Clark 结清 + 月报/雷达 + 体检三问成型）**：
+    - **可微渲染瓶颈线开线**（[[Differentiable Rendering]]）：[[Vicini — Path Replay Backpropagation (2021)]] 入库（**"常数内存 + 线性时间"起点**；**结论层 4 条可直接拿走**：重放三要素 / 内存与时间两笔账分开结算 / "有偏但方向对"被证伪（符号都可能错）/ "它能不能不存？"）+ [[2026-09-26-Constant-Memory Differentiable Light Tracing]] 入库（**光源侧补全**：1:1 vs 1:k 连接结构判据；压缩 vs 累积两策略）。**读法：只读结论层，推导层挂起**；桥的目标不变——读懂 [[LightOpt — Lights Optimization for Real-Time Rendering]] 的问题定义；
+    - **Clark 1976 补核结清**（9-29 挂账）：OSU 站内镜像一次成功（"大学站内镜像"路径第 5 次生效）；三项复核全结 + **四条新细节**（**中心加权细节 = foveation 先声 / 运动自适应细节（细节量 ∝ 1/速度）/ 排序从 m log₂m 降到 ≈pm / LOD 数据库构建管线：bottom-up pruning + top-down splitting + time/space 权衡**）；
+    - **首月月报 [[2026-09-Monthly|Monthly 2026-09]] + [[2026-09]] 雷达刷新**：雷达新增 4 行（Hair Rendering / Arm Neural Graphics / Physics-based Character Animation / World Models for Games）；Neural Upscaling → **Adopt+**（预算副作用）；**10 月目标 = 把"资料就绪"转为"动作完成"**（furnace test / 毛发 15 条 / 动态灯光复审 / 两条 30 分钟实测）；
+    - **体检三问成型**：**"不存？→ 不存在？→ 更便宜？"**（9-30 补上第一问：确定性系统 = 重放换存储）；
+    - **库内质量修复**：链接完整性检查发现 **[[Real-Time Rendering]] / [[Global Illumination]] 两个基础锚点自首日起引用悬空、从未建文件**（Index / PKM / Learning Path 多处引用受影响）→ **今日补齐**；[[Global Illumination]] 内含**八代近似谱系表**（环境光 → SH → 辐射度 → PRT → 屏幕空间 → **缓存族 RSM/VPL** → 光追 → 神经），**[[Neural Global Illumination]] 桥的具名前置缺口由此有了载体**（该概念笔记的 Prerequisites 已同步）；另修复 3 处小悬空。全库其余 37 处悬空（多为历史日报名称不匹配）记入维护台账。
 
 ---
 
@@ -236,4 +242,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-09-07]] · [[2026-09-27]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达
+相关：[[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达

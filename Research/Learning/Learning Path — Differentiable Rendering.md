@@ -56,6 +56,8 @@ created: 2026-09-07
 
 - [[LightOpt — Lights Optimization for Real-Time Rendering]]（目标应用，先读问题定义即可）
 - [[Inverse Rendering for Modeling with Line Primitives]]（进阶）
+- [[Vicini — Path Replay Backpropagation (2021)]] ★ 2026-09-30 新增：**"为什么必须离线 + 凭什么可行"的最清楚答案**；读**结论层**即可（重放三要素 / 内存与时间两笔账 / "有偏但方向对"被证伪）
+- [[2026-09-26-Constant-Memory Differentiable Light Tracing]] ★ 2026-09-30 新增：上游可微渲染的 2026 进展；读**结论层**（1:1 vs 1:k 连接结构 + 压缩/累积两种策略）——理解"这门技术的边界在哪"
 
 ## Practical Exercise
 
