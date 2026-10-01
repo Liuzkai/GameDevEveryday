@@ -39,6 +39,9 @@ Motion Diffusion（文本到动作）
 可控性增强：风格控制 / 关键帧约束 / 物体交互
         ↓
 实时化：token 化 + 单次前向（2026）
+        ↓
+检索 × 生成的混合形态（2026-10-01）：[[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph|运动缝合]]——
+"结构交给搜索（聚类图最短路）、细节交给生成（Transformer 过渡姿势）"
 ```
 
 2026 年的关键变化：**"实时"这条线被打通了**（2ms / 15000 FPS），生成式动画第一次有资格被当作运行时系统而不是内容工具讨论。
@@ -58,6 +61,7 @@ Motion Diffusion（文本到动作）
 - [[MotionBricks — Scalable Real-Time Motions]]
 - [[UniMate — One Unified Model to Animate Diverse Skeletons]]
 - [[Motion Style Slider — Continuous Style Control for Human Motion Diffusion]]
+- [[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph]] —— **检索 × 生成混合形态**：聚类图最短路定"结构 + 长度"，Transformer 生成过渡姿势（2026-10-01 入库）
 
 ## Personal Knowledge
 

@@ -213,6 +213,13 @@ user_level: Easy      # 或 Normal / Hard
     - **首月月报 [[2026-09-Monthly|Monthly 2026-09]] + [[2026-09]] 雷达刷新**：雷达新增 4 行（Hair Rendering / Arm Neural Graphics / Physics-based Character Animation / World Models for Games）；Neural Upscaling → **Adopt+**（预算副作用）；**10 月目标 = 把"资料就绪"转为"动作完成"**（furnace test / 毛发 15 条 / 动态灯光复审 / 两条 30 分钟实测）；
     - **体检三问成型**：**"不存？→ 不存在？→ 更便宜？"**（9-30 补上第一问：确定性系统 = 重放换存储）；
     - **库内质量修复**：链接完整性检查发现 **[[Real-Time Rendering]] / [[Global Illumination]] 两个基础锚点自首日起引用悬空、从未建文件**（Index / PKM / Learning Path 多处引用受影响）→ **今日补齐**；[[Global Illumination]] 内含**八代近似谱系表**（环境光 → SH → 辐射度 → PRT → 屏幕空间 → **缓存族 RSM/VPL** → 光追 → 神经），**[[Neural Global Illumination]] 桥的具名前置缺口由此有了载体**（该概念笔记的 Prerequisites 已同步）；另修复 3 处小悬空。全库其余 37 处悬空（多为历史日报名称不匹配）记入维护台账。
+23. **🔴 10-1 新增（运动缝合日：动画线首个经典锚点 + 过渡三问两代答案 + GS 排序线第 5 节点）**：
+    - **动画线第一个经典锚点落库**：[[Kovar — Motion Graphs (2002)]] 入库——图时代开山（相似度矩阵局部最小值 = 天然拼接点 / 固定约 1/3 s 混合窗 / SCC 剪枝 / 分支定界搜索）；**两条可迁移记忆点**：① **"观察频率决定验收严格度"的 2002 年表述**（走路阈值最严 vs 芭蕾可松——与你的分频逻辑同构）；② **离线重活 + 在线轻活**（O(F²) 建图可接受，因为它在离线侧）；**动画线从此有"第 0 章"**（此前最老一篇是 2020 的 LMM）；
+    - **过渡三问两代答案表**（沉淀进 [[Motion Matching]]）：**在哪切**（相似度局部最小值 → 簇图最短路）/ **切多久**（固定 1/3 s → 图路径决定，0.3 s 仅下界）/ **怎么接**（混合 → 生成）——**"过渡长度从超参变成结构化估计量"**（[[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph]]，14.5 ms 单次缝合，60 FPS 帧预算内；脚相位不同 → 64 vs 80 帧自动补步）；
+    - **"取消排序"线到第 5 节点**（沉淀进 [[Gaussian Splatting]]）：① 优化 → ② 顺序无关 → ③ 重设计基元 → ④ 随机光栅化全删 → **⑤ 随机透明混合路由**（[[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]]：fragment/primitive 双流按成本分拣；**移动端 73.2 FPS@540p 含 NPU 重建**——Android 档位稀缺实测）；**"档位 = 采样数（1/4/16-spp）"**；
+    - **"换空间"判据第 2 例**（[[2026-09-29-Texture Space Material Diffusion]]，NVIDIA / nvdiffrec 团队）：材质生成搬进纹理空间——"**已知投影当归纳偏置**（确定性变换进结构、不进损失）+ 2D 化换先验复用 + 训练规模 ≠ 使用规模"；输出 PBR 五通道直出 + 8K 超分；
+    - **方法侧**：9-30 listing 于运行前放出（周三组 12 条，3 条与 Run #22 去重）；**API 未公告通道捕获 2 条**（双通道分工第 7 次验证）；"大学课程 / 作者组归档"PDF 路径第 6 次生效（Kovar）；
+    - **产业侧**：**《战争机器：E-Day》早期访问今日开跑**（10-6 正式）——NVIDIA 官方博客：MegaLights ≤100 光源 + Lumen RT GI + Nanite 100× 细节 + **RTX Mega Geometry 首次光追 Nanite 几何** + DLSS SR/Dynamic MFG；**动态灯光复审的最终检验窗口开启**（首日实战数据待收）。
 
 ---
 
@@ -242,4 +249,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达
+相关：[[2026-10-01]] · [[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达

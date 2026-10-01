@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>运动缝合：从运动图到变长转移 —— Kovar 2002 → NMS 2026</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #1f5fa8;
+    --accent-soft: #eef4fb;
+    --old: #8a6d3b;
+    --old-soft: #faf5ea;
+    --new: #1f5fa8;
+    --new-soft: #eef4fb;
+    --ok: #2e7d4f;
+    --ok-soft: #eaf6ee;
+    --code: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #7db4e8;
+      --accent-soft: #1c2834;
+      --old: #d9b26a;
+      --old-soft: #2a241a;
+      --new: #7db4e8;
+      --new-soft: #1c2834;
+      --ok: #6bbf8a;
+      --ok-soft: #1c2b22;
+      --code: #24282b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 24px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 22px; }
+  h2 { font-size: 16px; margin: 34px 0 12px; padding-left: 10px;
+       border-left: 3px solid var(--accent); letter-spacing: -0.005em; }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--accent-soft); border: 1px solid var(--line);
+          border-radius: 10px; padding: 14px 18px; margin: 0 0 6px;
+          color: var(--ink); font-size: 14.5px; }
+  .lede strong { color: var(--accent); }
+  .duo { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 4px; }
+  .half { flex: 1 1 460px; background: var(--panel); border: 1px solid var(--line);
+          border-radius: 12px; padding: 16px 18px; }
+  .half h3 { margin: 0 0 10px; font-size: 15px; }
+  .half.old h3 { color: var(--old); }
+  .half.new h3 { color: var(--new); }
+  .flow { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 2px; }
+  .step { border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px;
+          font-size: 13.5px; background: var(--code); color: var(--ink); }
+  .step.hl { border-color: var(--accent); background: var(--accent-soft); }
+  .step.hl-old { border-color: var(--old); background: var(--old-soft); }
+  .arrow { text-align: center; color: var(--ink-3); font-size: 13px; line-height: 1; margin: 1px 0; }
+  .tag { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 20px;
+         border: 1px solid var(--line); background: var(--panel); color: var(--ink-3); margin-left: 6px; vertical-align: 1px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 10px 0; }
+  th, td { text-align: left; padding: 9px 11px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th { background: var(--code); color: var(--ink-2); font-weight: 600; }
+  td.q { color: var(--ink); font-weight: 600; white-space: nowrap; }
+  .k { color: var(--old); }
+  .n { color: var(--new); }
+  .panel { background: var(--panel); border: 1px solid var(--line);
+           border-radius: 12px; padding: 16px 18px; margin: 12px 0; }
+  .tl { position: relative; margin: 16px 0 8px; padding-left: 22px; }
+  .tl::before { content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px;
+                width: 2px; background: var(--line); }
+  .tl .ev { position: relative; margin: 0 0 10px; font-size: 13.5px; color: var(--ink-2); }
+  .tl .ev::before { content: ""; position: absolute; left: -21px; top: 7px; width: 9px; height: 9px;
+                    border-radius: 50%; background: var(--panel); border: 2px solid var(--ink-3); }
+  .tl .ev.star::before { border-color: var(--accent); background: var(--accent); }
+  .tl .yr { font-weight: 700; color: var(--ink); margin-right: 8px; }
+  .tl .ev.star .yr { color: var(--accent); }
+  .kbox { background: var(--ok-soft); border: 1px solid var(--line); border-left: 3px solid var(--ok);
+          border-radius: 10px; padding: 12px 16px; margin: 14px 0 4px; font-size: 14px; color: var(--ink); }
+  .note { color: var(--ink-3); font-size: 12.5px; margin-top: 10px; }
+  .figcap { color: var(--ink-3); font-size: 12.5px; margin-top: 6px; }
+  ul { margin: 6px 0 12px 18px; padding: 0; color: var(--ink-2); }
+  li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>运动缝合：从运动图到变长转移</h1>
+  <p class="sub">Kovar, Gleicher &amp; Pighin 2002（SIGGRAPH） → Length-varying Neural Motion Stitching, KAIST 2026（SIGGRAPH Asia Journal Track） · 本库 2026-10-01</p>
+
+  <div class="lede">
+    <strong>同一个问题，24 年：</strong>把两段（或多段）动作<strong>无缝接起来</strong>。
+    2002 年的 Kovar 把"在哪切"交给<strong>相似度矩阵的局部最小值</strong>、"切多久"固定为约 <strong>1/3 秒</strong>的混合窗；
+    2026 年的 NMS 把"在哪切 / 切多久"合并交给<strong>聚类转移图上的最短路</strong>——路径走多远，过渡就有多长（最小块 <strong>0.3 秒，直接沿用 Kovar 的数值</strong>）。
+    缝合的"长度问题"从<strong>超参</strong>变成<strong>结构化估计量</strong>。
+  </div>
+
+  <h2>一、两条管线并排看</h2>
+
+  <div class="duo">
+    <div class="half old">
+      <h3>Kovar 2002 — 运动图（Graph Era）</h3>
+      <div class="flow">
+        <div class="step">动作数据库（mocap 片段）</div>
+        <div class="arrow">↓ 骨骼驱动点云 × 窗口（≈1/3 s）</div>
+        <div class="step">全帧对相似度矩阵 <span class="tag">O(F²)，约 25 min / 6000 帧</span></div>
+        <div class="arrow">↓ 取局部最小值（"天然可拼接点"）</div>
+        <div class="step">候选过渡点 → 短窗混合成过渡 <span class="tag">根 lerp + 关节 slerp + C¹ 权重</span></div>
+        <div class="arrow">↓ 建图 + 剪枝</div>
+        <div class="step">运动图：边=片段 / 节点=拼接点 <span class="tag">SCC 剪枝：删死胡同</span></div>
+        <div class="arrow">↓ 用户误差函数 g(w,e) + 停止条件</div>
+        <div class="step hl-old">分支定界搜索"图行走" = 新动作 <span class="tag">离线重活 → 在线轻活</span></div>
+      </div>
+      <p class="figcap">过渡长度 = 固定值（混合窗 1/3 s）；用户约束以误差函数形式接入；代表性结果：54.9 s 走路动画 / 58.1 s 计算（1.3 GHz Athlon）。</p>
+    </div>
+
+    <div class="half new">
+      <h3>NMS 2026 — 聚类转移图 + 神经生成</h3>
+      <div class="flow">
+        <div class="step">输入：两段动作 A、B</div>
+        <div class="arrow">↓ ① 运动聚类（CVQ-VAE）</div>
+        <div class="step">动作块 → 码本簇 <span class="tag">块 ≥ 0.3 s（沿用 Kovar）</span></div>
+        <div class="arrow">↓ ② 聚类转移图寻路（A*）</div>
+        <div class="step">节点=簇 / 有向边=可转移 <span class="tag">边权=通行代价 + 接缝根差</span></div>
+        <div class="step hl">最短路 = 【过渡长度 + 引导序列】 <span class="tag">长度是路径的副产品</span></div>
+        <div class="arrow">↓ ③ 引导式生成</div>
+        <div class="step">Transformer 生成过渡姿势 + 预测 B 的根目的地</div>
+        <div class="arrow">↓ 输出</div>
+        <div class="step hl">无缝连接的新动作 <span class="tag">14.5 ms（6.3 寻路 + 8.2 生成）</span></div>
+      </div>
+      <p class="figcap">过渡长度 = 路径长度（自适应；脚相位不同 → 64 vs 80 帧，自动补一步）；确定性输出（固定代价设置可复现）。</p>
+    </div>
+  </div>
+
+  <h2>二、同一组子问题，两代答案</h2>
+  <table>
+    <tr><th>子问题</th><th class="k">Kovar 2002</th><th class="n">NMS 2026</th><th>变了吗</th></tr>
+    <tr>
+      <td class="q">在哪切？</td>
+      <td>相似度矩阵局部最小值（全帧对，O(F²)）</td>
+      <td>簇图最短路（簇级，免全帧对）</td>
+      <td>原理同（"找天然连接点"），单位从<strong>帧</strong>升级为<strong>语义簇</strong></td>
+    </tr>
+    <tr>
+      <td class="q">切多久？</td>
+      <td><strong>固定</strong> ≈1/3 s 混合窗</td>
+      <td><strong>路径长度决定</strong>（0.3 s 只是下界）</td>
+      <td>★ 核心变化：<strong>默认值 → 估计量</strong></td>
+    </tr>
+    <tr>
+      <td class="q">怎么接？</td>
+      <td>线性 / slerp 混合 + 约束标注修补</td>
+      <td>Transformer 生成（路径当引导）+ 根落位预测</td>
+      <td>混合 → 生成；对齐从手工/后处理 → 网络输出</td>
+    </tr>
+  </table>
+
+  <h2>三、为什么"长度"是关键变量</h2>
+  <div class="panel">
+    <p><strong>固定长度的隐含假设</strong>：所有动作对"离得一样远"。一旦两段动作差异大（爬行 → 投篮），固定窗＝角色没有足够时间调整姿态——过渡要么"跳"，要么被迫用更长的通用窗口把近的动作也拉长。</p>
+    <p><strong>图路径的语义</strong>：在"动作语义空间"里，两段动作之间隔了多少个簇，就是"需要走多少步"——<strong>过渡长度 = 语义距离的图度量</strong>。长度估计与生成共用同一个空间，因此不需要单独训练一个"时长回归器"。</p>
+    <p><strong>行为样本（原文）</strong>：同样两段输入，仅因第二段的脚相位不同——左脚踏地 → 64 帧直接接上；右脚踏地 → 80 帧（<strong>自动插入一步</strong>再接）。这正是"固定窗做不到、而图路径顺手做到"的事。</p>
+  </div>
+
+  <h2>四、一条 24 年的线</h2>
+  <div class="tl">
+    <div class="ev star"><span class="yr">2002</span>Kovar / Lee / Arikan 三组同年开启"图时代"——运动图：相似度 → 局部最小值 → 混合过渡 → 搜索 ★ 本库经典入库</div>
+    <div class="ev"><span class="yr">2003–04</span>注册曲线（过渡质量）/ 参数化运动（兑现 Kovar 的 Future Work）</div>
+    <div class="ev"><span class="yr">2010s</span>检索时代：Motion Fields（2010）→ Motion Matching（2015/16）——过渡变成"每帧混合"</div>
+    <div class="ev"><span class="yr">2020</span>Learned Motion Matching（压缩表示 + 学习化检索）★ 本库 S 基准</div>
+    <div class="ev star"><span class="yr">2026</span>NMS：图以"规划器"身份回归过渡子问题——聚类转移图 + 变长转移 + 神经生成 ★ 本库前沿入库</div>
+  </div>
+
+  <div class="kbox">
+    <strong>两条可迁移判据</strong>：<br>
+    ① <strong>"固定默认值 → 自适应估计"</strong>——看到一个被硬编码的超参（过渡长度 / 阈值 / 窗口），问"它是不是某个结构性量的投影？"（本文：长度 = 图路径长度）；<br>
+    ② <strong>"结构交给搜索，细节交给生成"</strong>——搜索负责"走哪条路、走多远"（离散、确定、可解释），生成负责"每帧长什么样"（连续、神经、高保真）。与 ProxyBuild / ControlGS / Magpie 的"生成只做决策层"同一哲学的新样本。
+  </div>
+
+  <p class="note">数据口径：Kovar 2002 数字来自原文（1.3 GHz Athlon 时代硬件）；NMS 耗时来自原文 Table（RTX 3090，1000 条测试输入）。本图为知识图解，完整解读见 [[Kovar — Motion Graphs (2002)]] 与 [[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph]]。</p>
+
+</div>
+</body>
+</html>

@@ -37,6 +37,7 @@ NeRF（隐式 MLP + volume rendering，慢）
   · 规模 → 光场显示（CoherentRaster）、4D 不确定性（GraphiXS）、
            语义抠资产（LangSplatV2）+ 稀疏体素（fVDB）
   · 渲染管线 → 随机光栅化（取消排序与混合）+ 时域神经去噪 ★ 2026-09-24 入库
+       → 随机透明"混合路由"（fragment ⊕ primitive 按成本分拣）+ 跨场景重建 + 移动端 NPU ★ 2026-10-01 入库
         ↓
 成为生成式世界模型的原生输出格式
 ```
@@ -59,7 +60,20 @@ NeRF（隐式 MLP + volume rendering，慢）
 
 - [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization]]
 - [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] —— **"排序瓶颈"的第四条路线（取消式）**：随机光栅化 + 时域神经去噪；全管线 2.1×、去噪 +1 ms 常数（与 TileGS 构成同题两端）★ 2026-09-24
+- [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]] —— **随机透明家族第二代（⑤）**：fragment / primitive 双流按成本路由 + 跨场景时空重建 + 移动端 NPU 全管线（92.6 FPS 裸渲染 / 73.2 FPS 含重建 @540p）；直接吃**未修改** 3DGS 资产；1080p 达 2.3–2.7× 标准 3DGS 吞吐 ★ 2026-10-01
 - [[Inverse Rendering for Modeling with Line Primitives]]（对比：显式线段 vs 体积基元）
+
+## 排序线全景（2026-10-01 沉淀）
+
+"取消排序"自成为库内固定线索以来已到第 5 个节点——**从"优化"到"置换"到"路由"**：
+
+| 节点 | 路线 | 代表 | 动作 |
+|---|---|---|---|
+| ① | 优化排序混合 | FlashGS / Speedy-Splat / [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization\|TileGS]] | 保持结构，做剔除与调度 |
+| ② | 顺序无关透明 | weighted-sum / hybrid transparency | 去全局排序（仍混合） |
+| ③ | 重设计基元 | surfel / depth peeling | 换几何锚定方式 |
+| ④ | 随机光栅化（全删） | StochasticSplats / [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising\|Stochastic GS Denoising]] | 排序与混合全删，噪声靠神经偿还 |
+| **⑤** | **随机透明混合路由** | **[[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering\|Gaussian Stippling]]（2026-09-29）** | **双流按成本分拣 + 跨场景重建 + 移动端落地** |
 
 ## Personal Knowledge
 
@@ -87,3 +101,5 @@ Current Level: **Easy**（2026-09-11 标 Easy，4 条 Mastery 判据全过）
 后续按约定**停止基础推送**，只推建立在 GS 之上的新研究（动态 GS、GS 角色管线等）。
 
 > **2026-09-24 更新**：首篇"GS 之上的新研究"已入库 —— [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]]（**排序瓶颈的"取消式"解法**：把排序与混合从管线里删掉，用 ~1 ms 神经去噪器偿还噪声债；自由导航 PSNR 29.80 vs ST-TAA 21.48）。**Easy 标记不变** —— 该文不含 GS 基础内容，全部价值在"管线置换 + 去噪器设计"两层。
+
+> **2026-10-01 更新**：排序线第 5 节点 —— [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering|Gaussian Stippling]]（**随机透明"混合路由"代**：fragment/primitive 双流按成本分拣 + 跨场景时空重建；桌面 2.3–2.7× 标准 3DGS、移动端 73.2 FPS@540p 含 NPU 重建；直接吃未修改资产）。**Easy 标记不变** —— 价值在"成本路由 + 移动端全管线"两层；**"档位 = 采样数（1/4/16-spp）"** 是该文提供的分档语言。
