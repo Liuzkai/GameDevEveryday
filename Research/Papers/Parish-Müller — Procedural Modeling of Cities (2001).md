@@ -206,7 +206,7 @@ Parser → 几何 + 着色器 → 任意多边形渲染器
         ↓
 ★ 2001  本文 —— 城市级 L-system 扩展（参数外移 + 自敏感网络）
         ↓
-2003  Wonka《Instant Architecture》（立面 split 规则，补细节侧）
+2003  [[Wonka — Instant Architecture (2003)]]（立面 split 规则 + 双重控制；补细节侧）✅ 2026-10-02 入库
         ↓
 2006  Müller et al.《Procedural Modeling of Buildings》——同一作者团队
       CGA shape 合并两线；把本文的"简单体块"批评为需要解决的对象
@@ -242,7 +242,7 @@ Parser → 几何 + 着色器 → 任意多边形渲染器
 ### Related
 
 - **[[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies|ProxyBuild]]** —— 相隔 25 年的**同题问答**：本文 *"each style texture has to be defined manually"* / *"rule authoring"* 的人工瓶颈，在 2026 由"LLM 解析 + 网络推断结构角色 + 检索组装"作答——**"不写规则，推断规则的作用对象"**；
-- **Wonka et al. 2003**（Instant Architecture）——同代工作，负责立面细节侧（split 规则）；
+- **[[Wonka — Instant Architecture (2003)]]**——同代工作，负责立面细节侧（split 规则 + control grammar）；✅ 2026-10-02 入库；
 - **Alexander《A Pattern Language》**——本文批评其"非形式化"，但"模式"思想与后面的 pattern rules（New York/Paris/…) 一脉相承；
 - **[[Reeves — Particle Systems (1983)]]** ——**同族对照**：都是"少量规则/参数 → 大量数据"的生成器（database amplification），且都在论文里留下了**成本账本**（Reeves：粒子数上限；本文：13K 建筑 ≈ 10 分钟）。
 

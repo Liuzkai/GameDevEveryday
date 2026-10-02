@@ -170,7 +170,7 @@ id: predecessor : cond ; successor : prob
   ↓
 1982 Stiny set grammar 简化 / 1991 L-system 植物（并行文法）
   ↓
-2001 [[Parish-Müller — Procedural Modeling of Cities (2001)]] 城市（简单体块 + shader）/ 2003 Wonka 立面（split 规则）
+2001 [[Parish-Müller — Procedural Modeling of Cities (2001)]] 城市（简单体块 + shader）/ 2003 [[Wonka — Instant Architecture (2003)]] 立面（split 规则 + 双重控制）
   ↓
 2006 ★ CGA shape（本文）：复杂体块 + 一致细节的两阶段解法
   ↓
@@ -187,7 +187,7 @@ id: predecessor : cond ; successor : prob
 ## Relationships
 
 ### Based On
-- Stiny 1975 形状文法（记名）；**Wonka et al. 2003 split 规则**（原文自述的直系祖先：*"我们基于 split 规则的思想构建"*）
+- Stiny 1975 形状文法（记名）；**[[Wonka — Instant Architecture (2003)]] 的 split 规则**（原文自述的直系祖先：*"我们基于 split 规则的思想构建"*；✅ 2026-10-02 入库）
 - L-system（Prusinkiewicz & Lindenmayer 1991）：**记号启发**（scope 是龟形记号的演化），但文法类型刻意不同（顺序 vs 并行）
 
 ### Extends

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>程序化立面：Wonka 2003 split grammar 与「规则选择」图解</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #1f5fa8;
+    --accent-soft: #eef4fb;
+    --old: #8a6d3b;
+    --old-soft: #faf5ea;
+    --new: #1f5fa8;
+    --new-soft: #eef4fb;
+    --ok: #2e7d4f;
+    --ok-soft: #eaf6ee;
+    --warn: #a8442a;
+    --warn-soft: #fbefeb;
+    --code: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #7db4e8;
+      --accent-soft: #1c2834;
+      --old: #d9b26a;
+      --old-soft: #2a241a;
+      --new: #7db4e8;
+      --new-soft: #1c2834;
+      --ok: #6bbf8a;
+      --ok-soft: #1c2b22;
+      --warn: #e08a6a;
+      --warn-soft: #2c1f1a;
+      --code: #24282b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 23px; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 22px; }
+  h2 { font-size: 16px; margin: 34px 0 12px; padding-left: 10px;
+       border-left: 3px solid var(--accent); letter-spacing: -0.005em; }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--accent-soft); border: 1px solid var(--line);
+          border-radius: 10px; padding: 14px 16px; margin: 0 0 8px; }
+  .lede p { margin: 0; color: var(--ink); }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 14px; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--code); color: var(--ink); font-weight: 600; }
+  td { color: var(--ink-2); }
+  code { background: var(--code); padding: 1px 6px; border-radius: 5px;
+         font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+          padding: 13px 15px; }
+  .card h3 { margin: 0 0 8px; font-size: 14.5px; }
+  .card p { margin: 0 0 8px; font-size: 13.5px; }
+  .tag { display: inline-block; font-size: 11.5px; padding: 1px 8px; border-radius: 20px;
+         border: 1px solid var(--line); color: var(--ink-3); margin-left: 6px; vertical-align: 1px; }
+  .tl { position: relative; margin: 14px 0 6px; padding-left: 0; }
+  .tl-row { display: grid; grid-template-columns: 92px 1fr; gap: 12px; margin-bottom: 9px; }
+  .tl-year { font-weight: 700; color: var(--accent); font-size: 14px; text-align: right;
+             padding-top: 1px; }
+  .tl-body { border-left: 2px solid var(--line); padding-left: 14px; position: relative;
+             color: var(--ink-2); font-size: 13.5px; }
+  .tl-body::before { content: ""; position: absolute; left: -6px; top: 7px; width: 9px; height: 9px;
+                     border-radius: 50%; background: var(--line); border: 2px solid var(--bg); }
+  .tl-row.hot .tl-body { border-color: var(--accent); color: var(--ink); }
+  .tl-row.hot .tl-body::before { background: var(--accent); }
+  .tl-row.hot .tl-year { color: var(--accent); }
+  .flow { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+  .node { flex: 1 1 150px; background: var(--panel); border: 1px solid var(--line);
+          border-radius: 10px; padding: 10px 12px; min-width: 140px; }
+  .node .nt { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .node .nd { font-size: 12.5px; color: var(--ink-2); }
+  .node.hl { border-color: var(--accent); background: var(--accent-soft); }
+  .arrow { align-self: center; color: var(--ink-3); font-size: 18px; }
+  .lvl { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 10px 0 14px; }
+  .lv { display: grid; grid-template-columns: 168px 1fr; border-top: 1px solid var(--line-2); }
+  .lv:first-child { border-top: none; }
+  .lv .k { background: var(--code); padding: 9px 12px; font-size: 13px; font-weight: 600; color: var(--ink); }
+  .lv .v { padding: 9px 12px; font-size: 13px; color: var(--ink-2); }
+  .mini { font-size: 12.5px; color: var(--ink-3); }
+  .key { background: var(--ok-soft); border: 1px solid var(--line); border-left: 3px solid var(--ok);
+         border-radius: 8px; padding: 11px 14px; margin: 10px 0; }
+  .key p { margin: 0 0 6px; font-size: 13.5px; }
+  .key p:last-child { margin-bottom: 0; }
+  .warnb { background: var(--warn-soft); border: 1px solid var(--line); border-left: 3px solid var(--warn);
+           border-radius: 8px; padding: 11px 14px; margin: 10px 0; }
+  .warnb p { margin: 0; font-size: 13.5px; }
+  .rulebox { background: var(--code); border: 1px solid var(--line); border-radius: 8px;
+             padding: 10px 13px; font-family: ui-monospace, Consolas, monospace;
+             font-size: 12.8px; color: var(--ink); margin: 8px 0; overflow-x: auto; white-space: pre; }
+  .foot { margin-top: 30px; border-top: 1px solid var(--line-2); padding-top: 12px;
+          font-size: 12.5px; color: var(--ink-3); }
+  .sq { display:inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>程序化立面：Wonka 2003 <em>Instant Architecture</em> 与「规则选择」</h1>
+<p class="sub">split grammar 机制 · 双重控制系统 · PCG 谱系四节点 —— 图解读本（据原文 PDF 逐节核对绘制）</p>
+
+<div class="lede">
+<p><strong>一句话：</strong>建筑不是「长」出来的，是「切」出来的——用 <strong>split grammar</strong>（拆分 / 转换两类规则、子形状永远含于父形状）从体块一路切到窗台檐角；再用两套独立机制解决「<strong>几百条规则里怎么选</strong>」：<strong>attribute matching</strong>（硬条件过滤 + 软偏好抽样）与 <strong>control grammar</strong>（把设计想法按建筑原则空间分布）。</p>
+</div>
+
+<h2>① 谱系坐标：PCG 四节点（2001 → 2003 → 2006 → 2026）</h2>
+
+<div class="tl">
+  <div class="tl-row">
+    <div class="tl-year">2001</div>
+    <div class="tl-body"><strong>Parish &amp; Müller《Procedural Modeling of Cities》</strong>——<strong>城市骨架</strong>：扩展 L-system 生成路网 / 地块 / 建筑。建筑 = <strong>简单体块 + shader 假装细节</strong>；"多而简"。</div>
+  </div>
+  <div class="tl-row hot">
+    <div class="tl-year">2003 ★</div>
+    <div class="tl-body"><strong>Wonka et al.《Instant Architecture》（本图主题）</strong>——<strong>立面细节</strong>：split grammar 把体块逐级拆到构件；"少而精"。<strong>"规则选择"问题首次提出</strong>；250 条规则 → 全部示例风格。</div>
+  </div>
+  <div class="tl-row hot">
+    <div class="tl-year">2006 ★</div>
+    <div class="tl-body"><strong>Müller, Wonka et al.《Procedural Modeling of Buildings》</strong>——<strong>合流</strong>：CGA shape 把「城市」与「立面」两条线并为一体（复杂体块 + 一致细节）→ CityEngine。</div>
+  </div>
+  <div class="tl-row">
+    <div class="tl-year">2026</div>
+    <div class="tl-body"><strong>ProxyBuild</strong>（库内前沿）——"不写规则"：LLM 解析 + 网络推断结构角色 + 检索组装。回应本文同款瓶颈（规则编写费力）。</div>
+  </div>
+</div>
+
+<div class="key">
+<p>🔄 <strong>同一批人的接力</strong>：Müller 是 2001 的<strong>二作</strong>、2006 的<strong>一作</strong>；Wonka 是 2003 的<strong>一作</strong>、2006 的<strong>二作</strong>——2001 → 2003 → 2006 不是"同域不同团队"，而是<strong>一条人员交叉的连续作者线</strong>。</p>
+</div>
+
+<h2>② split grammar：两类规则 + 一条「包含性」原则</h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3>规则一 · split（拆分）<span class="tag">填满体积</span></h3>
+    <p>把一个 basic shape 拆成一组子形状——子形状<strong>永远包含在父形状体积内</strong>，分割面可参数化。</p>
+    <div class="rulebox">体块 → 4×n 立面网格 → 窗 / 墙 / 檐口 …（逐级下拆）</div>
+    <p class="mini">例：cuboid → n×m×k 网格（原文 Definition 4.6）。</p>
+  </div>
+  <div class="card">
+    <h3>规则二 · conversion（转换）<span class="tag">可不填满</span></h3>
+    <p>把一个 basic shape 换成<strong>另一个</strong>——不要求占满原体积（如 cuboid → 三棱柱做屋顶，留空一部分）。</p>
+    <div class="rulebox">体块 → 三棱柱（屋顶）—— 空出的体积留给坡面</div>
+    <p class="mini">两类规则合起来 = "切"与"换"，从体块到门窗檐角。</p>
+  </div>
+</div>
+
+<div class="warnb">
+<p>⚠️ <strong>为什么不用 L-system？</strong>原文判定句：<em>"a building is not designed with a growth-like process, but a sequence of partitioning steps."</em> L-system 模拟"生长"，物体容易长进彼此（对树无所谓，对建筑不可容忍）；split grammar 的「<strong>子形状含于父形状</strong>」把这条问题<strong>从源头消掉</strong>——同时保住"可自动推导"。</p>
+</div>
+
+<h2>③ 双重控制系统：几百条规则里「怎么选」</h2>
+
+<div class="flow">
+  <div class="node"><div class="nt">体块（basic shape）</div><div class="nd">形状 + 符号 + 属性集</div></div>
+  <div class="arrow">→</div>
+  <div class="node hl"><div class="nt">① attribute matching</div><div class="nd">两级选规则：硬条件 → 软偏好</div></div>
+  <div class="arrow">⇄</div>
+  <div class="node hl"><div class="nt">② control grammar</div><div class="nd">把设计想法按建筑原则空间分布</div></div>
+  <div class="arrow">→</div>
+  <div class="node"><div class="nt">下一级子形状</div><div class="nd">带新属性，递归下拆</div></div>
+</div>
+
+<div class="lvl">
+  <div class="lv">
+    <div class="k">第一级 · 硬条件（MDV）</div>
+    <div class="v">逐属性做<strong>区间重叠</strong>测试 + containment 标志 + 优先级：任一属性失败 → 该规则得 <code>−∞</code> 直接剔除。<span class="mini">例（Fig.8）：WIN 的 6 条候选规则 → 3 条因"太复杂 / 太宽 / 未显式请求"被剔除。</span></div>
+  </div>
+  <div class="lv">
+    <div class="k">第二级 · 软偏好（MSV）</div>
+    <div class="v">候选集里按<strong>统计分布</strong>抽样：分布密度 × 每条规则<strong>预计算的随机数 pr</strong>——pr 每条建筑只算一次，保证同一次推导里"同类符号选同类规则"的<strong>一致性</strong>。</div>
+  </div>
+  <div class="lv">
+    <div class="k">control grammar 干什么</div>
+    <div class="v">产生 <code>⟨作用域, 属性, 值⟩</code> 命令并写进新形状：<strong>一层商铺</strong>、<strong>第 1/3 列竖向强调</strong>、<strong>第 2/3 层横向强调</strong>……"让不同想法在空间上有序共存"——这正是真实建筑里同时存在多种设计语言的机制。</div>
+  </div>
+  <div class="lv">
+    <div class="k">"排除默认"技巧</div>
+    <div class="v">containment 标志使特殊规则（如纯装饰的<strong>盲窗</strong>）在默认区间下永不可用——<strong>只在被显式请求时才出现</strong>。（"危险 / 特殊行为必须显式开启"的 2003 版本。）</div>
+  </div>
+</div>
+
+<h2>④ 为什么值得记：三个可迁移判据</h2>
+
+<div class="key">
+<p><strong>判据 1 · "规则选择"要独立成模块。</strong>规则库越大，随机选择越混乱（原文 Fig.2 展示 chaos 随规则数上升）——解法不是把设计塞进规则，而是把"<strong>怎么选</strong>"从"规则内容"里拆出来：硬条件管可行性、软偏好管风格分布。<span class="mini">→ 检查任何"多约束系统"：*选择策略是否已独立于规则本身？*</span></p>
+<p><strong>判据 2 · 硬条件与软偏好分两级。</strong>先"能不能用"，后"多想要"——从渲染分档（先保功能、后保质量）到 AI 工具的候选筛选，同一模式反复出现。</p>
+<p><strong>判据 3 · "拆出去"三步曲（与 2001 / 2006 合看）。</strong>2001 把 <strong>参数</strong>移出规则；2003 把 <strong>设计想法 + 选择策略</strong>移出规则；2006 把 <strong>表面</strong>移出规则（两阶段中间表示）——<em>规则只管结构</em>被推到极致，是"规则系统可维护性"的最早完整样本。</p>
+</div>
+
+<h2>⑤ 数字与本库记录</h2>
+
+<table>
+  <tr><th>项目</th><th>数据（原文）</th></tr>
+  <tr><td>规则库</td><td>约 <strong>250 条规则 + 40 属性</strong>，10 种 basic shape（3 种含 split），制作约 <strong>2 周</strong></td></tr>
+  <tr><td>生成速度</td><td>单建筑 <strong>1,000–100,000 多边形 / 1–3 秒</strong>（Pentium 4 @2GHz）；截图来自实时渲染引擎中的交互查看</td></tr>
+  <tr><td>规模外推</td><td>作者估计真实城市规划应用需 <strong>2,000–3,000 条规则</strong>（成本问题未解，留给后人）</td></tr>
+  <tr><td>本库定位</td><td>PCG 域<strong>立面细节侧锚点</strong>；"规则选择"出处；CGA shape / CityEngine 直接前置</td></tr>
+</table>
+
+<p class="mini">核查说明：全部数字与引文取自 TU Wien 官方存档的原论文 PDF（9 页，逐节核对）。两级匹配公式细节见原文 §5.2 与 Fig.8；谱系关系经 Müller 2006 与 Parish-Müller 2001 笔记交叉验证。</p>
+
+<div class="foot">
+程序化立面图解 · GameDevEveryday 研究库（2026-10-02 生成）· 配套笔记：[[Wonka — Instant Architecture (2003)]] · [[Müller — Procedural Modeling of Buildings (2006)]] · [[Parish-Müller — Procedural Modeling of Cities (2001)]] · [[Procedural Content Generation]]
+</div>
+
+</div>
+</body>
+</html>

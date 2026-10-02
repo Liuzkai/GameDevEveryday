@@ -47,7 +47,10 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
            localConstraints，9 条规则覆盖全部示例）；**self-sensitive**：树状→网络；
            layered grids 半程序化立面；LOD = 迭代深度；CityEngine 前身）
            ★ 2026-09-27 入库
-2003       立面：Wonka《Instant Architecture》（split 规则）
+2003       ★ 立面：[[Wonka — Instant Architecture (2003)]]
+           （**split grammar**：拆分/转换两类规则 + "子形状含于父形状"；**双重控制**：
+           attribute matching（规则选择两级制）+ control grammar（设计想法空间分布）；
+           **"规则选择"问题出处**；与 2001 同代互补——"多而简" vs "少而精"）★ 2026-10-02 入库
 2006       ★ CGA shape：[[Müller — Procedural Modeling of Buildings (2006)]]
            （复杂体块 + 一致细节；两阶段推导；CityEngine 的理论基础；
            同一作者团队——Müller 于 2001 论文任二作）
@@ -67,12 +70,15 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 ## Important Papers
 
 - [[Parish-Müller — Procedural Modeling of Cities (2001)]] —— **城市级源头**（扩展 L-system：参数外移；self-sensitive 网络拓扑；四段流水线 = 今天"地形→路网→地块→建筑"生成链的原型；CityEngine 最早出处）★ 2026-09-27 入库
+- [[Wonka — Instant Architecture (2003)]] —— **立面细节侧锚点**（split grammar + 双重控制；"规则选择"问题出处；CGA shape 的直接前置；与 2001 同代互补、与 2006 同一批人接力）★ 2026-10-02 入库
 - [[Müller — Procedural Modeling of Buildings (2006)]] —— **程序化建筑的源头**（CGA shape；CityEngine 理论基础；**与 2001 同一作者团队、相隔 5 年的直接接力**——2006 兑现了 2001 的 Future Work）
 - [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]] —— **2026 前沿样本**（推理 + 检索的混合范式；"结构锚定拓扑"原则；回应 2001 起就存在的"规则编写费力"）
 - [[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]] —— **2026 前沿样本（续）**（单图→场景；"稠密有界对应"替代"稀疏无界位姿"）
-- 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Wonka et al. 2003《Instant Architecture》；Perlin 1985《An Image Synthesizer》
+- 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Perlin 1985《An Image Synthesizer》
 
 > **"结构锚定"母题三例**（9-21 ~ 9-23 连续入库）：Müller 2006 锚在"二维 scope" → ProxyBuild 锚在"面-边拓扑" → Mira-Scene 锚在"像素 ↔ 规范坐标"。**锚什么可以变，但"生成必须作用在可对齐、可查询、可修正的中间表示上"不变。** Mira-Scene 还给出本母题目前最干净的量化判据：**稠密化不够，"有界"才是关键**（场景空间稠密预测 3D-IoU 0.379 vs 有界规范空间 0.727）。
+
+> **"拆出去"三步曲（2026-10-02 随 Wonka 2003 入库沉淀）**：2001 把**参数**移出规则（ideal successor）→ 2003 把**设计想法 + 选择策略**移出规则（control grammar + attribute matching）→ 2006 把**表面**移出规则（两阶段中间表示）。**每次都是把"不属于规则职责的东西"移出去、给它独立的表示**——"规则只管结构"被三次推到极致。
 
 ## Related Concepts
 
@@ -101,10 +107,11 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 - `user_level: Normal`（推断：游戏开发背景对"程序化生成"概念不陌生；**形状文法形式化细节与图神经网络不做要求**）
 - **库内重要连接**：用户工作（NGR / 开放世界）中 **PCG 生成的场景 = VFX 的承载容器**——PCG 产出多少几何/多少半透明植被，会直接影响运行时特效预算的"底噪"。**这是 PCG 域与你的预算工作的真实交叉点。**
 - 另：用户在整理游戏开发知识库时已涉及 Houdini 方向 → 本概念的"技术"清单可直接对接
-- **三条可迁移抽象（2001 入库时提炼，均不需要读全文）**：
+- **四条可迁移抽象（2001 / 2003 入库时提炼，均不需要读全文）**：
   1. **规则只描述结构、参数由外部策略决定**（ideal successor）——判据：任何规则/生成系统，先问"**哪些部分该从规则里移出去**"；
   2. **约束"有条件通过"：允许 + 标记 + 后期替换**（高速跨水 → 桥/隧道）——约束处置是三档（拒绝/修正/条件接受），不是二值；
-  3. **细节层次 = 迭代深度**（decreasing apices）——LOD 可以是生成语法的副产品，不必是独立资产链。
+  3. **细节层次 = 迭代深度**（decreasing apices）——LOD 可以是生成语法的副产品，不必是独立资产链；
+  4. **"选择策略"独立于"规则内容"**（[[Wonka — Instant Architecture (2003)]]）——规则库越大越需要独立的规则选择层（attribute matching：硬条件过滤 + 软偏好抽样）；判据：*约束越多，检查"怎么选"是否已从"规则本身"里拆出来*。
 - **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 <10 秒 + 建筑约 10 分钟（2001 硬件）——"database amplification"的另一面是**生成时间成本**；与"离线生成量 ≠ 运行时负载"是同一条账本。
 
 ## Learning Gap

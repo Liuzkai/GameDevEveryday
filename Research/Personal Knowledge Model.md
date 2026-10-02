@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 23 天**。当前不影响工作（推送已按推断值自动调权）。**本次（9-30）新增 1 篇前沿（[[2026-09-26-Constant-Memory Differentiable Light Tracing]]）+ 1 篇经典（[[Vicini — Path Replay Backpropagation (2021)]]），均按 Hard 推导层 / Normal 结论层分层入库；同日结清 [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 扫描件补核**，**未新增 Normal 概念**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 25 天**。当前不影响工作（推送已按推断值自动调权）。**本次（10-2）新增 1 篇前沿（[[2026-09-30-Lens Flare Removal and Reconstruction]]，按 B+ 接口层入库）+ 1 篇经典（[[Wonka — Instant Architecture (2003)]]，按 Normal 层入库）**；PCG 域自此**四节点齐全**（2001 城市 / 2003 立面 / 2006 合流 / 2026 推断）。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -220,6 +220,11 @@ user_level: Easy      # 或 Normal / Hard
     - **"换空间"判据第 2 例**（[[2026-09-29-Texture Space Material Diffusion]]，NVIDIA / nvdiffrec 团队）：材质生成搬进纹理空间——"**已知投影当归纳偏置**（确定性变换进结构、不进损失）+ 2D 化换先验复用 + 训练规模 ≠ 使用规模"；输出 PBR 五通道直出 + 8K 超分；
     - **方法侧**：9-30 listing 于运行前放出（周三组 12 条，3 条与 Run #22 去重）；**API 未公告通道捕获 2 条**（双通道分工第 7 次验证）；"大学课程 / 作者组归档"PDF 路径第 6 次生效（Kovar）；
     - **产业侧**：**《战争机器：E-Day》早期访问今日开跑**（10-6 正式）——NVIDIA 官方博客：MegaLights ≤100 光源 + Lumen RT GI + Nanite 100× 细节 + **RTX Mega Geometry 首次光追 Nanite 几何** + DLSS SR/Dynamic MFG；**动态灯光复审的最终检验窗口开启**（首日实战数据待收）。
+24. **🔴 10-2 新增（立面细节日：PCG 四节点齐全 + E-Day 实测到账）**：
+    - **PCG 域四节点齐全**：[[Wonka — Instant Architecture (2003)]] 入库（**split grammar + 双重控制**——attribute matching 两级制 / control grammar；"**规则选择**"问题出处）；**2001→2003→2006 是同一批人的接力**（Müller/Wonka 交叉合著——本库最强谱系血缘）；"**拆出去**三步曲"沉淀（参数 → 设计想法+选择策略 → 表面）；**"选择策略独立化"判据**已入 [[Procedural Content Generation]]（四条可迁移抽象）；
+    - **光学效应题域开线**：[[2026-09-30-Lens Flare Removal and Reconstruction]] 入库（Meta RL）——光晕"**两个账本一套表示**"（去光晕清理户 ↔ 相机空间 1D 高斯重建艺术家户）；**1D 几何约束消融 33.27 vs 27.77 dB**（"先验进结构不进损失"家族目前最干净的量化）；RTX 4090 92.7 FPS / 合批 +1.8%；
+    - **🔴 E-Day 实测到账（动态灯光复审的最后一块数据）**：MegaLights 机制（**每像素固定光照采样预算**；"**数千**（DF）vs **≤100**（NVIDIA 博客）"两口径并列）；**Mega Geometry 成本账：12GB 硬门槛 / 1–2GB 显存 / ~7–10% 成本 / DXR 2.0 的 CBLAS**；**"最高档太阳阴影换回 VSM" = "换管线"实证 +1**；**主动放弃 Ray Reconstruction**（神经层适用边界样本）；**Advanced Shader Delivery 首发**（着色器编译卡顿消除）；5090 @4K Ludicrous 原生 28/34 → +DLSS 4.5 Q 49/56 → +MFG X4 ~200。**复审材料全部就位——建议直接执行**（详见 [[2026-10-02]] 产业信号 1 与 [[Scalability and Quality Tiers]] 10-2 续记）；
+    - **动作清单（延续）**：PKM 校正（25 天）· 毛发 15 条自测 · furnace test 两项检查 · 两条 30 分钟实测（阴影占比 / 每千像素粒子数）。
 
 ---
 
@@ -249,4 +254,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-10-01]] · [[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-W37]] · [[2026-09]] 技术雷达
+相关：[[2026-10-02]] · [[2026-10-01]] · [[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-09]] 技术雷达

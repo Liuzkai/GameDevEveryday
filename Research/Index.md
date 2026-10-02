@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-01]]（昨日：[[2026-09-30]]）
+- **今日**：[[2026-10-02]]（昨日：[[2026-10-01]]）
 - **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 W40 待产出，覆盖 9-28 ~ 10-4）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 23 天）
+- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 25 天）
 
-## Papers（72）
+## Papers（74）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -92,6 +92,8 @@ created: 2026-09-07
 | [[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph]]             | A-  | Normal      | **中高（★ "过渡长度 = 图路径"：聚类转移图最短路定长度 + 引导式生成；**最小转移长度 0.3 s 沿用 Kovar 2002**；14.5 ms 单次缝合在 60 FPS 帧预算内；"结构交给搜索、细节交给生成"）** ★ 2026-10-01 |
 | [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]]               | A-  | Normal      | **高（★ "取消排序"线第 5 节点：随机透明双流按成本路由 + 跨场景时空重建；桌面 2.3–2.7× 3DGS；**移动端 73.2 FPS@540p 含 NPU 重建**；"档位 = 采样数（1/4/16-spp）"）** ★ 2026-10-01 |
 | [[2026-09-29-Texture Space Material Diffusion]]                                                | B+  | Normal      | 中高（**NVIDIA / nvdiffrec 团队："换空间"家族第 2 例**——材质生成搬进纹理空间（已知投影当归纳偏置）；PBR 五通道直出 + 8K 材质超分；训练规模 ≠ 使用规模） ★ 2026-10-01 |
+| [[Wonka — Instant Architecture (2003)]]                                                        | S（经典） | Normal | **最高（★ PCG 立面细节侧锚点：split grammar + 双重控制（attribute matching / control grammar）；"规则选择"问题出处；PCG 四节点齐全 2001→2003→2006→2026；与 2001/2006 同一批人接力）** ★ 2026-10-02 |
+| [[2026-09-30-Lens Flare Removal and Reconstruction]]                                           | B+  | Normal（接口层） | 中高（**光学效应题域第一条："两个账本一套表示"——去光晕（清理户）+ 相机锚定 1D 高斯重建（艺术家户）；1D 约束消融 33.27 vs 27.77 dB；RTX 4090 92.7 FPS、合批 +1.8%**） ★ 2026-10-02 |
 
 ## Concepts（32）
 
@@ -181,6 +183,6 @@ Research/
 
 ---
 
-最后更新：2026-10-01（Run #23：前沿窗口 9-30 ~ 10-1 —— **9-30 listing 12 条**（3 条已由 Run #22 评估，9 条新评估）；**API 窗口另捕获 2 条"已提交未公告"**；**入库 3 篇前沿 + 1 篇经典**，未凑数）—— 前沿为 **[[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph]]**（**运动缝合"长度问题"被图解决**：聚类转移图最短路决定过渡长度；14.5 ms 单次缝合，**最小转移长度 0.3 s 沿用 Kovar 2002**）、**[[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]]**（**"取消排序"线第 5 节点**：随机透明双流按成本路由 + 跨场景重建；移动端 73.2 FPS@540p 含 NPU 重建）、**[[2026-09-29-Texture Space Material Diffusion]]**（NVIDIA：材质生成搬进**纹理空间**——"换空间"家族第 2 例；PBR 五通道直出 + 8K 超分）；经典为 **[[Kovar — Motion Graphs (2002)]]**（**动画线首个经典锚点**：图时代开山——相似度局部最小值 + 固定 1/3 s 混合窗 + SCC 剪枝 + 分支定界；与今日前沿构成"**固定窗 → 变长转移**"24 年对子）；**产业侧：《战争机器：E-Day》早期访问开跑**（MegaLights ≤100 光源 × Mega Geometry 光追 Nanite × Nanite 100× 细节——动态灯光复审最终检验窗口开启）
+最后更新：2026-10-02（Run #24：**立面细节日** —— 前沿窗口 10-1 ~ 10-2（**Thu 10-1 组 3 条，2 条已由上轮覆盖，净新增仅 1 条**；**API 未公告先见另捕获 5 条**；双通道第 8 次验证）；**入库 1 篇前沿 + 1 篇经典**，未凑数）—— 前沿为 **[[2026-09-30-Lens Flare Removal and Reconstruction]]**（Meta RL：**光晕"两个账本一套表示"**——去光晕扩散模型（清理户）+ 相机锚定 1D 高斯重建（艺术家户）；**1D 约束消融 33.27 vs 27.77 dB**；RTX 4090 **92.7 FPS**、合批仅 +1.8%；"光学效应"题域开线）；经典为 **[[Wonka — Instant Architecture (2003)]]**（**PCG 四节点齐全**：2001 城市 → **2003 立面** → 2006 合流 → 2026 推断；split grammar + attribute matching + control grammar——**"规则选择"问题出处**；与 2001/2006 同一批人接力）；**产业侧：《战争机器：E-Day》早期访问实测到账**——MegaLights（数千 vs ≤100 两口径并列）/ Mega Geometry（**12GB 门槛 + ~7–10% 成本 + DXR 2.0 的 CBLAS**）/ **主动放弃 Ray Reconstruction** / **Advanced Shader Delivery 首发**——动态灯光复审数据就位
+　　▸ **10-1 回顾**（Run #23）：**运动缝合日**——Kovar 2002（动画线首个经典锚点）+ NMS 变长转移（24 年对子）+ GS "取消排序"线第 5 节点
 　　▸ **9-30 回顾**（Run #22）：**月结日**——可微渲染线开线（PRB 2021 + 光源侧 LRB 补全）；Clark 1976 补核结清；**首月月报 [[2026-09-Monthly|Monthly 2026-09]] + [[2026-09]] 雷达刷新**；补齐 [[Real-Time Rendering]] / [[Global Illumination]] 两个锚点概念
-　　▸ **9-29 回顾**（Run #21）：Clark 1976 入库（分档的祖先；预算起源三件套齐全）+ ReFM / ControlGS 两篇前沿（初始化解降级 / 优化到眼睛）
