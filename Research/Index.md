@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-02]]（昨日：[[2026-10-01]]）
+- **今日**：[[2026-10-03]]（昨日：[[2026-10-02]]）
 - **本周综合**：[[2026-W39]]（覆盖 **9-21 ~ 9-27**，已收官；下一周 W40 待产出，覆盖 9-28 ~ 10-4）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
 - **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 25 天）
 
-## Papers（74）
+## Papers（78）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -94,6 +94,10 @@ created: 2026-09-07
 | [[2026-09-29-Texture Space Material Diffusion]]                                                | B+  | Normal      | 中高（**NVIDIA / nvdiffrec 团队："换空间"家族第 2 例**——材质生成搬进纹理空间（已知投影当归纳偏置）；PBR 五通道直出 + 8K 材质超分；训练规模 ≠ 使用规模） ★ 2026-10-01 |
 | [[Wonka — Instant Architecture (2003)]]                                                        | S（经典） | Normal | **最高（★ PCG 立面细节侧锚点：split grammar + 双重控制（attribute matching / control grammar）；"规则选择"问题出处；PCG 四节点齐全 2001→2003→2006→2026；与 2001/2006 同一批人接力）** ★ 2026-10-02 |
 | [[2026-09-30-Lens Flare Removal and Reconstruction]]                                           | B+  | Normal（接口层） | 中高（**光学效应题域第一条："两个账本一套表示"——去光晕（清理户）+ 相机锚定 1D 高斯重建（艺术家户）；1D 约束消融 33.27 vs 27.77 dB；RTX 4090 92.7 FPS、合批 +1.8%**） ★ 2026-10-02 |
+| [[Keller — Instant Radiosity (1997)]]                                                           | A（经典） | **Normal（结论层）** | **高（★ VPL 起源："光照场 = 一组点光源" + quasi-random walk（确定性无方差）+ jittered low-discrepancy sampling；每盏 VPL 一遍渲染（成本 ∝ 灯数）；与 RSM 合读 = 缓存族两种记账；致谢彩蛋：Stamminger 提供硬件——8 年后他成了 RSM 作者）** ★ 2026-10-03 |
+| [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]                                      | A（经典） | **Normal（结论层）** | **最高（★ 缓存族 RSM 侧源头：四缓冲 shadow map + pixel light + 每像素 ~400 固定样本 + 屏幕空间插值；"把成本从'∝ 光源数'改写成'∝ 像素 × 常数'"——MegaLights"每像素光照预算"的 2005 原型；Neural GI 桥具名前置 ✅）** ★ 2026-10-03 |
+| [[2026-09-27-Plate-Local River Generation]]                                                     | A-  | Normal      | **高（★ 开放世界水系："确定性 + 地形感知 + 下坡保证 + 无限域"四者首次同时成立；板块双表示 + 懒加载逐板块缓存 + 构造性保证；37.9 ms/10 板块、1.13 µs/样本、0.169 MiB 缓存；诚实反例 0.0065%；PCG 自然地形分支首个样本）** ★ 2026-10-03 |
+| [[2026-10-01-GALA — Gaussian Blendshape Distillation for Real-Time Avatars]]                   | B+  | Normal      | 中高（**"一套基代表全部身份"：动画 ≈ 共享 blendshape 基的线性组合（含未见身份）；蒸馏为基 + 浅层 MLP、宿主零重训——154→5.5 ms / 42.9 s→16.1 ms（×2,659）/ 手机 60 fps；"神经 → 传统资产形态"翻译样本**） ★ 2026-10-03 |
 
 ## Concepts（32）
 
@@ -183,6 +187,7 @@ Research/
 
 ---
 
-最后更新：2026-10-02（Run #24：**立面细节日** —— 前沿窗口 10-1 ~ 10-2（**Thu 10-1 组 3 条，2 条已由上轮覆盖，净新增仅 1 条**；**API 未公告先见另捕获 5 条**；双通道第 8 次验证）；**入库 1 篇前沿 + 1 篇经典**，未凑数）—— 前沿为 **[[2026-09-30-Lens Flare Removal and Reconstruction]]**（Meta RL：**光晕"两个账本一套表示"**——去光晕扩散模型（清理户）+ 相机锚定 1D 高斯重建（艺术家户）；**1D 约束消融 33.27 vs 27.77 dB**；RTX 4090 **92.7 FPS**、合批仅 +1.8%；"光学效应"题域开线）；经典为 **[[Wonka — Instant Architecture (2003)]]**（**PCG 四节点齐全**：2001 城市 → **2003 立面** → 2006 合流 → 2026 推断；split grammar + attribute matching + control grammar——**"规则选择"问题出处**；与 2001/2006 同一批人接力）；**产业侧：《战争机器：E-Day》早期访问实测到账**——MegaLights（数千 vs ≤100 两口径并列）/ Mega Geometry（**12GB 门槛 + ~7–10% 成本 + DXR 2.0 的 CBLAS**）/ **主动放弃 Ray Reconstruction** / **Advanced Shader Delivery 首发**——动态灯光复审数据就位
+最后更新：2026-10-03（Run #25：**缓存族双源日** —— 前沿窗口 **Fri 10-2 组 14 条**（5 条已由先见通道覆盖，净新增 9 条全量覆盖）+ **cs.CV 扫查**（152 → 28 命中 → 深查 5）；**入库 2 前沿 + 2 经典**，未凑数）—— 经典双源：**[[Keller — Instant Radiosity (1997)]] + [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]**（缓存族的两种记账：随机光路 vs 结构化像素；**"固定样本预算"四连成形** 1978→1997→2005→2026；**[[Neural Global Illumination]] 桥材料层打通**；两篇之间有一条"硬件借用"的人之连线）；前沿：**[[2026-09-27-Plate-Local River Generation]]**（"确定性 + 地形感知 + 下坡保证 + 无限域"四者首次同时成立；开放世界水系）与 **[[2026-10-01-GALA — Gaussian Blendshape Distillation for Real-Time Avatars]]**（**"一套基代表全部身份"**；神经→线性蒸馏、手机 60 fps）；产业：E-Day 43 卡实测延续 + **社区神经渲染补录**（OptiScaler 0.3.4.1 / DLSS-NR-on-AMD +74%）
+　　▸ **10-2 回顾**（Run #24）：**立面细节日**——Wonka 2003（PCG 四节点齐全）+ Lens Flare（光学效应开线）+ E-Day 实测到账
 　　▸ **10-1 回顾**（Run #23）：**运动缝合日**——Kovar 2002（动画线首个经典锚点）+ NMS 变长转移（24 年对子）+ GS "取消排序"线第 5 节点
 　　▸ **9-30 回顾**（Run #22）：**月结日**——可微渲染线开线（PRB 2021 + 光源侧 LRB 补全）；Clark 1976 补核结清；**首月月报 [[2026-09-Monthly|Monthly 2026-09]] + [[2026-09]] 雷达刷新**；补齐 [[Real-Time Rendering]] / [[Global Illumination]] 两个锚点概念

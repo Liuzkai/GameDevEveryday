@@ -25,7 +25,7 @@ tags: [gi, neural, real-time]
 ## Prerequisites
 
 - [[Global Illumination]]（**问题与八代近似谱系**；其中"缓存族（RSM / VPL / Irradiance Caching / DDGI）"即本概念桥的具名缺口）
-- Reflective Shadow Maps（RSM）/ 虚拟点光源（VPL）——机制表见上
+- **RSM / VPL——✅ 2026-10-03 双源入库**：[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（pixel light + 每像素固定样本）· [[Keller — Instant Radiosity (1997)]]（VPL = 光路顶点变光源）；机制对照表见 [[Global Illumination]] 谱系第 6 行与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]
 - [[Neural Rendering]]
 - 实时渲染管线结构（G-buffer、deferred）
 
@@ -63,6 +63,7 @@ Neural Radiance Caching（NRC，2021，已在 RTX Remix 中产品化）
 - [[Lightweight Attention-based Indirect Illumination (AMD)]]
 - [[DLSS 5 — Generative Neural Rendering]]
 - [[2026-09-14-Gaussian Light Transport]]（⚠️ 非神经对照样本：显式 13D 高斯基函数 + 残差优化，视角无关、毫秒渲染、低显存——证明"神经"不是实时 GI 的唯一解；2026-09-14 入库）
+- **经典前置（桥材料，2026-10-03 入库）**：[[Keller — Instant Radiosity (1997)]] · [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]——**AMD 论文的 RSM 输入通道就建在后者之上**（"加一路 RSM 渲染让轻量模型看到屏幕外几何"）
 
 ## Personal Knowledge
 
@@ -75,6 +76,8 @@ Current Level: **Hard**
 - 理解所有神经 GI 论文的前置
 - Normal 难度，几个小时可补
 
+**✅ 2026-10-03 状态更新**：经典部分的**原始文献已双源入库**（[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] + [[Keller — Instant Radiosity (1997)]]，配 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]）——**桥材料层打通**；实际阅读动作（30 分钟级）待用户执行。iVPL（Imperfect VPLs）方向按需再补。
+
 ## Next Learning Step
 
-先补 Reflective Shadow Maps（RSM）与 iVPL（机制表见 [[Global Illumination]] 谱系第 6 行），再回来看神经方法。顺序反了会浪费大量时间。
+先补 RSM 与 VPL（~~机制表见 [[Global Illumination]] 谱系第 6 行~~ ✅ **2026-10-03 双源入库**：[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] / [[Keller — Instant Radiosity (1997)]]），再回来看神经方法。顺序反了会浪费大量时间。

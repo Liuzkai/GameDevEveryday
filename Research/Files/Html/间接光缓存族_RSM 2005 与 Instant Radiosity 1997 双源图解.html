@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>间接光缓存族：RSM 2005 × Instant Radiosity 1997 —— 双源图解</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #1f5fa8;
+    --accent-soft: #eef4fb;
+    --vpl: #8a6d3b;
+    --vpl-soft: #faf5ea;
+    --rsm: #1f5fa8;
+    --rsm-soft: #eef4fb;
+    --ok: #2e7d4f;
+    --ok-soft: #eaf6ee;
+    --code: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #7db4e8;
+      --accent-soft: #1c2834;
+      --vpl: #d9b26a;
+      --vpl-soft: #2a241a;
+      --rsm: #7db4e8;
+      --rsm-soft: #1c2834;
+      --ok: #6bbf8a;
+      --ok-soft: #1c2b22;
+      --code: #24282b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 23px; line-height: 1.35; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 20px; }
+  h2 { font-size: 16px; margin: 32px 0 12px; padding-left: 10px;
+       border-left: 3px solid var(--accent); letter-spacing: -0.005em; }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--accent-soft); border: 1px solid var(--line);
+          border-radius: 10px; padding: 14px 18px; margin: 0 0 6px;
+          color: var(--ink); font-size: 14.5px; }
+  .lede strong { color: var(--accent); }
+  .duo { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 4px; }
+  .half { flex: 1 1 460px; background: var(--panel); border: 1px solid var(--line);
+          border-radius: 12px; padding: 16px 18px; }
+  .half h3 { margin: 0 0 4px; font-size: 15px; }
+  .half.old h3 { color: var(--vpl); }
+  .half.new h3 { color: var(--rsm); }
+  .half .who { font-size: 12.5px; color: var(--ink-3); margin: 0 0 10px; }
+  .flow { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 2px; }
+  .step { border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px;
+          font-size: 13.5px; background: var(--code); color: var(--ink); }
+  .step.hl-old { border-color: var(--vpl); background: var(--vpl-soft); }
+  .step.hl-new { border-color: var(--rsm); background: var(--rsm-soft); }
+  .step .n { display: inline-block; min-width: 18px; height: 18px; line-height: 18px;
+             text-align: center; border-radius: 50%; font-size: 11px;
+             border: 1px solid var(--line); background: var(--panel);
+             color: var(--ink-3); margin-right: 8px; }
+  .arrow { text-align: center; color: var(--ink-3); font-size: 12px; line-height: 1; margin: 1px 0; }
+  .tag { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 20px;
+         border: 1px solid var(--line); background: var(--panel); color: var(--ink-3);
+         margin-left: 6px; vertical-align: 1px; }
+  .tag.b { border-color: var(--accent); color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 10px 0; }
+  th, td { text-align: left; padding: 9px 11px; vertical-align: top; border-bottom: 1px solid var(--line-2); }
+  th { background: var(--code); color: var(--ink-2); font-weight: 600; }
+  td:first-child { color: var(--ink-3); white-space: nowrap; }
+  .formula { font-family: "Cascadia Code", Consolas, "SF Mono", Menlo, monospace;
+             font-size: 13.5px; background: var(--code); border: 1px solid var(--line);
+             border-radius: 8px; padding: 10px 14px; color: var(--ink); overflow-x: auto; }
+  .oneliner { background: var(--ok-soft); border: 1px solid var(--line);
+              border-radius: 10px; padding: 14px 18px; margin: 12px 0; color: var(--ink);
+              font-size: 14.5px; }
+  .oneliner .q { color: var(--ok); font-weight: 700; }
+  .cost { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 4px; }
+  .cost .row { display: flex; align-items: baseline; gap: 10px; background: var(--panel);
+               border: 1px solid var(--line); border-radius: 9px; padding: 9px 13px; font-size: 13.5px; }
+  .cost .yr { font-weight: 700; color: var(--accent); min-width: 44px; }
+  .cost .unit { color: var(--ink); }
+  .cost .note { color: var(--ink-3); font-size: 12.5px; }
+  .tl { border-left: 2px solid var(--line); margin: 14px 0 6px 6px; padding-left: 18px; }
+  .tl .ev { position: relative; margin: 0 0 10px; font-size: 13.5px; color: var(--ink-2); }
+  .tl .ev::before { content: ""; position: absolute; left: -24px; top: 7px;
+                    width: 8px; height: 8px; border-radius: 50%;
+                    background: var(--panel); border: 2px solid var(--ink-3); }
+  .tl .ev.big::before { border-color: var(--accent); background: var(--accent); }
+  .tl .ev b { color: var(--ink); }
+  .foot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--line-2);
+          color: var(--ink-3); font-size: 12.5px; }
+  .kbd { font-family: Consolas, Menlo, monospace; font-size: 12.5px;
+         background: var(--code); border: 1px solid var(--line); border-radius: 5px;
+         padding: 0 5px; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>间接光缓存族：RSM 2005 × Instant Radiosity 1997</h1>
+  <p class="sub">"把无限反弹换成有限个点光源"——同一句台词，两种记账 · 与 [[Global Illumination]] 谱系表第 6 行配套</p>
+
+  <div class="lede">
+    <strong>两个源头共享同一个问题形式</strong>：间接光怎么算都贵（每次反弹 = 对全场景再积分一次）。
+    两篇论文相隔 8 年，给出的都是同一类答案——<strong>把"光照场"表示成一个有限点光源集合，让图形硬件去渲染它们</strong>。
+    差别只在：这个集合<strong>从哪来</strong>（随机光路 vs 结构化像素）、<strong>怎么花</strong>（每盏一遍 vs 每像素固定样本）。
+  </div>
+
+  <h2>一、两条流水线</h2>
+  <div class="duo">
+    <div class="half old">
+      <h3>Instant Radiosity <span class="tag">1997 · Keller</span></h3>
+      <p class="who">quasi-random walk → VPL → 逐灯硬件渲染 → 累加缓冲</p>
+      <div class="flow">
+        <div class="step"><span class="n">1</span>从光源出发 <b>N 条超采样路径</b>（Halton 低差异序列驱动的 quasi-random walk，确定性、无方差）</div>
+        <div class="arrow">▼ 命中点被 ρ 衰减、路径数按 ⌊ρᵏN⌋ 几何衰减</div>
+        <div class="step hl-old"><span class="n">2</span><b>每个光路顶点 = 一盏虚拟点光源（VPL）</b>——光照场 ≈ 一组点光源的集合</div>
+        <div class="arrow">▼ 调用标准硬件光照，每盏灯渲染一遍带阴影的画面</div>
+        <div class="step"><span class="n">3</span>全部画面在 <b>accumulation buffer</b> 里按权重 1/N 加权求和</div>
+        <div class="arrow">▼</div>
+        <div class="step"><span class="n">4</span>结果：漫反射全局光照解（"几秒"出图 —— 1997 硬件的"instant"）</div>
+      </div>
+    </div>
+
+    <div class="half new">
+      <h3>Reflective Shadow Maps <span class="tag b">2005 · Dachsbacher &amp; Stamminger</span></h3>
+      <p class="who">光源视角 → 四缓冲 → pixel light → 固定样本 gather → 屏幕空间插值</p>
+      <div class="flow">
+        <div class="step"><span class="n">1</span>从<b>光源视角</b>渲染一遍：shadow map 扩展为<b>四缓冲</b>（深度 / 世界坐标 / 法线 / <b>反射通量 Φ</b>）</div>
+        <div class="arrow">▼ 观察：单光源下，一个 bounce 的间接光"全部来自光源可见表面"——信息本来就在这张贴图里</div>
+        <div class="step hl-new"><span class="n">2</span><b>每个像素 = 一盏 pixel light</b>（40 万+ 盏的"结构化光源全集"，无需随机采样）</div>
+        <div class="arrow">▼ 求和太贵 → 重要性采样 + 固定预算</div>
+        <div class="step"><span class="n">3</span>每像素只取 <b>约 400 个样本</b>（采样密度随距离平方下降，权重 ξ₁² 补偿）</div>
+        <div class="arrow">▼ 低频交给插值：低分辨率（32×32/64×64）算准、全分辨率插值</div>
+        <div class="step"><span class="n">4</span>输出：交互帧率（<b>4.2–27.5 fps</b> @ 512×512 · 2005 硬件）</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>二、逐项对照</h2>
+  <table>
+    <tr><th></th><th>Instant Radiosity（1997）</th><th>RSM（2005）</th></tr>
+    <tr><td>光源集来源</td><td>光路顶点（quasi-random walk，<b>随机</b>）</td><td>光源视野像素（一次光栅化，<b>结构化全集</b>）</td></tr>
+    <tr><td>光源集规模</td><td>M 盏 VPL（≤ N/(1−ρ)，含路径平均长 1–10）</td><td>40 万+ pixel light（按需采样 ~400）</td></tr>
+    <tr><td>遮挡处理</td><td><b>有</b>：每盏 VPL 走一遍完整硬件阴影</td><td><b>无</b>：最重的近似（AO 贴图补偿，原文自陈"可能非常错"）</td></tr>
+    <tr><td>成本单位</td><td><b>每盏灯一遍渲染</b>（pass 数 ∝ 灯数）</td><td><b>每像素固定样本数</b>（与灯数脱钩）</td></tr>
+    <tr><td>输出</td><td>"几秒"静帧；滑动窗口变体可实时（方差回归）</td><td>交互帧率；直接可用（近似更粗）</td></tr>
+    <tr><td>确定性</td><td>确定性（低差异序列；同种子同结果）</td><td>确定性（同一场景同采样图案；可预计算）</td></tr>
+  </table>
+
+  <h2>三、同一句台词</h2>
+  <p>两篇论文都在回答同一个问题：<b>把"无限次反弹的积分"换成什么有限结构？</b>——这是 [[Global Illumination]] 笔记里"评估任何实时 GI 方案的第一问"的两个原始样本：</p>
+  <div class="formula">Instant Radiosity (1997):&nbsp;&nbsp;L(y) ≈ Σᵢ Lᵢ δ(y − Pᵢ)&nbsp;&nbsp;—— 光照场 = 光路顶点上的离散光源密度<br>RSM (2005):&nbsp;&nbsp;E(x) ≈ Σₚ∈samples Φₚ · cos·cos / r⁴&nbsp;&nbsp;—— 光照场 = 光源视野像素上的加权求和</div>
+  <div class="oneliner">
+    <span class="q">缓存族的共同台词</span>：不重算"每一个到达点"，而是<b>先把光源侧记录成一个有限集合</b>（VPL 表 / shadow map 像素），再从受光点侧<b>按预算采样这个集合</b>。
+    两次"记录"分别来自<b>随机光路</b>与<b>一次光栅化</b>——而 2005 的改进点正是用后者消灭前者的"每盏一遍"。
+  </div>
+
+  <h2>四、成本账本：四次改写的同一条线</h2>
+  <p>"成本关于哪个变量线性"——把一个像素的光照账本念了 48 年：</p>
+  <div class="cost">
+    <div class="row"><span class="yr">1978</span><span class="unit"><b>每盏灯 ≈ +1× 场景渲染</b>（阴影贴图工艺）</span><span class="note">成本 ∝ 光源数</span></div>
+    <div class="row"><span class="yr">1997</span><span class="unit">每盏 VPL = 一遍硬件渲染 + 累加</span><span class="note">成本 ∝ VPL 数（几百）；"灯"从实体光源扩张到光路顶点</span></div>
+    <div class="row"><span class="yr">2005</span><span class="unit"><b>每像素 ~400 固定样本</b>（从结构化缓存 gather）</span><span class="note">成本 ∝ 像素 × 常数；<b>与光源/场景复杂度脱钩</b></span></div>
+    <div class="row"><span class="yr">2026</span><span class="unit">MegaLights：<b>每像素固定光照采样预算</b>（随机采样数千光源 + 时域滤波）</span><span class="note">同一句话的当代工程形态（E-Day 首发）</span></div>
+  </div>
+
+  <h2>五、谱系（含一条人的连线）</h2>
+  <div class="tl">
+    <div class="ev"><b>1978</b> Williams：shadow map —— "光源视角"账本开张</div>
+    <div class="ev big"><b>1997</b> Keller：Instant Radiosity —— VPL 诞生；quasi-random walk + jittered low-discrepancy sampling</div>
+    <div class="ev"><b>2003</b> Dachsbacher &amp; Stamminger：Translucent Shadow Maps（shadow map 像素当光源，透射版）</div>
+    <div class="ev"><b>2004</b> Tabellion &amp; Lamorlette：影视近似 GI —— "一个 bounce 够用"</div>
+    <div class="ev big"><b>2005</b> Dachsbacher &amp; Stamminger：Reflective Shadow Maps —— 固定样本 gather + 屏幕空间插值</div>
+    <div class="ev"><b>2006</b> Splatting Indirect Illumination　·　<b>2008</b> Imperfect Shadow Maps（海量 VPL 阴影）</div>
+    <div class="ev"><b>2010s</b> 实时 GI 分岔：Lumen / DDGI / VXGI（缓存族与探针族各自演化）</div>
+    <div class="ev"><b>2021</b> Neural Radiance Caching（缓存族接神经、RTX Remix 产品化）</div>
+    <div class="ev big"><b>2026</b> AMD attention GI 把 RSM 当输入通道；MegaLights 用"每像素预算"接管动态灯光</div>
+  </div>
+  <div class="oneliner">
+    <span class="q">人的连线</span>：Instant Radiosity（1997）的致谢里写着 —— <b>"Special thanks go to Marc Stamminger, providing access to the Reality Engine 2"</b>。
+    8 年后，Marc Stamminger 成了 RSM（2005）的共同作者。两篇论文之间不只隔着 8 年——还隔着一次硬件借用。
+  </div>
+
+  <h2>六、一句话带走（对你的预算工作）</h2>
+  <p>
+    动态灯光维度（≤3/≤2/≤1/0）的原始账本是 1978 的"每盏灯 +1×"；RSM/VPL 家族展示了<b>另一条腿</b>——
+    <b>"把光照复杂度换成每像素固定预算"</b>。2026 的 MegaLights 正是这条腿的工程完成态（"数千 / ≤100"两口径都在说"每像素花多少"）。
+    <span class="kbd">判据</span> 任何新光照方案：先问它的<b>成本函数关于哪个变量线性</b>——灯数？像素？采样预算？
+  </p>
+
+  <p class="foot">
+    配套笔记：[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] · [[Keller — Instant Radiosity (1997)]]<br>
+    数字来源：RSM 原文 Table 1 与正文；IR 技术报告 287/97 与 SIGGRAPH '97 版。生成于 2026-10-03（Run #25）。
+  </p>
+
+</div>
+</body>
+</html>

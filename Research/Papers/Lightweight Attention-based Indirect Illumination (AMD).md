@@ -69,7 +69,7 @@ tags: [gi, neural-rendering, rsm, ivpl, amd, real-time]
 
 - [[Neural Rendering]]
 - [[Neural Global Illumination]]
-- [[Reflective Shadow Maps]]
+- [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（**本文的 RSM 输入通道即建在它之上**——"加一路 RSM 渲染让轻量模型看到屏幕外几何"；2026-10-03 入库）
 - [[Global Illumination]]
 
 ## Related Technologies

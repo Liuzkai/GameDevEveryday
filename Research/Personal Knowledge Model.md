@@ -81,7 +81,7 @@ user_level: Easy      # 或 Normal / Hard
 | [[Neural Rendering]] | 缺信号处理直觉 + 训练侧词汇 |
 | [[Generative Rendering]] | 缺一步生成模型基础 |
 | [[Differentiable Rendering]] | 缺自动微分 + 可微光栅化 |
-| [[Neural Global Illumination]] | 缺经典 GI 近似（RSM/VPL）作前置 |
+| [[Neural Global Illumination]] | 桥材料层打通（2026-10-03：RSM 2005 + Instant Radiosity 1997 双源入库）——**待读**（30 分钟级） |
 | [[Neural Animation]] | 被 [[Motion Matching]] 阻塞 |
 | [[Motion Generation]] | 被 [[Motion Matching]] 阻塞 |
 | [[Inverse Rendering]] | 被 [[Differentiable Rendering]] 阻塞 |
@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 25 天**。当前不影响工作（推送已按推断值自动调权）。**本次（10-2）新增 1 篇前沿（[[2026-09-30-Lens Flare Removal and Reconstruction]]，按 B+ 接口层入库）+ 1 篇经典（[[Wonka — Instant Architecture (2003)]]，按 Normal 层入库）**；PCG 域自此**四节点齐全**（2001 城市 / 2003 立面 / 2006 合流 / 2026 推断）。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 26 天**。当前不影响工作（推送已按推断值自动调权）。**本次（10-3）新增 2 篇前沿（[[2026-09-27-Plate-Local River Generation]]、[[2026-10-01-GALA — Gaussian Blendshape Distillation for Real-Time Avatars]]）+ 2 篇经典（[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]、[[Keller — Instant Radiosity (1997)]]——[[Neural Global Illumination]] 桥材料层自此打通）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -225,6 +225,12 @@ user_level: Easy      # 或 Normal / Hard
     - **光学效应题域开线**：[[2026-09-30-Lens Flare Removal and Reconstruction]] 入库（Meta RL）——光晕"**两个账本一套表示**"（去光晕清理户 ↔ 相机空间 1D 高斯重建艺术家户）；**1D 几何约束消融 33.27 vs 27.77 dB**（"先验进结构不进损失"家族目前最干净的量化）；RTX 4090 92.7 FPS / 合批 +1.8%；
     - **🔴 E-Day 实测到账（动态灯光复审的最后一块数据）**：MegaLights 机制（**每像素固定光照采样预算**；"**数千**（DF）vs **≤100**（NVIDIA 博客）"两口径并列）；**Mega Geometry 成本账：12GB 硬门槛 / 1–2GB 显存 / ~7–10% 成本 / DXR 2.0 的 CBLAS**；**"最高档太阳阴影换回 VSM" = "换管线"实证 +1**；**主动放弃 Ray Reconstruction**（神经层适用边界样本）；**Advanced Shader Delivery 首发**（着色器编译卡顿消除）；5090 @4K Ludicrous 原生 28/34 → +DLSS 4.5 Q 49/56 → +MFG X4 ~200。**复审材料全部就位——建议直接执行**（详见 [[2026-10-02]] 产业信号 1 与 [[Scalability and Quality Tiers]] 10-2 续记）；
     - **动作清单（延续）**：PKM 校正（25 天）· 毛发 15 条自测 · furnace test 两项检查 · 两条 30 分钟实测（阴影占比 / 每千像素粒子数）。
+25. **🔴 10-3 新增（缓存族双源日：Neural GI 桥材料层打通 + 两条前沿）**：
+    - **缓存族双源入库**（[[Global Illumination]] 谱系表第 6 行自此可读）：[[Keller — Instant Radiosity (1997)]]（**VPL 起源**："光照场 = 一组点光源" + quasi-random walk；每盏 VPL 一遍渲染——成本 ∝ 灯数）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（**RSM**：四缓冲 shadow map + 每像素 ~400 固定样本 + 屏幕空间插值——**成本改写成 ∝ 像素 × 常数**）。**[[Neural Global Illumination]]（Hard）的"最小前置"材料层自此齐备**——读法：两张笔记的结论层 + [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]（30 分钟级）；
+    - **"固定样本预算"四连**（1978 每灯 +1× → 1997 每 VPL 一遍 → 2005 每像素 400 样本 → 2026 MegaLights 每像素采样预算）——**判据固化：任何光照方案先问"成本关于哪个变量线性"**；你的五档矩阵在 PC 档可同时持有两套语言（灯数上限 / 每像素预算）；
+    - **"一个表示代表全部"家族三例同框**：IR 1997（一组点光源 = 光场）· Zinke 2008（一条原型路径 = 全部路径）· **GALA 2026（一套共享基 = 全部身份；神经→线性蒸馏，手机 60 fps）**——跨 29 年、"从光到人"；
+    - **PCG 第 5 条抽象**（[[2026-09-27-Plate-Local River Generation]]）："**先定域、后算局部**"——确定性划分让"需要全局视野"的问题逐块独立（**懒加载的前提是确定性**；确定性 = 可丢弃重建权 = 多人一致性）；开放世界水系"四要求同时成立"的首个构造性答案；
+    - **动作清单（延续）**：PKM 校正（26 天）· 毛发 15 条自测 · furnace test 两项检查 · 两条 30 分钟实测（阴影占比 / 每千像素粒子数）· 动态灯光复审（材料全齐，E-Day 10-6 为最终检验）。
 
 ---
 
@@ -254,4 +260,4 @@ user_level: Easy      # 或 Normal / Hard
 
 ---
 
-相关：[[2026-10-02]] · [[2026-10-01]] · [[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-09]] 技术雷达
+相关：[[2026-10-03]] · [[2026-10-02]] · [[2026-10-01]] · [[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-09]] 技术雷达

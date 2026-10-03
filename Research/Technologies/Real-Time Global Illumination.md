@@ -98,6 +98,19 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 
 关联：[[Shadow Mapping]]（成本模型与六条限制的完整展开）· [[预算五维_1978-1983_源头图解]]
 
+## 🔴 补：缓存族双源入库（2026-10-03）——"固定样本预算"的 1997/2005 原型
+
+[[Keller — Instant Radiosity (1997)]]（VPL 起源）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（pixel light + 每像素 ~400 固定样本）入库——这是本页上文"每盏动态灯的代价在 1978 年就被写下来了"的续章：
+
+| 代 | 成本单位 | 代表 |
+|---|---|---|
+| 1978 | 每盏灯 ≈ +1× 场景渲染 | 阴影贴图工艺（[[Williams — Casting Curved Shadows on Curved Surfaces (1978)]]） |
+| 1997 | 每盏 VPL 一遍渲染（∝ 灯光集大小） | Instant Radiosity（quasi-random walk 造灯） |
+| 2005 | **每像素固定样本数**（∝ 像素 × 常数，与灯数脱钩） | RSM（重要性采样 + 屏幕空间插值） |
+| 2026 | 每像素固定光照采样预算 | MegaLights（随机采样数千光源 + 时域滤波） |
+
+**读法**：MegaLights"数千（DF）/ ≤100（NVIDIA）"两口径之争的答案在这张表里——这条路线的问题从来不是"灯多不多"，而是"**每像素花多少**"（详见 [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] 与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]）。
+
 ## Game Engine Integration
 
 - UE：Lumen / SSGI / Lightmass
@@ -114,7 +127,8 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 
 - [[Neural Global Illumination]]
 - [[Global Illumination]]
-- [[Reflective Shadow Maps]]
+- [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（缓存族 RSM 侧源头；2026-10-03 入库）
+- [[Keller — Instant Radiosity (1997)]]（缓存族 VPL 侧源头；2026-10-03 入库）
 
 ## Related Papers
 

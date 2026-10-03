@@ -38,7 +38,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | 3 | **辐射度（Radiosity）** | 把间接光变成"面片之间传能量"的矩阵问题 | 静态、漫反射专用（1990s 离线/烘焙） |
 | 4 | **PRT / 预计算转移** | 预烘"表面如何接收环境"的转移算子 | 静态几何；材质自由度受限 |
 | 5 | **屏幕空间族（SSAO → SSGI / SSR）** | 只在已有像素里找反弹 | 便宜；**屏幕外一律丢失**（"屏幕空间 vs 引擎感知"） |
-| 6 | **缓存/Direct 祖先族：RSM / VPL / Irradiance Caching / DDGI** | 把间接光"记在小本子上"复用 | ⚠️ **这一族是 [[Neural Global Illumination]] 的具名前缺口（桥材料）**：RSM=第一个 bounce 存进阴影贴图；VPL=把发光面变成"很多小灯"；缓存=空间上插值复用 |
+| 6 | **缓存/Direct 祖先族：RSM / VPL / Irradiance Caching / DDGI** | 把间接光"记在小本子上"复用 | ✅ **2026-10-03 源头落库**：[[Keller — Instant Radiosity (1997)]]（VPL = 把光路顶点变成"很多小灯"）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（RSM = 第一个 bounce 存进阴影贴图，每像素固定样本 gather）——**[[Neural Global Illumination]] 桥的具名前置自此可读**；缓存族其余成员（Irradiance Caching / DDGI）按需 |
 | 7 | **光追 GI（硬件）** | 真反弹，降噪器补噪声 | DDGI / Lumen（UE 默认）/ MegaLights（直接光侧）；贵，PC 高端 |
 | 8 | **神经 GI** | 让网络学"间接光长什么样" | 离实时有数量级差距；见 [[Neural Global Illumination]]（Hard） |
 
@@ -47,6 +47,8 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 ```text
 1986  Kajiya：渲染方程（"全部反弹"第一次有完整表述）+ 路径追踪解
 1984-90s  辐射度方法（面片间传能）——工程界第一次尝到"间接光"的甜头（离线）
+1997  Keller：Instant Radiosity——**VPL 起源**（缓存族随机侧）★ 2026-10-03 入库
+2005  Dachsbacher & Stamminger：RSM——**缓存族结构化侧**（每像素固定样本）★ 2026-10-03 入库
 1990s-2000s  PRT / SH 光照（[[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]）
 2000s  实时阴影/环境光工程化；SSAO（2007 前后）
 2010s  SSGI / SSR / 体素 GI / 光追 GI 原型（DDGI 2019）
@@ -61,8 +63,9 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 |---|---|---|
 | [[Kajiya — The Rendering Equation (1986)]] | "全部反弹"的完整表述（本概念的容器） | ✅ 入库 |
 | [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]] | 环境光的 9 阶 SH（移动端 GI 根源） | ✅ 入库 |
+| [[Keller — Instant Radiosity (1997)]] | **VPL 起源**（缓存族随机侧源头："光照场 = 一组点光源"；每盏 VPL 一遍渲染） | ✅ **2026-10-03 入库** |
+| [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] | **RSM**（缓存族结构化侧源头：pixel light + 每像素固定样本；"成本 ∝ 像素 × 常数"的 2005 原型） | ✅ **2026-10-03 入库** |
 | [[LightOpt — Lights Optimization for Real-Time Rendering]] | 用可微优化反推"光照布局怎么配" | ✅ 入库（DR 桥目标） |
-| RSM / VPL 原始文献 | **具名缺口**（Neural GI 的前置） | 记名待入库 |
 | 神经 GI 侧：| 见 [[Neural Global Illumination]] 的桥 | 观察 |
 
 ## Related Concepts
@@ -94,16 +97,18 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 
 ## Learning Gap
 
-- **需要**（30 分钟级）：RSM / VPL / Irradiance Caching / DDGI 四者的"缓存结构"是什么——**这是 [[Neural Global Illumination]] 桥的具名前置**；
+- ✅ **需要**（30 分钟级）**已于 2026-10-03 落库**：RSM / VPL 的"缓存结构"= [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（四缓冲 shadow map + pixel light + 每像素 ~400 固定样本 + 屏幕空间插值）+ [[Keller — Instant Radiosity (1997)]]（光路顶点 = VPL + 逐灯渲染累加）——**[[Neural Global Illumination]] 桥的具名前置自此可读**（配 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]）；
+- **按需**：Irradiance Caching / DDGI 的缓存结构（读取成本低，用时再补）；
 - **不需要**：辐射度矩阵求解、PRT 数学细节（工具已废弃，只需知道它存在过）。
 
 ## Next Step
 
-1. 查清 RSM / VPL 的代表文献（记名 → 必要时入库），补齐 [[Neural Global Illumination]] 桥的前置缺口；
+1. ~~查清 RSM / VPL 的代表文献（记名 → 必要时入库），补齐 [[Neural Global Illumination]] 桥的前置缺口~~ ✅ **2026-10-03 完成**（[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] + [[Keller — Instant Radiosity (1997)]] 双源入库）；
 2. 做"动态灯光维度复审"时，把本表第 7/8 行（Lumen / MegaLights 的能力边界）与你的五档矩阵对照一次；
 3. 保持与 [[Real-Time Global Illumination]]（Technology）的同步：引擎侧有新证据（如 E-Day 实测）时双向更新。
 
 ## Notes
 
 - **为什么现在才建**：首日建库时本概念被列为"基础锚点"但文件一直缺失（[[Neural Global Illumination]] 的桥长期缺"经典 GI 近似"这一环）——2026-09-30 链接完整性检查时发现并补齐。同期补齐的还有 [[Real-Time Rendering]]。
+- **2026-10-03 更新**：**谱系表第 6 行（缓存族）具名缺口闭合**——[[Keller — Instant Radiosity (1997)]] + [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] 双源入库；第 6 行自此从"⚠️ 记名"升级为"✅ 可读"。
 - 本概念**不是** [[Neural Global Illumination]] 的重复：前者是"问题与近似谱系"，后者是"神经方法目标"——关系为 Prerequisite（本概念 → 神经 GI）。
