@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>接收侧缓存：Ward 1988 辐照度缓存 —— 缓存族第三种记账</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #1f5fa8;
+    --accent-soft: #eef4fb;
+    --vpl: #8a6d3b;
+    --vpl-soft: #faf5ea;
+    --rsm: #1f5fa8;
+    --rsm-soft: #eef4fb;
+    --ic: #7a3e9d;
+    --ic-soft: #f6eefa;
+    --ok: #2e7d4f;
+    --ok-soft: #eaf6ee;
+    --code: #f4f4f1;
+    --warn: #b4552d;
+    --warn-soft: #fdf1ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #7db4e8;
+      --accent-soft: #1c2834;
+      --vpl: #d9b26a;
+      --vpl-soft: #2a241a;
+      --rsm: #7db4e8;
+      --rsm-soft: #1c2834;
+      --ic: #c79ae0;
+      --ic-soft: #271c30;
+      --ok: #6bbf8a;
+      --ok-soft: #1c2b22;
+      --code: #24282b;
+      --warn: #e0946b;
+      --warn-soft: #2c211b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 23px; line-height: 1.35; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 20px; }
+  h2 { font-size: 16px; margin: 34px 0 12px; padding-left: 10px;
+       border-left: 3px solid var(--ic); letter-spacing: -0.005em; }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--ic-soft); border: 1px solid var(--line);
+          border-radius: 10px; padding: 14px 18px; margin: 0 0 6px;
+          color: var(--ink); font-size: 14.5px; }
+  .lede strong { color: var(--ic); }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 6px; font-size: 13.5px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--code); font-weight: 600; color: var(--ink); }
+  td { color: var(--ink-2); background: var(--panel); }
+  .col-ir th { color: var(--vpl); }
+  .col-rsm th { color: var(--rsm); }
+  .col-ic th { color: var(--ic); }
+  .hl { color: var(--ic); font-weight: 600; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+         padding: 16px 18px; margin: 12px 0; }
+  .box h3 { margin: 0 0 8px; font-size: 15px; }
+  .flow { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 2px; }
+  .step { border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px;
+          font-size: 13.5px; background: var(--code); color: var(--ink); }
+  .step.hl { border-color: var(--ic); background: var(--ic-soft); }
+  .step .n { display: inline-block; min-width: 18px; height: 18px; line-height: 18px;
+             text-align: center; border-radius: 50%; font-size: 11px;
+             border: 1px solid var(--line); background: var(--panel);
+             color: var(--ink-3); margin-right: 8px; }
+  .arrow { text-align: center; color: var(--ink-3); font-size: 12px; line-height: 1; margin: 1px 0; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+             background: var(--code); border: 1px solid var(--line); border-radius: 8px;
+             padding: 10px 12px; font-size: 13px; color: var(--ink); overflow-x: auto; margin: 8px 0; }
+  .grid2 { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+  .card { flex: 1 1 300px; background: var(--panel); border: 1px solid var(--line);
+          border-radius: 12px; padding: 14px 16px; }
+  .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); }
+  .card .big { font-size: 22px; font-weight: 700; color: var(--ic); line-height: 1.3; }
+  .card .small { font-size: 12.5px; color: var(--ink-3); }
+  .tl { border-left: 2px solid var(--line); margin: 14px 0 4px 8px; padding-left: 18px; }
+  .tl .ev { position: relative; margin: 0 0 10px; font-size: 13.5px; color: var(--ink-2); }
+  .tl .ev::before { content: ""; position: absolute; left: -25px; top: 7px;
+                    width: 9px; height: 9px; border-radius: 50%;
+                    background: var(--panel); border: 2px solid var(--ink-3); }
+  .tl .ev.star { color: var(--ink); font-weight: 600; }
+  .tl .ev.star::before { border-color: var(--ic); background: var(--ic); }
+  .tl .y { color: var(--ink-3); font-size: 12.5px; margin-right: 6px; }
+  .note { font-size: 12.5px; color: var(--ink-3); border-top: 1px dashed var(--line);
+          margin-top: 28px; padding-top: 12px; }
+  svg text { font-family: inherit; }
+  .tag { display: inline-block; font-size: 11.5px; padding: 1px 7px; border-radius: 6px;
+         border: 1px solid var(--line); color: var(--ink-3); background: var(--panel);
+         margin-left: 6px; vertical-align: 1px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>接收侧缓存：Ward 1988 辐照度缓存（Irradiance Caching）</h1>
+  <div class="sub">「缓存族」第三种记账 —— 光侧缓存“光”，本篇缓存“答案”<br>
+  源：Ward / Rubinstein / Clear, <i>A Ray Tracing Solution for Diffuse Interreflection</i>, SIGGRAPH '88, pp. 85–92（本页核对原文 8 页扫描件）</div>
+
+  <div class="lede">
+    <strong>一句话机制：</strong>间接光照（辐照度）是<strong>视图无关</strong>且<strong>沿表面缓慢变化</strong>的量——
+    不必逐像素算。把「表面点收到的答案」存进八叉树，在<strong>误差容限 a</strong> 内插值复用；
+    误差不达标就算一个新值再存进去。<strong>「答案的个数」与「像素的个数」自此解耦。</strong>
+  </div>
+
+  <h2>三种记账：缓存族全景（1988 / 1997 / 2005 三源齐）</h2>
+  <table>
+    <tr>
+      <th style="width: 18%"></th>
+      <th class="col-ir" style="width: 27%">Instant Radiosity（1997）</th>
+      <th class="col-rsm" style="width: 27%">RSM（2005）</th>
+      <th class="col-ic" style="width: 28%">Irradiance Caching（1988，本篇）</th>
+    </tr>
+    <tr>
+      <th>缓存对象</th>
+      <td>光路顶点（VPL）</td>
+      <td>光源视野像素（pixel light）</td>
+      <td class="hl">表面收到的答案（辐照度）</td>
+    </tr>
+    <tr>
+      <th>所在侧</th>
+      <td>光侧 · 随机</td>
+      <td>光侧 · 结构化</td>
+      <td class="hl">接收侧</td>
+    </tr>
+    <tr>
+      <th>复用维度</th>
+      <td>同一帧多趟渲染的累加</td>
+      <td>屏幕空间插值</td>
+      <td class="hl">表面八叉树 + 跨视图 / 跨帧 / 跨渲染文件</td>
+    </tr>
+    <tr>
+      <th>成本单位</th>
+      <td>每盏 VPL 一遍渲染</td>
+      <td>每像素固定 ~400 样本</td>
+      <td class="hl">每个「新答案」一次 MC 计算（数量由 a 决定）</td>
+    </tr>
+    <tr>
+      <th>预算语言</th>
+      <td>样本数定预算</td>
+      <td>样本数定预算</td>
+      <td class="hl">误差定预算（a = 质量旋钮）</td>
+    </tr>
+  </table>
+  <p class="note" style="border-top:none; margin-top:2px; padding-top:0;">
+    与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]] 合读：那两张讲「光从哪里来」，本篇讲「答案存在哪里」。</p>
+
+  <h2>缓存循环：每个表面点的判定</h2>
+  <svg viewBox="0 0 980 250" width="100%" role="img" aria-label="irradiance cache loop diagram">
+    <defs>
+      <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="#8a9196"/>
+      </marker>
+    </defs>
+    <rect x="10" y="95" width="150" height="56" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <text x="85" y="119" text-anchor="middle" font-size="13" fill="var(--ink)">光线命中的</text>
+    <text x="85" y="137" text-anchor="middle" font-size="13" fill="var(--ink)">表面点 P</text>
+
+    <line x1="160" y1="123" x2="228" y2="123" stroke="#8a9196" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="232" y="88" width="190" height="70" rx="10" fill="var(--ic-soft)" stroke="var(--ic)"/>
+    <text x="327" y="112" text-anchor="middle" font-size="13" fill="var(--ink)">在八叉树中找邻居</text>
+    <text x="327" y="130" text-anchor="middle" font-size="12.5" fill="var(--ink-2)">w_i &gt; 1/a 且 d_i ≥ 0 ？</text>
+    <text x="327" y="148" text-anchor="middle" font-size="11.5" fill="var(--ink-3)">（误差达标 + 不在“前方”）</text>
+
+    <line x1="422" y1="105" x2="510" y2="66" stroke="#8a9196" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="452" y="76" font-size="12" fill="var(--ok)">有（集合 S 非空）</text>
+    <rect x="514" y="30" width="230" height="60" rx="10" fill="var(--ok-soft)" stroke="var(--ok)"/>
+    <text x="629" y="54" text-anchor="middle" font-size="13" fill="var(--ink)">加权平均，直接输出</text>
+    <text x="629" y="73" text-anchor="middle" font-size="12" fill="var(--ink-2)">E = Σ wᵢEᵢ / Σ wᵢ　（廉价路径）</text>
+
+    <line x1="422" y1="140" x2="510" y2="180" stroke="#8a9196" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="448" y="176" font-size="12" fill="var(--warn)">无（S 为空）</text>
+    <rect x="514" y="150" width="230" height="62" rx="10" fill="var(--warn-soft)" stroke="var(--warn)"/>
+    <text x="629" y="174" text-anchor="middle" font-size="13" fill="var(--ink)">主方法：分层 Monte Carlo</text>
+    <text x="629" y="193" text-anchor="middle" font-size="12" fill="var(--ink-2)">算出新值 → 存入八叉树</text>
+
+    <line x1="744" y1="181" x2="830" y2="181" stroke="#8a9196" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="834" y="150" width="132" height="62" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+    <text x="900" y="174" text-anchor="middle" font-size="13" fill="var(--ink)">输出 +</text>
+    <text x="900" y="193" text-anchor="middle" font-size="12.5" fill="var(--ink-2)">供全场景复用</text>
+
+    <text x="490" y="240" text-anchor="middle" font-size="12" fill="var(--ink-3)">变化慢的区域点稀疏 · 变化快的区域自动加密 —— 密度由误差常数 a 唯一决定</text>
+  </svg>
+
+  <h2>为什么可以缓存：split sphere 误差模型</h2>
+  <div class="grid2">
+    <div class="card" style="flex: 1 1 380px;">
+      <h4>误差上界（原文 Eq 3b → Eq 4）</h4>
+      <div class="formula">ε(P) ≤ E₀ · [ (4/π)·‖P−P₀‖/R₀ + √(2 − 2·N(P)·N(P₀)) ]</div>
+      <p style="font-size: 13.5px; margin: 8px 0 0;">
+        <strong>位移项 ∝ 1/R₀</strong>：环境照得越匀（R₀ 大），答案变化越慢；<br>
+        <strong>朝向项 = 单位圆弦长</strong>：只看法线夹角 √(2−2N·N₀) ——与球几何无关。<br>
+        原文：<i>“The change in x becomes the distance between two points, and the change in ξ becomes the angle between two surface normals.”</i>
+      </p>
+    </div>
+    <div class="card" style="flex: 1 1 340px;">
+      <h4>容差常数 a 的语义</h4>
+      <p style="font-size: 13.5px; margin: 0 0 8px;">
+        估计误差 &lt; a 的值才允许被复用（wᵢ &gt; 1/a）：
+      </p>
+      <div class="formula">wᵢ(P) = 1 / ( ‖P−P₀‖/Rᵢ + √(1 − N(P)·N(Pᵢ)) )</div>
+      <p style="font-size: 13.5px; margin: 8px 0 0;">
+        <b class="hl">a 大</b> → 点更稀、更快、误差大；<b class="hl">a 小</b> → 点更密。<br>
+        验证结论：实际平均误差 ≈ 估计误差的 <b>1/4</b>、最大 ≈ <b>2×</b>；误差与 a 线性相关。
+      </p>
+    </div>
+  </div>
+
+  <h2>成本账本（原文数字）</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>冰激凌店场景（Sun 3/60）</h4>
+      <div class="big">~30 h</div>
+      <div class="small">同一幅图若逐像素独立光追：<b style="color:var(--warn)">&gt;500 h</b>；精确辐射度解：<b style="color:var(--warn)">~100,000 h</b></div>
+    </div>
+    <div class="card">
+      <h4>办公室场景（VAX 11/780）</h4>
+      <div class="big">25 / 40 / 70 h</div>
+      <div class="small">direct only → first bounce → seven bounces（三次独立计算）</div>
+    </div>
+    <div class="card">
+      <h4>缓存的复利</h4>
+      <div class="big">越用越准</div>
+      <div class="small">值可写入文件供后续渲染复用——预计算的区域“内容差永不突破”（原文：复用后计算更快且更准）</div>
+    </div>
+  </div>
+
+  <h2>时间线：从照明工程到神经渲染</h2>
+  <div class="tl">
+    <div class="ev"><span class="y">1984·85·86</span>辐射度（Goral / Cohen）· 渲染方程与路径追踪（Kajiya）· 随机采样（Cook）</div>
+    <div class="ev star"><span class="y">1988</span>★ 本篇：接收侧缓存 + 误差容限 a + 八叉树 + 跨渲染复用（来源：LBL 照明系统研究组 —— “Caching”一词由此进入 GI）</div>
+    <div class="ev"><span class="y">1992</span>Ward &amp; Heckbert：Irradiance Gradients（把梯度存进缓存，点可以更稀疏）</div>
+    <div class="ev"><span class="y">1990s–2000s</span>Radiance 渲染器 → final gathering 进入各家离线渲染器（行业标准件）</div>
+    <div class="ev"><span class="y">1997 / 2005</span>光侧两种记账：VPL（Keller）· RSM（Dachsbacher &amp; Stamminger）</div>
+    <div class="ev"><span class="y">2019</span>DDGI：探针网格版的“接收侧缓存”（实时化）</div>
+    <div class="ev star"><span class="y">2021</span>★ Neural Radiance Caching：<b>缓存对象不变（就是本篇的辐照度），缓存介质从插值公式换成神经网络</b></div>
+    <div class="ev"><span class="y">2026</span>AMD attention GI 等：经典缓存结构当神经网络的输入——“缓存族给神经当眼睛”</div>
+  </div>
+
+  <h2>两条可迁移判据（写给预算工作）</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>① 预算定在“样本数”上，还是定在“误差”上？</h4>
+      <p style="font-size: 13.5px; margin: 0;">
+        1978 / 1997 / 2005 系列的账本语言是“花多少力气”（样本数、灯数、分辨率）；
+        本篇发明了另一种：<b class="hl">把质量标准定死（a），让开销跟着场景自适应</b>——
+        与 DLSS 的“目标帧时间”、ControlGS 的“功耗预算”、你的 SABC“总预算倒挂分配”是同一族思想。
+      </p>
+    </div>
+    <div class="card">
+      <h4>② 缓存“过程”，还是缓存“答案”？</h4>
+      <p style="font-size: 13.5px; margin: 0;">
+        四个同族样本：VPL 缓存“光路”· PRB 缓存“随机数种子”（重放换存储）· River 缓存“河网”（确定性使其可重建）·
+        <b class="hl">本篇缓存“答案”（辐照度）</b>——选择缓存层级 = 选择成本函数关于什么线性。
+      </p>
+    </div>
+  </div>
+
+  <div class="note">
+    本页为 [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] 的配套图解（2026-10-04 入库）。
+    公式均核对自 radsite.lbl.gov 原刊扫描件；与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解]] 合读 = 缓存族三源齐。
+  </div>
+
+</div>
+</body>
+</html>

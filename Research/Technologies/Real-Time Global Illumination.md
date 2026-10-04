@@ -111,6 +111,22 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 
 **读法**：MegaLights"数千（DF）/ ≤100（NVIDIA）"两口径之争的答案在这张表里——这条路线的问题从来不是"灯多不多"，而是"**每像素花多少**"（详见 [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] 与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]）。
 
+## 🔴 补：缓存族第三源 —— 接收侧缓存与"第二种预算语言"（2026-10-04）
+
+[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（辐照度缓存）入库——在"每像素花多少"之外，1988 给出了**另一种预算语言**：
+
+| 语言 | 问题 | 代表 |
+|---|---|---|
+| 样本预算 | "每一步花多少力气？" | 1978 每灯 +1× 场景 → 1997 每盏 VPL 一遍 → 2005 每像素 ~400 样本 → 2026 每像素采样预算 |
+| **误差预算** | **"答案要多准才算够？"** | **1988 辐照度缓存：估计误差 < a 才允许复用缓存值，否则触发新计算——开销跟着"答案变化率"自适应**（平坦处点疏、陡峭处点密；值可写文件跨渲染复用） |
+
+**读法（对实时工程的三条接口）**：
+- Lumen 的 Final Gather / 辐照度探针、UE4 早期的 ILC、DDGI——都是"**接收侧缓存**"的工程后裔（"探针密度为什么要自适应"的答案在这条链上）；
+- **NRC（2021）就是它的神经版**：缓存对象（辐照度）未变，"缓存介质"从解析插值升级为网络——本页路线 C 的谱系自此可读到 1988；
+- 对档位设计的启示：**"质量定死、开销自适应"**与"开销定死、质量浮动"是两条独立的档位轴——你的五维预算目前全是后者（数量上限），前者的接口是"误差容限 / 目标质量"（与 DLSS"目标帧时间"、ControlGS"功耗预算"同族）。
+
+关联：[[接收侧缓存_Ward 1988 辐照度缓存图解]]（第三源图解）
+
 ## Game Engine Integration
 
 - UE：Lumen / SSGI / Lightmass
@@ -129,10 +145,12 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 - [[Global Illumination]]
 - [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（缓存族 RSM 侧源头；2026-10-03 入库）
 - [[Keller — Instant Radiosity (1997)]]（缓存族 VPL 侧源头；2026-10-03 入库）
+- [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（缓存族接收侧源头 / 误差预算语言；2026-10-04 入库）
 
 ## Related Papers
 
 - [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] —— **"动态灯光"成本法则的地基**（每盏灯 ≈ +1× 场景渲染）
+- [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] —— **"误差预算"的原始文献**（辐照度缓存：a 容限决定点密度；NRC 祖先）
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]（烘焙路线 A 的数学根源：SH9 探针）
 - [[Lightweight Attention-based Indirect Illumination (AMD)]]
 - [[LightOpt — Lights Optimization for Real-Time Rendering]]
