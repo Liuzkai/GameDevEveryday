@@ -1,20 +1,29 @@
 ---
 type: paper
-title: "Microfacet Models for Refraction through Rough Surfaces"
-authors: [Bruce Walter, Stephen R. Marschner, Hongsong Li, Kenneth E. Torrance]
+title: Microfacet Models for Refraction through Rough Surfaces
+authors:
+  - Bruce Walter
+  - Stephen R. Marschner
+  - Hongsong Li
+  - Kenneth E. Torrance
 year: 2007
-published: "2007-06-25"
-venue: "EGSR'07 — 18th Eurographics Symposium on Rendering, pp. 195-206"
-url: "https://doi.org/10.2312/EGWR.EGSR07.195-206"
+published: 2007-06-25
+venue: EGSR'07 — 18th Eurographics Symposium on Rendering, pp. 195-206
+url: https://doi.org/10.2312/EGWR.EGSR07.195-206
 code: ""
-project_page: "https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.html"
-category: [rendering, microfacet-theory, brdf, bsdf]
+project_page: https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.html
+category:
+  - rendering
+  - microfacet-theory
+  - brdf
+  - bsdf
 importance: S
 historical_importance: 5
 game_relevance: 5
 production_readiness: Industry Adopted
 user_level: Normal
-status: reading
+status:
+  - read
 ---
 
 # Walter et al. 2007 — Microfacet Models for Refraction through Rough Surfaces
@@ -54,7 +63,6 @@ Disney Principled BRDF 2012（生产参数化）
         ↓
 2026：[[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]] 从随机几何把 GGX 重新推导为特例
 ```
-
 **一个值得记住的细节**：本文作者之一 **Kenneth E. Torrance 就是 Cook-Torrance 的 Torrance**。1981 年他提出框架，26 年后他署名把它推广到折射——这不是巧合，是这条谱系真的在同一个实验室（Cornell Program of Computer Graphics）里延续。
 
 ## Core Idea
@@ -212,3 +220,13 @@ $$\Lambda(s) = \frac{-1+\sqrt{1+\alpha^2\tan^2\theta_s}}{2}$$
 - 作者机构：Cornell University, Program of Computer Graphics（Kenneth E. Torrance 为 Cook-Torrance 1981/1982 的作者之一）。
 - PDF 公开可读：https://cseweb.ucsd.edu/~viscomp/classes/cse168/sp25/readings/EGSR07-btdf.pdf
 - 本文入选今日经典线的原因：你正在研读 D/G/F，而**你实际在用的 D（GGX）和 G（Smith）就出自这篇**。它是知识图谱里"最常用却缺失"的那个节点。
+
+|缩写|英文全称|中文名称|描述什么|
+|---|---|---|---|
+|**BSDF**|Bidirectional Scattering Distribution Function|双向散射分布函数|光到达表面后，向不同方向散射的规律|
+|**BRDF**|Bidirectional Reflectance Distribution Function|双向反射分布函数|光反射回表面同一侧的规律|
+|**BTDF**|Bidirectional Transmittance Distribution Function|双向透射分布函数|光穿过表面，进入另一侧的规律|
+
+**BSDF 是总称，包含 BRDF（反射）和 BTDF（透射）。**
+
+“双向”指函数同时考虑**入射方向和出射方向**，不是指光只能往两个方向走。

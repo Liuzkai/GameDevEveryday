@@ -1,22 +1,36 @@
 ---
 type: paper
 title: "EMODY Flow: Emotion-Aware Audio-Driven Full-Body Motion Generation"
-authors: [Harsh Kumar Agarwal, Xavier Alameda-Pineda, Olivier Perrotin]
+authors:
+  - Harsh Kumar Agarwal
+  - Xavier Alameda-Pineda
+  - Olivier Perrotin
 year: 2026
-published: "2026-08-19 (arXiv)"
-venue: "arXiv:2609.16011 (cs.GR)"
-url: "https://arxiv.org/abs/2609.16011"
+published: 2026-08-19 (arXiv)
+venue: arXiv:2609.16011 (cs.GR)
+url: https://arxiv.org/abs/2609.16011
 code: ""
 project_page: ""
-category: [motion-generation, animation, audio-driven, facial-animation]
+category:
+  - motion-generation
+  - animation
+  - audio-driven
+  - facial-animation
 importance: B+
 historical_importance: 0
 game_relevance: 3
 production_readiness: Research
 user_level: Normal
-status: unread
-aliases: [EMODY Flow, EMODY]
-tags: [animation, motion-generation, audio-driven, npc]
+status:
+  - read
+aliases:
+  - EMODY Flow
+  - EMODY
+tags:
+  - animation
+  - motion-generation
+  - audio-driven
+  - npc
 ---
 
 # EMODY Flow: Emotion-Aware Audio-Driven Full-Body Motion Generation

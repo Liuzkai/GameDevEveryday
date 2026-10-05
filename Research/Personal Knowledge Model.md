@@ -32,14 +32,16 @@ user_level: Easy      # 或 Normal / Hard
 
 已知的用户背景：
 
-- NGR（王者荣耀世界）项目，淬炼系统相关工作
-- 为新角色**技能 VFX 设计性能预算**
-- 已建立"技能 × SABC 分级 × 实测指标 × 五档画质"的评价框架
-- SABC 分级依据：触发频率 × 难度 × 伤害；占比约 S 10% / A 13% / B 42% / C 34%
-- 已设计五个量化维度上限：Niagara 发射器（12/8/4/2）、同屏粒子（3000/1200/400/100）、贴图尺寸（2048/1024/512/256）、动态灯光（3/2/1/0）、VFX 时长（3s/2s/1s/0.5s）
-- 预算配比原则：S/A/B/C 按 35-40% / 30% / 20% / 10%（与数量占比倒挂）
-- 五档画质：PC_High / PC_Low / Android_High / Android_Mid / Android_Low
-- 实测指标：Particles / DrawCalls / Primitives / OverDraw / CPUTime / GPUTime
+- 资深游戏技术美术，工作经验 材质制作，过场特殊效果（houdini），PCG
+- 渲染底层理解 Normal / Hard 等级
+- 角色渲染 Normal 等级
+- 体渲染 Normal 等级
+- 水体渲染 Normal 等级
+- PBR 材质制作 Easy 等级
+- 游戏动画系统 Normal 等级
+- 游戏程序化PCG Normal 等级
+- PCG 算法 Normal / Hard 等级
+- 工具使用（Houdini, Maya, Unreal Engine, Substance) Easy 等级
 
 由此推断：用户对**实时渲染工程、UE/Niagara、性能剖析、跨平台分档**是 Easy；对**神经方法、可微渲染、生成模型**是 Hard。
 

@@ -1,20 +1,31 @@
 ---
 type: paper
 title: "DLSS 5: Generative Neural Rendering"
-authors: ["NVIDIA Research (ADLR)"]
+authors:
+  - NVIDIA Research (ADLR)
 year: 2026
-published: "2026-09-03"
-venue: "NVIDIA Research / Product (GeForce RTX 50 Series)"
-url: "https://research.nvidia.com/labs/adlr/DLSS5"
+published: 2026-09-03
+venue: NVIDIA Research / Product (GeForce RTX 50 Series)
+url: https://research.nvidia.com/labs/adlr/DLSS5
 code: ""
-project_page: "https://research.nvidia.com/labs/adlr/DLSS5"
-category: ["Rendering", "Neural Rendering", "Upscaling", "Production"]
-importance: "S"
-game_relevance: "Critical"
-production_readiness: "Early Production"
-user_level: "Normal"
-status: unread
-tags: [neural-rendering, real-time, nvidia, dlss, generative]
+project_page: https://research.nvidia.com/labs/adlr/DLSS5
+category:
+  - Rendering
+  - Neural Rendering
+  - Upscaling
+  - Production
+importance: S
+game_relevance: Critical
+production_readiness: Early Production
+user_level: Normal
+status:
+  - read
+tags:
+  - neural-rendering
+  - real-time
+  - nvidia
+  - dlss
+  - generative
 ---
 
 # DLSS 5: Generative Neural Rendering

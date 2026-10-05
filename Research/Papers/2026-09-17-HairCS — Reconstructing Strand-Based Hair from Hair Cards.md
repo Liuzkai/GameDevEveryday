@@ -22,7 +22,7 @@ tags: [hair, character, asset-pipeline, lod]
 # HairCS: Reconstructing Strand-Based Hair from Hair Cards
 
 ## TL;DR
-
+![](https://arxiv.org/html/2609.16465v1/teaser2.png)
 把游戏工业里最普遍的**发片（hair cards）资产自动转成发丝（strand-based）资产**，并且输出满足三条生产硬约束：发根长在头皮上、发根分布均匀、发量填得合理。
 
 一句话价值：**它给"发片 → 发丝"这条 LOD 阶梯补了一部上行电梯。** 过去要么重新做一版发丝，要么永远停在发片档；现在存量发片资产本身可以当源。
@@ -51,7 +51,9 @@ tags: [hair, character, asset-pipeline, lod]
 - 发片生成/优化：主流做法仍是美术手工或半自动摆片，研究侧关注贴图层面的 alpha 与剪影优化；
 - 发丝重建：从多视角图像、点云、单图重建发型（需要采集数据，与游戏流水线脱节）；
 - 本文差异：**不需要任何额外采集**，输入就是项目里现成的发片，输出直接进现有的发丝渲染/仿真/grooming 管线。
-
+![](https://arxiv.org/html/2609.16465v1/pipeline.png)
+![](https://arxiv.org/html/2609.16465v1/density.png)
+![](https://arxiv.org/html/2609.16465v1/card_in_the_wild.png)
 ## Core Idea
 
 一个自动化流水线，输入"一组带贴图的三角形/四边形条带"，输出"strand-based 发型"，同时满足三件事：
@@ -62,6 +64,8 @@ tags: [hair, character, asset-pipeline, lod]
    - 发丝**必须从头皮长出**（strands originate from the scalp）；
    - **发根分布均匀**（roots uniformly distributed）——否则会出现斑秃或局部过密；
    - **发量填充合理**（hair volume plausibly filled）——从表面片到体积填充，这是"片 → 丝"最难的一步：发片只描述一层壳，发丝要填满一个体积。
+
+![](https://arxiv.org/html/2609.16465v1/fig/Init/process.png)
 
 第 3 条是本文的技术核心，也是判断它能不能用的关键：**如果只做外观重建而不满足这三条，产出的发丝在仿真和修改器下会立刻穿帮。**
 
