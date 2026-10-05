@@ -18,9 +18,10 @@ importance: S
 historical_importance: 5
 game_relevance: 5
 production_readiness: Industry Adopted
-user_level: Normal
+user_level:
+  - Easy
 status:
-  - reading
+  - read
 ---
 
 # A Reflectance Model for Computer Graphics (Cook & Torrance, 1981)
@@ -82,6 +83,104 @@ $$f_r = \frac{F(\theta_i')}{\pi} \cdot \frac{D(\alpha) \cdot G}{(N \cdot L)(N \c
 
 漫反射项与高光项做能量配平（高光拿走的能量漫反射就拿不到），这是模型自洽的关键。
 
+## 原论文图示与 D / G / F 对照
+
+以下页码按 1982 年期刊版原文标注；PDF 页码从首页起计。
+
+| 原论文图示 | 对应内容 | 阅读重点 |
+|---|---|---|
+| 图 2（原文第 9 页，PDF 第 3 页） | 反射几何基础，并非专门的 G 项图 | N 是宏观法线，L 指向光源，V 指向观察者，H 是 L 与 V 的半程向量；α 是 N 与 H 的夹角，θ 是 L 或 V 与 H 的夹角。 |
+| 图 3（原文第 13 页，PDF 第 7 页） | **D：微面分布项** | 对比 Beckmann 与 Gaussian 分布，以及不同粗糙度参数 m 下的分布变化：较小 m 对应集中分布，较大 m 对应更分散的分布。 |
+| 图 4（原文第 15 页，PDF 第 9 页） | **F：波长依赖及反射颜色** | 上图展示铜镜在垂直入射时的光谱反射率；下图对比标准光源 D6500 的入射光谱与经铜镜反射后的光谱。 |
+| 图 5（原文第 17 页，PDF 第 11 页） | **F：角度、波长与颜色变化** | 展示铜镜反射率如何同时随波长和入射角变化，并对比随角度变化的铜色与论文方法的近似颜色。 |
+
+### 图 2 — 反射几何基础
+
+![图 2：反射几何基础](../Files/Pictures/Cook_Torrance_Figure_2.png)
+
+N、L、V、H 及角度的定义；不是专门展示 G 项的图。
+
+### 图 3 — D 项：微面分布
+
+![图 3：D 项：微面分布](../Files/Pictures/Cook_Torrance_Figure_3.png)
+
+Beckmann 与 Gaussian 分布对比；上排 m=0.2，下排 m=0.6。原图已旋转为便于阅读的方向。
+
+### 图 4 — F 项：波长与反射颜色
+
+![图 4：F 项：波长与反射颜色](../Files/Pictures/Cook_Torrance_Figure_4.png)
+
+铜镜的垂直入射光谱反射率，以及入射光谱和反射光谱的对比。
+
+### 图 5 — F 项：角度、波长与颜色
+
+![图 5：F 项：角度、波长与颜色](../Files/Pictures/Cook_Torrance_Figure_5.png)
+
+铜镜反射率随入射角和波长变化；下方保留原文的精确计算与近似计算彩色色带。
+
+**G 项在哪里？** 正文“Directional Distribution of the Reflected Light”（原文第 11 页，PDF 第 5 页）给出几何衰减公式，描述微面之间的入射遮挡（shadowing）和出射遮挡（masking）。图 2–5 中没有一张专门绘制 G 项遮挡机制的图。
+
+记忆顺序：**图 2 定义方向 → 图 3 看 D 分布 → 图 4、5 看 F 与颜色；G 回正文公式看遮挡。**
+
+来源：[Cook–Torrance 期刊版原文（Cornell PDF）](https://www.graphics.cornell.edu/~westin/consortium-home/cook-tog.pdf)。
+
+## D / G / F 在着色器里怎样计算（教学伪代码）
+
+下面是现代实时渲染的简化示例，不是 1981 年论文原代码：采用 **GGX 分布 + 可分离 Smith-GGX 遮挡 + Schlick 菲涅尔近似**。原论文使用 Beckmann 等分布并讨论完整 Fresnel。这里把 D、G、F 分开写，方便与原图对照；生产实现还可能合并几何项、使用高度相关 Smith 和多次散射补偿。
+
+### 输入与计算流程
+
+N 是表面单位法线；L、V 分别是表面指向光源、观察者的单位向量。所有颜色与光照在线性空间计算。roughness 是美术粗糙度，F0 是正入射 RGB 反射率（例如常见非金属可近似取 0.04，金属需使用对应的有色反射率）。本示例只计算不透明表面的单次散射镜面项。
+
+```C
+function SpecularBRDF(N, L, V, roughness, F0):
+    NoL = clamp(dot(N, L), 0, 1)
+    NoV = clamp(dot(N, V), 0, 1)
+    if NoL <= 0 or NoV <= 0:
+        return RGB(0)
+    if dot(L + V, L + V) < 1e-12:
+        return RGB(0)
+
+    H = normalize(L + V)                 // 图 2：所需微面法线
+    NoH = clamp(dot(N, H), 0, 1)
+    VoH = clamp(dot(V, H), 0, 1)
+    alpha = max(clamp(roughness, 0, 1)^2, 0.001)
+    a2 = alpha * alpha                   // 下限用于数值稳定，不表示理想镜面
+
+    // D：朝向 H 附近的微面分布密度，对应图 3 的概念
+    // 此处用 GGX，图 3 原图展示 Beckmann / Gaussian
+    denominator = (1 - NoH * NoH) + a2 * NoH * NoH
+    D = a2 / (PI * denominator * denominator)
+
+    // G：入射和出射方向的微面遮挡，可分离 Smith-GGX
+    function G1(cosine):
+        return 2 * cosine / (cosine + sqrt(a2 + (1 - a2) * cosine^2))
+    G = G1(NoL) * G1(NoV)
+
+    // F：微面反射率，RGB 各通道分别计算；对应图 4、5 的概念
+    F = F0 + (RGB(1) - F0) * (1 - VoH)^5
+
+    return D * G * F / (4 * NoL * NoV)
+```
+
+这里 alpha 是现代 GGX 的宽度参数；**不要与原图 2 的角度 α 混淆**。D 是密度，可以大于 1；它不等于反射率，不应被截断到 1。
+
+### 从 BRDF 到一个直接光源的像素贡献
+
+```C
+specular = SpecularBRDF(N, L, V, roughness, F0)
+NoL = max(dot(N, L), 0)
+Lo_specular += specular * lightWeight * NoL * shadowVisibility
+```
+
+lightWeight 是引擎计算的入射光权重，包含适用的灯光强度和距离衰减。这里适用于已经折算为单一方向贡献的直接光；面积光或环境光需要积分，采样估计时还要包含相应采样权重。shadowVisibility 是场景物体投影造成的阴影，**不等于 G 的微面自遮挡**。这里尚未加入漫反射、环境光、曝光或色调映射。
+
+### 原论文与现代代码为何分母不同？
+
+前文保留的是原论文记号：F·D·G / [π(N·L)(N·V)]。此处采用现代归一化 NDF 的记号，镜面 BRDF 写成 D·G·F / [4(N·L)(N·V)]。分布定义和归一化约定必须配套，不能把两套 D 和分母直接混用。
+
+实现参考：[Google Filament 官方技术文档：D、G、F 与标准材质](https://google.github.io/filament/main/filament.html)。本段按其公开公式重新组织为教学伪代码，未声称可直接编译或与某个引擎的完整实现一致。
+
 ## Why It Works
 
 三因子各自对应一个真实物理机制，而不是三个调参旋钮：
@@ -139,11 +238,11 @@ $$f_r = \frac{F(\theta_i')}{\pi} \cdot \frac{D(\alpha) \cdot G}{(N \cdot L)(N \c
 
 ## Mastery Criteria（Normal → Easy 检查表）
 
-- [ ] 能用一句话说清 D/G/F 各自的物理机制与可观测后果
-- [ ] 能解释为什么金属高光有色、非金属高光中性（F 的波长依赖）
-- [ ] 能解释掠射角"所有材质都变镜子"（F→1）
-- [ ] 能说清 UE 的 Roughness / Metallic 分别对应三因子中的哪一部分
-- [ ] 能说清 GGX 相对 Beckmann 改了什么（长尾巴 → 更真实的高光晕散）
+- [x] 能用一句话说清 D/G/F 各自的物理机制与可观测后果
+- [x] 能解释为什么金属高光有色、非金属高光中性（F 的波长依赖）
+- [x] 能解释掠射角"所有材质都变镜子"（F→1）
+- [x] 能说清 UE 的 Roughness / Metallic 分别对应三因子中的哪一部分
+- [x] 能说清 GGX 相对 Beckmann 改了什么（长尾巴 → 更真实的高光晕散）
 
 ## Notes
 
