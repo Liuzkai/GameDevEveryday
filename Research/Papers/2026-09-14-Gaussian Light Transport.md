@@ -1,20 +1,26 @@
 ---
 type: paper
-title: "Gaussian Light Transport"
-authors: [Patrick Attimont, Kartic Subr, Cyril Soler]
+title: Gaussian Light Transport
+authors:
+  - Patrick Attimont
+  - Kartic Subr
+  - Cyril Soler
 year: 2026
-published: "2026-09-10"
-venue: "SIGGRAPH Asia 2026 (Conference Track)"
-url: "https://arxiv.org/abs/2609.11430"
+published: 2026-09-10
+venue: SIGGRAPH Asia 2026 (Conference Track)
+url: https://arxiv.org/abs/2609.11430
 code: ""
-project_page: "https://patrick-attimont.com/projects/gaussian-light-transport/"
-category: [rendering, global-illumination]
+project_page: https://patrick-attimont.com/projects/gaussian-light-transport/
+category:
+  - rendering
+  - global-illumination
 importance: A
 historical_importance: 0
 game_relevance: 4
 production_readiness: Research
 user_level: Hard
-status: unread
+status:
+  - read
 ---
 
 # Gaussian Light Transport
@@ -34,9 +40,18 @@ status: unread
 
 ## Core Idea
 
+![高斯函数：柔边光斑、参数调整与多个函数叠加](../Files/Pictures/高斯函数_柔边光斑示意.png)
+
+> 二维直觉示意：亮度或高度代表函数值；本文的表示还包含方向、法线与材质等维度。
+
 把 GI 解写成高维高斯的线性组合：
 
 $$L(x, \omega, n, m) \approx \sum_i w_i \cdot G_i(x, \omega, n, m)$$
+
+![论文图三：高斯表示中的位置、方向、反照率、法线与粗糙度](../Files/Pictures/Gaussian_Light_Transport_Figure_3.svg)
+
+> **论文图 3：高斯表示与查询。** 从表面查询点提取位置、反照率、法线和粗糙度，并结合出射方向计算各子空间的高斯因子。一个高斯内部的因子相乘，再乘辐射亮度系数；多个高斯的贡献相加得到预测光照。
+> 来源：[Gaussian Light Transport，Figure 3](https://arxiv.org/html/2609.11430v1#S3.F3)，Patrick Attimont、Kartic Subr、Cyril Soler（2026）。原始 SVG，未修改。
 
 两个关键决策：
 

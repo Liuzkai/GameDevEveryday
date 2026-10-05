@@ -1,18 +1,28 @@
 ---
 type: paper
 title: "FlexMoGen: Flexible Motion Generation from Language and Style References"
-authors: ["Kai Weixian Lan", "Bodie Criswell", "Briana Fedkiw", "Zhan Zhang", "Joseph Teran", "Daniel Holden"]
+authors:
+  - Kai Weixian Lan
+  - Bodie Criswell
+  - Briana Fedkiw
+  - Zhan Zhang
+  - Joseph Teran
+  - Daniel Holden
 year: 2026
-published: "2026-09-07"
-venue: "Pacific Graphics 2026"
-url: "https://arxiv.org/abs/2609.08032"
+published: 2026-09-07
+venue: Pacific Graphics 2026
+url: https://arxiv.org/abs/2609.08032
 code: ""
-category: [animation, motion-generation, diffusion]
-importance: "A"
-game_relevance: "高"
-production_readiness: "Research"
-user_level: "Normal（Motion Matching 侧）/ Hard（生成侧）"
-status: unread
+category:
+  - animation
+  - motion-generation
+  - diffusion
+importance: A
+game_relevance: 高
+production_readiness: Research
+user_level: Normal（Motion Matching 侧）/ Hard（生成侧）
+status:
+  - read
 ---
 
 # FlexMoGen — Flexible Motion Generation from Language and Style References

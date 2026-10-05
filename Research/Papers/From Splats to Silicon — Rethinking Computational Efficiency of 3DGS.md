@@ -1,18 +1,33 @@
 ---
 type: paper
 title: "From Splats to Silicon: Rethinking Computational Efficiency of 3DGS"
-authors: ["Minnan Pei", "Qiwei Dong", "Yihan Zhou", "Gang Li", "Yuchen Zhu", "Wenju Zhao", "Zhongtian Long", "Siting Wang", "Peisong Wang", "Jian Cheng"]
+authors:
+  - Minnan Pei
+  - Qiwei Dong
+  - Yihan Zhou
+  - Gang Li
+  - Yuchen Zhu
+  - Wenju Zhao
+  - Zhongtian Long
+  - Siting Wang
+  - Peisong Wang
+  - Jian Cheng
 year: 2026
-published: "2026-09-05"
-venue: "arXiv preprint (cs.AR)"
-url: "https://arxiv.org/abs/2609.06157"
+published: 2026-09-05
+venue: arXiv preprint (cs.AR)
+url: https://arxiv.org/abs/2609.06157
 code: ""
-category: [gaussian-splatting, systems, hardware, performance]
-importance: "B+"
-game_relevance: "中高（方法论）"
-production_readiness: "Research（测量方法论）"
-user_level: "Normal"
-status: unread
+category:
+  - gaussian-splatting
+  - systems
+  - hardware
+  - performance
+importance: B+
+game_relevance: 中高（方法论）
+production_readiness: Research（测量方法论）
+user_level: Normal
+status:
+  - read
 ---
 
 # From Splats to Silicon — Rethinking Computational Efficiency of 3DGS

@@ -14,10 +14,10 @@ tags: [rendering, neural, production, shipping]
 ## Architecture
 
 ```
-低分辨率渲染帧 ┐
-Motion Vectors ├→ 神经模型 → 高分辨率输出
-历史帧/Temporal State ┐
-Depth / Albedo / Normal ┘
+低分辨率渲染帧             ┐
+Motion Vectors           ├→ 神经模型 → 高分辨率输出
+历史帧/Temporal State     ┐
+Depth / Albedo / Normal  ┘
 ```
 
 三代演进：

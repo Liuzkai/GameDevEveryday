@@ -1,20 +1,31 @@
 ---
 type: paper
-title: "Learning Realistic Athletic Sprinting Without Demonstrations"
-authors: [William Wang, Nicholas Bianco, Guy Tevet, Jennifer Hicks, C. Karen Liu, Scott Delp, Kayvon Fatahalian]
+title: Learning Realistic Athletic Sprinting Without Demonstrations
+authors:
+  - William Wang
+  - Nicholas Bianco
+  - Guy Tevet
+  - Jennifer Hicks
+  - C. Karen Liu
+  - Scott Delp
+  - Kayvon Fatahalian
 year: 2026
-published: "2026-09-10"
-venue: "arXiv（DOI 关联 ACM 图形学出版物）"
-url: "https://arxiv.org/abs/2609.11083"
+published: 2026-09-10
+venue: arXiv（DOI 关联 ACM 图形学出版物）
+url: https://arxiv.org/abs/2609.11083
 code: ""
 project_page: ""
-category: [animation, physics, rl]
-importance: A
+category:
+  - animation
+  - physics
+  - rl
+importance: A-
 historical_importance: 0
 game_relevance: 3
 production_readiness: Research
 user_level: Hard
-status: unread
+status:
+  - read
 ---
 
 # Learning Realistic Athletic Sprinting Without Demonstrations
