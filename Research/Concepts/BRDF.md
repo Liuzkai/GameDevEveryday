@@ -38,6 +38,7 @@ $$f_r(\omega_i, \omega_o) = \frac{dL_o(\omega_o)}{dE_i(\omega_i)}$$
 | **失效边界** | [[Hair Rendering]]（Kajiya-Kay 1989 / Marschner 2003） | 细长散射体 + 透射，**标准微面 BRDF 不适用** |
 | 生产参数化 | Disney Principled 2012 → Karis UE4 2013 | 实时化，美术友好 |
 | 进引擎 | [[Karis — Real Shading in Unreal Engine 4 (2013)]] | D 取 GGX 且 $\alpha=$Roughness²、G 用 Schlick 形式配 $k$、F 用球面高斯；**环境光走 [[Split-Sum Approximation]]**（2026-09-18 入库） |
+| **同源漫反射** | [[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] | **漫反射与镜面使用同一套微面假设**（GGX+Smith 下的 diffuse 解："最多丢一半"→ multi=0.1159α）；**"specular 分母的 4 = (L+V=2H·V) 的平方"**；UE 的 k=α/2 与 Smith 推导同源；理想 Lambert 缺 5% ★ 2026-10-05 入库 |
 | 测量数据 | MERL 100 材质库（2003） | 验证基准 |
 
 ## Prerequisites

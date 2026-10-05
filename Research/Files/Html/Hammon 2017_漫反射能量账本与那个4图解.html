@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hammon 2017 — 漫反射能量账本与那个「4」</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1d1f21; --ink-2: #4a4f55; --ink-3: #7b8288;
+    --line: #e3e3e0; --code: #f4f4f1;
+    --acc: #b4552d; --acc-soft: #fdf1ea;
+    --blue: #1f5fa8; --blue-soft: #eef4fb;
+    --green: #2e7d4f; --green-soft: #eaf6ee;
+    --purple: #7a3e9d; --purple-soft: #f6eefa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a; --panel: #1e2124; --ink: #e8eae7; --ink-2: #b6bcc0; --ink-3: #8a9196;
+      --line: #33383c; --code: #24282b;
+      --acc: #e0946b; --acc-soft: #2c211b;
+      --blue: #7db4e8; --blue-soft: #1c2834;
+      --green: #6bbf8a; --green-soft: #1c2b22;
+      --purple: #c79ae0; --purple-soft: #271c30;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px 20px 48px; background: var(--bg); color: var(--ink);
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+         font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 23px; line-height: 1.35; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 20px; }
+  h2 { font-size: 16px; margin: 34px 0 12px; padding-left: 10px; border-left: 3px solid var(--acc); }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--acc-soft); border: 1px solid var(--line); border-radius: 10px;
+          padding: 14px 18px; margin: 0 0 6px; color: var(--ink); font-size: 14.5px; }
+  .lede strong { color: var(--acc); }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 6px; font-size: 13.5px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--code); font-weight: 600; color: var(--ink); }
+  td { color: var(--ink-2); background: var(--panel); }
+  .hl { color: var(--acc); font-weight: 600; }
+  .hlb { color: var(--blue); font-weight: 600; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 12px 0; }
+  .box h3 { margin: 0 0 8px; font-size: 15px; }
+  .flow { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 2px; }
+  .step { border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-size: 13.5px; background: var(--code); color: var(--ink); }
+  .step.hl { border-color: var(--acc); background: var(--acc-soft); }
+  .step .n { display: inline-block; min-width: 18px; height: 18px; line-height: 18px; text-align: center;
+             border-radius: 50%; font-size: 11px; border: 1px solid var(--line); background: var(--panel);
+             color: var(--ink-3); margin-right: 8px; }
+  .arrow { text-align: center; color: var(--ink-3); font-size: 12px; line-height: 1; margin: 1px 0; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code);
+             border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 13px;
+             color: var(--ink); overflow-x: auto; margin: 8px 0; white-space: pre; }
+  .grid2 { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+  .card { flex: 1 1 300px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); }
+  .card .big { font-size: 22px; font-weight: 700; color: var(--acc); line-height: 1.3; }
+  .card .small { font-size: 12.5px; color: var(--ink-3); }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px;
+         border: 1px solid var(--line); color: var(--ink-3); background: var(--panel); margin-right: 6px; }
+  .banner { text-align: center; color: var(--ink-3); font-size: 12.5px; margin: 26px 0 0; }
+  .cols3 { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+  .colc { flex: 1 1 220px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--panel); }
+  .colc h5 { margin: 0 0 4px; font-size: 13.5px; color: var(--ink); }
+  .colc p { font-size: 12.5px; margin: 0; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hammon 2017 — 漫反射能量账本与那个「4」</h1>
+  <p class="sub">PBR Diffuse Lighting for GGX+Smith Microsurfaces · GDC 2017 · Respawn（Titanfall 2 生产研究）· 193 页幻灯片 · 2026-10-05 入库（原文阻塞 16 天后解除）</p>
+
+  <div class="lede">
+    <strong>一句话</strong>：与 GGX+Smith 镜面<b>同源</b>地重做漫反射 —— 数值求解发现单次散射<b>最多丢一半光</b>；
+    顺手给出两个著名问题的答案：<b>「PBR specular 的 4 从哪来」</b>与<b>「理想 Lambert 少了 5%」</b>。
+  </div>
+
+  <h2>一、那个「4」从哪来 —— 一次测度变换</h2>
+  <p>PBR 镜面公式 $F D G \,/\, 4(N\cdot L)(N\cdot V)$ 的分母里有个 4，很多人以为它来自"除以 π 之类的归一化"。真相是：<b>它是从立体角测度变换里掉出来的雅可比系数</b>。</p>
+  <div class="flow">
+    <div class="step"><span class="n">1</span>归一化约束：∫ ρ·cosθ_V dV = 1 —— 但 δ 函数只在 m = H 处非零，<b>必须把积分换到 dm 域</b>才有意义</div>
+    <div class="arrow">▼ 需要 dV/dm</div>
+    <div class="step"><span class="n">2</span>把 dV 移到 (L+V) 方向球上：<span style="font-family:ui-monospace">dV = (H·V / |L+V|²) · dm</span></div>
+    <div class="arrow">▼ 代入几何关系</div>
+    <div class="step"><span class="n">3</span><b>L+V = 2(H·V)</b>（半程向量定义）→ <b>|L+V|² = 4(H·V)²</b> ⇒ <span style="font-family:ui-monospace">dV/dm = 4(H·V)</span></div>
+    <div class="arrow">▼ 回代</div>
+    <div class="step hl"><span class="n">4</span>k · (H·V) · 4(H·V) = 1 ⇒ <b>k = 1/(4 H·L H·V)</b> —— <span style="font-family:ui-monospace">"This 2 squared is specular BRDF's 4!"</span></div>
+  </div>
+  <p style="margin-top:10px"><span class="tag">一句话</span>4 = 2²，来自 |L+V| = 2(H·V) 的平方。它回答的其实是一个"为什么不是 π"的疑问——<b>它根本不是面积归一化因子，而是坐标变换的代价</b>。</p>
+
+  <h2>二、漫反射丢了多少 —— 单次散射最多丢一半</h2>
+  <p>把漫反射写成微面上的 λ=1/π 反弹、路径追踪微面间的多次弹射（同 Oren-Nayar 方法但换到 Smith+GGX 假设下），得到的分账：</p>
+  <div class="cols3">
+    <div class="colc">
+      <h5>Direct only</h5>
+      <p>只算直接光 + 单次散射 → 高粗糙度、掠射角处明显发暗。<b>这就是旧模型的真相：丢光</b>。</p>
+    </div>
+    <div class="colc">
+      <h5>Direct + indirect</h5>
+      <p>加入微面间多次弹射 → 亮回来了。原文结论句：<b>"Up to half the light was missing!"</b></p>
+    </div>
+    <div class="colc">
+      <h5>Indirect only</h5>
+      <p>把多次弹射单独看 → 它自己就是一笔可观的能量账（尤其是粗糙端）。</p>
+    </div>
+  </div>
+  <p><span class="tag">与镜面侧的平行</span>镜面侧的故事是「被挡住 ≠ 被吸收」；漫反射侧的版本是「<b>光进表面不是终点，还会带着 Fresnel 弹回来</b>」——单次散射把它当成了终结。</p>
+
+  <h2>三、新 G2 近似 —— 和 UE 里那个 k=α/2 同源</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>精确 Smith G1（GGX）</h4>
+      <div class="formula">G1 = 2N·V / ( α² + (1−α²)(N·V)² + N·V )</div>
+      <p class="small">分母里 N·V 的平方项是精确的，但每帧要开方级别的运算。</p>
+    </div>
+    <div class="card">
+      <h4>lerp 放松 → 与 UE 相同的形状</h4>
+      <div class="formula">G1 ≈ 2N·V / ( N·V(2−α) + α )
+   = 2N·V / lerp(N·V, 1, α) + N·V 的变形</div>
+      <p class="small">把 (N·V)² 放松为 lerp(N·V, 1, α) —— <b class="hl">"Turns out, identical to Unreal's Smith"（k=α/2）</b>。UE 里那个经验常数其实可以从 Smith 推导出来。</p>
+    </div>
+  </div>
+  <div class="box">
+    <h3>height-correlated 的新 G2（工程选型）</h3>
+    <div class="formula">G2(L,V) = 2(N·L)(N·V) / lerp( 2(N·L)(N·V), (N·L)+(N·V), α )
+
+组合进完整 specular BRDF 时分子抵消：
+    BRDF = F·D / [ 2 · lerp(2·N·L·N·V, N·L+N·V, α) ]</div>
+    <table>
+      <tr><th>形式</th><th>成本</th><th>质量</th></tr>
+      <tr><td>G1(L)·G1(V)（uncorrelated）</td><td>~4 cycles</td><td>掠射 + 高粗糙度端偏暗</td></tr>
+      <tr><td><b>新 G2 近似</b>（correlated）</td><td>~6 cycles</td><td><b class="hl">粗糙电介质掠射端显著改善；"只有可忽略的额外成本"</b></td></tr>
+    </table>
+    <p class="small" style="margin-top:8px">附赠 shader 恒等式：不构造 H 直接求 N·H、L·H —— 19 cycles → 7 cycles（<b>省 7-10 cycles / light</b>）。</p>
+  </div>
+
+  <h2>四、Lambert 的账：为什么加上 Fresnel 后是 1.05/π</h2>
+  <div class="flow">
+    <div class="step"><span class="n">1</span>余弦衰减的真相：不是"能量随角度变少"，而是<b>几何</b>——内部光束各向同性，表面按 cosθ 切割光束、按 1/cosθ 缩放面积</div>
+    <div class="arrow">▼ 对称性要求</div>
+    <div class="step"><span class="n">2</span><b>出射也要有 Fresnel</b>：1−F = (1−F0)(1−(1−N·V)⁵) —— 光路可逆，进和出必须同等对待</div>
+    <div class="arrow">▼ 内部反射光会被弹回表面、再次获得逃逸机会</div>
+    <div class="step hl"><span class="n">3</span>归一化：2πk·∫(1−(1−cosθ)⁵)·cosθ·sinθ dθ = 1 ⇒ <b>k = 21/20π = 1.05/π</b> —— 理想漫反射比 Lambert 大 5%</div>
+  </div>
+
+  <h2>五、最终模型（全部闭式）</h2>
+  <div class="box">
+    <div class="formula">facing = 0.5 + 0.5·(L·V)
+rough  = facing^(0.9 − 0.4·facing) · (0.5 + N·H) / (N·H)
+smooth = 1.05 · (1−(1−N·L)⁵) · (1−(1−N·V)⁵)
+single = (1/π) · lerp(smooth, rough, α)      ← α=0 时退化为 5% 修正 Lambert
+multi  = 0.1159 · α                           ← 多次弹射能量补偿（一行线性项）
+diffuse = albedo·single + albedo·multi</div>
+    <p class="small">两个零售版本：hybrid（smooth 换 Disney fd90）· cheaper（smooth 换 Lambert）。数值求解先行、拟合在后 —— "tried tons of random equations until ones that I liked"。</p>
+  </div>
+
+  <h2>六、两个账本 —— 与 Kulla-Conty 2017 的对偶</h2>
+  <table>
+    <tr><th></th><th>Kulla-Conty 2017（镜面侧）</th><th>Hammon 2017（漫反射侧）</th></tr>
+    <tr><td>洞从哪来</td><td>G 遮挡掉的能量被当成"消失"</td><td>单次散射忽略了微面间多次弹射 + 出射 Fresnel</td></tr>
+    <tr><td>补法形态</td><td>查表 lobe：（1−E(μo)）(1−E(μi))/π(1−E_avg)</td><td>闭式线性项：multi = 0.1159α</td></tr>
+    <tr><td>验证</td><td>32×32 表（4KB）</td><td>路径追踪数值对照</td></tr>
+    <tr><td>入库</td><td>★ 2026-09-19</td><td>★ 2026-10-05（本图）</td></tr>
+  </table>
+  <p><span class="tag">关键认知</span>这不是"同一个洞的两半"，而是<b>两个独立账本</b>：镜面侧的洞由 G 遮挡造成，漫反射侧的洞由"忽略弹射 + Fresnel 不对称"造成。成因不同、修法不同、成本量级也不同（查表 vs 一行乘加）。</p>
+
+  <p class="banner">图注：本图解供 Obsidian 嵌入使用 · 数据与引文均取自 GDC 2017 官方 193 页幻灯片（media.gdcvault.com 新 CDN）</p>
+</div>
+</body>
+</html>

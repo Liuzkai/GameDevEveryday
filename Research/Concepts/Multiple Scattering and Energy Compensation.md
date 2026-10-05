@@ -8,10 +8,12 @@ first_introduced: "问题自 Cook-Torrance 1981 就存在；工程解 Kelemen 20
 
 # Multiple Scattering and Energy Compensation
 
-> 建立于 2026-09-19；**2026-09-20 由"三条路线"扩为"五条"**（+Heitz 2016 精确真值、+Fdez-Agüera 2019 实时 IBL 版、+Lagarde/Turquin 最便宜版）。
+> 建立于 2026-09-19；**2026-09-20 由"三条路线"扩为"五条"**（+Heitz 2016 精确真值、+Fdez-Agüera 2019 实时 IBL 版、+Lagarde/Turquin 最便宜版）；**2026-10-05 补上"漫反射侧"的账本**（+Hammon 2017）。
 > **它是 [[Physically Based Rendering]] 的 Learning Gap 里最后一块"账本"**：
 > [[Microfacet Theory]] 给你 $D\cdot G\cdot F$，但**这个形式本身就结构性地忽略了微面之间的互反射**——于是表面"少收了一笔钱"。
 > 这个笔记就是那笔钱的账：**少了多少、怎么量、五条不同的补法各缺哪一角。**
+>
+> **🔴 2026-10-05 更新（"账本"的完整化）**：此前全篇（含五条补法与 4b）是 **specular（镜面）侧** 的账。[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] 入库后，**漫反射侧**的同题账目首次落库（新增 §4c）——**两册账不是"同一个洞的两半"，而是两个独立账本**：镜面侧的洞由 $G$ 遮挡造成；漫反射侧的洞由"忽略微面间多次弹射 + 出射 Fresnel 不对称"造成。成因不同、修法不同、成本量级也不同（查表 lobe vs 一行线性项）。
 
 ## Definition
 
@@ -123,6 +125,25 @@ $$E_d=1-(F_{ss}E_{ss}+F_{ms}E_{ms}),\qquad K_d=\text{albedo}\cdot E_d$$
 
 **实操含义**：**furnace test 要查两头** —— 粗糙端是否变暗（旧检查项），**光滑端是否有一圈偏亮**（新检查项）。后者更容易被漏掉，因为它看起来"更干净"而不是"更暗"。
 
+### 4c. 漫反射侧的账（2026-10-05 新增，Hammon 2017）
+
+> 前面全部是**镜面侧**的账。漫反射侧有一个**独立**的账本——[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]]（GDC 2017 / Respawn，Titanfall 2 生产研究）。
+
+- **洞从哪来**：漫反射的微面形式 $\rho_m = 1/\pi$ 没有 dirac delta、没有闭式解 → 数值求解后发现**单次散射忽略的微面间二次以上弹射最多能占一半能量**（原文："Up to half the light was missing!"）——Oren-Nayar 完整版也含 second bounce，方向一致；
+- **补法形态（与镜面侧对照）**：
+
+| | 镜面侧（Kulla-Conty 2017） | **漫反射侧（Hammon 2017）** |
+|---|---|---|
+| 洞的成因 | $G$ 遮挡的能量被当成"消失" | 忽略多次弹射 + 出射 Fresnel 不对称 |
+| 补法 | 查表 lobe：$(1-E(\mu_o))(1-E(\mu_i))/\pi(1-E_{avg})$ | **闭式线性项：$\mathrm{multi}=0.1159\alpha$**（直接乘 albedo） |
+| 成本 | 32×32 表 ≈ 4KB + 1 次采样 | **一行乘加** |
+| 附加条件 | path tracing 语境、漫射假设 | 与同一 $\alpha$ 驱动（与 specular 同源） |
+
+- **另一个 5%**：理想漫反射（Lambert + 出射 Fresnel + 内部弹回机会归一化）比纯 Lambert **大 5%**（$k = 21/20\pi = 1.05/\pi$，源自 Shirley 1997）——**"Lambert 本身就不是正确的平滑极限"**；
+- **同源要求**：这篇的根问题是"diffuse 与 specular 用了两套不相容的微面假设（Oren-Nayar vs GGX+Smith），连粗糙度都无法换算"——**判据：我引擎里的漫反射与镜面，是同一套微面假设吗？**
+
+> **两册账的合读**：镜面侧"补一个标量"（③④⑤ 修方向 albedo）、漫反射侧"补一个线性项"（multi）——**都是"账平"而非"分布对"**；而 ①②（Heitz / Dupuy）是两侧共同的"推输运"路线。**"补能量 vs 推输运是两件事"这条判据在漫反射侧同样成立。**
+
 ### 5. 一个可迁移的审近似判据
 
 > **看到任何"补能量 / 预计算 / 近似"方案，先问：为了让结果可预存或可闭式化，它额外假设了什么？这个假设在哪个角度/参数区间会肉眼可见？**
@@ -157,6 +178,9 @@ $$E_d=1-(F_{ss}E_{ss}+F_{ms}E_{ms}),\qquad K_d=\text{albedo}\cdot E_d$$
         ↓
 ★ 2017  Kulla & Conty（把 Kelemen 公式工程化：32×32 表 = 4KB + 解析 F_avg + 忽略各向异性）
         —— 被多家引擎/工作室采用 ★ 本库已入库
+★ 2017  Hammon（GDC，**2026-10-05 入库**）：**漫反射侧**同题 —— 与 GGX+Smith 同源求解漫反射
+        —— 单次散射"最多丢一半"；新 G2 近似（=UE 的 k=α/2 同源）；"4"的推导；Lambert 缺 5%
+        —— 同一年、同一问题的镜像侧，两册账并立
         ↓
 2018  ★ Hill 系列（**2026-09-24 入库**）：Fms 修正 → EFms 预计算 → Schlick 拆分（Σ wi·F0^i）→ 单贴图 3 MAD
         —— "更准 vs 能用"在方案内部再演两轮（3D LUT → 2D LUT → 1 贴图）
@@ -194,7 +218,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 | Kelemen & Szirmay-Kalos 2001, Eurographics Short | 公式源头 | ❌ 未入库（较老，可只在本文引用） |
 | [[Hill — A Multi-Faceted Exploration (2018-2019)]] | **路线 ③ 的工程化中段**（Fms 修正 + EFms 预计算 + Schlick 拆分 → 单贴图 3 MAD）；"更准 vs 能用"的完整过程记录 | ✅ **2026-09-24 入库**（原文四篇逐篇核对；**两处"待核实"同日结案**） |
 | [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] | **系统性手册（746 页参考地图册）** | ✅ **2026-09-23 入库** —— 本书即"五条补法"谱系的**原文全谱**（VII.48）；13.3.4 给出 Heitz 式截面，13.7.1/13.8.1 给出**球面 albedo 的拟合闭式**（furnace test 的第一个客观对照基线）；14.2 节为 Kelemen 2001 归属提供手册级佐证 |
-| Hammon 2017, *PBR Diffuse Lighting for GGX+Smith Microsurfaces* | **漫反射侧**的同类问题 | ❌ 未入库，**优先级高** |
+| [[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] | **漫反射侧的同类账本**（单次散射丢一半 / multi=0.1159α / 新 G2 / "4"的推导 / Lambert 缺 5%） | ✅ **2026-10-05 入库**（原文阻塞 16 天后经新 CDN `media.gdcvault.com` 解除） |
 
 ## Related Concepts
 
@@ -249,7 +273,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 1. **把 furnace test 做成一次真实的自测**（30 分钟内可完成）：
    纯金属球 → Roughness 0→1 → 只有环境光 → 截图；**再加一个光滑白电介质球查掠射亮边**；然后切换引擎侧的能量补偿开关对比。**做完这一条，本概念即可从 Normal 升 Easy**；
    **🔴 2026-09-23 更新：现在有客观对照基线了** —— 先在 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 的 **13.7.1（Beckmann）/ 13.8.1（GGX）** 查到对应 $\eta$、$\alpha$ 的**球面 albedo 拟合闭式值**，再与引擎实测对照（不再是"凭感觉看变暗/变亮"）；
-2. **经典候选排队（2026-09-24 更新）**：~~Heitz et al. 2016~~ ✅ → ~~Fdez-Agüera 2019~~ ✅ → ~~d'Eon《Hitchhiker's Guide》~~ ✅（9-23）→ ~~Hill 2018 part 2/3~~ ✅（**9-24 入库**）→ 现最高优先级：**Hammon 2017**（`PBR Diffuse Lighting for GGX+Smith Microsurfaces` —— **漫反射侧也漏能量**；**原文阻塞中**：GDC Vault 403 已三试）> 毛发侧 **Kajiya-Kay 1989**（需先确认原文可得）> PCG 侧 **Parish & Müller 2001**（候选）；
+2. **经典候选排队（2026-10-05 更新）**：~~Heitz et al. 2016~~ ✅ → ~~Fdez-Agüera 2019~~ ✅ → ~~d'Eon《Hitchhiker's Guide》~~ ✅（9-23）→ ~~Hill 2018 part 2/3~~ ✅（**9-24 入库**）→ ~~Hammon 2017~~ ✅（**10-05 入库，阻塞解除**）——**PBR 侧经典队列自此清空**。后续候选（低优先）：Kelemen 2001 原文（已在多处引用）、Shirley 1997（*A Practitioners' Assessment of Light Reflection Models*，**记名**——Hammon 的对称化归一化来源）;
 3. 与 [[Split-Sum Approximation]] 合并成一张"IBL 镜面半边固定开销表"（cubemap 预滤波 + EnvBRDF LUT + 能量补偿），纳入 [[Real-Time VFX Performance Budgeting]] 的参考账。**④ 让这张表多了一行"成本 ≈ 0"**。
 
 ## Visualization

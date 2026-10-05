@@ -41,6 +41,8 @@ Disney Principled BRDF（2012，《无敌破坏王》生产验证：原则化参
         ↓
 ★ Heitz 2016（多次散射的随机真值）→ ★ Kulla-Conty 2017（4KB 表补回能量，工程可用）★ 2026-09-19 入库
         ↓
+★ Hammon 2017（GDC）—— **漫反射侧**同源化：与 GGX+Smith 假设一致地重做 diffuse（"最多丢一半"→ multi=0.1159α）+ **"4"的完整推导** + 理想 Lambert 缺 5% ★ 2026-10-05 入库
+        ↓
 Dupuy 2026 —— 特制 NDF 上所有散射阶的**精确初等闭式**（理论天花板，代价是无 roughness 参数）★ 2026-09-19 入库
         ↓
 Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
@@ -90,9 +92,12 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 - [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]——D（GGX）与 G（Smith）
 - [[Karis — Real Shading in Unreal Engine 4 (2013)]]——★ **实时化那一步（入库 2026-09-18）**：三因子换廉价形式 + [[Split-Sum Approximation]] 环境光 + 材质模型定型（BaseColor/Metallic/Roughness，非金属 $F_0$=0.04）
 - [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]——★ **能量侧那一步（入库 2026-09-19）**：单次散射丢掉的那部分能量怎么补回来（32×32 表 ≈ 4KB）+ **Furnace Test** 这个可执行的自测方法
+- [[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]]——★ **漫反射侧那一步（入库 2026-10-05）**：与 GGX+Smith 同源地求解漫反射（"最多丢一半"）；**"specular 的 4 从哪来"与"UE 的 k=α/2 从哪来"两个长期悬置问题的答案**；理想 Lambert 缺 5%（1.05/π）
 - [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]——★ 理论天花板（2026，所有散射阶的精确初等闭式）
 
 > **至此本概念三侧齐备：来源侧（D·G·F 的物理出处）2026-09-17 闭合，工程侧（进引擎 + IBL 查表）2026-09-18 闭合，能量侧（多次散射）2026-09-19 闭合。**
+>
+> **🔴 2026-10-05 补：能量侧再细分"镜面 / 漫反射"两册账** —— 9-19/9-20 的 Kulla-Conty 线是**镜面侧**（$G$ 遮挡的能量）；[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] 补上**漫反射侧**（单次散射丢一半 → multi=0.1159α；Lambert 缺 5%）。**PBR 经典谱系至此完整**——上游（Cook-Torrance 1981）到能量账（2016/2017 双侧）到理论天花板（Dupuy 2026）全链在库。
 >
 > 🔭 **前沿外延（2026-09-21 补记）**：PBR 正在"出借"到新方向 —— [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] 把**渲染方程改写进 VAE 潜空间**（带符号辐射 / 平响应项 / 遮挡项三项修正），路径追踪首次直接输出 latent 图。**含义：渲染方程（[[Rendering Equation]]）的输出物可被整体替换 —— 这不是 PBR 的"改进"，而是 PBR 作为"可迁移求解框架"的第一次外借。**
 

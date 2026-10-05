@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Budgeted-GS — 容量下限与因子树（GS 的率-失真视角）</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1d1f21; --ink-2: #4a4f55; --ink-3: #7b8288;
+    --line: #e3e3e0; --code: #f4f4f1;
+    --acc: #1a7a6e; --acc-soft: #e9f6f3;
+    --warn: #b4552d; --warn-soft: #fdf1ea;
+    --blue: #1f5fa8; --blue-soft: #eef4fb;
+    --purple: #7a3e9d; --purple-soft: #f6eefa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a; --panel: #1e2124; --ink: #e8eae7; --ink-2: #b6bcc0; --ink-3: #8a9196;
+      --line: #33383c; --code: #24282b;
+      --acc: #6cc7b8; --acc-soft: #16292a;
+      --warn: #e0946b; --warn-soft: #2c211b;
+      --blue: #7db4e8; --blue-soft: #1c2834;
+      --purple: #c79ae0; --purple-soft: #271c30;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px 20px 48px; background: var(--bg); color: var(--ink);
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+         font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 23px; line-height: 1.35; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 20px; }
+  h2 { font-size: 16px; margin: 34px 0 12px; padding-left: 10px; border-left: 3px solid var(--acc); }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  .lede { background: var(--acc-soft); border: 1px solid var(--line); border-radius: 10px;
+          padding: 14px 18px; margin: 0 0 6px; color: var(--ink); font-size: 14.5px; }
+  .lede strong { color: var(--acc); }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 6px; font-size: 13.5px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--code); font-weight: 600; color: var(--ink); }
+  td { color: var(--ink-2); background: var(--panel); }
+  .hl { color: var(--acc); font-weight: 600; }
+  .hlw { color: var(--warn); font-weight: 600; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 12px 0; }
+  .box h3 { margin: 0 0 8px; font-size: 15px; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code);
+             border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 13px;
+             color: var(--ink); overflow-x: auto; margin: 8px 0; white-space: pre; }
+  .grid2 { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+  .card { flex: 1 1 300px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); }
+  .card .big { font-size: 22px; font-weight: 700; color: var(--acc); line-height: 1.3; }
+  .card .small { font-size: 12.5px; color: var(--ink-3); }
+  .grid4 { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+  .stat { flex: 1 1 200px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .stat .v { font-size: 20px; font-weight: 700; color: var(--acc); line-height: 1.25; }
+  .stat .k { font-size: 12px; color: var(--ink-3); }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px;
+         border: 1px solid var(--line); color: var(--ink-3); background: var(--panel); margin-right: 6px; }
+  .flow { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 2px; }
+  .step { border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-size: 13.5px; background: var(--code); color: var(--ink); }
+  .step.hl { border-color: var(--acc); background: var(--acc-soft); }
+  .arrow { text-align: center; color: var(--ink-3); font-size: 12px; line-height: 1; margin: 1px 0; }
+  .banner { text-align: center; color: var(--ink-3); font-size: 12.5px; margin: 26px 0 0; }
+  .svgwrap { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px; margin: 10px 0; }
+  .cols3 { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+  .colc { flex: 1 1 220px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--panel); }
+  .colc h5 { margin: 0 0 4px; font-size: 13.5px; }
+  .colc p { font-size: 12.5px; margin: 0; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Budgeted-GS — 容量下限与因子树</h1>
+  <p class="sub">Real-Time Large-Scale Gaussian Splatting via Factoring LOD · Haipeng Wang（Neusoft）· EG 2027 投稿预印本 · arXiv:2610.03162 · 2026-10-05 入库（未公告先见）</p>
+
+  <div class="lede">
+    <strong>一句话</strong>：把 city-scale 3DGS 的"该用多少 primitive"从习惯问题变成<b>可测量、可认证的理论问题</b>——
+    误差随预算以 <b>N<sup>−1/2</sup></b> 下降（Zador 定律），并据此做出"<b>部署时单参数选 LOD</b>"与"<b>训练时直接长在正确尺寸</b>"两个方法。
+    <br>答卷：官方城市数据、单张 4080 SUPER、1080p 原生全 SH、<b>71 fps</b>。
+  </div>
+
+  <h2>一、率-失真曲线 —— 预算到底该定在哪</h2>
+  <div class="svgwrap">
+  <svg viewBox="0 0 1000 330" width="100%" height="330" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, Menlo, Consolas, monospace">
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="#7b8288"/>
+      </marker>
+    </defs>
+    <!-- axes -->
+    <line x1="80" y1="280" x2="940" y2="280" stroke="#7b8288" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="80" y1="280" x2="80" y2="40" stroke="#7b8288" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="900" y="305" font-size="13" fill="#7b8288">预算 N（primitive 数）→</text>
+    <text x="90" y="34" font-size="13" fill="#7b8288">误差 ↓</text>
+    <!-- floor curve: steep then knee then flat asymptote -->
+    <path d="M100,60 C190,190 260,235 360,248 C480,258 620,262 920,264" fill="none" stroke="#1a7a6e" stroke-width="3"/>
+    <text x="120" y="80" font-size="12.5" fill="#1a7a6e">陡降区（预算不足）</text>
+    <text x="480" y="286" font-size="12.5" fill="#1a7a6e">平坦区 = 容量下限（再多的 primitive 也买不到更多质量）</text>
+    <!-- knee -->
+    <circle cx="330" cy="246" r="6" fill="#b4552d"/>
+    <text x="300" y="230" font-size="12.5" fill="#b4552d">knee N*（最陡窗口斜率最大处）</text>
+    <text x="238" y="215" font-size="12" fill="#b4552d">← BCT 直接训练在这里</text>
+    <!-- published compressors flat zone -->
+    <rect x="600" y="243" width="170" height="26" fill="none" stroke="#7a3e9d" stroke-width="1.5" stroke-dasharray="5 4" rx="6"/>
+    <text x="598" y="238" font-size="12" fill="#7a3e9d">已发表压缩器（平均斜率 −0.04）</text>
+    <text x="620" y="260" font-size="11.5" fill="#7a3e9d">"赚的是冗余，不是容量"</text>
+    <!-- zador law annotation -->
+    <text x="100" y="112" font-size="12.5" fill="#7b8288">理论线：误差 ∝ N^(−1/2)（表面场景，d_ps = 4）</text>
+    <text x="100" y="130" font-size="11.5" fill="#7b8288">合成对照实测斜率 −0.549 / −0.548 / −0.551（R² = 0.997）</text>
+  </svg>
+  </div>
+  <p><span class="tag">读法</span>曲线陡降段的花费是"买容量"，平坦段的花费是"买安慰"。<b class="hl">预算的正确答案 = 陡降与平坦的拐点（knee）</b>——BCT 直接在 knee 训练，"生来就是正确尺寸"。</p>
+
+  <h2>二、数学的两个半场</h2>
+  <table>
+    <tr><th>组件</th><th>内容</th><th>回答</th></tr>
+    <tr><td><b>容量下限</b>（Zador 定律）</td><td>R(N) ≍ C·‖λ‖·N<sup>−2/d_ps</sup>；表面场景 d_ps=4 → <b>−1/2</b></td><td>不可避免的误差是多少</td></tr>
+    <tr><td><b>合并许可</b>（Wang–Zahl 2025）</td><td>Kakeya 三维猜想解决定理的加权重释：局部"过度覆盖"处可合并，损失只有常数级</td><td>哪些组冗余（"第一次把 Kakeya 理论用于渲染"）</td></tr>
+    <tr><td><b>尺度截断</b></td><td>投影脚印 &lt; 像素尺度（t = c·d/f）的原子可丢弃</td><td>什么可以丢</td></tr>
+    <tr><td><b>预算分配</b></td><td>尺度带预算指数衰减 m<sub>j</sub> ∝ 2<sup>−jγ</sup>；per-tile N<sub>j</sub>* ∝ K<sub>j</sub>s<sub>j</sub>/d<sub>j</sub></td><td>固定预算怎么分</td></tr>
+  </table>
+  <div class="box">
+    <h3>三种基元的速率（论文附加结论）</h3>
+    <div class="formula">三角形 N⁻¹   ｜   点基元 N⁻¹ᐟ²（3DGS 属此族）   ｜   各向同性体素 N⁻¹ᐟ⁴
+"最优单元恰是各向异性协方差椭球原子 —— 正是 3DGS 拟合的东西。"</div>
+    <p class="small">"源受限 vs 目标受限"：自由松弛是目标受限（N^(−2/d_c)）；渲染实例是源受限（N^(−2/d_ps)，d_ps ≥ d_c）——<b>"primitive 必须能渲染、不只是匹配颜色"是速率变慢的原因</b>。</p>
+  </div>
+
+  <h2>三、Factoring LOD —— 一个模型变一棵树</h2>
+  <div class="flow">
+    <div class="step"><span class="n">1</span>训练好的模型：每个 primitive → <b>plank</b>（μ, R, h=3σ, α）——"场景原本就是一堆带透明度的定向盒子"</div>
+    <div class="arrow">▼ GPU 八叉树（叶容量 4096）</div>
+    <div class="step"><span class="n">2</span>叶内按尺度分带：ℓ = ⌊log₂(s/s_base)⌋（s_base = 5% 分位）</div>
+    <div class="arrow">▼ 每（叶, 带）→ 批量矩匹配 → ≤256 个等价 plank</div>
+    <div class="step"><span class="n">3</span>守恒三量：<b>加权体积 W · 质心 c* · 惯性张量 T*</b>（SH 颜色进一阶矩）→ 特征分解得等价 plank（c*, R*, h*, w*）</div>
+    <div class="arrow">▼ 内部节点自底向上同样聚合</div>
+    <div class="step hl"><span class="n">4</span>构建几秒（单 GPU）；<b>聚合表示比输入小 119×</b>；原始 primitive 保留最细层（Morton 序）</div>
+  </div>
+
+  <h2>四、渲染：单参数 c 扫过全部档位</h2>
+  <div class="box">
+    <p>像素脚印调度器：对每个（叶,带）算阈值 <span style="font-family:ui-monospace">t = c · d / f</span>，落入三层之一：</p>
+    <div class="cols3">
+      <div class="colc"><h5>raw</h5><p>成员可分辨（s̄ ≥ t）→ 渲染原始高斯</p></div>
+      <div class="colc"><h5>fine</h5><p>簇可分辨、成员不可 → 渲染 fine 等价 plank</p></div>
+      <div class="colc"><h5>coarse</h5><p>亚像素 → 渲染单个聚合 plank</p></div>
+    </div>
+    <p style="margin-top:8px"><b class="hl">c 是唯一的质量旋钮</b>：c=1 = 可分辨参考档；c 越大越合并；c&lt;1 保留亚像素内容（超分）。选择是<b>分辨率不变的</b>（800² 与 1080p 同预算下物化集合相同）；选择与收集<b>全在 GPU</b>（无 CPU 侧收集、无 host 上传）。</p>
+  </div>
+
+  <h2>五、实测答卷（官方 MatrixCity 数据）</h2>
+  <div class="grid4">
+    <div class="stat"><div class="v">71 fps</div><div class="k">1080p 原生 · 全 SH · 4080 SUPER（官方 207 视角轨迹）</div></div>
+    <div class="stat"><div class="v">6.2×</div><div class="k">vs Octree-GS 同质量帧率（71 vs 11.5）</div></div>
+    <div class="stat"><div class="v">4.4 / 30.4 GiB</div><div class="k">VRAM 峰值 vs Octree-GS（6.9×）</div></div>
+    <div class="stat"><div class="v">119×</div><div class="k">聚合表示相对输入的压缩</div></div>
+    <div class="stat"><div class="v">-2.12 vs -7.08 dB</div><div class="k">同内存档：LOD vs 随机子采样（859 MB）</div></div>
+    <div class="stat"><div class="v">1288 / 824 / 407 MB</div><div class="k">c = 4 / 8 / 16 → 8 / 4 / 2 GB 级显存目标</div></div>
+    <div class="stat"><div class="v">33%</div><div class="k">BCT 同质量省下的 primitive（31.21 dB：670k vs 1M）</div></div>
+    <div class="stat"><div class="v">78 vs 175 min</div><div class="k">单次训练 vs 传统 train-then-prune（且质量更高）</div></div>
+  </div>
+
+  <h2>六、谱系位置 —— Clark 1976 的 GS 实现</h2>
+  <table>
+    <tr><th>Clark 1976 的原始表述（分档的祖先）</th><th>Budgeted-GS 2026 的对应物</th></tr>
+    <tr><td>"可见复杂度保持固定上限"</td><td>每视角物化工作集 ≤ 容量预算 K</td></tr>
+    <tr><td>working set（主存该驻留多少）</td><td>GPU 只遍历因子树的 cut，前缀 LOD（CP-LOD）物化</td></tr>
+    <tr><td>细节随屏幕占比变化</td><td>像素脚印阈值 t = c·d/f —— 三档调度的判据</td></tr>
+    <tr><td>递归下降搜索</td><td>八叉树 + 尺度带的层级选择</td></tr>
+  </table>
+  <p><span class="tag">一句话</span>"降档 = 降表示层级"的又一实证：<b>换表示（原始高斯 → 等价 plank → 聚合 plank），不是缩参数</b>——与 Parish 2001「迭代深度」、ToCo-Mesh「自适应细分」同一母题。</p>
+
+  <p class="banner">图注：本图解供 Obsidian 嵌入使用 · 数据取自 arXiv:2610.03162v1 HTML 全文</p>
+</div>
+</body>
+</html>

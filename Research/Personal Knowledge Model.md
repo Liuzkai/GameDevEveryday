@@ -150,7 +150,7 @@ user_level: Easy      # 或 Normal / Hard
 
 ## 待用户处理的推断项（每次运行检查）
 
-1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 26 天**。当前不影响工作（推送已按推断值自动调权）。**本次（10-3）新增 2 篇前沿（[[2026-09-27-Plate-Local River Generation]]、[[2026-10-01-GALA — Gaussian Blendshape Distillation for Real-Time Avatars]]）+ 2 篇经典（[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]、[[Keller — Instant Radiosity (1997)]]——[[Neural Global Illumination]] 桥材料层自此打通）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
+1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 28 天**。当前不影响工作（推送已按推断值自动调权）。**本次（10-5）新增 1 篇前沿（[[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD|Budgeted-GS]]）+ 1 篇经典（[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]]——**PBR 经典队列自此清空**）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
 3. [[Motion Matching]] 的 40 分钟 Action 已于 9-17 降级为静默项——**想恢复随时说一声**；
 4. **动态灯光维度复审**（UE 5.8 MegaLights 转 Production 的影响）—— **🔴 2026-09-24：材料全部就绪，转为执行项**（官方一手核验完成，见第 14 条；[[2026-W38]] 第一优先级可直接执行）；
@@ -231,6 +231,14 @@ user_level: Easy      # 或 Normal / Hard
     - **"一个表示代表全部"家族三例同框**：IR 1997（一组点光源 = 光场）· Zinke 2008（一条原型路径 = 全部路径）· **GALA 2026（一套共享基 = 全部身份；神经→线性蒸馏，手机 60 fps）**——跨 29 年、"从光到人"；
     - **PCG 第 5 条抽象**（[[2026-09-27-Plate-Local River Generation]]）："**先定域、后算局部**"——确定性划分让"需要全局视野"的问题逐块独立（**懒加载的前提是确定性**；确定性 = 可丢弃重建权 = 多人一致性）；开放世界水系"四要求同时成立"的首个构造性答案；
     - **动作清单（延续）**：PKM 校正（26 天）· 毛发 15 条自测 · furnace test 两项检查 · 两条 30 分钟实测（阴影占比 / 每千像素粒子数）· 动态灯光复审（材料全齐，E-Day 10-6 为最终检验）。
+26. **🔴 10-05 新增（漫反射侧结账日：Hammon 入库 + 预算语言第三轨）**：
+    - **PBR 线的"读材料"阶段全部结束**：[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] 入库（**原文阻塞 16 天**，经 GDC Vault 新 CDN `media.gdcvault.com` 解除）——**能量账本两册账并立**（镜面侧 Kulla-Conty 查表 / 漫反射侧 Hammon 线性项）；**PBR 经典队列自上而下全部清空**（Heitz→Fdez-Agüera→d'Eon→Hill→**Hammon** ✅）。剩余全部是**你的动作**（25 条自测 + furnace test 两项 + 30 分钟实测）；
+    - **三条最有用的"一句话"**（Hammon 产出，均可直接背）：① **"specular 分母的 4 = (L+V=2H·V) 的平方"**（测度变换，不是面积归一化）；② **"UE 的 k=α/2 是 Smith G1 的 lerp 放松形态"**（你一直在用的东西的出处）；③ **"理想漫反射比纯 Lambert 大 5%（1.05/π）"**（Lambert 本身就不是正确的平滑极限）；
+    - **漫反射侧的一句话检验**（[[Multiple Scattering and Energy Compensation]] §4c 新增）：*"进了表面的光还会带着 Fresnel 与弹射几何回来"*——与镜面侧的"被挡住 ≠ 被吸收"配对；**"补能量 vs 推输运"判据自此双侧成立**；
+    - **预算语言第三轨落库**（[[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD|Budgeted-GS]]，A-）：**误差 ∝ N⁻¹ᐟ²（Zador 定律）**——与你的"样本定预算 / 误差定预算"并立，**"预算定在曲线上哪个点"自此有了理论形态**；**对偶证书** = "预算的可认证性"范式（你给 SABC 找依据时可直接参考的形式）；
+    - **两条对分档工作的体检（来自 Budgeted-GS，可直接做）**：① **"我的预算是'最陡区'还是'平坦区'？"**——砍一半资源若只损失一点质量，说明预算本来就在冗余区；② **"我的档位差异是'换表示'还是'缩参数'？"**——前者每 dB 成本通常更低（LOD vs 随机子采样同内存对照：-2.12 vs -7.08 dB）；
+    - **读一切压缩/优化论文的新防御**："已发表压缩器前沿平坦（斜率均值 -0.04）：**增益来自冗余、不是容量**"——先问"报告的是冗余收益还是容量收益"（与 OREO 的"先找降级消融"并列）；
+    - **动作清单（更新）**：PKM 校正（28 天）· 毛发 15 条自测 · **furnace test 两项检查（PBR 队列清空后，这是 PBR 线唯一剩下的动作）** · 两条 30 分钟实测 · **动态灯光复审（E-Day 正式版 10-6/10-7 发售——最终检验窗口就在眼前）**。
 
 ---
 
