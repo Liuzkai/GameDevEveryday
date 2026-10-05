@@ -1,156 +1,159 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-status: INFERRED — 待用户校正
+updated: 2026-10-05
+status: calibrated-from-reading
+reading_checkpoint: 2026-09-18
+read_paper_count: 27
 ---
 
 # Personal Knowledge Model
 
-> ⚠️ **本文件目前是推断值，不是你的真实输入。**
-> 建立于 2026-09-07 首次运行，基于对用户工作背景的已知信息推断。
-> **请直接修改**——这是整个推荐系统的状态源。
+> **2026-10-05 已按实际阅读记录校正。** 用户自述已读到 9 月 18 日；本次核对论文 frontmatter，共 **27 篇标记为 `read`**。阅读记录是确定事实，概念掌握程度仍按明确自评与已有证据分层记录。
+> `reading_checkpoint` 是用户的阅读位置，不是按论文发布时间划定的已读边界，也不是实际完成阅读的日期。部分较晚入库的论文同样已标 `read`，一并计入；较早但仍为 `unread` 的论文不自动改成已读。
 
-## 如何校正
+## 如何理解和更新这个模型
 
-两种方式，任选其一：
+- **已读**：以论文的 `status: read`、`status: [read]` 或 YAML 列表中的 `read` 为准；不等于通过全部自测或完成实现。
+- **已掌握（Easy）**：明确的 `user_level: Easy` 或已有掌握记录。单篇 Easy 只确认该篇覆盖范围，不自动扩展为整个领域 Easy。
+- **学习区（Normal）**：能够沿现有知识继续学习；新增加的概念层判断会明确标为推断。
+- **推导或实现缺口（Hard）**：保留具体缺口，但不再把已读的 Hard 论文描述成“尚未接触”或“不能读”。
+- **资料已入库**只代表可用材料。未读、未自测、未实践分别记录，不用入库日期代替个人进度。
 
-**方式 A（推荐）：改 frontmatter**
-打开任意 Concept / Technology / Paper 笔记，修改：
-```yaml
-user_level: Easy      # 或 Normal / Hard
-```
+继续修改论文或概念笔记的 `status` / `user_level`，或直接告诉我掌握情况即可。**本次仅更新本模型；未批量改写论文或概念笔记的属性。** 下表中的分层推断不视为那些概念笔记已经完成升档。
 
-**方式 B：改本文件的分级清单**
-直接在下面三个清单里移动条目，我会同步到对应笔记。
+## 工作背景与已有基础
 
-**方式 C：直接告诉我**
-"把 X 标记为 Easy" —— 我会更新对应笔记的 frontmatter。
+沿用原有背景：资深游戏技术美术，工作涉及材质、Houdini 过场特效与 PCG；Houdini、Maya、Unreal Engine、Substance 为熟悉工具。PBR 材质制作是强项；渲染底层、角色/体积/水体渲染、游戏动画系统和 PCG 算法仍需按具体主题判断。
 
----
+**工程经验与理论掌握分开记录**：会做预算、使用材质或工具，不足以证明已掌握全部底层渲染理论。
 
-## 推断依据
+## 本次校正的主要变化
 
-已知的用户背景：
+| 方向 | 实际证据 | 当前判断与推荐变化 |
+|---|---|---|
+| PBR / BRDF | Cook–Torrance 已读且 `user_level: Easy`；Kajiya、Walter、Schlick 已读 | Cook–Torrance 框架已确认 Easy；BRDF / PBR 整体维持 Normal，转向工程近似与能量问题，减少重复基础讲解 |
+| 多次散射 | Kulla–Conty、Heitz、Fdez-Agüera、Dupuy 2026 均已读 | 已覆盖工程补偿、随机输运与闭式路线；概念比较属 Normal 学习区，推导与引擎验证尚无完成证据 |
+| Gaussian Splatting | 原有 Easy 记录；Compact Neural Appearance、From Splats to Silicon、GradRig 已读 | 基础 Easy 沿用；阅读已延伸到外观压缩、系统瓶颈与可微蒙皮，后续从这些接口继续 |
+| 动画检索与生成 | Learned Motion Matching、STyMo、FlexMoGen、UniMo、EMODY Flow、GestureFAR 已读 | Motion Matching 仍为 Normal，但不再作为阻止阅读所有神经动画的硬门槛；生成方法的表示、控制与延迟取舍可作为 Normal 入口（推断） |
+| 神经 / 生成渲染 | DLSS 5、Magpie、PBR-Latent 已读，三篇笔记均为 Normal | 系统边界与工程取舍已有阅读基础；这部分按 Normal 入口组织（推断），训练与生成模型推导仍保留 Hard |
+| 光传输与介质 | Kajiya、Gaussian Light Transport、GPIS、Grid-Free Monte Carlo 已读 | 已从表面反射延伸到光场表示、随机几何与按需求解；不把高维拟合、随机过程或 PDE 推导视为已掌握 |
+| 粒子 / 阴影 | Reeves、Williams 已读且 Easy | 保留机制层 Easy；成本模型已读，项目内测量仍待验证 |
 
-- 资深游戏技术美术，工作经验 材质制作，过场特殊效果（houdini），PCG
-- 渲染底层理解 Normal / Hard 等级
-- 角色渲染 Normal 等级
-- 体渲染 Normal 等级
-- 水体渲染 Normal 等级
-- PBR 材质制作 Easy 等级
-- 游戏动画系统 Normal 等级
-- 游戏程序化PCG Normal 等级
-- PCG 算法 Normal / Hard 等级
-- 工具使用（Houdini, Maya, Unreal Engine, Substance) Easy 等级
+## 当前知识分级
 
-由此推断：用户对**实时渲染工程、UE/Niagara、性能剖析、跨平台分档**是 Easy；对**神经方法、可微渲染、生成模型**是 Hard。
+### Easy — 已有基础，不重复基础教学
 
----
-
-## 当前分级（推断）
-
-### Easy — 已完全掌握，不主动推送
-
-| 知识 | 推断理由 |
+| 知识范围 | 证据与边界 |
 |---|---|
-| [[Real-Time VFX Performance Budgeting]] | 用户正在**定义**这个领域 |
-| [[Niagara]] | 日常工作工具 |
-| [[Scalability and Quality Tiers]] | 已在设计五档画质体系 |
-| [[Real-Time Rendering]] | 能定义粒子/贴图/灯光预算，必然已掌握 |
-| [[Gaussian Splatting]] | 2026-09-11 标 Easy：排序/管线/密度控制三 Gap 闭环，4 条判据全过 |
-| [[Particle Systems]] | **2026-09-21 入库，标 Easy**：VFX 域唯一历史锚点。**机制层（发射率/寿命/层级/混合）是你的日常工作；只有成本模型层被拆为 Normal**（屏占比密度 vs 绝对上限 / 发射器数=树节点数 / 随机数只在 Spawn 消费 / 加法混合是免排序唯一前提） |
-| [[Shadow Mapping]] | **2026-09-21 入库，标 Easy**：补齐库里零覆盖的阴影域。**机制层（两遍渲染/bias/PCF/级联/cube map）不复述；只有成本模型层被拆为 Normal**（每灯 ≈ +1× 场景渲染 / 分辨率平方 / 全向光面数乘 / **阴影占比与材质复杂度反向**） |
+| Cook–Torrance 微面反射框架 | **本次直接核实**：[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] 为 `read` + `Easy`；不自动把整个 [[BRDF]] / [[Physically Based Rendering]] 升档 |
+| [[Gaussian Splatting]] 基础 | 沿用 2026-09-11 的四项判据完成记录与概念笔记 Easy；不包含后来全部新变体 |
+| [[Particle Systems]]、[[Shadow Mapping]] 机制 | [[Reeves — Particle Systems (1983)]]、[[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] 均为 `read` + `Easy`；项目内成本测量另列 |
+| PBR 材质制作与常用 DCC / 引擎工具 | 沿用背景记录，区别于 PBR 理论与引擎实现 |
+| [[Real-Time VFX Performance Budgeting]]、[[Niagara]]、[[Scalability and Quality Tiers]] | 沿用既有工作背景分级；本次阅读未提供新的实践验收记录 |
+| [[Real-Time Rendering]] 的工程应用层 | 沿用原有 Easy；不再用“能做预算”推断整个底层理论已掌握 |
 
-### Normal — Primary Learning Zone（最高优先级）
+### Normal — 当前主要学习区
 
-| 知识 | 推断理由 |
+| 知识 | 阅读基础与下一处缺口 |
 |---|---|
-| [[Motion Matching]] | 懂动画与 VFX 时序耦合，但未必深入检索/混合内部（9-17 起转静默项） |
-| [[Procedural Content Generation]] | **2026-09-22 新建，标 Normal（推断）**：游戏开发背景对"程序化生成"概念不陌生（NGR 开放世界 + Houdini 方向整理），但形状文法形式化与图神经网络细节不要求。**⚠️ 若你自评 Houdini / UE PCG Framework 是日常域，说一声即可升 Easy** |
-| [[BRDF]] | 2026-09-14 新信号：用户主动研读 Cook-Torrance D/G/F 物理来源（非推断，用户自述） |
-| [[Physically Based Rendering]] | 同上，与 BRDF 同一条学习线；**来源侧（D·G·F 出处）9-17 闭合、工程侧（进引擎 + IBL 查表）9-18 闭合、能量侧（多次散射）9-19 闭合**，收口清单 25 条 |
-| [[Multiple Scattering and Energy Compensation]] | 2026-09-19 新建：**PBR 最后一块账本**（单次散射丢的能量 + 三条补法各缺哪一角）。判据是你日常接触的高粗糙度材质观感；**含唯一的引擎侧实测题（furnace test）** |
-| [[Split-Sum Approximation]] | 2026-09-18 新建：环境光镜面反射的实时近似（UE Sky Light / 反射捕获的底层）；判据是你日常接触的固定开销项 |
-| [[Tile-Based Rendering]] | 做移动端分档，应有概念但未必系统 |
-| [[Neural Upscaling and Frame Generation]] | 作为渲染工程师应已接触，未必深入 |
-| [[GPU-Driven Rendering]] | 与 DrawCall 预算相关，应是部分掌握 |
-| [[Temporal Stability and Artistic Intent]] | 有工程直觉，未必形式化 |
+| [[BRDF]]、[[Physically Based Rendering]]、[[Microfacet Theory]] | Cook–Torrance 框架已 Easy，Kajiya / Walter / Schlick 已读；[[Karis — Real Shading in Unreal Engine 4 (2013)]] 仍未读，工程链尚未完成 |
+| [[Rendering Equation]]、[[Global Illumination]] | Kajiya 与 Gaussian Light Transport 已读；可继续比较采样与函数表示，不能由此确认 GI 缓存族已掌握 |
+| [[Multiple Scattering and Energy Compensation]] | 四篇核心材料已读；工程补偿与精确输运的比较可以继续，Heitz / Dupuy 推导及实测结果未确认 |
+| [[Split-Sum Approximation]] | 沿用 Normal；Fdez-Agüera 已读，Karis 未读，需补全其 IBL 近似与 LUT 假设 |
+| [[Motion Matching]] | Learned Motion Matching 已读；可从检索、步进、解码的对应关系继续，自测未确认；原 40 分钟练习保持可选 |
+| [[Neural Animation]]、[[Motion Generation]] 的方法概览与工程层 | **分层推断为 Normal 入口**：已有六篇动画方向阅读；不自动修改概念笔记的整体 Hard，也不确认扩散 / flow 训练推导已掌握 |
+| [[Neural Rendering]]、[[Generative Rendering]] 的系统层 | **分层推断为 Normal 入口**：DLSS 5 / Magpie / PBR-Latent 已读；可比较规则与画面边界、表示选择、吞吐与延迟 |
+| [[Participating Media]]、[[Linear Transport Theory]] 的概念层 | 沿用概念笔记 Normal，新增 GPIS / Dupuy / Grid-Free 阅读覆盖；随机几何与输运推导另列 Hard |
+| [[Procedural Content Generation]] | 沿用 Normal，ESG 已读；不能据此认定城市 / 建筑形状文法经典已读 |
+| [[Tile-Based Rendering]]、[[GPU-Driven Rendering]] | 沿用 Normal；From Splats to Silicon 提供性能分析阅读依据，不等于全部管线知识已掌握 |
+| [[Neural Upscaling and Frame Generation]]、[[Temporal Stability and Artistic Intent]] | 沿用 Normal；DLSS 5 / Magpie 可作为已读对照，项目内效果与延迟尚未验证 |
+| [[Hair Rendering]] | 沿用角色渲染基础与待补状态；HairCS / Marschner 仍未读，毛发 15 条判据不能计为通过 |
 
-### Hard — 需建桥，不强行推送
+### Hard — 已接触，但推导或实现仍需桥接
 
-| 知识 | 阻塞原因 |
+| 知识 | 已有入口 | 未确认的部分 |
+|---|---|---|
+| [[Differentiable Rendering]]、[[Inverse Rendering]] | GradRig、PBR-Latent 已读 | 自动微分、梯度估计、可微光栅化及优化实现；不能直接升为 Normal |
+| 神经 / 生成方法的训练层 | 渲染与动画方向已有多篇 Normal 材料 | 网络训练、扩散 / flow matching / 蒸馏推导与实现 |
+| [[Neural Global Illumination]] | Kajiya + Gaussian Light Transport 已读 | 神经缓存训练与更新；RSM / Instant Radiosity 仍未读；Gaussian Light Transport 是非神经对照，不等于神经 GI 已掌握 |
+| 微面多次散射与随机几何的推导层 | Heitz、Dupuy、GPIS 已读 | 随机输运、自由程 / 相位函数、水平穿越统计与闭式推导 |
+| 瞬态扩散 / Monte Carlo 数学 | Grid-Free Monte Carlo 已读 | 热核、exit time 采样、PDE 与方差分析 |
+| [[Physics-based Character Animation]] 的 RL / 生物力学层 | Athletic Sprinting 已读 | 奖励、控制策略训练与肌肉仿真实现；DSD / LYRIC 尚未读 |
+| [[Neural Physics Simulation]] | 粒子机制 Easy，ESG 提供场景与物理约束入口 | attention、学习式仿真与训练；不再断言“只缺一个 attention 词汇” |
+
+## 下一步：按实际阅读缺口衔接
+
+1. **优先补 PBR 工程环节**：[[Karis — Real Shading in Unreal Engine 4 (2013)]] 仍为 `unread`。从已读的 Walter / Schlick / Fdez-Agüera 接入 [[Split-Sum Approximation]]，重点看近似假设和 LUT 的输入输出。
+2. **多次散射由阅读转向验证**：四篇已读不必再按“首次介绍”推送。先用自己的话比较 Kulla–Conty、Heitz、Fdez-Agüera 与 Dupuy 的目标、假设和实时成本，再按所测 BSDF 的条件设计 white furnace test，记录能量守恒与补偿开关差异。普通环境光下的粗糙度对比可作观察，不能替代受控测试。
+3. **动画线允许继续前进**：以 LMM 为检索 / 学习基线，对照 STyMo / FlexMoGen 的风格控制、UniMo 的表示、EMODY / GestureFAR 的音频驱动与流式延迟。Motion Matching 自测作为补缺工具，不要求完成后才读所有生成动画。
+4. **Hard 按具体问题建桥**：可微方向从已读 GradRig / PBR-Latent 引出“优化什么参数、损失是什么、梯度从哪里来”，再用 [[Learning Path — Differentiable Rendering]] 补缺；神经方向沿 [[Learning Path — Neural Rendering]] 补训练侧概念。
+5. **毛发与物理动画保留为待选支线**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]]、[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]、[[2026-09-17-DSD — Diffusion Skill Discovery]]、[[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]] 仍为未读，不因日期靠前而跳过。
+
+后续推荐避免重讲已读论文；只有用于对照、回答具体疑问或支撑实践时才回引。优先延续 PBR / 微面理论主线，同时保留动画与神经渲染的工程入口。此处优先级来自本次阅读分布的推断，不代表用户已经承诺执行这些练习。
+
+## 掌握判据与实践状态
+
+| 范围 | 当前记录 | 如何更新 |
+|---|---|---|
+| Gaussian Splatting 基础四项 | 沿用 9 月 11 日完成记录 | 不要求重复验收 |
+| Cook–Torrance | 明确 Easy | 不再以“用户未校正”处理 |
+| PBR / BRDF 五篇、共 25 条自测清单 | 四篇已读，Karis 未读；无全部通过记录 | 完成相应自测后再判断整体是否 Easy |
+| 多次散射 | 四篇已读；推导与实践未确认 | 概念比较、数学理解、引擎实测分开记录；一次观感测试不代表掌握整个领域 |
+| Motion Matching 六项 | LMM 已读；判据完成情况未知 | 可按实际疑问检查，不自动增加必做任务 |
+| Hair Rendering 十五项 | 属于已备材料；无已通过证据 | 从未读的 Marschner 开始，后续按需补充 |
+| 可微渲染四项 / 神经渲染五项 | 已有应用侧阅读入口；判据通过情况未知 | 沿对应 Learning Path 逐项确认 |
+| 阴影占比 / 屏占比粒子密度 / 动态灯光分档复审 | 旧模型提出过，未见执行结果 | 保留为可选实践；不得从资料入库推断已执行 |
+
+## 已读论文账本（27 篇）
+
+以下清单逐项来自本次 frontmatter 核对。**不推定阅读完成日期**；保留各篇自己的难度分层。以后有新标记时，以论文文件当前属性为准并刷新本表。
+
+| 已读论文 | 当前笔记的 user_level |
 |---|---|
-| [[Neural Rendering]] | 缺信号处理直觉 + 训练侧词汇 |
-| [[Generative Rendering]] | 缺一步生成模型基础 |
-| [[Differentiable Rendering]] | 缺自动微分 + 可微光栅化 |
-| [[Neural Global Illumination]] | 桥材料层打通（2026-10-03：RSM 2005 + Instant Radiosity 1997 双源入库）——**待读**（30 分钟级） |
-| [[Neural Animation]] | 被 [[Motion Matching]] 阻塞 |
-| [[Motion Generation]] | 被 [[Motion Matching]] 阻塞 |
-| [[Inverse Rendering]] | 被 [[Differentiable Rendering]] 阻塞 |
-| [[Neural Physics Simulation]] | 仅缺 attention 词汇；桥：粒子知识（Easy）+ "super-token merging ≈ 粒子 LOD" 一个类比 |
+| [[2026-09-14-Gaussian Light Transport]] | Hard |
+| [[2026-09-14-Learning Realistic Athletic Sprinting Without Demonstrations]] | Hard |
+| [[2026-09-15-Grid-Free Monte Carlo for Time-Dependent Diffusion]] | Hard |
+| [[2026-09-15-UniMo — Unifying Human and Animal Motion Generation]] | Normal |
+| [[2026-09-16-ESG — Generating Physically Consistent Dynamic 3D Scenes from Text]] | Normal |
+| [[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]] | Hard |
+| [[2026-09-17-EMODY Flow — Emotion-Aware Audio-Driven Full-Body Motion Generation]] | Normal |
+| [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] | Normal |
+| [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] | Normal（概念层）+ Hard（推导层） |
+| [[2026-09-18-GestureFAR — Streaming Co-Speech Gesture Generation with Flow Autoregression]] | Normal |
+| [[Compact Neural Appearance Models for Efficient Gaussian Splatting]] | Normal |
+| [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] | Easy |
+| [[DLSS 5 — Generative Neural Rendering]] | Normal |
+| [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] | Normal |
+| [[FlexMoGen — Flexible Motion Generation from Language and Style References]] | Normal（Motion Matching 侧）/ Hard（生成侧） |
+| [[From Splats to Silicon — Rethinking Computational Efficiency of 3DGS]] | Normal |
+| [[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation]] | Normal |
+| [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] | Hard |
+| [[Kajiya — The Rendering Equation (1986)]] | Normal |
+| [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]] | Normal（研读中） |
+| [[Learned Motion Matching (Holden 2020)]] | Normal → Easy 桥接材料 |
+| [[Magpie — Real-Time World Renderer for Interactive Games]] | Normal |
+| [[Reeves — Particle Systems (1983)]] | Easy |
+| [[STyMo — Fast and Controllable Few-Shot Motion Style Transfer]] | Normal |
+| [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]] | Normal |
+| [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] | Normal |
+| [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] | Easy |
 
----
+## 本次替代的旧判断
 
-## 关键依赖链（Prerequisite Graph）
+- “用户未做任何校正 / 第 28 天”已失效：27 篇 `read` 与 Cook–Torrance 的 `Easy` 都是实际反馈。
+- “PBR 工程侧 9-18 闭合 / PBR 读材料阶段全部结束”曾混淆资料整理与用户阅读：Karis、d'Eon、Hill、Hammon 当前仍未读。
+- “Motion Matching 未 Easy，因此神经动画不可读”过于严格：实际已有多篇动画阅读，可按层次继续学习。
+- “Hard = 无法阅读”不符合当前记录：应区分已接触结论、掌握概念、理解推导、能做实现。
+- 不再把每日产业动态、文献补录或推荐动作自动计入个人知识。它们的原始背景保留在下方历史记录及对应 Daily / Weekly 中。
 
-```
-                    ┌─ [[Neural Rendering]] ──┬─ [[Generative Rendering]]
-                    │                          └─ [[Neural Global Illumination]]
-[[Real-Time Rendering]] (Easy)
-        │
-        ├─ [[Tile-Based Rendering]] (Normal)
-        │
-        └─ [[GPU-Driven Rendering]] (Normal)
-                    │
-[[Neural Upscaling and Frame Generation]] (Normal)
-        │
-        ↓
-[[Motion Matching]] (Normal)  ←── ★ 关键瓶颈
-        │
-        ↓
-[[Neural Animation]] (Hard) → [[Motion Generation]] (Hard)
+## 历史推荐与资料准备记录（非当前个人状态）
 
-[[Differentiable Rendering]] (Hard) ←── ★ 第二个瓶颈
-        │
-        ↓
-[[Inverse Rendering]] (Hard)
-```
 
-**两个瓶颈值得优先打通**：
+展开 9 月至 10 月 5 日的旧记录
 
-1. **[[Motion Matching]]** — 一旦 Easy，解锁动画侧 3 条线
-2. **[[Differentiable Rendering]]** — 一旦 Normal，能读懂 [[LightOpt — Lights Optimization for Real-Time Rendering]]，直接作用于你的预算工作
+> 下列文字保留用于追溯旧推荐，**不是当前知识判断或待办清单**。其中“闭环”“读材料结束”“用户未校正”“唯一剩余动作”等措辞已由上文校正；产业信息和性能数据本次未重新核验，不能当作本次确认的事实或已完成的实践。
 
----
-
-## 反馈信号
-
-你的标记变化本身就是信号：
-
-- 你把某知识从 Normal 改成 Easy → 我会停止推送其基础内容，并开始推**建立在它之上的新研究**
-- 你把某知识从 Hard 改成 Normal → 说明桥搭对了，我会沿同一路径继续
-- 你长期不改某 Hard 知识 → 我会降低该方向的推送权重，转入 Watchlist
-
----
-
-## 已建立的 Mastery Criteria
-
-以下知识有**客观**掌握判据，不用凭感觉：
-
-- [[Motion Matching]] — 6 条判据（静默中）
-- [[Tile-Based Rendering]] — 5 条判据
-- [[GPU-Driven Rendering]] — 4 条判据
-- [[Gaussian Splatting]] — 4 条判据 ✅ 2026-09-11 达成（见 [[GS 图解 1 — 协方差与椭球：高斯的形状说明书|图解 1]]、[[GS 图解 2 — 排序瓶颈、管线冲突与密度控制|图解 2]]）
-- **PBR / BRDF 收口清单 — 25 条**（Cook-Torrance 5 + Kajiya 5 + Walter 5 + Schlick 5 + **Karis 5**，2026-09-18 由 [[Karis — Real Shading in Unreal Engine 4 (2013)]] 补齐最后一组；其余 20 条见各论文笔记末尾）
-  - **清单之外的最后一条具名缺口（多次散射能量补偿）已于 2026-09-19 闭环、2026-09-20 由"三角形"扩为完整谱系**：[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]（工程解）+ [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]]（理论解）+ [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]]（**精确真值**）+ [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]]（**实时落地，零新增资源**）+ [[Hill — A Multi-Faceted Exploration (2018-2019)]]（**谱系中段的完整过程记录**，9-24 入库）。**不计入 25 条**，标为"读了，不是会了"；
-  - **⚠️ 25 条里唯一的引擎侧实测题（唯一待做动作，9-20 升级为两项检查）**：① 纯金属球 + 只有环境光 + Roughness 0→1 截图 → **粗糙端是否整团变暗**；② **光滑白色电介质球 → 掠射边缘是否有一圈偏亮（超额能量）**；③ 切换多次散射补偿开关对比。做法见 [[多次散射_五条补法路线与实时落地图解]] 第 5 节。**两项都做完即可把 [[Multiple Scattering and Energy Compensation]] 标 Easy。** **（9-23 更新：对照基线已就位——先查 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 13.7.1 / 13.8.1 的球面 albedo 拟合值，再对引擎实测。）**
-- **[[Hair Rendering]] — 15 条判据**（2026-09-18 随 [[Marschner — Light Scattering from Human Hair Fibers (2003)]] 建立 5 条：三条光路 ↔ 三个视觉现象 / 黑发为何无次级高光 / 双高光机制 / 微面为何不适用 / 砍留优先级；**2026-09-25 随 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 增 4 条**：texel 三要素 / sin(t,l) 漫反射 / 高光为何是圆锥 / "渲染时间与几何复杂度解耦"对预算的意义；**2026-09-26 随 [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 再增 3 条**：两 lobe 的移位机制（扰动切线）/ "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟；**2026-09-28 随 [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 再增 3 条**：单散射为何对浅色发不够 / "原型路径代表全部路径"的成立条件 / 全局局部为何像"阴影"与"材质"。**15 条通过即可把"毛发着色（含实时工程与多散射）"标 Easy**；**9-29《巫师 3》重制版实测可作第 13 条"实战观察"**）
-- [[Differentiable Rendering]] — 4 条判据（在 [[Learning Path — Differentiable Rendering]]）
-- [[Neural Rendering]] — 5 条判据（在 [[Learning Path — Neural Rendering]]）
-
----
-
-## 待用户处理的推断项（每次运行检查）
 
 1. **本文件仍为推断值**（自 2026-09-07 建立，用户未做任何校正）——**第 28 天**。当前不影响工作（推送已按推断值自动调权）。**本次（10-5）新增 1 篇前沿（[[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD|Budgeted-GS]]）+ 1 篇经典（[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]]——**PBR 经典队列自此清空**）**。任何一次校正都会立刻改变推送重心，**仍建议做一次**；
 2. **PBR / BRDF 的升档开关**：25 条自测通过即可标 Easy（我会在你标了之后停止推基础内容，转向其上的新研究）。**其中 24 条是纸面自测，唯一一条实测题是引擎侧 furnace test（30 分钟）—— 且 9-20 起升级为"查两头"：粗糙端是否变暗 + 光滑白色电介质球的掠射边缘是否有一圈偏亮**；
@@ -196,7 +199,7 @@ user_level: Easy      # 或 Normal / Hard
 19. **🔴 9-27 新增（PCG 谱系日：三节点齐全 + 三条可迁移抽象）**：
     - **[[Procedural Content Generation]] 三节点齐全**：[[Parish-Müller — Procedural Modeling of Cities (2001)]]（城市）→ [[Müller — Procedural Modeling of Buildings (2006)]]（建筑）→ [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies|ProxyBuild]]（推断）——源头/中段/前沿首次全部落库；**2001 ↔ 2006 的"同作者接力"关系**（2006 兑现 2001 的 Future Work，并以 occlusion 查询回应其"体块互不感知"问题）；
     - **三条可迁移抽象（不需要读全文，可直接用于分档体检）**：① **规则只描述结构、参数由外部策略决定**（ideal successor）——判据："任何规则系统，先问哪些部分该从规则里移出去"；② **约束三档处置**：拒绝 / 修正 / **有条件接受 + 标记 + 后期替换**（高速跨水 → 桥或隧道）；③ **细节层次 = 迭代深度**（decreasing apices）——**与 ToCo-Mesh 的"固定拓扑 + 自适应细分"同源：降档应换表示的深度/密度，而不是硬缩参数**（对分档工作的又一次确认）；
-    - **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 <10 秒 + 建筑约 10 分钟——"database amplification"（少量规则 → 大量数据）的另一面是**生成时间成本**；与 [[Müller — Procedural Modeling of Buildings (2006)]] 的"离线生成量 ≠ 运行时负载"合流；
+    - **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 10 秒 + 建筑约 10 分钟——"database amplification"（少量规则 → 大量数据）的另一面是**生成时间成本**；与 [[Müller — Procedural Modeling of Buildings (2006)]] 的"离线生成量 ≠ 运行时负载"合流；
     - **产业侧新样本（艺术意图维度）**：《巫师 3》重制版（9-29）发售前"**氛围 vs 准确**"画质争议（CDPR 确认原版不强制替换）→ 记为 [[Temporal Stability and Artistic Intent]] 的一手样本：**"更准确的光"与"记忆里的味道"不总是重合；旧观感保留 = 事实上的"艺术意图档位"**。
 20. **🔴 9-28 新增（毛发多散射日 + 跨域同构升级 + 产业双信号）**：
     - **毛发自测扩至 15 条（窗口强化）**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库（**全局/局部分解 + "一条原型路径代表全部路径" + 三档实现**；7.8h → 5.2min → 14fps 且零调参）——**毛发着色谱系四节点（1989/2003/2004/2008）全闭合**；新增 3 条自测：单散射为何对浅色发不够 / 原型路径的成立条件 / 全局局部为何像"阴影"与"材质"。**9-29 巫 3 重制版实测可作实战观察（第 13 项）**；
@@ -242,32 +245,7 @@ user_level: Easy      # 或 Normal / Hard
     - **读一切压缩/优化论文的新防御**："已发表压缩器前沿平坦（斜率均值 -0.04）：**增益来自冗余、不是容量**"——先问"报告的是冗余收益还是容量收益"（与 OREO 的"先找降级消融"并列）；
     - **动作清单（更新）**：PKM 校正（28 天）· 毛发 15 条自测 · **furnace test 两项检查（PBR 队列清空后，这是 PBR 线唯一剩下的动作）** · 两条 30 分钟实测 · **动态灯光复审（E-Day 正式版 10-6/10-7 发售——最终检验窗口就在眼前）**。
 
----
-
-## 一处值得复用的分层模板（9-20 建立，9-21 首次用于新建概念）
-
-[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] 的 `user_level` 标为 **Hard**，但笔记里**显式分列了两层**：
-
-| 层 | 内容 | 可读性 |
-|---|---|---|
-| **推导层** | Smith 随机输运的自由程分布与相位函数、微片辐射度量学 | **真正的 Hard** —— 不必现在动 |
-| **结论层** | ①"被挡住 ≠ 被吸收" ②它不可实时 ③成本随粗糙度上升 ④按事件序列分解 lobe | **Normal 可直接拿走，不需要任何推导** |
-
-**结论：`user_level: Hard` 不等于"这篇不能读"。** 面对 Hard 材料时，**先问"它的结论层是不是 Normal 的"** —— 如果是，就把两层分开记，Hard 的那层挂着等前置补齐即可。**这与本库 §14 的 Hard 策略（找最小前置、搭桥）是同一件事的一个更省力的入口。**
-
-### 🔁 9-21 扩展：这个模板也可以用在 **Easy** 域上，用来安全地往库里加"你本来就懂的东西"
-
-9-21 新建的两个概念（[[Particle Systems]]、[[Shadow Mapping]]）走的都是这条路：
-
-| 层 | 内容 | 状态 |
-|---|---|---|
-| **机制层** | 粒子五步循环 / 发射率 / 寿命 / 层级；阴影两遍渲染 / bias / PCF / 级联 | **Easy —— 你的日常，不复述、不推送** |
-| **成本模型层** | 屏占比密度 vs 绝对上限 · 发射器数=树节点数 · 随机数只在 Spawn 消费 · 加法混合是免排序唯一前提 · 每灯 ≈ +1× 场景渲染 · 分辨率平方 · 全向光面数乘 | **Normal —— 值得动手验证的部分** |
-
-**这解决了此前的一个两难**：Easy 域的历史锚点**本该入库**（§12 例外第 4 条），但**整篇笔记很容易变成"教你已经在做的事"**。
-**拆两层之后，Easy 域可以安全入库** —— **机制层只写"不复述"，写出来的全是成本模型层。**
-**判据**：一个已经 Easy 的域，**还能否贡献 Normal 的材料？** 能，就入库；不能，就只留一行索引。
 
 ---
 
-相关：[[2026-10-03]] · [[2026-10-02]] · [[2026-10-01]] · [[2026-09-30]] · [[2026-09-Monthly|Monthly 2026-09]] · [[2026-W39]] · [[2026-W38]] · [[2026-09]] 技术雷达
+相关：[[Index]] · [[2026-09-18]] · [[Learning Path — Differentiable Rendering]] · [[Learning Path — Neural Rendering]]
