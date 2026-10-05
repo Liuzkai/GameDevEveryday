@@ -35,6 +35,8 @@ Lambertian（漫反射）BRDF 在频域上是一个**陡峭的低通滤波器**�
 
 ## Core Idea
 
+![图 2. 我们的方法得到的图像与采用标准纹理映射方法得到的图像进行了比较。](https://graphics.stanford.edu/papers/envmap/Figs/4sphere1.jpg)
+
 辐照度的定义是入射光与 clamped cosine 的球面卷积：
 
 $$E(n) = \int L(\omega)\,(n \cdot \omega)_+ \, d\omega$$
@@ -52,6 +54,8 @@ $$A_l = (n\cdot\omega)_+ \text{ 的 SH 系数：} a_0 = \pi,\; a_1 = \tfrac{2\pi
 $$E(n) = c_0 + c_1 n_x + c_2 n_y + c_3 n_z + c_4 n_x n_y + \cdots + c_8(n_z^2 \text{ 项})$$
 
 ——无纹理、无积分，9 个常数（每通道，RGB 共 27 个 float）就是一个完整的"漫反射环境光探针"。
+
+
 
 ## Why It Works
 
@@ -131,7 +135,7 @@ Lumen Radiance Probes / [[2026-09-14-Gaussian Light Transport]] 等现代探针�
 
 ## Mastery Criteria（并入 PBR 检查表）
 
-- [ ] 能解释为什么漫反射只需要 9 个系数而镜面高光不行（滤波带宽 vs BRDF 锐利度）
+- [x] 能解释为什么漫反射只需要 9 个系数而镜面高光不行（滤波带宽 vs BRDF 锐利度）
 - [ ] 能说出 UE 一个 Light Probe 里存的是什么（SH3 × RGB ≈ 27 float）
 - [ ] 能解释移动端烘焙 GI"颜色对、阴影糊"的根本原因
 

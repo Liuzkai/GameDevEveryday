@@ -1,20 +1,28 @@
 ---
 type: paper
-title: "Grid-Free Monte Carlo for Time-Dependent Diffusion"
-authors: [Zihong Zhou, Rohan Sawhney, Eugene d'Eon, Wojciech Jarosz]
+title: Grid-Free Monte Carlo for Time-Dependent Diffusion
+authors:
+  - Zihong Zhou
+  - Rohan Sawhney
+  - Eugene d'Eon
+  - Wojciech Jarosz
 year: 2026
-published: "2026-09-11"
-venue: "arXiv preprint (cs.GR; math.NA)"
-url: "https://arxiv.org/abs/2609.12306"
+published: 2026-09-11
+venue: arXiv preprint (cs.GR; math.NA)
+url: https://arxiv.org/abs/2609.12306
 code: ""
 project_page: ""
-category: [rendering, simulation, monte-carlo]
+category:
+  - rendering
+  - simulation
+  - monte-carlo
 importance: A-
 historical_importance: 0
 game_relevance: 3
 production_readiness: Research
 user_level: Hard
-status: unread
+status:
+  - read
 ---
 
 # Grid-Free Monte Carlo for Time-Dependent Diffusion

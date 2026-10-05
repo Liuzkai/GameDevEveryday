@@ -1,20 +1,25 @@
 ---
 type: paper
-title: "The Rendering Equation"
-authors: [James T. Kajiya]
+title: The Rendering Equation
+authors:
+  - James T. Kajiya
 year: 1986
-published: "1986-08"
-venue: "SIGGRAPH 1986, Computer Graphics 20(4), pp. 143–150"
-url: "https://doi.org/10.1145/15886.15902"
+published: 1986-08
+venue: SIGGRAPH 1986, Computer Graphics 20(4), pp. 143–150
+url: https://doi.org/10.1145/15886.15902
 code: ""
 project_page: ""
-category: [rendering, global-illumination, classical]
+category:
+  - rendering
+  - global-illumination
+  - classical
 importance: S
 historical_importance: 5
 game_relevance: 5
 production_readiness: Industry Adopted
 user_level: Normal
-status: unread
+status:
+  - read
 ---
 
 # The Rendering Equation (Kajiya 1986)
@@ -45,6 +50,14 @@ $$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)
 - $f_r$：[[BRDF]]——材质把入射光 $\omega_i$ 转成出射光 $\omega_o$ 的比例函数，[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] 的 D·G·F 就是填在这里；
 - $L_i$：入射辐射亮度——**注意它是未知量本身在别的地方的取值**：$L_i$ 在另一个表面点 $x'$ 上又由同一个方程定义。方程是递归的，这是全部 GI 困难性的根源；
 - $n \cdot \omega_i$：Lambert 余弦项，几何投影衰减。
+
+### 图解：光路与方程变量逐项对应
+
+![[Research/Files/Pictures/Kajiya 1986 — 渲染方程与光路变量对应.svg]]
+
+固定白球表面的着色点 $x$：黄色的灯光与红色的墙面反射光，都是不同方向上的 $L_i$；青色光路是朝相机的 $L_o$。每个入射方向的贡献乘以局部 BRDF $f_r$ 与余弦权重，再对半球方向积分。白球本身不发光，因此这里 $L_e=0$，灯照到白球的光属于 $L_i$。
+
+实线箭头表示光的传播方向；入射方向 $\omega_i$ 按惯例从 $x$ 指向来光处，与入射光传播方向相反。图中的 $f_r$ 是完整反射分布函数，Cook–Torrance 的 D、G、F 是构成镜面项的因素，并非单独的 D·G·F 就等于完整 BRDF。
 
 ## Technical Approach
 

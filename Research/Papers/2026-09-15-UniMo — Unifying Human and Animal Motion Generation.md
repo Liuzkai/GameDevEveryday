@@ -1,28 +1,37 @@
 ---
 type: paper
 title: "UniMo: Unifying Human and Animal Motion Generation"
-authors: [Zeyu Zhang, Zhiyuan Zhang, Siheng Wang, Yiran Wang, Danning Li, Ian Reid, Richard Hartley]
+authors:
+  - Zeyu Zhang
+  - Zhiyuan Zhang
+  - Siheng Wang
+  - Yiran Wang
+  - Danning Li
+  - Ian Reid
+  - Richard Hartley
 year: 2026
-published: "2026-09-11"
-venue: "SIGGRAPH Asia 2026 (Posters)"
-url: "https://arxiv.org/abs/2609.12342"
+published: 2026-09-11
+venue: SIGGRAPH Asia 2026 (Posters)
+url: https://arxiv.org/abs/2609.12342
 code: ""
-project_page: "https://steve-zeyu-zhang.github.io/UniMo"
-category: [animation, motion-generation]
+project_page: https://steve-zeyu-zhang.github.io/UniMo
+category:
+  - animation
+  - motion-generation
 importance: B+
 historical_importance: 0
 game_relevance: 3
 production_readiness: Research
-user_level: Hard
-status: unread
+user_level:
+  - Normal
+status:
+  - read
 ---
 
 # UniMo: Unifying Human and Animal Motion Generation
 
 ## TL;DR
-
 用一个**点云表示**绕过骨骼拓扑差异，把文本驱动的动作生成从"人类专用"扩展到"人 + 动物统一"：把参数化骨架转成无参数的点云（关节变成点集），再用**动态采样**给运动活跃的关节分配更多点。配套发布 UniML3D 数据集：145,907 条动作序列 + 433,388 条 caption，**比现有动物动作数据集大 102 倍**。在 UniML3D + HumanML3D / KIT-ML / AnimalML3D 三个公开基准上 SOTA。
-
 ## Problem
 
 文本驱动人体动作生成（text-to-motion）近年进展很快，但扩到动物就卡在两处：
@@ -30,8 +39,7 @@ status: unread
 1. **拓扑差异**：人的骨架结构标准，动物千差万别（四足/翅膀/长尾），统一建模困难 → 现状是每个物种训一个模型，又贵又碎；
 2. **数据规模**：动物动作数据集又小又脏，标注质量撑不起生成模型。
 
-## Core Idea
-
+## Core ![](https://arxiv.org/html/2609.12342v1/architecture.png)
 **不统一骨架，统一表示**。与其设计一个能表达所有物种的"超级骨架"（拓扑统一，难），不如把骨架降级成点云（表示统一，易）：
 
 - 参数化骨架 → 无参数点集：关节位置/运动变成点的位置/运动，拓扑信息被"点密度 + 空间分布"隐式表达；

@@ -1,26 +1,41 @@
 ---
 type: paper
 title: "ESG: Generating Physically Consistent Dynamic 3D Scenes from Text Descriptions"
-authors: [Xintong Fang, Zhiyuan Fang, Rengan Xie, Xuhong Zhang, Guoyuan An, Zeran Liu, Jingyan Zhang, Jiarui Guo, Yuchi Huo]
+authors:
+  - Xintong Fang
+  - Zhiyuan Fang
+  - Rengan Xie
+  - Xuhong Zhang
+  - Guoyuan An
+  - Zeran Liu
+  - Jingyan Zhang
+  - Jiarui Guo
+  - Yuchi Huo
 year: 2026
-published: "2026-09-14"
-venue: "arXiv 2609.15392 (cs.GR)"
-url: "https://arxiv.org/abs/2609.15392"
+published: 2026-09-14
+venue: arXiv 2609.15392 (cs.GR)
+url: https://arxiv.org/abs/2609.15392
 code: ""
 project_page: ""
-category: [pcg, scene-generation, differentiable-simulation, game-ai, unreal-engine]
+category:
+  - pcg
+  - scene-generation
+  - differentiable-simulation
+  - game-ai
+  - unreal-engine
 importance: B+
 historical_importance: 0
 game_relevance: 4
 production_readiness: Research
 user_level: Normal
-status: unread
+status:
+  - read
 ---
 
 # ESG — Generating Physically Consistent Dynamic 3D Scenes from Text
 
 ## TL;DR
-
+![](https://arxiv.org/html/2609.15392v1/figure/Teaser3x2.jpg)
 用 LLM 从文本生成**物理一致且可直接在 Unreal Engine 里跑起来**的动态 3D 场景。核心是一个叫 **Evolutive Scene Graph（ESG）** 的机器可校验中间表示：实体带物理属性、空间关系、事件驱动时间线。LLM 负责建图和自检，空间布局用能量最小化求解，物理参数用**可微仿真**按事件约束反解，最后编译成引擎可执行类。
 
 ## Problem
@@ -50,6 +65,8 @@ status: unread
 有了这个中间层，后面每一步都可以用确定性方法处理：图可以校验、布局可以优化、参数可以反解。**LLM 只做它擅长的（结构与时机的语义），物理交给求解器。**
 
 ## Technical Approach
+
+![](https://arxiv.org/html/2609.15392v1/pipeline.png)
 
 四段流水线：
 

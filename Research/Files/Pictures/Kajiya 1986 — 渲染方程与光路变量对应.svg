@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1160" viewBox="0 0 1600 1160" role="img" aria-labelledby="title desc">
+<title id="title">光路与渲染方程逐项对应</title><desc id="desc">固定白球表面的点 x，以黄色和红色表示不同方向的入射光，青色表示朝相机的出射光。紫色表示点 x 的 BRDF，绿色表示法线与余弦权重。白球不发光，自发光为零。</desc>
+<defs>
+<radialGradient id="ball" cx="25%" cy="20%" r="85%"><stop stop-color="#ffe1db"/><stop offset=".45" stop-color="#e9edf4"/><stop offset="1" stop-color="#73839c"/></radialGradient>
+<marker id="yellow" markerWidth="9" markerHeight="7" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#ffd279"/></marker>
+<marker id="red" markerWidth="9" markerHeight="7" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#ff969d"/></marker>
+<marker id="cyan" markerWidth="9" markerHeight="7" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#74deed"/></marker>
+<marker id="green" markerWidth="9" markerHeight="7" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#a4e5b3"/></marker>
+<style>text{font-family:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;fill:#edf3fc}.muted{fill:#a9b9cf}.body{font-size:23px}.small{font-size:20px}.head{font-size:28px;font-weight:700}.y{fill:#ffd279}.r{fill:#ff969d}.c{fill:#74deed}.p{fill:#d3afff}.g{fill:#a4e5b3}</style>
+</defs>
+<rect width="1600" height="1160" rx="24" fill="#111f33"/>
+<text x="55" y="53" class="small muted">KAJIYA · THE RENDERING EQUATION · 1986</text>
+<text x="55" y="106" font-size="42" font-weight="750">图里的每一束光，在方程中是什么？</text>
+<text x="55" y="146" class="body muted">固定白球表面的一点 x，只问：它朝相机方向送出多少光？</text>
+<rect x="40" y="174" width="1520" height="476" rx="20" fill="#1c3049"/>
+<!-- Physical light propagation -->
+<path d="M135 300L289 265V546L135 578Z" fill="#b64b5b" stroke="#ff969d" stroke-width="2"/>
+<text x="161" y="525" class="head">红墙 y</text>
+<circle cx="445" cy="253" r="29" fill="#ffd279"/>
+<text x="489" y="241" class="body y">灯：光的起点</text>
+<path d="M424 276L281 310" stroke="#ffd279" stroke-width="3" fill="none" marker-end="url(#yellow)"/>
+<text x="183" y="291" class="small muted">先照亮墙</text>
+<circle cx="852" cy="492" r="130" fill="url(#ball)"/>
+<!-- x on sphere top, directions toward incident hemisphere -->
+<path d="M471 266L838 354" stroke="#ffd279" stroke-width="5" marker-end="url(#yellow)"/>
+<text x="522" y="296" class="body y">Lᵢ(x, ω灯)：直接入射光</text>
+<path d="M289 310Q550 320 839 360" stroke="#ff969d" stroke-width="5" fill="none" marker-end="url(#red)"/>
+<text x="367" y="453" class="body r">Lᵢ(x, ω墙)：墙反射来的入射光</text>
+<path d="M864 356L1314 273" stroke="#74deed" stroke-width="5" marker-end="url(#cyan)"/>
+<text x="1010" y="331" class="body c">Lₒ(x, ωₒ)：出射光</text>
+<text x="1112" y="239" class="small c">ωₒ 指向相机</text>
+<rect x="1350" y="231" width="102" height="74" rx="12" fill="#425973" stroke="#74deed" stroke-width="2"/>
+<path d="M1350 249L1324 236V303L1350 288Z" fill="#74deed"/>
+<text x="1366" y="340" class="body">相机</text>
+<!-- Normal and incoming direction convention -->
+<path d="M852 349V207" stroke="#a4e5b3" stroke-width="3" marker-end="url(#green)"/>
+<text x="868" y="224" class="body g">n 法线</text>
+<path d="M835 340L713 311" stroke="#ffd279" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#yellow)"/>
+<path d="M852 308Q815 303 801 332" stroke="#a4e5b3" stroke-width="2" fill="none"/>
+<text x="797" y="290" class="small g">θᵢ</text>
+<circle cx="852" cy="362" r="9" fill="#fff" stroke="#d3afff" stroke-width="4"/>
+<text x="876" y="390" class="head">x</text>
+<text x="801" y="517" class="head" style="fill:#26364c">白球</text>
+<path d="M866 375L1000 420" stroke="#d3afff" stroke-width="2"/>
+<text x="1014" y="422" class="body p">fᵣ：在 x 处决定反射权重</text>
+<text x="1014" y="458" class="small muted">同时依赖入射方向 ωᵢ 与出射方向 ωₒ</text>
+<text x="1014" y="502" class="body">Lₑ(x, ωₒ) = 0</text>
+<text x="1014" y="535" class="small muted">此处白球不发光；灯的光计入 Lᵢ。</text>
+<text x="72" y="606" class="small muted">实线箭头 = 光实际传播方向。虚线 ωᵢ 从 x 指向来光处，与入射光的传播方向相反。</text>
+<!-- Equation color matched -->
+<rect x="40" y="669" width="1520" height="156" rx="20" fill="#263a52"/>
+<text x="68" y="708" class="small muted">现代常用反射形式（不是原文符号）：颜色与上方光路、局部属性一一对应</text>
+<text x="81" y="768" font-size="34"><tspan fill="#74deed">Lₒ(x, ωₒ)</tspan><tspan> = Lₑ(x, ωₒ) + ∫Ω⁺ </tspan><tspan fill="#d3afff">fᵣ(x, ωᵢ, ωₒ)</tspan><tspan> </tspan><tspan fill="#ffd279">Lᵢ(x, ωᵢ)</tspan><tspan> </tspan><tspan fill="#a4e5b3">(n · ωᵢ)</tspan><tspan> dωᵢ</tspan></text>
+<text x="83" y="804" class="small muted">Lᵢ 是随方向变化的函数：黄色和红色光路，都是它在不同来光方向上的取值。</text>
+<!-- Mapping cards -->
+<rect x="40" y="844" width="493" height="218" rx="18" fill="#1c3049"/>
+<text x="66" y="887" class="head g">角度：为什么有余弦？</text>
+<text x="66" y="929" class="body">n · ωᵢ = cos θᵢ</text>
+<text x="66" y="966" class="small muted">θᵢ 是法线与来光方向的夹角。</text>
+<text x="66" y="999" class="small muted">越斜入射，同样面积截获的光越少。</text>
+<text x="66" y="1032" class="small muted">这与材质的反射规则 fᵣ 是不同的因素。</text>
+<rect x="551" y="844" width="493" height="218" rx="18" fill="#1c3049"/>
+<text x="577" y="887" class="head">积分：所有方向一起贡献</text>
+<text x="577" y="929" class="body">Ω⁺：x 上方的整个方向半球</text>
+<text x="577" y="966" class="small muted">dωᵢ：一小块方向范围（立体角）。</text>
+<text x="577" y="999" class="small muted">黄线、红线只是其中两个示意方向；</text>
+<text x="577" y="1032" class="small muted">每个方向都先乘反射与余弦权重，再积分。</text>
+<rect x="1062" y="844" width="498" height="218" rx="18" fill="#1c3049"/>
+<text x="1088" y="887" class="head r">递归：墙的出射 = 球的入射</text>
+<text x="1088" y="929" class="body">Lᵢ(x, ω墙) = Lₒ(y, y→x)</text>
+<text x="1088" y="966" class="small muted">适用于两点可见、真空中的自由传播。</text>
+<text x="1088" y="999" class="small muted">计算墙的出射光，要再用一次同样的方程。</text>
+<text x="1088" y="1032" class="small muted">路径追踪随机采样这些连接，并加权平均。</text>
+<text x="55" y="1104" class="small muted">读图顺序：固定 x → 看各方向的 Lᵢ → 乘 fᵣ 与 cos θᵢ → 对方向积分 → 加 Lₑ → 得到朝相机的 Lₒ。</text>
+<text x="55" y="1138" font-size="16" class="muted">概念示意，非原论文插图 · 稳态表面反射 · DOI: 10.1145/15886.15902</text>
+</svg>

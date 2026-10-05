@@ -1,25 +1,36 @@
 ---
 type: paper
 title: "Gaussian Process Implicit Surfaces as Participating Media: Realization-Free Rendering from Level-Crossing Statistics"
-authors: [Jack Cui, Kehan Xu, Eugene d'Eon, Wojciech Jarosz]
+authors:
+  - Jack Cui
+  - Kehan Xu
+  - Eugene d'Eon
+  - Wojciech Jarosz
 year: 2026
-published: "2026-09-13"
-venue: "arXiv 2609.14695 (cs.GR)"
-url: "https://arxiv.org/abs/2609.14695"
+published: 2026-09-13
+venue: arXiv 2609.14695 (cs.GR)
+url: https://arxiv.org/abs/2609.14695
 code: ""
 project_page: ""
-category: [rendering, participating-media, microfacet-theory, stochastic-geometry]
+category:
+  - rendering
+  - participating-media
+  - microfacet-theory
+  - stochastic-geometry
 importance: A-
 historical_importance: 0
 game_relevance: 3
 production_readiness: Research
 user_level: Hard
-status: unread
+status:
+  - read
 ---
 
 # Gaussian Process Implicit Surfaces as Participating Media
 
 ## TL;DR
+
+![](https://arxiv.org/html/2609.14695v1/teaser-figure.png)
 
 把「随机隐式曲面（GPIS）」和「参与介质」在**两个方向上**打通：用 Kac–Rice 水平穿越公式直接从一个高斯过程的逐点统计量解析出各向异性辐射传输方程（RTE）参数，**不再需要采样任何具体几何实现**（realization-free）。同一套统计结构顺带推导出全球面 Beckmann 与 GGX 法线分布、解析 masking–shadowing 函数，并证明在 height-field 极限下其局部条件近似**退化为 Smith 的独立性假设**。
 
@@ -65,6 +76,8 @@ Zhou, Seyb, Zhao — SIGGRAPH 2026
 - **SGGX（Dupuy et al. 2016）**：SGGX 分布把微面法线分布推广到体积，是本文要"作为特例恢复"的目标之一。
 
 ## Core Idea
+
+![](https://arxiv.org/html/2609.14695v1/equal_time-figure.png)
 
 GPIS 把几何表示为**一个高斯过程的零水平集**：GP 的每一次采样（realization）给出一个可能的曲面。关键是——**渲染要的是所有 realization 上光传输的平均值，而不是某一个 realization**。
 
