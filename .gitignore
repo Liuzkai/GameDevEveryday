@@ -12,4 +12,5 @@
 Thumbs.db
 desktop.ini
 
-.claudian/*
+# ===== Claudian 本地配置与会话（保留本地，不进仓库）=====
+/.claudian/
