@@ -14,3 +14,6 @@ desktop.ini
 
 # ===== Claudian 本地配置与会话（保留本地，不进仓库）=====
 /.claudian/
+
+# ===== RealClaudian 本地插件（保留本地，不进仓库）=====
+/.obsidian/plugins/realclaudian/
