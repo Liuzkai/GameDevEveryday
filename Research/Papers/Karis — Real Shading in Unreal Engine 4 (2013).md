@@ -1,22 +1,37 @@
 ---
 type: paper
-title: "Real Shading in Unreal Engine 4"
-authors: [Brian Karis]
+title: Real Shading in Unreal Engine 4
+authors:
+  - Brian Karis
 year: 2013
-published: "2013 (course notes v2; changelog 2013-08-05)"
-venue: "SIGGRAPH 2013 Course — Physically Based Shading in Theory and Practice"
-url: "https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf"
-code: "UE4 源码（Public/Shading 与 ReflectionEnvironment 相关）"
-project_page: "https://blog.selfshadow.com/publications/s2013-shading-course/"
-category: [pbr, real-time-rendering, ibl, split-sum, unreal-engine]
+published: 2013 (course notes v2; changelog 2013-08-05)
+venue: SIGGRAPH 2013 Course — Physically Based Shading in Theory and Practice
+url: https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
+code: UE4 源码（Public/Shading 与 ReflectionEnvironment 相关）
+project_page: https://blog.selfshadow.com/publications/s2013-shading-course/
+category:
+  - pbr
+  - real-time-rendering
+  - ibl
+  - split-sum
+  - unreal-engine
 importance: S
 historical_importance: 4
 game_relevance: 5
 production_readiness: Industry Adopted
 user_level: Normal
-status: unread
-aliases: [Karis 2013, Real Shading in Unreal Engine 4, UE4 PBR 课程笔记]
-tags: [pbr, real-time-rendering, unreal-engine, split-sum, classic]
+status:
+  - read
+aliases:
+  - Karis 2013
+  - Real Shading in Unreal Engine 4
+  - UE4 PBR 课程笔记
+tags:
+  - pbr
+  - real-time-rendering
+  - unreal-engine
+  - split-sum
+  - classic
 ---
 
 # Real Shading in Unreal Engine 4 (Karis 2013)

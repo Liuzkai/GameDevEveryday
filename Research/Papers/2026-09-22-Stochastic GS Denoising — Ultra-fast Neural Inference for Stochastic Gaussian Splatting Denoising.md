@@ -1,21 +1,36 @@
 ---
 type: paper
-title: "Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising"
-authors: [Chenxiao Hu, Hao Zhang, Yanchen Zhang, Meng Gai, Guoping Wang, Sheng Li]
+title: Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising
+authors:
+  - Chenxiao Hu
+  - Hao Zhang
+  - Yanchen Zhang
+  - Meng Gai
+  - Guoping Wang
+  - Sheng Li
 year: 2026
 published: 2026-09-22
-venue: "arXiv 2609.25604（cs.CV 主分类 + cs.GR 交叉；预印本；北京大学）
-         —— 验证平台：2DGS + Vulkan/NVRHI 自研渲染器（RTX 3090）"
-url: "https://arxiv.org/abs/2609.25604"
+venue: arXiv 2609.25604（cs.CV 主分类 + cs.GR 交叉；预印本；北京大学） —— 验证平台：2DGS + Vulkan/NVRHI 自研渲染器（RTX 3090）
+url: https://arxiv.org/abs/2609.25604
 code: ""
 project_page: ""
-category: [gaussian-splatting, real-time-rendering, denoising, neural-rendering, pipeline]
+category:
+  - gaussian-splatting
+  - real-time-rendering
+  - denoising
+  - neural-rendering
+  - pipeline
 importance: A-
 historical_importance: 2
 game_relevance: 4
 production_readiness: Research
 user_level: Normal
 status: unread
+tags:
+  - neural-rendering
+  - gaussian-splatting
+  - real-time-rendering
+  - denoising
 ---
 
 # Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising

@@ -1,0 +1,11 @@
+{
+	"nodes":[
+		{"id":"9cfc531203c5d5d2","type":"text","text":"","x":-100,"y":140,"width":250,"height":60},
+		{"id":"24efe4f74ccbe5b5","type":"text","text":"Real-Time Rendering","x":-460,"y":-100,"width":250,"height":60},
+		{"id":"11e904e65ef7cd74","x":-100,"y":-540,"width":880,"height":100,"type":"file","file":"Research/Papers/Cook-Torrance — A Reflectance Model for Computer Graphics (1981).md"}
+	],
+	"edges":[
+		{"id":"9a22804d3b9b2647","fromNode":"24efe4f74ccbe5b5","fromSide":"right","toNode":"9cfc531203c5d5d2","toSide":"left"},
+		{"id":"fd64434f7879aec1","fromNode":"24efe4f74ccbe5b5","fromSide":"right","toNode":"11e904e65ef7cd74","toSide":"left"}
+	]
+}

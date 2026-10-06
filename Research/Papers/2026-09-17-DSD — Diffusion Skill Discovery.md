@@ -1,22 +1,38 @@
 ---
 type: paper
 title: "DSD: Learning Diverse and Reusable Motor Skills via Diffusion Skill Discovery"
-authors: [Sun Woo Kim, Xue Bin Peng]
+authors:
+  - Sun Woo Kim
+  - Xue Bin Peng
 year: 2026
-published: "2026-09-15 (v1)"
-venue: "arXiv 2609.17682 (cs.LG; cs.GR) — 未见 venue 标注"
-url: "https://arxiv.org/abs/2609.17682"
+published: 2026-09-15 (v1)
+venue: arXiv 2609.17682 (cs.LG; cs.GR) — 未见 venue 标注
+url: https://arxiv.org/abs/2609.17682
 code: ""
-project_page: "https://youtu.be/QhMs67fvuWk (视频)"
-category: [animation, physics-based-character, reinforcement-learning, skill-discovery, diffusion]
+project_page: https://youtu.be/QhMs67fvuWk (视频)
+category:
+  - animation
+  - physics-based-character
+  - reinforcement-learning
+  - skill-discovery
+  - diffusion
 importance: A-
 historical_importance: 2
 game_relevance: 4
 production_readiness: Research
 user_level: Hard
-status: unread
-aliases: [DSD, Diffusion Skill Discovery, 扩散技能发现]
-tags: [animation, physics-based-animation, reinforcement-learning, diffusion, skill-discovery]
+status:
+  - read
+aliases:
+  - DSD
+  - Diffusion Skill Discovery
+  - 扩散技能发现
+tags:
+  - animation
+  - physics-based-animation
+  - reinforcement-learning
+  - diffusion
+  - skill-discovery
 ---
 
 # DSD: Learning Diverse and Reusable Motor Skills via Diffusion Skill Discovery
@@ -56,8 +72,8 @@ $$\max \; I(\mathbf{s};\mathbf{z}) = H\big(\text{state}\big) - H\big(\text{state
 
 两个工程决定很关键：
 
-1. **潜空间取单位超球面** $\mathcal{Z}=\{\mathbf{z}:\lVert\mathbf{z}\rVert=1\}$，条件似然用 **von Mises–Fisher 分布**参数化（避开归一化常数要积分整个高维状态空间的问题）——这是沿 ASE 的归一化技能编码器参数化；
-2. **抖动引起的多样性抑制（Jitter-Induced Diversity Suppression, JIDS）**：论文第 7 节专门处理一个陷阱——**扩散 score 很容易被高频抖动撑起来**，让你在"多样性"指标上赢、在观感上输。修法是用二阶 Butterworth 滤波器（截止 1 Hz、30 Hz 采样、窗口 10 帧，实现细节引自 HTML 版）把抖动从 score 里滤掉。消融显示 JIDS 让根关节 jerk 降约 13%、FID 降约 12%。
+1. **潜空间取单位超球面** $\mathcal{Z}=\{\mathbf{z}:\lVert\mathbf{z}\rVert=1\}$，条件似然用 **von Mises–Fisher 分布**参数化（避开归一化常数要积分整个高维状态空间的问题）——这是沿 ASE 的归一化技能编码器参数化；![](https://arxiv.org/html/2609.17682v1/fig/SystemDiagram1_4.jpg)
+2. **抖动引起的多样性抑制（Jitter-Induced Diversity Suppression, JIDS）**：论文第 7 节专门处理一个陷阱——**扩散 score 很容易被高频抖动撑起来**，让你在"多样性"指标上赢、在观感上输。修法是用二阶 Butterworth 滤波器（截止 1 Hz、30 Hz 采样、窗口 10 帧，实现细节引自 HTML 版）把抖动从 score 里滤掉。消融显示 JIDS 让根关节 jerk 降约 13%、FID 降约 12%。![](https://arxiv.org/html/2609.17682v1/fig/SystemDiagram2_2.jpg)
 
 > **这是本篇最值得记的一条工程经验（与技能发现无关）：用扩散/生成模型当"评分器"时，先问它有没有把噪声当成信号。**
 

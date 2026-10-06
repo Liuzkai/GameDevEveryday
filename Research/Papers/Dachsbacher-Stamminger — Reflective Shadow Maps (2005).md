@@ -1,22 +1,44 @@
 ---
 type: paper
-title: "Reflective Shadow Maps"
-authors: [Carsten Dachsbacher, Marc Stamminger]
+title: Reflective Shadow Maps
+authors:
+  - Carsten Dachsbacher
+  - Marc Stamminger
 year: 2005
-published: "2005-04-03（I3D '05；正文页脚 203–208）"
-venue: "I3D 2005 — Symposium on Interactive 3D Graphics and Games（ACM SIGGRAPH 主办；Washington DC）"
-url: "https://doi.org/10.1145/1053427.1053460"
+published: 2005-04-03（I3D '05；正文页脚 203–208）
+venue: I3D 2005 — Symposium on Interactive 3D Graphics and Games（ACM SIGGRAPH 主办；Washington DC）
+url: https://doi.org/10.1145/1053427.1053460
 code: ""
 project_page: ""
-category: [real-time-rendering, global-illumination, indirect-lighting, many-lights, shadow, classical]
+category:
+  - real-time-rendering
+  - global-illumination
+  - indirect-lighting
+  - many-lights
+  - shadow
+  - classical
 importance: A（经典）
 historical_importance: 5
 game_relevance: 5
-production_readiness: "Industry Adopted（思想层：'从结构化缓存 gather 固定样本数'的实时 GI 范式；被后续 many-lights / VPL 管线与 2026 神经 GI 直接引用）"
-user_level: "Normal"
+production_readiness: Industry Adopted（思想层：'从结构化缓存 gather 固定样本数'的实时 GI 范式；被后续 many-lights / VPL 管线与 2026 神经 GI 直接引用）
+user_level: Normal
 status: unread
-aliases: [RSM, Reflective Shadow Map, 反射阴影贴图, pixel light, 像素光源, Dachsbacher 2005]
-tags: [classic, gi, indirect-lighting, real-time, many-lights, rsm, i3d]
+aliases:
+  - RSM
+  - Reflective Shadow Map
+  - 反射阴影贴图
+  - pixel light
+  - 像素光源
+  - Dachsbacher 2005
+tags:
+  - classic
+  - gi
+  - indirect-lighting
+  - real-time
+  - many-lights
+  - rsm
+  - i3d
+  - real-time-rendering
 ---
 
 # Reflective Shadow Maps（Dachsbacher & Stamminger 2005）

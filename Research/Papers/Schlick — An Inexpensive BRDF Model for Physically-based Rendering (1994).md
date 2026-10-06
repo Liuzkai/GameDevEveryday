@@ -1,22 +1,36 @@
 ---
 type: paper
-title: "An Inexpensive BRDF Model for Physically-based Rendering"
-authors: [Christophe Schlick]
+title: An Inexpensive BRDF Model for Physically-based Rendering
+authors:
+  - Christophe Schlick
 year: 1994
 published: "1994"
 venue: "Computer Graphics Forum 13(3): 233–246"
-url: "https://doi.org/10.1111/1467-8659.1330233"
+url: https://doi.org/10.1111/1467-8659.1330233
 code: ""
 project_page: ""
-category: [brdf, microfacet, fresnel, real-time-rendering]
+category:
+  - brdf
+  - microfacet
+  - fresnel
+  - real-time-rendering
 importance: S
 historical_importance: 5
 game_relevance: 5
 production_readiness: Industry Adopted
 user_level: Normal
 status: read
-aliases: [Schlick 1994, Schlick's approximation, Schlick 近似]
-tags: [brdf, pbr, fresnel, classic, easy-candidate]
+aliases:
+  - Schlick 1994
+  - Schlick's approximation
+  - Schlick 近似
+tags:
+  - brdf
+  - pbr
+  - fresnel
+  - classic
+  - easy-candidate
+  - real-time-rendering
 ---
 
 # An Inexpensive BRDF Model for Physically-based Rendering (Schlick 1994)

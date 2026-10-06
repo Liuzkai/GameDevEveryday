@@ -1,9 +1,12 @@
 ---
 type: concept
 user_level: Easy
-aliases: [Real-Time Rendering, 实时渲染, RTR]
+aliases:
+  - Real-Time Rendering
+  - 实时渲染
+  - RTR
 prerequisites: []
-first_introduced: "1960s–1970s（光栅显示与可见面算法）；"实时"作为工程目标从飞行模拟器时代确立"
+first_introduced: 1960s–1970s（光栅显示与可见面算法）;实时作为工程目标从飞行模拟器时代确立
 ---
 
 # Real-Time Rendering
@@ -32,7 +35,7 @@ first_introduced: "1960s–1970s（光栅显示与可见面算法）；"实时"�
 
 着色
   ├─ 微面 BRDF（D·G·F）                  → [[Microfacet Theory]](N) · [[BRDF]](N) · [[Physically Based Rendering]](N)
-  ├─ 能量账本（多次散射补偿）             → [[Multiple Scattering and Energy Compensation]](N)
+  ├─ 能量账本（多次散射补偿）              → [[Multiple Scattering and Energy Compensation]](N)
   └─ 特殊材质                            → [[Hair Rendering]](N) · [[Participating Media]](N)
 
 光照
