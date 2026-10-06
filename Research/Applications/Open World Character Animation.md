@@ -37,6 +37,7 @@ tags: [animation, open-world, production]
 | [[MotionBricks — Scalable Real-Time Motions]] | 内容量 + 过渡（2ms 实时生成） | Prototype |
 | [[UniMate — One Unified Model to Animate Diverse Skeletons]] | 非人形 / 跨拓扑 | Research |
 | [[Motion Style Slider — Continuous Style Control for Human Motion Diffusion]] | 风格微调的重拍成本 | Research |
+| [[Animation Compression]]（数据侧）| 动画内存账单（误差界即档位；CurveCodec 2 对 ACL 0.37×/0.22×）| Prototype（CurveCodec 2，2026-10-06 入库）|
 
 ## 与 VFX 的耦合
 

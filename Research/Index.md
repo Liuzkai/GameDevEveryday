@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-05]]（昨日：[[2026-10-04]]）
+- **今日**：[[2026-10-06]]（昨日：[[2026-10-05]]）
 - **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；下一周 W41 待产出，覆盖 10-5 ~ 10-11）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ⚠️ 推断值，待校正（已挂 28 天）
+- **认知模型**：[[Personal Knowledge Model]] ✅ **2026-10-05 已按实际阅读记录校正**（27 篇已读 / Cook-Torrance 确认 Easy / 检查点 9-18）——推送按校正结果组织，不再按推断值
 
-## Papers（81）
+## Papers（84）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -42,7 +42,7 @@ created: 2026-09-07
 | [[InstantMimic — A High Performance System for Learning Physics-based Skills in Seconds]]    | A-  | Normal（系统侧） | 中高（系统方法论+新阵营锚点） |
 | [[SceneHI — High-Resolution 3D-Consistent Scene Texturing with Controllable Illumination]]   | B+  | Hard（概念可读） | 中（生成式资产烘焙对照）   |
 | [[MOONWALK — Intent-Evidence-Action Alignment for Animation VFX Review]]                     | B   | Easy（流程语言） | 中（评审工作流模板）     |
-| [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]                         | S（经典） | Normal（研读中） | **高（当前学习焦点）** |
+| [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]                         | S（经典） | **Easy（10-05 确认）** | **高（当前学习焦点）** |
 | [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]] | S（经典） | Normal | **高（PBR 环境光半边 / 移动端 GI 根源）** |
 | [[2026-09-14-Gaussian Light Transport]]                                                      | A-  | Hard（概念桥短） | 高（GI 显式路线对照）     |
 | [[2026-09-14-Learning Realistic Athletic Sprinting Without Demonstrations]]                  | A-  | Hard        | 中（零示范范式）        |
@@ -101,8 +101,11 @@ created: 2026-09-07
 | [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]                            | A（经典） | **Normal（结论层）** | **最高（★ 缓存族"接收侧"源头 / 辐照度缓存：答案视图无关 + 误差容限 a + 八叉树 + 跨渲染复用；"误差定预算"第一文献——500h→30h；**NRC 2021 直接祖先**（缓存对象未变、介质变））** ★ 2026-10-04 |
 | [[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] | S（经典） | **Normal** | **最高（★ 漫反射侧结账：与 GGX+Smith 同源求解（单次散射"最多丢一半"）→ multi=0.1159α；**"specular 的 4 = (L+V=2H·V) 的平方"完整推导**；**UE 的 k=α/2 与 Smith 推导同源**；理想 Lambert 缺 5% = 1.05/π；**原文阻塞 16 天后经新 CDN 解除**）** ★ 2026-10-05 |
 | [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD]] | A- | **Normal** | **高（★ GS 的 LOD/预算线开线："误差 ∝ N⁻¹ᐟ²"（Zador 律）+ 因子树（矩匹配聚合 119×）+ 部署时单参数 c 扫连续内存-质量曲线；官方城市数据 71 fps @1080p 全 SH（vs Octree-GS 11.5 fps / 6.2×）；**"已发表压缩器前沿平坦：增益来自冗余、不是容量"**；对偶证书 = **预算可认证性范式**）** ★ 2026-10-05 |
+| [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]] | A- | **Normal（机制层）** | **高（★ 毛发"仿真轴"首节点：神经时间积分器"镜像"经典积分器 I/O；模拟器在环 + 随机视界；3000 股 0.460 ms/帧、动态帧 2000 打满（前作 131）、12 万股免重训；strand-space 消融 0.632 vs 0.342 = "表示即先验"最干净量化）** ★ 2026-10-06 |
+| [[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model]] | A- | **Normal（推断）** | **最高（★ 动画压缩域开线：两阶段 = 经典决策 + 学习熵编码；0.37×/0.22× ACL 字节（两种契约口径）；"误差界即档位"（0.01–1cm）+ 契约/回退/计数 = 预算可认证性第三形态；ACL 作者邮件 = 引擎三本账一手资料）** ★ 2026-10-06 |
+| [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] | A（经典） | **Normal（结论层）** | **最高（★ 缓存族第四节点/现代形态：探针网格 × 8×8+16×16 编码 × 每帧 m×n 射线 × 滞后摊销 × Chebyshev 矩可见性；6 ms/frame vs 1 min/frame；"探针数量 > 分辨率"调参次序；"光追补充光栅化"分工原句；RTXGI 产品线起点——**Neural GI 桥经典侧自此完整**）** ★ 2026-10-06 |
 
-## Concepts（32）
+## Concepts（33）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -132,6 +135,7 @@ created: 2026-09-07
 - [[GPU-Driven Rendering]]
 - [[Neural Upscaling and Frame Generation]]（实为 Technology）
 - [[Temporal Stability and Artistic Intent]]
+- [[Animation Compression]] ★ 2026-10-06 入库（**动画线"数据侧"第一节点**：三本账（内存/解码/导入）+ 误差界即档位 + "运行时代码器 vs 装载时代码器"分工；源头 CurveCodec 2 / ACL）
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -190,7 +194,8 @@ Research/
 
 ---
 
-最后更新：2026-10-05（Run #27：**漫反射侧结账日 + GS 预算线开线** —— 经典头条 **[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] 入库**（原文阻塞 16 天经 **GDC Vault 新 CDN `media.gdcvault.com`** 解除；"4"的推导 / UE 的 k=α/2 同源 / Lambert 缺 5% / multi=0.1159α；**PBR 经典队列清空、能量账本两册账并立**）；前沿 **[[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD|Budgeted-GS]]**（A-）——**"预算语言"第三轨（率-失真定律）+ 部署时单参数 c + 对偶证书**；Mon 10-5 组未放出（留痕待覆盖）；产业：**E-Day 深测全到账（首个出货 MegaLights 游戏 / Mega Geometry 12GB 门槛出货实证 / DLSS 5 画质税 ~15% 首个量化）**）
+最后更新：2026-10-06（Run #28：**分工日 —— 四样本同题"接管的边界" + 读者反馈闭环** —— 前沿 2 篇入库：**[[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]**（毛发**仿真轴**首节点；神经积分器镜像经典 I/O；0.460 ms/3000 股；动态 2000 帧打满）与 **[[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model|CurveCodec 2]]**（动画压缩域开线；0.37×/0.22× ACL；**"误差界即档位"**）；经典头条 **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]**（缓存族第四节点/现代形态——**Neural GI 桥经典侧完整**）；**🔴 PKM 已按实际阅读记录校正（27 篇已读）**——推送按校正结果组织；产业：**E-Day 发售日**（4K 原生需 5090 / Steam 85% / 峰值创系列纪录 / 遍历卡顿新样本））
+　　▸ **10-5 回顾**（Run #27）：**漫反射侧结账日**——Hammon 2017（阻塞 16 天经新 CDN 解除；PBR 经典队列清空）+ Budgeted-GS（GS 预算线开线、Zador 定律）
 　　▸ **10-4 回顾**（Run #26）：缓存族第三源日（Ward 1988）——三源齐 + W40 周报
 　　▸ **10-3 回顾**（Run #25）：缓存族双源日——RSM 2005 + IR 1997；"固定样本预算"四连；River + GALA
 　　▸ **10-2 回顾**（Run #24）：**立面细节日**——Wonka 2003（PCG 四节点齐全）+ Lens Flare（光学效应开线）+ E-Day 实测到账

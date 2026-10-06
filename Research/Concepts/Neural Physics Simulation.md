@@ -36,6 +36,8 @@ tags: [physics, neural-simulator, particles]
 - GNS — Graph Network Simulators（2020，确立"粒子=图节点"范式）
 - TIE / Neural Operators（2021-2022，算子学习分支）
 - [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer|WorldParticle]]（2026，SIGGRAPH Asia — 首次单架构统一六类动力学）
+- [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]（2026，Meta × NVIDIA — **神经时间积分器**：镜像经典积分解算器的输入输出，模拟器在环监督；角色级（发丝）实时）
+- 毛发神经仿真三代（同域对照）：GroomGen（2023）→ Quaffure（2025，准静态）→ Neuralocks（2026）→ **Neuroll（2026）**
 
 ## Related Concepts
 
@@ -46,20 +48,24 @@ tags: [physics, neural-simulator, particles]
 
 - 远期：统一 VFX 求解器（一个模型 + 每特效一个 condition，替代"每现象一套求解器"）
 - 中期：离线替代仿真（LOD 远处特效用学习模型近似）
-- 现在：无可落地路径，纯概念储备
+- **2026-10-06 现状更新**：**首个"角色级"实时原型出现**（[[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]：发丝仿真 3000 股 0.460 ms/帧、消费级硬件、密度无关线性扩展）——从"纯概念储备"变为"有可指向的原型路径"；VFX 粒子侧仍无同级样本。
 
 ## Important Papers
 
+- [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]]（★ 2026-10-06 入库：**"镜像经典 I/O"的神经积分器**——替代数值积分、保留经典接口语义；模拟器在环 + 随机视界；strand-space 消融 = "表示即先验"最干净量化）
 - [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer]]
 
 ## Personal Knowledge
 
-Current Level: **Hard**
+Current Level: **Hard**（入口已扩：**机制层（"神经替代哪一步、保留什么接口"）现在有 [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]] 一篇可直接读**；训练/推导层仍缺）
 
 ## Learning Gap
 
-唯一的实质缺口是 Transformer 注意力机制词汇。物理侧你已全部具备。
+- **概念层（可读）**：分工判据——"显式部分 vs 学习部分"在 Neuroll 里有一个具体答案（**替代积分步骤、保留经典 I/O 语义与显式物理状态**）；你的粒子机制 Easy 可支撑这一层阅读；
+- **未确认层（按 2026-10-05 PKM 校正记录）**：attention、学习式仿真的训练细节与实现——**不再断言"只缺一个 attention 词汇"**（该表述已由 PKM 校正替代）；训练目标、误差累积、泛化条件都是实际缺口，按具体问题再建桥。
 
 ## Next Learning Step
 
-**不要读 attention 教材。** 直接读 [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer|WorldParticle]] 的 Figure 1 + 项目页视频，把 super-token merging 类比为你熟悉的东西：**粒子 LOD / 分簇**——"先压缩相互作用图，再在压缩域里算贵的部分"。这个类比成立之后，本概念可从 Hard 升 Normal。
+1. **先读 [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]] 的机制层**（Figure 2 训练管线 + Table 1 数字）——25 分钟，用自己的话回答"它替代了解算器的哪一步、保留了什么"；
+2. [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer|WorldParticle]] 的 Figure 1 + 项目页视频仍可作为"压缩相互作用图 = 粒子 LOD"的类比入口；
+3. 训练/推导侧（扩散 / flow matching / 图网络训练）沿 [[Neural Rendering]] / 具体论文的问题缺口补，不在本概念层展开。

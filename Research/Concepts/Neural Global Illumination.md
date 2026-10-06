@@ -24,9 +24,10 @@ tags: [gi, neural, real-time]
 
 ## Prerequisites
 
-- [[Global Illumination]]（**问题与八代近似谱系**；其中"缓存族（RSM / VPL / Irradiance Caching / DDGI）"即本概念桥的具名缺口）
+- [[Global Illumination]]（**问题与八代近似谱系**；其中"缓存族（RSM / VPL / Irradiance Caching / DDGI）"即本概念桥的具名缺口——**2026-10-06 起四节点全部落库**）
 - **RSM / VPL——✅ 2026-10-03 双源入库**：[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（pixel light + 每像素固定样本）· [[Keller — Instant Radiosity (1997)]]（VPL = 光路顶点变光源）；机制对照表见 [[Global Illumination]] 谱系第 6 行与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]
 - **接收侧缓存——✅ 2026-10-04 入库**：[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（辐照度缓存 = **NRC 的直接祖先**：缓存对象就是它定义的辐照度；误差容限 a 决定点密度）；见 [[接收侧缓存_Ward 1988 辐照度缓存图解|第三源图解]]
+- **现代形态——✅ 2026-10-06 入库**：[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（**DDGI**：缓存族在光追时代的合流点——探针场 + 增量更新 + 滞后摊销；RTXGI 产品线起点，其 SDK v2.0 已并入 NRC/SHaRC）；见 [[探针辐照度场_DDGI 2019 图解|DDGI 图解]]
 - [[Neural Rendering]]
 - 实时渲染管线结构（G-buffer、deferred）
 
@@ -77,8 +78,8 @@ Current Level: **Hard**
 - 理解所有神经 GI 论文的前置
 - Normal 难度，几个小时可补
 
-**✅ 2026-10-03/04 状态更新**：经典部分的**原始文献已三源入库**（[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] 接收侧 + [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] 光侧结构化 + [[Keller — Instant Radiosity (1997)]] 光侧随机；配 [[接收侧缓存_Ward 1988 辐照度缓存图解|第三源图解]] 与 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]]）——**桥材料层全部打通**；实际阅读动作（30 分钟级）待用户执行。iVPL（Imperfect VPLs）方向按需再补。
+**✅ 2026-10-03/04/06 状态更新**：经典部分的**原始文献已四节点入库**（[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] 接收侧 + [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] 光侧结构化 + [[Keller — Instant Radiosity (1997)]] 光侧随机 + **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] 现代形态**；配 [[接收侧缓存_Ward 1988 辐照度缓存图解|第三源图解]]、[[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]] 与 [[探针辐照度场_DDGI 2019 图解|DDGI 图解]]）——**桥的经典侧自此完整**。按 2026-10-05 PKM 校正：桥材料已备、**实际阅读动作（30 分钟级）待执行**；神经侧（训练/推断）另列 Hard。iVPL（Imperfect VPLs）方向按需再补。
 
 ## Next Learning Step
 
-先补 RSM 与 VPL（~~机制表见 [[Global Illumination]] 谱系第 6 行~~ ✅ **2026-10-03 双源入库**：[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] / [[Keller — Instant Radiosity (1997)]]），再回来看神经方法。顺序反了会浪费大量时间。
+先补 RSM 与 VPL（~~机制表见 [[Global Illumination]] 谱系第 6 行~~ ✅ **2026-10-03 双源入库**：[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] / [[Keller — Instant Radiosity (1997)]]），再沿 [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（接收侧）与 [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（现代形态）把"缓存→场→神经"的介质演化串起来，最后回来看神经方法。顺序反了会浪费大量时间。

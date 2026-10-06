@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-05
+updated: 2026-10-06
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 27
@@ -244,6 +244,11 @@ read_paper_count: 27
     - **两条对分档工作的体检（来自 Budgeted-GS，可直接做）**：① **"我的预算是'最陡区'还是'平坦区'？"**——砍一半资源若只损失一点质量，说明预算本来就在冗余区；② **"我的档位差异是'换表示'还是'缩参数'？"**——前者每 dB 成本通常更低（LOD vs 随机子采样同内存对照：-2.12 vs -7.08 dB）；
     - **读一切压缩/优化论文的新防御**："已发表压缩器前沿平坦（斜率均值 -0.04）：**增益来自冗余、不是容量**"——先问"报告的是冗余收益还是容量收益"（与 OREO 的"先找降级消融"并列）；
     - **动作清单（更新）**：PKM 校正（28 天）· 毛发 15 条自测 · **furnace test 两项检查（PBR 队列清空后，这是 PBR 线唯一剩下的动作）** · 两条 30 分钟实测 · **动态灯光复审（E-Day 正式版 10-6/10-7 发售——最终检验窗口就在眼前）**。
+27. **🔴 10-06 新增（分工日：毛发仿真轴开线 + 动画压缩域开线 + GI 缓存族封顶）**——**以下为资料侧记录；个人进度以本文件上文（校正后）与各笔记当前属性为准**：
+    - **毛发线分双轴**：[[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]] 入库（**仿真轴首节点**，独立于渲染侧 15 条自测）——神经时间积分器"镜像"经典积分器 I/O + 模拟器在环；3000 股 0.460 ms/帧；"表示即先验"消融（strand space 0.632 vs world space 0.342）；
+    - **新域 [[Animation Compression]]**：[[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model|CurveCodec 2]]（0.37×/0.22× ACL；**"误差界即档位"** + 契约/回退/计数；页面含 ACL 作者邮件 = "三本账"一手资料）——`Normal` 为推断值；
+    - **[[Neural Global Illumination]] 桥经典侧完整**：[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)|DDGI 2019]] 入库——缓存族四节点齐（Ward / IR / RSM / **DDGI**）+ 三图解；**30 分钟读法已列**（= 该桥的实际阅读动作，仍待执行）；
+    - **当日最值钱判据**："新旧工具各自接管哪一段"四样本（DDGI 光追补充光栅化 / Neuroll 镜像 I/O / CurveCodec 2 只学熵编码 / LoCoSplat 取消重型网络）；"误差契约"成为预算可认证性第三形态。
 
 
 ---

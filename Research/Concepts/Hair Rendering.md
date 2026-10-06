@@ -102,9 +102,17 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
         ↓
 ★ 2026-09 《巫师 3》重制版（9-29）—— LSS 路径追踪毛发（HairWorks 增强）
         → 毛发成为 GPU 光追的原生曲线基元（"光追档"成为新的最高档）
+
+【仿真轴】（2026-10-06 开线，与渲染轴独立）
+1992-2025  悬臂梁 → Cosserat rod / DER → GPU 求解器（数千股"高端配置实时"）
+2023-2026  神经三代：GroomGen（数据驱动）→ Quaffure（准静态）→ Neuralocks（惯性损失）
+★ 2026-10 Neuroll —— 神经时间积分器（镜像经典 I/O）+ 模拟器在环 + 随机视界
+        → 3000 股 0.460 ms/帧；动态帧数 2000 打满（前作 131）；密度无关
 ```
 
 > **"表示跟着观察尺度走"的完整三代**：texel ↔ 几何（1989，手动）→ 发片 ↔ 发丝（2026，HairCS 可自动升档）→ 光追曲线基元（2026，LSS）。**你的毛发分档表未来会多出一档：光追毛发。**
+>
+> **两个轴的分工（2026-10-06 补）**：本概念此前全部内容 = **渲染轴**（"头发看起来像什么"，关键词 = 表示）；**仿真轴**（"头发怎么动"，关键词 = 积分）由 [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]] 开线——毛发在库内第一次有"怎么动"的节点。两轴可分别调档：渲染侧 = 发片/发丝/光追基元；仿真侧 = off / 准静态 / 动态（一个网络三态）+ 刚度标量。
 
 ## Important Papers
 
@@ -115,8 +123,9 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 | [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] | 资产侧：发片 → 发丝 自动升档 |
 | [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] | ★ 2026-09-26 入库：**实时工程侧**——"怎么把 2003 的物理模型塞进 2004 的硬件"：发片模型 / 两 lobe 移位近似（扰动切线 + shift 贴图）/ **取消运行时排序**（静态索引缓冲 + 四趟渲染） |
 | [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] | ★ 2026-09-28 入库：**多次散射实时近似**——全局/局部分解、原型路径（透射连乘 + 方差求和）、fback 材质属性、三档实现；"浅色发"账本的闭合项 |
+| [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]] | ★ **2026-10-06 入库（仿真轴首节点）**：神经时间积分器 = 镜像经典积分器 I/O（前状态+刚度+碰撞几何入、下一状态出）；模拟器在环 + 随机视界；3000 股 **0.460 ms/帧**、动态帧数 **2000**（前作 131）、密度无关扩到 12 万股；strand-space 规范化（运动比 0.632 vs 世界系 0.342） |
 
-**四节点已齐**：经验侧（Kajiya-Kay 1989）、物理侧（Marschner 2003）、实时工程侧（Scheuermann 2004）、**多散射近似（Zinke-Yuksel 2008）** 均入库。**物理与工程主干全部闭合**；剩余为可选深挖（双散射的后续演进、离线侧更多近似）。
+**四节点已齐**：经验侧（Kajiya-Kay 1989）、物理侧（Marschner 2003）、实时工程侧（Scheuermann 2004）、**多散射近似（Zinke-Yuksel 2008）** 均入库。**物理与工程主干全部闭合**；剩余为可选深挖（双散射的后续演进、离线侧更多近似）。**仿真轴 2026-10-06 开线**（Neuroll）——"头发怎么动"独立于渲染轴，另行积累。
 
 ## Related Concepts
 
@@ -173,3 +182,4 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 - **2026-09-26**：**实时工程缺口闭合**（[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]]）——"发片 + 双高光 + 固定排序"这套**游戏毛发默认做法的源头文档**；同时是"**取消式优化**"的 2004 年版本（取消运行时 CPU 空间排序）。**三节点（1989 / 2003 / 2004）齐全，自测 12 条。**
 - **2026-09-28**：**多散射节点闭合**（[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]）——"浅色发的发色由多散射主导"这一整类现象的解法；三条可迁移抽象入库（原型路径的合法性检查 / 方差可加 / 三档实现=换采样与存储）；**与 PBR 能量账本"补能量 vs 推输运"跨域同构**。**四节点（1989 / 2003 / 2004 / 2008）齐全，自测 15 条。**
 - **2026-09-29**：《巫师 3》重制版上线（LSS 毛发）——**实测：HairWorks 开关 = 30 vs 44 fps（5080 4K PT）**。记录两条判断：**① 光追档正式进入商业首发**（"光追基元"这个新档位不再是研究展望）；**② "换表示 ≠ 降成本"**——LSS 把毛发搬进光追管线换来观感，但每像素覆盖率决定的成本量级不变（与 Kajiya-Kay 1989"渲染时间与几何复杂度解耦"合读：**解耦的是"几何复杂度"，不是"屏幕覆盖"**）。第 13 项"实战观察"数据点已备。
+- **2026-10-06**：**仿真轴开线**（[[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]）——毛发问题在库内第一次分成两个正交轴：**渲染 = 表示（本概念既有全部内容）**；**仿真 = 积分（Neuroll 起）**。Neuroll 与渲染侧自测（15 条）**无绑定关系**——它是 [[Neural Physics Simulation]] 域的样本，不改变"毛发着色"的 Easy 判据进度。可对照阅读点：Zinke 2008"一条原型路径代表全部路径"与 Neuroll"逐发丝独立网络"都在用**"线性可分解"**这把钥匙打开毛发问题。

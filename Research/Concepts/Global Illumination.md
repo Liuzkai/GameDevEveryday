@@ -38,8 +38,8 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | 3 | **辐射度（Radiosity）** | 把间接光变成"面片之间传能量"的矩阵问题 | 静态、漫反射专用（1990s 离线/烘焙） |
 | 4 | **PRT / 预计算转移** | 预烘"表面如何接收环境"的转移算子 | 静态几何；材质自由度受限 |
 | 5 | **屏幕空间族（SSAO → SSGI / SSR）** | 只在已有像素里找反弹 | 便宜；**屏幕外一律丢失**（"屏幕空间 vs 引擎感知"） |
-| 6 | **缓存/Direct 祖先族：Irradiance Caching / VPL / RSM / DDGI** | 把间接光"记在小本子上"复用 | ✅ **三源齐（2026-10-03 / 10-04）**：[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（**接收侧缓存**：缓存"表面收到的答案"，误差容限 a 决定点密度）+ [[Keller — Instant Radiosity (1997)]]（VPL = 把光路顶点变成"很多小灯"）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（RSM = 第一个 bounce 存进阴影贴图，每像素固定样本 gather）——**[[Neural Global Illumination]] 桥的具名前置三块全部可读**；DDGI 按需 |
-| 7 | **光追 GI（硬件）** | 真反弹，降噪器补噪声 | DDGI / Lumen（UE 默认）/ MegaLights（直接光侧）；贵，PC 高端 |
+| 6 | **缓存/Direct 祖先族：Irradiance Caching / VPL / RSM / DDGI** | 把间接光"记在小本子上"复用 | ✅ **四节点齐（2026-10-03 / 10-04 / 10-06）**：[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（**接收侧缓存**：缓存"表面收到的答案"，误差容限 a 决定点密度）+ [[Keller — Instant Radiosity (1997)]]（VPL = 把光路顶点变成"很多小灯"）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（RSM = 第一个 bounce 存进阴影贴图，每像素固定样本 gather）+ **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（DDGI = 动态辐照度场：探针网格 × 光追增量更新 × 滞后摊销——缓存族与光追时代的合流）**——**[[Neural Global Illumination]] 桥的经典侧自此完整** |
+| 7 | **光追 GI（硬件）** | 真反弹，降噪器补噪声 | **DDGI（2019，探针场路线——见第 6 行）/ Lumen（UE 默认，表面缓存路线）/ MegaLights（直接光侧）**；贵，PC 高端 |
 | 8 | **神经 GI** | 让网络学"间接光长什么样" | 离实时有数量级差距；见 [[Neural Global Illumination]]（Hard） |
 
 ## Historical Evolution
@@ -52,10 +52,13 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 2005  Dachsbacher & Stamminger：RSM——**缓存族结构化侧**（每像素固定样本）★ 2026-10-03 入库
 1990s-2000s  PRT / SH 光照（[[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]）
 2000s  实时阴影/环境光工程化；SSAO（2007 前后）
-2010s  SSGI / SSR / 体素 GI / 光追 GI 原型（DDGI 2019）
+2010s  SSGI / SSR / 体素 GI / 光追 GI 原型
+2019  ★ DDGI（Majercik et al.，JCGT）：**缓存族进入光追时代**——探针网格 + 每帧增量更新 + 滞后摊销 + 矩可见性；"缓存族 × 硬件光追"的合流点（**2026-10-06 入库**）
+2020- RTXGI SDK 产品线：逆水寒（2020 首个游戏）→ ICARUS / THE FINALS；UE4 插件 + Unity
 2020s  Lumen 把"软件/硬件光追 GI"做成引擎默认；烘焙与实时合流
-2021  神经 GI 成为独立研究方向（本库 [[Neural Global Illumination]]，Hard）
-2026  MegaLights（动态光源侧 Production）+ E-Day 把"全 GI"与硬件光追门槛绑定（强约束样本）
+2021  神经 GI 成为独立研究方向（本库 [[Neural Global Illumination]]，Hard）；NRC 把 DDGI/IC 的"缓存介质"换成神经网络
+    《Scaling Probe-Based Real-Time Dynamic GI for Production》（JCGT 10(2), 2021）——DDGI 的生产化补丁集
+2026  MegaLights（动态光源侧 Production）+ E-Day 把"全 GI"与硬件光追门槛绑定（强约束样本）；RTXGI SDK v2.x 内 NRC/SHaRC 与经典探针并置
 ```
 
 ## Important Papers
@@ -67,6 +70,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | [[Keller — Instant Radiosity (1997)]] | **VPL 起源**（缓存族随机侧源头："光照场 = 一组点光源"；每盏 VPL 一遍渲染） | ✅ **2026-10-03 入库** |
 | [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] | **RSM**（缓存族结构化侧源头：pixel light + 每像素固定样本；"成本 ∝ 像素 × 常数"的 2005 原型） | ✅ **2026-10-03 入库** |
 | [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] | **辐照度缓存（IC）**（缓存族**接收侧**源头：答案视图无关 + 误差容限 a + 八叉树 + 跨渲染复用；**NRC 2021 的直接祖先**——缓存对象就是本篇定义的辐照度） | ✅ **2026-10-04 入库** |
+| [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] | **DDGI**（缓存族**现代形态/合流点**：探针网格 + 8×8/16×16 八面体编码 + 每帧 m×n 射线 + 滞后 α∈[0.85,0.98] + Chebyshev 矩可见性；"每帧 m×n 射线"= 固定样本预算家族 2019 节点；RTXGI 产品线起点） | ✅ **2026-10-06 入库** |
 | [[LightOpt — Lights Optimization for Real-Time Rendering]] | 用可微优化反推"光照布局怎么配" | ✅ 入库（DR 桥目标） |
 | 神经 GI 侧：| 见 [[Neural Global Illumination]] 的桥 | 观察 |
 
@@ -99,14 +103,13 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 
 ## Learning Gap
 
-- ✅ **需要**（30 分钟级）**已落库三源**：RSM / VPL 的"缓存结构"= [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（四缓冲 shadow map + pixel light + 每像素 ~400 固定样本 + 屏幕空间插值）+ [[Keller — Instant Radiosity (1997)]]（光路顶点 = VPL + 逐灯渲染累加）+ **[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（接收侧缓存：误差容限 a + 八叉树 + 加权插值——"缓存答案"的源头）**——**[[Neural Global Illumination]] 桥的具名前置三块自此全部可读**（配 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]] + [[接收侧缓存_Ward 1988 辐照度缓存图解]]）；
-- **按需**：DDGI 的缓存结构（读取成本低，用时再补）；
+- ✅ **需要**（30 分钟级）**已落库四节点**：RSM / VPL 的"缓存结构"= [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（四缓冲 shadow map + pixel light + 每像素 ~400 固定样本 + 屏幕空间插值）+ [[Keller — Instant Radiosity (1997)]]（光路顶点 = VPL + 逐灯渲染累加）+ **[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（接收侧缓存：误差容限 a + 八叉树 + 加权插值——"缓存答案"的源头）** + **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（DDGI：缓存族的现代形态——探针场 + 光追更新 + 时间摊销）**——**[[Neural Global Illumination]] 桥的经典侧自此完整**（配 [[间接光缓存族_RSM 2005 与 Instant Radiosity 1997 双源图解|双源图解]] + [[接收侧缓存_Ward 1988 辐照度缓存图解]] + [[探针辐照度场_DDGI 2019 图解]]）；
 - **不需要**：辐射度矩阵求解、PRT 数学细节（工具已废弃，只需知道它存在过）。
 
 ## Next Step
 
-1. ~~查清 RSM / VPL 的代表文献（记名 → 必要时入库），补齐 [[Neural Global Illumination]] 桥的前置缺口~~ ✅ **2026-10-03 完成**（[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] + [[Keller — Instant Radiosity (1997)]] 双源入库）；
-2. 做"动态灯光维度复审"时，把本表第 7/8 行（Lumen / MegaLights 的能力边界）与你的五档矩阵对照一次；
+1. ~~查清 RSM / VPL 的代表文献（记名 → 必要时入库），补齐 [[Neural Global Illumination]] 桥的前置缺口~~ ✅ **2026-10-03 完成**（[[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] + [[Keller — Instant Radiosity (1997)]] 双源入库）；~~DDGI 按需~~ ✅ **2026-10-06 入库**（[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]——缓存族四节点齐、桥的经典侧完整）；
+2. 做"动态灯光维度复审"时，把本表第 7 行（DDGI / Lumen / MegaLights 三条路线的能力边界）与你的五档矩阵对照一次；
 3. 保持与 [[Real-Time Global Illumination]]（Technology）的同步：引擎侧有新证据（如 E-Day 实测）时双向更新。
 
 ## Notes
@@ -114,4 +117,5 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 - **为什么现在才建**：首日建库时本概念被列为"基础锚点"但文件一直缺失（[[Neural Global Illumination]] 的桥长期缺"经典 GI 近似"这一环）——2026-09-30 链接完整性检查时发现并补齐。同期补齐的还有 [[Real-Time Rendering]]。
 - **2026-10-03 更新**：**谱系表第 6 行（缓存族）具名缺口闭合**——[[Keller — Instant Radiosity (1997)]] + [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] 双源入库；第 6 行自此从"⚠️ 记名"升级为"✅ 可读"。
 - **2026-10-04 更新**：**缓存族第三源（接收侧）入库**——[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（辐照度缓存）；第 6 行"三源齐"（1988 接收侧 / 1997·2005 光侧），并补入第二种预算语言——**"误差定预算"（a = 质量旋钮）与"样本定预算"并列**。配 [[接收侧缓存_Ward 1988 辐照度缓存图解|第三源图解]]。
+- **2026-10-06 更新**：**缓存族第四节点（现代形态）入库**——[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（DDGI）；第 6 行四节点齐 + 第 7 行路线边界更新（**DDGI 探针场 / Lumen 表面缓存 / MegaLights 直接光**三条路线并存）；"固定样本预算"家族补 2019 节点（**每帧 m×n 射线**）+ 新语言"**收敛可从空间维度挪到时间维度**"（摊销）。配 [[探针辐照度场_DDGI 2019 图解|DDGI 图解]]。
 - 本概念**不是** [[Neural Global Illumination]] 的重复：前者是"问题与近似谱系"，后者是"神经方法目标"——关系为 Prerequisite（本概念 → 神经 GI）。

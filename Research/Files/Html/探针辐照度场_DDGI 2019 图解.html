@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>辐照度场：DDGI 2019 —— 缓存族在光追时代的合流点</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --ink: #1d1f21;
+    --ink-2: #4a4f55;
+    --ink-3: #7b8288;
+    --line: #e3e3e0;
+    --line-2: #efefec;
+    --accent: #1f5fa8;
+    --accent-soft: #eef4fb;
+    --probe: #7a3e9d;
+    --probe-soft: #f6eefa;
+    --ray: #b4552d;
+    --ray-soft: #fdf1ea;
+    --ok: #2e7d4f;
+    --ok-soft: #eaf6ee;
+    --warn: #b4552d;
+    --warn-soft: #fdf1ea;
+    --code: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --panel: #1e2124;
+      --ink: #e8eae7;
+      --ink-2: #b6bcc0;
+      --ink-3: #8a9196;
+      --line: #33383c;
+      --line-2: #282c30;
+      --accent: #7db4e8;
+      --accent-soft: #1c2834;
+      --probe: #c79ae0;
+      --probe-soft: #271c30;
+      --ray: #e0946b;
+      --ray-soft: #2c211b;
+      --ok: #6bbf8a;
+      --ok-soft: #1c2b22;
+      --warn: #e0946b;
+      --warn-soft: #2c211b;
+      --code: #24282b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 22px; line-height: 1.4; margin: 0 0 6px; font-weight: 700; }
+  .sub { color: var(--ink-3); font-size: 13.5px; margin-bottom: 22px; }
+  h2 { font-size: 17px; margin: 34px 0 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+  h2 .n { color: var(--accent); font-weight: 700; margin-right: 6px; }
+  h3 { font-size: 15px; margin: 18px 0 6px; }
+  p { margin: 8px 0; color: var(--ink-2); }
+  b, strong { color: var(--ink); }
+  .k { background: var(--code); border: 1px solid var(--line-2); border-radius: 4px;
+       padding: 0 5px; font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+       font-size: 12.5px; color: var(--ink); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+           padding: 14px 18px; margin: 12px 0; }
+  .lede { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 10px;
+          padding: 12px 16px; margin: 14px 0; }
+  .lede p { color: var(--ink); margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13.5px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+  th { color: var(--ink-3); font-weight: 600; font-size: 12.5px; border-bottom: 1px solid var(--line); }
+  td b { color: var(--ink); }
+  .tag { display: inline-block; font-size: 11.5px; padding: 1px 8px; border-radius: 999px;
+         border: 1px solid var(--line); color: var(--ink-3); margin-right: 6px; white-space: nowrap; }
+  .tag.p { color: var(--probe); border-color: var(--probe); }
+  .tag.r { color: var(--ray); border-color: var(--ray); }
+  .tag.o { color: var(--ok); border-color: var(--ok); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+  .card h3 { margin-top: 2px; }
+  .card p { margin: 4px 0; font-size: 13.5px; }
+  ul { margin: 6px 0 6px 2px; padding-left: 18px; color: var(--ink-2); }
+  li { margin: 3px 0; }
+  .mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12.5px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .foot { color: var(--ink-3); font-size: 12.5px; margin-top: 30px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0; }
+  .chip { border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+          padding: 5px 10px; font-size: 12.5px; color: var(--ink-2); }
+  .chip b { color: var(--ink); }
+  .chip.hl { border-color: var(--accent); background: var(--accent-soft); }
+  .chip.hl b { color: var(--accent); }
+  .arrow { color: var(--ink-3); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>辐照度场：DDGI 2019 —— 缓存族在光追时代的合流点</h1>
+<div class="sub">Majercik / Guertin / Nowrouzezahrai / McGuire · JCGT 8(2), pp. 1–30, 2019 · 图解与核对：2026-10-06</div>
+
+<div class="lede">
+<p><b>一句话</b>：把"预烘焙的静态光照探针"改造成<b>每帧用硬件光追增量更新的辐照度场</b>——第一个真正可出货的动态漫反射 GI 探针方案。三件套 = <b>紧凑编码</b> + <b>摊销更新</b>（滞后混合）+ <b>可见性加权查询</b>（专治漏光）。</p>
+<p><b>谱系位置</b>：缓存族（Ward 1988 接收侧 / IR 1997 · RSM 2005 光侧）的第四节点，也是"缓存族 × 硬件光追"的合流点——NRC（2021）要替换的"缓存介质"，在产品线上正从这里开始。</p>
+</div>
+
+<h2><span class="n">1</span>2019 年的三角困境（为什么需要它）</h2>
+<div class="grid2">
+  <div class="card">
+    <h3><span class="tag p">探针法</span></h3>
+    <p>IBL 探针在游戏里无处不在，但三个老毛病从未同时解决：<b>手动放置 + 代理几何</b>（反射错位）、<b>漏光/暗漏</b>、<b>静态</b>（只在初始化烘一次）。</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag r">屏幕空间</span></h3>
+    <p>SSGI / SSR：便宜的代价是<b>屏幕外几何一律丢失</b>，且视角相关 → 时间不稳定。</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag r">体素 / 光追</span></h3>
+    <p>VXGI 类：几何表示（八叉树）与参数化耦合，泄漏难治；离线路径追踪质量最好，但离实时差 3–4 个数量级。</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag o">目标</span></h3>
+    <p><b>动态物体 + 动态光照</b>下的实时漫反射 GI，<b>无需手动放置</b>，对几何与辐射复杂度都鲁棒。</p>
+  </div>
+</div>
+
+<h2><span class="n">2</span>编码：一个探针 = 两张八面体小图</h2>
+<div class="panel">
+  <table>
+    <tr><th>数据</th><th>格式</th><th>分辨率（八面体）</th><th>用途</th></tr>
+    <tr><td>球面辐照度</td><td class="mono">GL_R11G11B10F</td><td><b>8 × 8</b></td><td>漫反射间接光查询</td></tr>
+    <tr><td>平均距离 + 距离平方</td><td class="mono">GL_RG16F</td><td><b>16 × 16</b></td><td>可见性（Chebyshev 矩）</td></tr>
+  </table>
+  <p>所有探针打包进<b>一张 2D 图集</b>：<span class="k">gutter</span> 边保证双线性插值不出缝，探针按 <span class="k">4×4</span> 写边界对齐。深度值经 cosine-power 加权后锐化；低于阈值（0.001）的 texel 不更新。</p>
+  <p>格式结论（原文 Figure 12）：<b>R11G11B10F = 16 位浮点保真度、省 45% 存储</b>；8 位整型出伪影；深度从"前作 128×128×6 高精度 cube map"降到 <b>16×16</b>——省下来的底气来自查询侧的加权方案。</p>
+</div>
+
+<h2><span class="n">3</span>更新：每帧一轮"探针-射线批"，滞后混入</h2>
+<svg viewBox="0 0 840 250" width="100%" role="img" aria-label="DDGI 每帧更新循环">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-3)"/>
+    </marker>
+  </defs>
+  <g font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5">
+    <!-- 探针网格 -->
+    <rect x="18" y="40" width="150" height="130" rx="10" fill="var(--probe-soft)" stroke="var(--probe)" stroke-width="1.2"/>
+    <text x="93" y="66" text-anchor="middle" fill="var(--probe)" font-weight="700">探针网格</text>
+    <g fill="var(--probe)">
+      <circle cx="52" cy="92" r="3.2"/><circle cx="88" cy="92" r="3.2"/><circle cx="124" cy="92" r="3.2"/>
+      <circle cx="52" cy="122" r="3.2"/><circle cx="88" cy="122" r="3.2"/><circle cx="124" cy="122" r="3.2"/>
+      <circle cx="52" cy="152" r="3.2"/><circle cx="88" cy="152" r="3.2"/><circle cx="124" cy="152" r="3.2"/>
+    </g>
+    <text x="93" y="188" text-anchor="middle" fill="var(--ink-3)" font-size="11.5">1–2 m 间距 · 2 的幂 · 免手动放置</text>
+
+    <!-- 射线批 -->
+    <rect x="212" y="40" width="150" height="130" rx="10" fill="var(--ray-soft)" stroke="var(--ray)" stroke-width="1.2"/>
+    <text x="287" y="66" text-anchor="middle" fill="var(--ray)" font-weight="700">① 每帧射线批</text>
+    <g stroke="var(--ray)" stroke-width="1.1" fill="none">
+      <path d="M 287 96 L 245 150"/><path d="M 287 96 L 287 152"/><path d="M 287 96 L 329 150"/>
+      <path d="M 287 96 L 260 148"/><path d="M 287 96 L 314 148"/>
+    </g>
+    <circle cx="287" cy="96" r="4" fill="var(--ray)"/>
+    <text x="287" y="188" text-anchor="middle" fill="var(--ink-3)" font-size="11.5">m 探针 × n 条射线（Fibonacci 螺旋）</text>
+
+    <!-- surfel 着色 -->
+    <rect x="406" y="40" width="150" height="130" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.2"/>
+    <text x="481" y="66" text-anchor="middle" fill="var(--accent)" font-weight="700">② surfel 着色</text>
+    <g fill="var(--accent)">
+      <rect x="434" y="92" width="14" height="14" rx="3"/><rect x="458" y="104" width="14" height="14" rx="3"/>
+      <rect x="482" y="90" width="14" height="14" rx="3"/><rect x="506" y="112" width="14" height="14" rx="3"/>
+      <rect x="452" y="128" width="14" height="14" rx="3"/><rect x="490" y="136" width="14" height="14" rx="3"/>
+    </g>
+    <text x="481" y="180" text-anchor="middle" fill="var(--ink-3)" font-size="11.5">与最终画面同一套 shading 例程</text>
+
+    <!-- 滞后混合 -->
+    <rect x="600" y="40" width="222" height="130" rx="10" fill="var(--ok-soft)" stroke="var(--ok)" stroke-width="1.2"/>
+    <text x="711" y="66" text-anchor="middle" fill="var(--ok)" font-weight="700">③ 滞后混合进图集</text>
+    <text x="711" y="98" text-anchor="middle" fill="var(--ink-2)" class="mono" font-size="12">newIrr = lerp(oldIrr, new, α)</text>
+    <text x="711" y="122" text-anchor="middle" fill="var(--ink-2)">α ∈ <tspan font-weight="700" fill="var(--ok)">[0.85, 0.98]</tspan> = 时间滤波</text>
+    <text x="711" y="146" text-anchor="middle" fill="var(--ink-3)" font-size="11.5">多弹射：本帧"间接"= 上一弹射结果</text>
+    <text x="711" y="162" text-anchor="middle" fill="var(--ink-3)" font-size="11.5">→ 跨帧累积收敛（摊销）</text>
+
+    <!-- 箭头 -->
+    <line x1="170" y1="105" x2="208" y2="105" stroke="var(--ink-3)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <line x1="364" y1="105" x2="402" y2="105" stroke="var(--ink-3)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <line x1="558" y1="105" x2="596" y2="105" stroke="var(--ink-3)" stroke-width="1.4" marker-end="url(#a1)"/>
+    <text x="420" y="228" text-anchor="middle" fill="var(--ink-3)" font-size="12">为什么能省：间接光是<b>低频、视图无关</b>的量——贵的东西用便宜的时间常数摊销（"时间是第二根预算轴"）</text>
+  </g>
+</svg>
+
+<h2><span class="n">4</span>查询：8 探针 cage + 五级权重（治漏光的核心）</h2>
+<div class="panel">
+  <p>对每个着色点，取包围它的 8 个探针（cage），按序加权：</p>
+  <table>
+    <tr><th>#</th><th>权重</th><th>治什么</th></tr>
+    <tr><td>1</td><td><b>软背面剔除</b>（法线 · 指向探针方向 平滑淡出）</td><td>截断下方探针的贡献</td></tr>
+    <tr><td>2</td><td><b>感知抑制</b>（暗区极低辐照度 < 5% 强度按单调曲线压低）</td><td>人对暗区漏光最敏感（HVS 依据）</td></tr>
+    <tr><td>3</td><td><b>Chebyshev 矩可见性</b>（平均距离 + 距离平方 → 上界）</td><td>把"探针看不到的着色点"权重压下去（VSM 同源）</td></tr>
+    <tr><td>4</td><td><b>法线偏置</b>（按法线与探针方向偏移）</td><td>避开阴影/非阴影边界的权重失真</td></tr>
+    <tr><td>5</td><td><b>三线性插值</b>（着色点 ↔ 探针中心距离）</td><td>平滑空间过渡</td></tr>
+  </table>
+  <p><b>成立前提（原文写出）</b>：<i>"着色点处的入射光 ≈ 包围它的探针处的入射光——当且仅当二者互相可见"</i>。探针越稀，假设误差越大（漏光来源）；消融链（Fig 7）：传统探针 → +背面剔除 → +可见性 → +法线偏置 → 逼近路径追踪。</p>
+</div>
+
+<h2><span class="n">5</span>关键数字（原文核对）</h2>
+<div class="panel">
+  <table>
+    <tr><th>项</th><th>数字</th><th>出处</th></tr>
+    <tr><td>总帧时间</td><td><b>6 ms/frame</b>（1080p，RTX 2080 Ti）；对照离线路径追踪 <b>1 min/frame</b></td><td>Figure 1</td></tr>
+    <tr><td>间接光组件合计</td><td><b>2.6 ms</b>（32×8×32 探针、64 rays/probe）：ray cast 0.8 + ray shade 0.4 + 探针更新 0.7 + 查询 0.5 + 其余 0.3</td><td>Table 2</td></tr>
+    <tr><td>光追吞吐</td><td><b>&gt; 1.5 GRays/s</b>（多配置；876,127 primitives 场景）</td><td>Table 1</td></tr>
+    <tr><td>质量结论</td><td><b>"探针数量比探针分辨率更重要"</b>——低密度→漏光；低分辨率→基本无感</td><td>Fig 9–11</td></tr>
+    <tr><td>探针放置</td><td>人类尺度 <b>1–2 m 间距</b>；对网格旋转/平移鲁棒；失效例 = 着色区完全出网格</td><td>§4.1 / Fig 14</td></tr>
+  </table>
+</div>
+
+<h2><span class="n">6</span>谱系带：缓存族 → 合流 → 产品线</h2>
+<div class="chain">
+  <span class="chip"><b>1988</b> Ward 接收侧缓存</span><span class="arrow">→</span>
+  <span class="chip"><b>1997</b> IR（VPL）</span><span class="arrow">→</span>
+  <span class="chip"><b>2005</b> RSM（每像素固定样本）</span><span class="arrow">→</span>
+  <span class="chip hl"><b>2019 DDGI</b>：增量更新 + 滞后 + 矩可见性</span><span class="arrow">→</span>
+  <span class="chip"><b>2020</b> RTXGI v1 · 《逆水寒》首发</span><span class="arrow">→</span>
+  <span class="chip"><b>2021</b> Scaling for Production · DDGI Resampling</span><span class="arrow">→</span>
+  <span class="chip"><b>2024</b> RTXGI v2 并入 NRC / SHaRC</span><span class="arrow">→</span>
+  <span class="chip"><b>2026</b> ARC Raiders 等采用（二手）</span>
+</div>
+<p>"固定样本预算"家族在此多出一个节点：<b>每帧 m 探针 × n 射线</b>（1978 每灯 +1× → 1997 每 VPL 一遍 → 2005 每像素 ~400 → <b>2019 每帧 m×n 射线</b> → 2026 MegaLights 每像素采样预算）。</p>
+
+<h2><span class="n">7</span>对分档工作的三条借条</h2>
+<div class="grid2">
+  <div class="card"><h3>① 调参次序</h3><p><b>"数量 > 分辨率"</b>——预算先加在"探针数（网格密度）"上，再加"每探针精度"上。</p></div>
+  <div class="card"><h3>② 第二根预算轴</h3><p><b>"收敛可以从空间维度挪到时间维度"</b>——每帧射线数不足时，用滞后（时间滤波）跨帧摊销。</p></div>
+  <div class="card"><h3>③ 互补而非替代</h3><p>原文方法论：<b>"光追是光栅化的补充，不是替代"</b>——只在非相干可见性查询上动用 RT 核。</p></div>
+  <div class="card"><h3>档位旋钮</h3><p>DDGI 的档位 = 探针数 × 分辨率 × <b>更新率</b>——"档位 = 多个正交子系统的组合"的 GI 域实证。</p></div>
+</div>
+
+<div class="foot">
+  <p><b>来源与口径</b>：JCGT 官方低分辨率 PDF（30 页）逐页核对；官方引用页确认 vol. 8, no. 2, <b>pp. 1–30</b>（非 50–68）。产品线信息（逆水寒 2020 / RTXGI 版本 / ARC Raiders）为二手来源，已在论文笔记中标注。本页为 [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] 的配套图解。</p>
+</div>
+
+</div>
+</body>
+</html>
