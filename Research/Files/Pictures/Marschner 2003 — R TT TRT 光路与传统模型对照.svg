@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1730" viewBox="0 0 1600 1730" role="img" aria-labelledby="title desc">
+<title id="title">Marschner 2003：从经验高光到三条光路</title>
+<desc id="desc">与传统 Kajiya–Kay 头发着色对照。三个圆截面以 Snell 定律和反射定律构造 R、TT、TRT 光路；下方分别解释 Fresnel、内部吸收、方位分布和纵向高光偏移。原创示意，非按比例。</desc>
+<defs>
+<marker id="blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#2264b5"/></marker>
+<marker id="teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#087f86"/></marker>
+<marker id="orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#b75a19"/></marker>
+<marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#657383"/></marker>
+<style>text{font-family:'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',sans-serif;fill:#172c43} .muted{fill:#536579}.formula{font-family:'DejaVu Sans','Arial','PingFang SC',sans-serif}.label{font-weight:600}</style>
+</defs><rect width="1600" height="1730" fill="#f3f6fa"/>
+<text x="52" y="68" font-size="22" style="fill:#536579" font-weight="600">MARSCHNER 2003  /  头发散射</text>
+<text x="52" y="126" font-size="43" font-weight="700">从一个经验高光，走向三条可解释的光路</text>
+<text x="52" y="168" font-size="26">核心变化：让光进入发丝，把反射、透射、内部吸收和高光分离联系起来。</text>
+<rect x="52" y="201" width="720" height="167" rx="20" fill="#e7edf4" stroke="none"/>
+<rect x="792" y="201" width="756" height="167" rx="20" fill="#e4f1ef" stroke="none"/>
+<text x="76" y="244" font-size="27" font-weight="650">传统参照：Kajiya–Kay（1989）</text>
+<text x="76" y="283" font-size="25">经验镜面高光锥 + 漫反射项</text>
+<text x="76" y="322" font-size="23">不显式描述穿透、内反射及分离的次级高光。</text>
+<text x="817" y="244" font-size="27" font-weight="650">Marschner：半透明纤维 + 三种传输模式</text>
+<text x="817" y="283" font-size="25">R / TT / TRT：表面反射、穿透、一次内反射</text>
+<text x="817" y="322" font-size="23">内部吸收给颜色；鳞片倾角使高光位置分离。</text>
+<text x="52" y="419" font-size="29" font-weight="650">01  从发轴方向看截面：同一束入射光，三类路径</text>
+<text x="52" y="456" font-size="22" style="fill:#536579">圆截面示例  η = 1.55，h = 0.60；光线在法平面内。箭头为光的传播方向，虚线为局部法线。</text>
+<rect x="52" y="482" width="484" height="531" rx="20" fill="#ffffff" stroke="none"/>
+<rect x="52" y="482" width="484" height="7" rx="0" fill="#2264b5" stroke="none"/>
+<text x="76" y="528" font-size="30" style="fill:#2264b5" font-weight="700">R   表面反射</text>
+<text x="76" y="563" font-size="22" style="fill:#536579">p = 0 · 不进入内部</text>
+<circle cx="299" cy="700" r="102" fill="#f8e9d5" stroke="#b89a76" stroke-width="2"/>
+<path d="M177.000,700.000 L421.000,700.000" stroke="#d1c2ac" stroke-width="1" fill="none" stroke-linecap="round" stroke-dasharray="3 6"/>
+<circle cx="299" cy="700" r="3" fill="#8a765c" stroke="none" stroke-width="1"/>
+<path d="M243.512,658.384 L192.920,620.440" stroke="#8995a2" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+<circle cx="217.39999999999998" cy="638.8" r="4" fill="#2264b5" stroke="none" stroke-width="1"/>
+<path d="M82.760,638.800 L217.400,638.800" stroke="#2264b5" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#blue)"/>
+<text x="77" y="622" font-size="20" style="fill:#2264b5">入射</text>
+<path d="M217.400,638.800 L201.692,584.944" stroke="#2264b5" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#blue)"/>
+<text x="176.69199999999998" y="589.944" font-size="20" style="fill:#2264b5" text-anchor="end">出射</text>
+<text x="337" y="714" font-size="19" style="fill:#8a765c" text-anchor="middle">发丝内部</text>
+<path d="M108.000,700.000 L108.000,638.800" stroke="#8995a2" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<text x="119" y="676" font-size="21" style="fill:#536579">h</text>
+<text x="76" y="883" font-size="29" style="fill:#2264b5" class="formula">A<tspan baseline-shift="sub" font-size="72%">R</tspan> = F<tspan baseline-shift="sub" font-size="72%">i</tspan></text>
+<text x="76" y="927" font-size="24" font-weight="600">表面保留入射光的颜色</text>
+<text x="76" y="966" font-size="22">形成主高光；不受内部色素吸收。</text>
+<rect x="558" y="482" width="484" height="531" rx="20" fill="#ffffff" stroke="none"/>
+<rect x="558" y="482" width="484" height="7" rx="0" fill="#087f86" stroke="none"/>
+<text x="582" y="528" font-size="30" style="fill:#087f86" font-weight="700">TT   穿透</text>
+<text x="582" y="563" font-size="22" style="fill:#536579">p = 1 · 内部走一段</text>
+<circle cx="805" cy="700" r="102" fill="#f8e9d5" stroke="#b89a76" stroke-width="2"/>
+<path d="M683.000,700.000 L927.000,700.000" stroke="#d1c2ac" stroke-width="1" fill="none" stroke-linecap="round" stroke-dasharray="3 6"/>
+<circle cx="805" cy="700" r="3" fill="#8a765c" stroke="none" stroke-width="1"/>
+<path d="M749.512,658.384 L698.920,620.440" stroke="#8995a2" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+<circle cx="723.4" cy="638.8" r="4" fill="#087f86" stroke="none" stroke-width="1"/>
+<path d="M873.566,689.535 L936.082,679.993" stroke="#8995a2" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+<circle cx="905.8322805140112" cy="684.6100290336942" r="4" fill="#087f86" stroke="none" stroke-width="1"/>
+<path d="M588.760,638.800 L723.400,638.800" stroke="#087f86" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#teal)"/>
+<text x="583" y="622" font-size="20" style="fill:#087f86">入射</text>
+<path d="M723.400,638.800 L905.832,684.610" stroke="#087f86" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M800.022,658.040 L829.211,665.370" stroke="#087f86" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#teal)"/>
+<path d="M905.832,684.610 L999.328,734.725" stroke="#087f86" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#teal)"/>
+<text x="999.3280797846435" y="762.724916230471" font-size="20" style="fill:#087f86" text-anchor="middle">出射</text>
+<text x="582" y="883" font-size="29" style="fill:#087f86" class="formula">A<tspan baseline-shift="sub" font-size="72%">TT</tspan> = (1 − F<tspan baseline-shift="sub" font-size="72%">i</tspan>)² T</text>
+<text x="582" y="927" font-size="24" font-weight="600">到背光侧的透射</text>
+<text x="582" y="966" font-size="22">浅色发丝在逆光下更明亮。</text>
+<rect x="1064" y="482" width="484" height="531" rx="20" fill="#ffffff" stroke="none"/>
+<rect x="1064" y="482" width="484" height="7" rx="0" fill="#b75a19" stroke="none"/>
+<text x="1088" y="528" font-size="30" style="fill:#b75a19" font-weight="700">TRT   一次内部反射</text>
+<text x="1088" y="563" font-size="22" style="fill:#536579">p = 2 · 内部走两段</text>
+<circle cx="1311" cy="700" r="102" fill="#f8e9d5" stroke="#b89a76" stroke-width="2"/>
+<path d="M1189.000,700.000 L1433.000,700.000" stroke="#d1c2ac" stroke-width="1" fill="none" stroke-linecap="round" stroke-dasharray="3 6"/>
+<circle cx="1311" cy="700" r="3" fill="#8a765c" stroke="none" stroke-width="1"/>
+<path d="M1255.512,658.384 L1204.920,620.440" stroke="#8995a2" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+<circle cx="1229.4" cy="638.8" r="4" fill="#b75a19" stroke="none" stroke-width="1"/>
+<path d="M1379.566,689.535 L1442.082,679.993" stroke="#8995a2" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+<circle cx="1411.8322805140112" cy="684.6100290336942" r="4" fill="#b75a19" stroke="none" stroke-width="1"/>
+<path d="M1270.453,756.274 L1233.483,807.582" stroke="#8995a2" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+<circle cx="1251.3718526827688" cy="782.7555680755958" r="4" fill="#b75a19" stroke="none" stroke-width="1"/>
+<path d="M1094.760,638.800 L1229.400,638.800" stroke="#b75a19" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#orange)"/>
+<text x="1089" y="622" font-size="20" style="fill:#b75a19">入射</text>
+<path d="M1229.400,638.800 L1411.832,684.610" stroke="#b75a19" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M1306.022,658.040 L1335.211,665.370" stroke="#b75a19" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#orange)"/>
+<path d="M1411.832,684.610 L1251.372,782.756" stroke="#b75a19" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M1344.439,725.831 L1318.765,741.534" stroke="#b75a19" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#orange)"/>
+<path d="M1251.372,782.756 L1150.122,814.400" stroke="#b75a19" stroke-width="3.5" fill="none" stroke-linecap="round" marker-end="url(#orange)"/>
+<text x="1150.1217596356605" y="842.4002367885392" font-size="20" style="fill:#b75a19" text-anchor="middle">出射</text>
+<text x="1088" y="883" font-size="26" style="fill:#b75a19" class="formula">A<tspan baseline-shift="sub" font-size="72%">TRT</tspan> = (1 − F<tspan baseline-shift="sub" font-size="72%">i</tspan>)² F<tspan baseline-shift="sub" font-size="72%">t</tspan> T²</text>
+<text x="1088" y="927" font-size="24" font-weight="600">有色次级高光与方位闪光</text>
+<text x="1088" y="966" font-size="22">多走一段内部路程，再乘一次吸收。</text>
+<text x="52" y="1054" font-size="29" font-weight="650">02  “剩下多少光”与“光集中到哪里”要分别计算</text>
+<rect x="52" y="1079" width="720" height="294" rx="20" fill="#ffffff" stroke="none"/>
+<rect x="792" y="1079" width="756" height="294" rx="20" fill="#ffffff" stroke="none"/>
+<text x="76" y="1120" font-size="26" font-weight="650">路径权重 A：Fresnel × Beer 吸收</text>
+<text x="76" y="1160" font-size="25" class="formula">F<tspan baseline-shift="sub" font-size="72%">i</tspan> = F(η, γ<tspan baseline-shift="sub" font-size="72%">i</tspan>)；F<tspan baseline-shift="sub" font-size="72%">t</tspan> = F(1/η, γ<tspan baseline-shift="sub" font-size="72%">t</tspan>)</text>
+<text x="76" y="1196" font-size="22">T：每段内部吸收（非界面透射 T），按 RGB 计算。</text>
+<text x="76" y="1230" font-size="21">走得越远，吸收越多；R 不走内部，TT / TRT 会变色。</text>
+<text x="76" y="1264" font-size="21">h：按半径归一化的入射偏移；γ<tspan baseline-shift="sub" font-size="72%">i</tspan> / γ<tspan baseline-shift="sub" font-size="72%">t</tspan> 相对法线。</text>
+<text x="76" y="1298" font-size="21">上式沿用 §4.3 标量权重，限光滑圆柱、法平面入射。</text>
+<text x="76" y="1340" font-size="22" style="fill:#2264b5" font-weight="600">这些 A 只是路径权重，不是完整方向散射函数。</text>
+<text x="817" y="1120" font-size="26" font-weight="650">方位项 N：把入射位置映射到出射角</text>
+<text x="817" y="1160" font-size="25" class="formula">sin γ<tspan baseline-shift="sub" font-size="72%">i</tspan> = h；η sin γ<tspan baseline-shift="sub" font-size="72%">t</tspan> = h</text>
+<text x="817" y="1196" font-size="25" class="formula">φ(p,h) = 2pγ<tspan baseline-shift="sub" font-size="72%">t</tspan> − 2γ<tspan baseline-shift="sub" font-size="72%">i</tspan> + pπ</text>
+<text x="817" y="1233" font-size="25" class="formula">N<tspan baseline-shift="sub" font-size="72%">p</tspan>(φ) = Σ<tspan baseline-shift="sub" font-size="72%">r</tspan> A(p,h<tspan baseline-shift="sub" font-size="72%">r</tspan>) / |2 dφ/dh|<tspan baseline-shift="sub" font-size="72%">h</tspan><tspan baseline-shift="sub" font-size="72%">r</tspan></text>
+<text x="817" y="1270" font-size="21">先找所有到达 φ 的入射位置 h<tspan baseline-shift="sub" font-size="72%">r</tspan>，再累加方向密度。</text>
+<text x="817" y="1304" font-size="21">TRT 可有多个根；路径集中可产生 glints（闪光）。</text>
+<text x="817" y="1340" font-size="21" style="fill:#536579">原文式 (3)、(8)；φ 以朝外的入射方向为角度基准。</text>
+<rect x="52" y="1393" width="1496" height="237" rx="20" fill="#e7edf4" stroke="none"/>
+<text x="76" y="1434" font-size="28" font-weight="650">03  另一维度：鳞片倾斜改变纵向高光位置</text>
+<text x="76" y="1476" font-size="24">截面 φ → N<tspan baseline-shift="sub" font-size="72%">p</tspan>：绕发丝的方向分布。</text>
+<text x="76" y="1514" font-size="23">纵向 θ → M<tspan baseline-shift="sub" font-size="72%">p</tspan>：鳞片使 R 朝发根、TT / TRT 朝发梢偏移；粗糙度使高光展宽。</text>
+<text x="76" y="1553" font-size="27" class="formula">S = Σ<tspan baseline-shift="sub" font-size="72%">p</tspan> M<tspan baseline-shift="sub" font-size="72%">p</tspan> N<tspan baseline-shift="sub" font-size="72%">p</tspan> / cos²θd</text>
+<text x="544" y="1553" font-size="22">式 (9) 的结构简写；θd = (θr − θi) / 2。</text>
+<text x="76" y="1596" font-size="22" style="fill:#536579">上方纯截面没有画鳞片偏移。斜入射需虚拟折射率与路程修正；椭圆度和焦散平滑见 §5。</text>
+<text x="52" y="1667" font-size="19" style="fill:#536579">来源：Marschner et al., Light Scattering from Human Hair Fibers (2003)，PDF 第 1 页 Figure 1；第 6 页 Figure 9；第 7–8 页 §4.3–5。</text>
+<text x="52" y="1701" font-size="19" style="fill:#536579">对照依据：§1、Figure 12（PDF 第 10 页）。原创重绘，示意非按比例；只示三种模式，未包含发丝之间的多次散射。</text>
+</svg>

@@ -136,6 +136,7 @@ $$\frac{1}{N}\sum \frac{L_i f\cos\theta}{p}\;\approx\;\left(\frac{1}{N}\sum L_i\
 | 第二项 | **环境 BRDF**（纯 BRDF，把 $L_i$ 当作纯白） | 代入 Schlick 后 **$F_0$ 可提出积分**（式 8），得到两个只依赖 $(\text{Roughness},\ \cos\theta_v)$ 的输出 $A,B$，存 **2D R16G16 LUT** | 用 $(\text{Roughness}, n\cdot v)$ 查一次 |
 
 $$L_o \;\approx\; \text{PrefilteredColor}\times\Big(F_0\cdot A+B\Big)$$
+![[EnvBRDF2DLUT.png]]
 
 **两个近似的诚实排序（原文自己排的，请照抄这个判断）：**
 

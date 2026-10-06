@@ -234,6 +234,18 @@ UE Groom / TressFX / HairWorks —— 进引擎，只服务高端档
 
 ## Visualization
 
+### 原文重绘：三条光路与传统头发模型的区别
+
+![[Research/Files/Pictures/Marschner 2003 — R TT TRT 光路与传统模型对照.svg]]
+
+以 Kajiya–Kay 为参照，把 **R / TT / TRT 光路 → Fresnel 与吸收权重 → 方向散射 → 可见现象** 连起来。截面光路按圆柱几何构造；纵向鳞片偏移单独说明，不混画在截面中。路径权重 $A$ 不能直接当作完整散射函数 $S$。
+
+来源：[Marschner 2003 原文](https://www.cs.cornell.edu/~srm/publications/SG03-hair-lr.pdf)，PDF 第 1 页 Figure 1、第 6 页 Figure 9 与式 (3)、第 7 页 §4.3 与式 (8)–(9)、第 8 页 §5、第 10 页 Figure 12。图为原创示意，非按比例；上方光路采用光滑圆柱、法平面入射的简化条件。
+
+> 原文核对：式 (3) 为 $\varphi(p,h)=2p\gamma_t-2\gamma_i+p\pi$，入射角 $\gamma_i$ 与折射角 $\gamma_t$ 不能混为同一个角。§2.2 明确 $S$ 与表面 BRDF 的物理单位相同；不同的是底层光量按长度或面积定义。
+
+### 原有交互图解
+
 ![[Hair R·TT·TRT 三叶散射图解.html]]
 
 含：纤维截面与三条光路、倾角如何把两个高光推开、参数表、lobe↔视觉现象对照表、以及"为什么微面 BRDF 不适用"的度量对比。
@@ -242,3 +254,5 @@ UE Groom / TressFX / HairWorks —— 进引擎，只服务高端档
 
 - 引用信息已核实：ACM SIGGRAPH 2003 Papers，pp. 780–791；ACM TOG 22(3)；DOI 10.1145/1201775.882345。作者单位：Cornell（Marschner）、UCSD（Jensen）、Stanford（Cammarano、Hanrahan）、Worley Laboratories（Worley）。
 - 本次运行**已下载原文 PDF 并核对**：$\varphi(p,h)=2p\gamma-2\gamma+p\pi$、$M_p$ 高斯形式、$\alpha_{TT}=-\alpha_R/2$、$\alpha_{TRT}=-3\alpha_R/2$、Table 1 全部典型值、$\eta^*$ 椭圆度近似、"R 白 / TRT 有色 / 黑发无次高光"、"out-of-plane glints"、"Descartes rainbow" 均在原文中逐条确认。
+# Original
+![[LightScatteringFromHumanHairFibers.pdf]]
