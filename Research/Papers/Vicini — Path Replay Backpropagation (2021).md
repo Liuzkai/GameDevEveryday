@@ -16,7 +16,7 @@ production_readiness: "Research（但已是可微渲染的工具链标准件）"
 user_level: "Hard（推导层）/ Normal（结论层：重放换存储 + 4 条判据）"
 status: unread
 aliases: [Path Replay Backpropagation, PRB, 路径重放反向传播, Vicini 2021]
-tags: [classic, differentiable-rendering, inverse-rendering, monte-carlo, memory-budget]
+tags: [differentiable-rendering, inverse-rendering, monte-carlo, memory-budget]
 ---
 
 # Path Replay Backpropagation（Vicini, Speierer & Jakob 2021）

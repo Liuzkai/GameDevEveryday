@@ -2,7 +2,7 @@
 type: concept
 title: "Scalability and Quality Tiers"
 user_level: Easy
-tags: [performance, production, user-domain]
+tags: [performance]
 ---
 
 # Scalability and Quality Tiers

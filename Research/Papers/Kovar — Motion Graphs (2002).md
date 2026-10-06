@@ -16,7 +16,7 @@ production_readiness: "Industry Adopted（思想层：所有数据驱动动画�
 user_level: "Normal（框架层）/ Easy（混合与过渡的工程直觉层）"
 status: unread
 aliases: [Kovar 2002, Motion Graphs 2002, 运动图, Kovar-Gleicher-Pighin 2002]
-tags: [classic, animation, motion-synthesis, motion-graph, data-driven, transition]
+tags: [animation, motion-synthesis, motion-graph, data-driven, transition]
 ---
 
 # Motion Graphs（Kovar, Gleicher & Pighin 2002）

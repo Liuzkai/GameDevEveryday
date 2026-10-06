@@ -16,7 +16,7 @@ production_readiness: Industry Adopted
 user_level: Normal
 status: unread
 aliases: [Kajiya-Kay 1989, Kajiya-Kay hair, texel, 三维纹理渲染毛发]
-tags: [hair, classic, rendering, texture, lod, pbr-boundary]
+tags: [hair, rendering, texture, lod, pbr-boundary]
 ---
 
 # Rendering Fur with Three Dimensional Textures (Kajiya-Kay 1989)

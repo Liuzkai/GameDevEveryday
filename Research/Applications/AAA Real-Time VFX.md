@@ -2,7 +2,7 @@
 type: application
 title: "AAA Real-Time VFX"
 user_level: Easy
-tags: [vfx, production, user-domain]
+tags: [vfx]
 ---
 
 # AAA Real-Time VFX

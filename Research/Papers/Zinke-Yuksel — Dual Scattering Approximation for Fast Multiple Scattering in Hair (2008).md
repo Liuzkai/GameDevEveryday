@@ -16,7 +16,7 @@ production_readiness: Industry Adopted
 user_level: Normal
 status: unread
 aliases: [Dual Scattering, Zinke 2008, 双散射]
-tags: [hair, classic, rendering, multiple-scattering, real-time, transport]
+tags: [hair, rendering, multiple-scattering, real-time, transport]
 ---
 
 # Dual Scattering Approximation for Fast Multiple Scattering in Hair (Zinke / Yuksel 2008)

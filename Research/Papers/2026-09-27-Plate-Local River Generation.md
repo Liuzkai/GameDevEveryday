@@ -1,21 +1,35 @@
 ---
 type: paper
 title: "Plate-Local River Generation: Deterministic, Terrain-Aware, Downhill-Flowing Rivers for Infinite Procedural Worlds"
-authors: [Michael K. Davis III]
+authors:
+  - Michael K. Davis III
 year: 2026
-published: "2026-09-27（arXiv v1 提交；Fri 10-2 公告组放出）"
-venue: "arXiv Preprint（cs.GR；独立研究者）"
-url: "https://arxiv.org/abs/2610.00301"
-code: "https://github.com/Davismk3/plate-local-river-generation"
+published: 2026-09-27（arXiv v1 提交；Fri 10-2 公告组放出）
+venue: arXiv Preprint（cs.GR；独立研究者）
+url: https://arxiv.org/abs/2610.00301
+code: https://github.com/Davismk3/plate-local-river-generation
 project_page: ""
-category: [procedural-generation, terrain, hydrology, open-world, infinite-worlds]
+category:
+  - procedural-generation
+  - terrain
+  - hydrology
+  - open-world
+  - infinite-worlds
 importance: A-
 historical_importance: 0
 game_relevance: 5
-production_readiness: "Prototype（C++17 独立库 + 命令行导出器 + 交互查看器，无第三方依赖；M4 Max 上缓存构建 3-10 ms/板块、查询 ~1.1 µs/样本——离工程化不远，但无引擎集成）"
-user_level: "Normal"
-status: unread
-tags: [pcg, terrain, rivers, infinite-worlds, determinism, open-world, chunk-streaming]
+production_readiness: Prototype（C++17 独立库 + 命令行导出器 + 交互查看器，无第三方依赖；M4 Max 上缓存构建 3-10 ms/板块、查询 ~1.1 µs/样本——离工程化不远，但无引擎集成）
+user_level: Normal
+status:
+  - read
+tags:
+  - pcg
+  - terrain
+  - rivers
+  - infinite-worlds
+  - determinism
+  - open-world
+  - chunk-streaming
 ---
 
 # Plate-Local River Generation（Davis 2026）

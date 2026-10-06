@@ -15,7 +15,7 @@ game_relevance: 4
 production_readiness: Prototype（桌面 2.3–2.7× 3DGS；移动端 NPU 实测 73 FPS@540p）
 user_level: Normal（GS 之上的新研究；排序线新节点）
 status: unread
-tags: [gaussian-splatting, rendering, sorting-free, stochastic, mobile, npu, zju]
+tags: [gaussian-splatting, rendering, sorting-free, stochastic, mobile, npu]
 ---
 
 # Gaussian Stippling: Sorting-Free 3D Gaussian Rendering via Hybrid Sampling and Spatiotemporal Reconstruction（ZJU, 2026）

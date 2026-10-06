@@ -16,7 +16,7 @@ production_readiness: "Industry Adopted（思想层：CGA shape 与 CityEngine �
 user_level: "Normal"
 status: unread
 aliases: [Wonka 2003, Instant Architecture 2003, split grammar, split 文法, 立面生成]
-tags: [classic, pcg, architecture, shape-grammar, split-grammar, rule-selection]
+tags: [pcg, architecture, shape-grammar, split-grammar, rule-selection]
 ---
 
 # Instant Architecture（Wonka, Wimmer, Sillion & Ribarsky 2003）

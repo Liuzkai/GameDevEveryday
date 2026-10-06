@@ -14,7 +14,7 @@ game_relevance: "Medium"
 production_readiness: "Research"
 user_level: "Normal"
 status: unread
-tags: [game-ai, llm, rl, npc, runtime-adaptation]
+tags: [game-ai, llm, reinforcement-learning, npc, runtime-adaptation]
 ---
 
 # LLM-Guided RL for Adaptive NPC Behavior in Multi-Agent Combat Games

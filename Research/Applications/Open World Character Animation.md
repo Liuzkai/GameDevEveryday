@@ -2,7 +2,7 @@
 type: application
 title: "Open World Character Animation"
 user_level: Normal
-tags: [animation, open-world, production]
+tags: [animation, open-world]
 ---
 
 # Open World Character Animation

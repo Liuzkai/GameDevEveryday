@@ -2,7 +2,7 @@
 type: technology
 title: "Arm Neural Graphics (NSS / NFRU / NSSD)"
 user_level: Normal
-tags: [rendering, neural, mobile, production, industry-signal]
+tags: [rendering, neural, mobile]
 ---
 
 # Arm Neural Graphics (NSS / NFRU / NSSD)

@@ -16,7 +16,7 @@ production_readiness: "Industry Adopted（思想层：irradiance caching / final
 user_level: "Normal（结论层）"
 status: unread
 aliases: [Irradiance Caching, IC 1988, Ward 1988, 辐照度缓存, 漫反射反射的射线追踪解, A Ray Tracing Solution for Diffuse Interreflection]
-tags: [classic, gi, irradiance-caching, monte-carlo, ray-tracing, siggraph]
+tags: [gi, irradiance-caching, monte-carlo, ray-tracing]
 ---
 
 # A Ray Tracing Solution for Diffuse Interreflection（Ward 1988）

@@ -23,7 +23,6 @@ status:
 tags:
   - neural-rendering
   - real-time
-  - nvidia
   - dlss
   - generative
 ---

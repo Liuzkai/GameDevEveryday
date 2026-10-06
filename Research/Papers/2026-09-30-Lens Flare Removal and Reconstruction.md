@@ -15,7 +15,7 @@ game_relevance: 4
 production_readiness: "Prototype（实时实测 92.7 FPS @ 单光源场景，RTX 4090；对 3DGS 光栅器零改动）"
 user_level: Normal
 status: unread
-tags: [lens-flare, camera-effects, gaussian-splatting, capture, vfx, meta]
+tags: [lens-flare, camera-effects, gaussian-splatting, capture, vfx]
 ---
 
 # Lens Flare Removal and Reconstruction（Meta Reality Labs, 2026）

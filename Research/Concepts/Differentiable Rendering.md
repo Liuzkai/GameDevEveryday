@@ -2,7 +2,7 @@
 type: concept
 title: "Differentiable Rendering"
 user_level: Hard
-tags: [rendering, optimization, foundation]
+tags: [rendering, optimization]
 ---
 
 # Differentiable Rendering

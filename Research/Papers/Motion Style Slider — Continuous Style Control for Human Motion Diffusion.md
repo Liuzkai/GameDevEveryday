@@ -14,7 +14,7 @@ game_relevance: "High"
 production_readiness: "Research"
 user_level: "Normal"
 status: unread
-tags: [animation, style-transfer, diffusion, production-pipeline, game-studio-research]
+tags: [animation, style-transfer, diffusion, production-pipeline]
 ---
 
 # Motion Style Slider: Endpoint-Supervised Continuous Style Control

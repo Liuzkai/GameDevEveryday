@@ -2,7 +2,7 @@
 type: concept
 title: "Neural Rendering"
 user_level: Hard
-tags: [rendering, neural, foundation]
+tags: [rendering, neural]
 ---
 
 # Neural Rendering

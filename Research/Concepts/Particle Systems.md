@@ -5,7 +5,7 @@ user_level: Easy
 aliases: [Particle System, 粒子系统, Particle Simulation for VFX, Fuzzy Object Modeling]
 prerequisites: [Real-Time Rendering, GPU Architecture]
 first_introduced: "1983（William T. Reeves, ACM TOG 2(2)）"
-tags: [vfx, particles, simulation, rendering, user-domain, classic]
+tags: [vfx, particles, simulation, rendering]
 ---
 
 # Particle Systems

@@ -5,7 +5,7 @@ user_level: Easy
 aliases: [Shadow Map, Shadow Mapping, 阴影贴图, Depth Map from Light, 光源深度图]
 prerequisites: [Real-Time Rendering, Tile-Based Rendering]
 first_introduced: "1977–1978（Crow 提出两遍可见性；Williams 给出 Z-buffer 实现）"
-tags: [rendering, shadow, lighting, dynamic-lights, image-space, classic]
+tags: [rendering, shadow, lighting, dynamic-lights, image-space]
 ---
 
 # Shadow Mapping

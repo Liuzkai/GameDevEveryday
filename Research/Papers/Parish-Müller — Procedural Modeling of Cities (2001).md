@@ -16,7 +16,7 @@ production_readiness: Research
 user_level: Normal
 status: unread
 aliases: [Parish & Müller 2001, CityEngine 2001, 程序化城市生成]
-tags: [pcg, classic, l-system, city, cityengine, urban, production-pipeline]
+tags: [pcg, l-system, city, cityengine, urban, production-pipeline]
 ---
 
 # Procedural Modeling of Cities（Parish & Müller 2001）

@@ -28,8 +28,6 @@ tags:
   - brdf
   - pbr
   - fresnel
-  - classic
-  - easy-candidate
   - real-time-rendering
 ---
 

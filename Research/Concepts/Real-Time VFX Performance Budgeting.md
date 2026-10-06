@@ -2,7 +2,7 @@
 type: concept
 title: "Real-Time VFX Performance Budgeting"
 user_level: Easy
-tags: [vfx, performance, production, user-domain]
+tags: [vfx, performance]
 ---
 
 # Real-Time VFX Performance Budgeting

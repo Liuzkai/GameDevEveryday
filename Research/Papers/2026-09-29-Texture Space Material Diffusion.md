@@ -15,7 +15,7 @@ game_relevance: 4
 production_readiness: Research（离线工具形态；多视图重建 17 视角 @2K 约 130 s / GB300）
 user_level: Normal
 status: unread
-tags: [materials, texture, diffusion, nvidia, asset-pipeline, pbr]
+tags: [materials, texture, diffusion, asset-pipeline, pbr]
 ---
 
 # Texture Space Material Diffusion（NVIDIA, 2026）

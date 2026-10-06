@@ -15,12 +15,12 @@ game_relevance: 5
 production_readiness: "Prototype（定位：装载时代码器——非 ACL 的运行时替代；位精确整型推理；0.37×/0.22× ACL 字节数）"
 user_level: Normal
 status: unread
-tags: [animation, compression, codec, acl, production, character, learned-entropy]
+tags: [animation, compression, codec, acl, character, learned-entropy]
 ---
 
 # CurveCodec 2: Skeleton-agnostic animation compression with a learned entropy model
 
-> **入库 2026-10-06（Run #28）。** HKU（Mingyi Shi / Huancheng Lin / Taku Komura）× Adobe Research（Xuelin Chen）；前作 **CurveCodec 1（"Neural Codec for Skeletal Animation Compression"）已被 SIGGRAPH Asia 2026 Conference Papers 接收**（DOI 10.1145/3829340.3842192），本篇是它的重写版（"v2 replaces v1"）。10-3 提交、经 API"未公告先见"通道捕获。**本文开启库内一个新域：[[Animation Compression]]——动画数据被"存"和"传"的那一半问题**。
+> **入库 2026-10-06（Run 28）。** HKU（Mingyi Shi / Huancheng Lin / Taku Komura）× Adobe Research（Xuelin Chen）；前作 **CurveCodec 1（"Neural Codec for Skeletal Animation Compression"）已被 SIGGRAPH Asia 2026 Conference Papers 接收**（DOI 10.1145/3829340.3842192），本篇是它的重写版（"v2 replaces v1"）。10-3 提交、经 API"未公告先见"通道捕获。**本文开启库内一个新域：[[Animation Compression]]——动画数据被"存"和"传"的那一半问题**。
 
 ## TL;DR
 

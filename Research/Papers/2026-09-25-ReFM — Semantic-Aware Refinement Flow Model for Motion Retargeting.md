@@ -16,7 +16,7 @@ production_readiness: Prototype
 user_level: Normal
 status: unread
 aliases: [ReFM, 语义感知重定向细化, refinement flow retargeting]
-tags: [animation, retargeting, character-animation, motion, autodesk, pipeline]
+tags: [animation, retargeting, character-animation, motion, pipeline]
 ---
 
 # ReFM: Semantic-Aware Refinement Flow Model for Motion Retargeting（Autodesk Research 2026）

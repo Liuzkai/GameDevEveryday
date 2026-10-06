@@ -19,7 +19,7 @@ status: unread
 
 # Budgeted-GS: Real-Time Large-Scale Gaussian Splatting via Factoring LOD
 
-> **入库 2026-10-05（Run #27）。** 作者 Haipeng Wang（东软 Neusoft）；EG 2027 投稿预印本（28 页 + 附录，10-2 提交、10-5 窗口捕获，**"未公告先见"**）。它是本库 [[Gaussian Splatting]] 的新一条线——**LOD / 预算线**——也是"预算"主题第一次以**理论定律**的形态出现：**误差 ∝ N^(-2/d)（Zador 定律）**，且给出**可测量、可认证**的容量下限。
+> **入库 2026-10-05（Run 27）。** 作者 Haipeng Wang（东软 Neusoft）；EG 2027 投稿预印本（28 页 + 附录，10-2 提交、10-5 窗口捕获，**"未公告先见"**）。它是本库 [[Gaussian Splatting]] 的新一条线——**LOD / 预算线**——也是"预算"主题第一次以**理论定律**的形态出现：**误差 ∝ N^(-2/d)（Zador 定律）**，且给出**可测量、可认证**的容量下限。
 
 ## TL;DR
 

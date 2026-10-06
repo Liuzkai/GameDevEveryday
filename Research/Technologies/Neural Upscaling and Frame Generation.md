@@ -2,7 +2,7 @@
 type: technology
 title: "Neural Upscaling and Frame Generation"
 user_level: Normal
-tags: [rendering, neural, production, shipping]
+tags: [rendering, neural]
 ---
 
 # Neural Upscaling and Frame Generation

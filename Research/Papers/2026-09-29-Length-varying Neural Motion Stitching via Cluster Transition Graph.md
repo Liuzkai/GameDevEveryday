@@ -15,7 +15,7 @@ game_relevance: 4
 production_readiness: Research（代码即将放出；推理 14.5 ms 已接近实时）
 user_level: Normal
 status: unread
-tags: [animation, motion-stitching, motion-graph, transition, siggraph-asia, kaist]
+tags: [animation, motion-stitching, motion-graph, transition]
 ---
 
 # Length-varying Neural Motion Stitching via Cluster Transition Graph（KAIST, SIGGRAPH Asia 2026）

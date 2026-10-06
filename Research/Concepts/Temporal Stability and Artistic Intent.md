@@ -2,7 +2,7 @@
 type: concept
 title: "Temporal Stability and Artistic Intent"
 user_level: Normal
-tags: [neural, production, quality]
+tags: [neural, quality]
 ---
 
 # Temporal Stability and Artistic Intent

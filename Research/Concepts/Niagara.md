@@ -2,7 +2,7 @@
 type: concept
 title: "Niagara"
 user_level: Easy
-tags: [ue, vfx, user-domain]
+tags: [unreal-engine, vfx]
 ---
 
 # Niagara

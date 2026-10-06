@@ -2,7 +2,7 @@
 type: technology
 title: "Real-Time Global Illumination"
 user_level: Normal
-tags: [rendering, gi, production]
+tags: [rendering, gi]
 ---
 
 # Real-Time Global Illumination

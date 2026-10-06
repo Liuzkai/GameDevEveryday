@@ -2,7 +2,7 @@
 type: concept
 title: "Motion Matching"
 user_level: Normal
-tags: [animation, runtime, foundation]
+tags: [animation, runtime]
 ---
 
 # Motion Matching

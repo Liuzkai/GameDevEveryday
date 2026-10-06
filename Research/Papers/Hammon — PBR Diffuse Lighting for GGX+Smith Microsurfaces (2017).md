@@ -19,7 +19,7 @@ status: unread
 
 # PBR Diffuse Lighting for GGX+Smith Microsurfaces
 
-> **入库 2026-10-05（Run #27）。** 本库"经典队列"挂账**最长**的一篇：自 2026-09-19 进入队列（PBR 线），9-21/9-22/9-23/10-4 四次尝试原文均因 GDC Vault 旧 CDN（`twvideo01.ubm-us.net`）403 而失败，**阻塞 16 天**。今日经搜索命中**新 CDN 域名 `media.gdcvault.com`**，193 页幻灯片全文一次下载成功、逐页核对。**原文阻塞至此解除。**
+> **入库 2026-10-05（Run 27）。** 本库"经典队列"挂账**最长**的一篇：自 2026-09-19 进入队列（PBR 线），9-21/9-22/9-23/10-4 四次尝试原文均因 GDC Vault 旧 CDN（`twvideo01.ubm-us.net`）403 而失败，**阻塞 16 天**。今日经搜索命中**新 CDN 域名 `media.gdcvault.com`**，193 页幻灯片全文一次下载成功、逐页核对。**原文阻塞至此解除。**
 > 它是 [[Multiple Scattering and Energy Compensation]]「能量账本」的**漫反射侧**：此前五条补法全部是 **specular 侧**的账，本篇给出 diffuse 侧同题答案，并顺手回答了本库两个长期悬置的问题——**"PBR specular 里的 4 是哪来的"** 与 **"UE 的 Smith G1 近似（k=α/2）从哪来"**。
 
 ## TL;DR

@@ -16,7 +16,7 @@ production_readiness: Research
 user_level: Normal
 status: unread
 aliases: [ToCo-Mesh]
-tags: [gaussian-splatting, reconstruction, topology, animation, capture, siggraph-asia]
+tags: [gaussian-splatting, reconstruction, topology, animation, capture]
 ---
 
 # ToCo-Mesh: Topology-Consistent Dynamic Mesh Reconstruction via Adaptive Tessellation and Surface-Aligned 2DGS

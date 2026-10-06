@@ -14,7 +14,7 @@ game_relevance: "Critical"
 production_readiness: "Prototype"
 user_level: "Normal"
 status: unread
-tags: [real-time-rendering, lighting, optimization, differentiable, mobile, tencent]
+tags: [real-time-rendering, lighting, optimization, differentiable, mobile]
 ---
 
 # LightOpt: Lights Optimization for Real-time Rendering

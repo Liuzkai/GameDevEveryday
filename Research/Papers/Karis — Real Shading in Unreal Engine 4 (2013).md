@@ -31,7 +31,6 @@ tags:
   - real-time-rendering
   - unreal-engine
   - split-sum
-  - classic
 ---
 
 # Real Shading in Unreal Engine 4 (Karis 2013)

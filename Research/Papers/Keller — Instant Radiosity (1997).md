@@ -16,7 +16,7 @@ production_readiness: "Industry Adopted（思想层：VPL / '把光路顶点变�
 user_level: "Normal"
 status: unread
 aliases: [Instant Radiosity, IR 1997, VPL, virtual point light, 虚拟点光源, 即时辐射度, Keller 1997]
-tags: [classic, gi, radiosity, vpl, many-lights, quasi-monte-carlo, siggraph]
+tags: [gi, radiosity, vpl, many-lights, quasi-monte-carlo]
 ---
 
 # Instant Radiosity（Keller 1997）

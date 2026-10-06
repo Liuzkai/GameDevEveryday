@@ -16,7 +16,7 @@ production_readiness: "Industry Adopted（思想层；原文系统当时未实�
 user_level: "Easy（机制层）/ Normal（成本模型层）"
 status: unread
 aliases: [Clark 1976, Hierarchical Geometric Models, 层级几何模型, LOD 起源]
-tags: [classic, lod, scalability, visibility, rendering, engine-architecture, budget]
+tags: [lod, scalability, visibility, rendering, engine-architecture, budget]
 ---
 
 # Hierarchical Geometric Models for Visible Surface Algorithms（Clark 1976）

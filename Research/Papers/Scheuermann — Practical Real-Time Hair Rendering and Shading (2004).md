@@ -16,7 +16,7 @@ production_readiness: Industry Adopted
 user_level: Normal
 status: unread
 aliases: [Scheuermann 2004, 实时毛发工程三刀]
-tags: [hair, classic, rendering, real-time, sorting, early-z, production]
+tags: [hair, rendering, real-time, sorting, early-z]
 ---
 
 # Practical Real-Time Hair Rendering and Shading (Scheuermann 2004)

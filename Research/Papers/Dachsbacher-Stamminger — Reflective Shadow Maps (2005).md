@@ -31,13 +31,11 @@ aliases:
   - 像素光源
   - Dachsbacher 2005
 tags:
-  - classic
   - gi
   - indirect-lighting
   - real-time
   - many-lights
   - rsm
-  - i3d
   - real-time-rendering
 ---
 
@@ -210,4 +208,4 @@ tags:
 - **来源核对**：正文 PDF（UCSC 课程镜像 `users.soe.ucsc.edu/~pang/160/s13/.../p203-dachsbacher.pdf`，pypdf 提取 7 页全文逐节核对；数值均取自原文 Table 1 与正文）。
 - **页码核验**：正文页脚 **203–208**（第 7 页为图版，页脚 231）；ACM 注册记录（CrossRef / OpenAlex 一致）作 **203–231**——两说并存，本笔记引用以正文 **203–208** 为准。
 - **历史彩蛋**：[[Keller — Instant Radiosity (1997)]] 的致谢里感谢 *"Marc Stamminger, providing access to the Reality Engine 2"*——**8 年后，Stamminger 正是本文（RSM）的共同作者**。硬件提供者与后续作者是同一人，这条线自己把自己接上了。
-- 入库日：2026-10-03（Run #25）；[[Global Illumination]] 谱系表第 6 行"RSM"自此从"记名待入库"改为 ✅。
+- 入库日：2026-10-03（Run 25）；[[Global Illumination]] 谱系表第 6 行"RSM"自此从"记名待入库"改为 ✅。

@@ -15,12 +15,12 @@ game_relevance: 4
 production_readiness: "Prototype（3000 股 0.460 ms/帧、线性扩展到 12 万股免重训；Meta 头像/游戏场景明确列为目标）"
 user_level: "Normal（机制层）"
 status: unread
-tags: [hair, hair-simulation, neural-simulation, physics, meta, nvidia, real-time]
+tags: [hair, hair-simulation, neural-simulation, physics, real-time]
 ---
 
 # Neuroll: Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling
 
-> **入库 2026-10-06（Run #28）。** Meta（Vancouver/USA）× Meta Reality Labs × NVIDIA（Tuur Stuyck）联合；**ACM TOG 投稿**；10-3 提交、经 API"未公告先见"通道捕获。**本文是库内毛发线的"仿真轴"第一节点**——此前毛发线（[[Hair Rendering]]）全部节点（Kajiya-Kay 1989 / Marschner 2003 / Scheuermann 2004 / Zinke 2008 / HairCS 2026）都在**渲染侧**；这一篇回答另一半问题：**"头发怎么动"**。
+> **入库 2026-10-06（Run 28）。** Meta（Vancouver/USA）× Meta Reality Labs × NVIDIA（Tuur Stuyck）联合；**ACM TOG 投稿**；10-3 提交、经 API"未公告先见"通道捕获。**本文是库内毛发线的"仿真轴"第一节点**——此前毛发线（[[Hair Rendering]]）全部节点（Kajiya-Kay 1989 / Marschner 2003 / Scheuermann 2004 / Zinke 2008 / HairCS 2026）都在**渲染侧**；这一篇回答另一半问题：**"头发怎么动"**。
 
 ## TL;DR
 

@@ -16,7 +16,7 @@ production_readiness: Industry Adopted
 user_level: Normal
 status: unread
 aliases: [Marschner 2003, Marschner hair, R TT TRT, 毛发散射模型]
-tags: [hair, brdf, classic, scattering, pbr-boundary]
+tags: [hair, brdf, scattering, pbr-boundary]
 ---
 
 # Light Scattering from Human Hair Fibers (Marschner 2003)

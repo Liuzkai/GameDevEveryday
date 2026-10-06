@@ -16,7 +16,7 @@ production_readiness: Industry Adopted
 user_level: Normal（研读中）
 status: read
 aliases: [Kulla-Conty 2017, Kulla Conty, Energy Compensation, 微面能量补偿, fms, Imageworks 2017]
-tags: [rendering, brdf, microfacet, energy-conservation, multiple-scattering, pbr, production]
+tags: [rendering, brdf, microfacet, energy-conservation, multiple-scattering, pbr]
 ---
 
 # Revisiting Physically Based Shading at Imageworks

@@ -16,7 +16,7 @@ production_readiness: "Industry Adopted（NVIDIA RTXGI SDK 产品化：2020-03 v
 user_level: "Normal（结论层）"
 status: unread
 aliases: [DDGI, Dynamic Diffuse GI, 动态漫反射全局光照, 辐照度场, irradiance field, ray-traced irradiance fields, Majercik 2019, RTXGI 论文]
-tags: [classic, gi, probes, irradiance-field, ray-tracing, real-time, jcgt]
+tags: [gi, probes, irradiance-field, ray-tracing, real-time]
 ---
 
 # Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields（Majercik et al. 2019）

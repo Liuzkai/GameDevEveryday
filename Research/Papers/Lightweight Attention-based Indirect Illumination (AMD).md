@@ -14,7 +14,7 @@ game_relevance: "Medium-High"
 production_readiness: "Research"
 user_level: "Hard"
 status: unread
-tags: [gi, neural-rendering, rsm, ivpl, amd, real-time]
+tags: [gi, neural-rendering, rsm, ivpl, real-time]
 ---
 
 # Lightweight Attention-based Indirect Illumination (AMD, SIGGRAPH 2026)
