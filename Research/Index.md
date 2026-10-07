@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-06]]（昨日：[[2026-10-05]]）
+- **今日**：[[2026-10-07]]（昨日：[[2026-10-06]]）
 - **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；下一周 W41 待产出，覆盖 10-5 ~ 10-11）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ **2026-10-05 已按实际阅读记录校正**（27 篇已读 / Cook-Torrance 确认 Easy / 检查点 9-18）——推送按校正结果组织，不再按推断值
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-07（已读 30 篇：Karis / DSD / River 转 read；Karis 读后 PBR 阅读侧全清）**——推送按校正结果组织
 
-## Papers（84）
+## Papers（88）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -104,6 +104,10 @@ created: 2026-09-07
 | [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]] | A- | **Normal（机制层）** | **高（★ 毛发"仿真轴"首节点：神经时间积分器"镜像"经典积分器 I/O；模拟器在环 + 随机视界；3000 股 0.460 ms/帧、动态帧 2000 打满（前作 131）、12 万股免重训；strand-space 消融 0.632 vs 0.342 = "表示即先验"最干净量化）** ★ 2026-10-06 |
 | [[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model]] | A- | **Normal（推断）** | **最高（★ 动画压缩域开线：两阶段 = 经典决策 + 学习熵编码；0.37×/0.22× ACL 字节（两种契约口径）；"误差界即档位"（0.01–1cm）+ 契约/回退/计数 = 预算可认证性第三形态；ACL 作者邮件 = 引擎三本账一手资料）** ★ 2026-10-06 |
 | [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] | A（经典） | **Normal（结论层）** | **最高（★ 缓存族第四节点/现代形态：探针网格 × 8×8+16×16 编码 × 每帧 m×n 射线 × 滞后摊销 × Chebyshev 矩可见性；6 ms/frame vs 1 min/frame；"探针数量 > 分辨率"调参次序；"光追补充光栅化"分工原句；RTXGI 产品线起点——**Neural GI 桥经典侧自此完整**）** ★ 2026-10-06 |
+| [[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]] | S（经典） | **Normal（能量页）** | **最高（★ Weta 生产毛发模型：球面高斯卷积重建守恒 M_p（非高斯 + off-specular peak）+ 方位向取消求根改积分 + 任意阶（TRRT ≈ 白发掠射 15%）；"白环境实验"= 毛发版 furnace test；pbrt-v4 采用其 M_p 与色素 RGB；与用户进行中的 Marschner 深读直系对接）** ★ 2026-10-07 |
+| [[2026-10-05-Neural Emission Fields — Real-time Rendering of Pre-integrated Neural Emitters]] | A- | Normal | **高（★ "取消运行时积分"：预集成 + 神经场 = 可携带照明资产（平移/旋转/缩放免重训）；全高清 1.2/2.5 ms 恒定、交叉点 267 顶点（Dragon 436k 顶点上解析法 ~1952 ms）；对照 oracle 代理需 ~734 spp；预计算存法谱系第 ⑤ 种；MegaLights 的"零采样"互补面）** ★ 2026-10-07 |
+| [[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering]] | A- | Normal | **高（★ GS 排序线第 6 节点（收口）：训练方差正则 + 时空重采样"生干净"；1 spp 31.44 dB（+13.1 dB vs 前作）、收敛极限与排序版 L1 < 10⁻⁴；3DGS 原班人马（Kerbl/Kopanas）+ SVGF 血统（Wyman）；"档位 = 采样数"每档可交付）** ★ 2026-10-07 |
+| [[2026-10-06-PhysLDM — Latent Diffusion for High-Fidelity Deformable Simulation]] | B+ | **Hard（取三条抽象）** | 中（**"混沌判据"：混沌动力学上确定性回归收敛到非物理平均值、扩散才建模分布；时空 VAE 78× 压缩 / 2.48 mm；可微逆问题 40 秒级（vs DiffIPC 26 分钟）**） ★ 2026-10-07 |
 
 ## Concepts（33）
 
