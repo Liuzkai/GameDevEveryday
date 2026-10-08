@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-07
+updated: 2026-10-08
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 30
@@ -13,6 +13,7 @@ read_paper_count: 30
 > `reading_checkpoint` 是用户的阅读位置，不是按论文发布时间划定的已读边界，也不是实际完成阅读的日期。部分较晚入库的论文同样已标 `read`，一并计入；较早但仍为 `unread` 的论文不自动改成已读。
 >
 > **2026-10-07 更新（阅读推进，逐文件核实）**：已读 **27 → 30 篇**——[[Karis — Real Shading in Unreal Engine 4 (2013)]] / [[2026-09-17-DSD — Diffusion Skill Discovery]] / [[2026-09-27-Plate-Local River Generation]] 三篇转 `read`。**Karis 读后 PBR 阅读侧全清**（唯一剩余动作 = furnace test）；**Marschner 深读进行中**（status 仍为 `unread`，不代改——用户自制 R/TT/TRT 光路 SVG、三处勘误、挂载原文 PDF）；用户新建学习白板 `Learning/Canvas/Notes.canvas`（Shading Model D/G/F + IBL/Split-Sum + Marschner 三线，含 EnvBRDF LUT 补图）。
+> **2026-10-08 更新（仅资料侧；个人阅读状态无变化）**：毛发线第六节点补齐——[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS 生产模型；自测 18 → **21 条**；六节点闭合 1989→2016）；**面部域开线**——新概念 [[Facial Animation]] + 首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（结论层 Normal 可读）；物理域新增经典侧地图（Multiphysics 教程，待按需查阅）。
 
 ## 如何理解和更新这个模型
 
@@ -90,7 +91,8 @@ read_paper_count: 30
 2. **多次散射由阅读转向验证**：四篇已读不必再按“首次介绍”推送。先用自己的话比较 Kulla–Conty、Heitz、Fdez-Agüera 与 Dupuy 的目标、假设和实时成本，再按所测 BSDF 的条件设计 white furnace test，记录能量守恒与补偿开关差异。普通环境光下的粗糙度对比可作观察，不能替代受控测试。
 3. **动画线允许继续前进**：以 LMM 为检索 / 学习基线，对照 STyMo / FlexMoGen 的风格控制、UniMo 的表示、EMODY / GestureFAR 的音频驱动与流式延迟。Motion Matching 自测作为补缺工具，不要求完成后才读所有生成动画。
 4. **Hard 按具体问题建桥**：可微方向从已读 GradRig / PBR-Latent 引出“优化什么参数、损失是什么、梯度从哪里来”，再用 [[Learning Path — Differentiable Rendering]] 补缺；神经方向沿 [[Learning Path — Neural Rendering]] 补训练侧概念。
-5. **毛发线已启动（2026-10-07 更新）**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] **深读进行中**（自制光路 SVG + 三处勘误 + 原文 PDF 挂载；status 未改）；配套材料已补 [[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]]（能量页，Weta 生产模型）。仍为未读：[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]、[[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]；[[2026-09-17-DSD — Diffusion Skill Discovery]] ✅ 已读。
+5. **毛发线已启动（2026-10-07 更新）**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] **深读进行中**（自制光路 SVG + 三处勘误 + 原文 PDF 挂载；status 未改）；配套材料已补 [[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]]（能量页，Weta 生产模型）。**（2026-10-08 更新）生产化页补入**：[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS；near-field 取消求积 + logistic + 第四叶）——**自测 18 → 21 条**，六节点闭合（1989→2016）；阅读顺序不变（Marschner → d'Eon 2011 → [可选] Chiang 2016 → 21 条自测）。仍为未读：[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]、[[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]；[[2026-09-17-DSD — Diffusion Skill Discovery]] ✅ 已读。
+6. **面部线开线（2026-10-08，资料侧）**：[[Facial Animation]] 概念建立 + [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]] 入库——**按需阅读（结论层 ≈20 分钟），不设硬动作**；blendshape 基础列为未来按需材料。
 
 后续推荐避免重讲已读论文；只有用于对照、回答具体疑问或支撑实践时才回引。优先延续 PBR / 微面理论主线，同时保留动画与神经渲染的工程入口。此处优先级来自本次阅读分布的推断，不代表用户已经承诺执行这些练习。
 
@@ -103,7 +105,7 @@ read_paper_count: 30
 | PBR / BRDF 五篇、共 25 条自测清单 | **五篇全部已读（Karis 2026-10-07 转 read）**；无全部通过记录 | 完成相应自测后再判断整体是否 Easy |
 | 多次散射 | 四篇已读；推导与实践未确认 | 概念比较、数学理解、引擎实测分开记录；一次观感测试不代表掌握整个领域 |
 | Motion Matching 六项 | LMM 已读；判据完成情况未知 | 可按实际疑问检查，不自动增加必做任务 |
-| Hair Rendering 十八项 | Marschner 深读中；d'Eon 2011 能量页入材料（2026-10-07） | 从进行中的 Marschner 继续，后续按需补充 |
+| Hair Rendering 二十一项 | Marschner 深读中；d'Eon 2011 能量页 + Chiang 2016 生产化页入材料（2026-10-08） | 从进行中的 Marschner 继续，后续按需补充 |
 | 可微渲染四项 / 神经渲染五项 | 已有应用侧阅读入口；判据通过情况未知 | 沿对应 Learning Path 逐项确认 |
 | 阴影占比 / 屏占比粒子密度 / 动态灯光分档复审 | 旧模型提出过，未见执行结果 | 保留为可选实践；不得从资料入库推断已执行 |
 

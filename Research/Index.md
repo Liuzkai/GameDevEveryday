@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-07]]（昨日：[[2026-10-06]]）
+- **今日**：[[2026-10-08]]（昨日：[[2026-10-07]]）
 - **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；下一周 W41 待产出，覆盖 10-5 ~ 10-11）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-07（已读 30 篇：Karis / DSD / River 转 read；Karis 读后 PBR 阅读侧全清）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-08（毛发线六节点闭合；面部域开线）**——推送按校正结果组织
 
-## Papers（88）
+## Papers（92）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -108,8 +108,12 @@ created: 2026-09-07
 | [[2026-10-05-Neural Emission Fields — Real-time Rendering of Pre-integrated Neural Emitters]] | A- | Normal | **高（★ "取消运行时积分"：预集成 + 神经场 = 可携带照明资产（平移/旋转/缩放免重训）；全高清 1.2/2.5 ms 恒定、交叉点 267 顶点（Dragon 436k 顶点上解析法 ~1952 ms）；对照 oracle 代理需 ~734 spp；预计算存法谱系第 ⑤ 种；MegaLights 的"零采样"互补面）** ★ 2026-10-07 |
 | [[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering]] | A- | Normal | **高（★ GS 排序线第 6 节点（收口）：训练方差正则 + 时空重采样"生干净"；1 spp 31.44 dB（+13.1 dB vs 前作）、收敛极限与排序版 L1 < 10⁻⁴；3DGS 原班人马（Kerbl/Kopanas）+ SVGF 血统（Wyman）；"档位 = 采样数"每档可交付）** ★ 2026-10-07 |
 | [[2026-10-06-PhysLDM — Latent Diffusion for High-Fidelity Deformable Simulation]] | B+ | **Hard（取三条抽象）** | 中（**"混沌判据"：混沌动力学上确定性回归收敛到非物理平均值、扩散才建模分布；时空 VAE 78× 压缩 / 2.48 mm；可微逆问题 40 秒级（vs DiffIPC 26 分钟）**） ★ 2026-10-07 |
+| [[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]] | A（经典） | **Normal（生产化页）** | **最高（★ WDAS 生产毛发模型：near-field 取消 70 点求积（把宽度积分外包给路径追踪器；毛发着色 ~20× / 整帧 >10×：869→76 min）+ logistic 方位分布 + 第四叶折无穷阶（furnace test 通过）+ 感知均匀六参数；**毛发谱系六节点闭合（1989→2016）**；⚠️ 更正此前 "Pixar" 误记——实为 Walt Disney Animation Studios）** ★ 2026-10-08 |
+| [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting]] | A- | **Normal（结论层）** | **高（★ 面部线首节点："四个不需要"（无 cage / 预计算坐标 / 解码器 / 全局求解）的点基双因子——身份权重算一次 × 表情控制点每帧 = 矩阵乘积；183 帧端到端 1 秒（对手 25 s / 17 s）；30 人用户研究双第一；风格化头泛化；GALA"分解家族"、ReFM"重定向对"）** ★ 2026-10-08 |
+| [[2026-10-07-DynaConTalk — Wavelet-Constrained Diffusion for Long-Form and Controllable Holistic Co-Speech 3D Motion]] | A- | **Normal（结论层）** | **高（★ "换空间"家族第 3 例（小波系数空间）：同位姿误差下时间抖动 −89.4% / 分布距离 −92.1%；FGD 1.75（对比最好 3.56）；matched-noise 三合一（延续/修复/参考）；自带 FGD 频带审计（99.51% / 9.14%）；代码已放出）** ★ 2026-10-08 |
+| [[2026-10-07-Simulation Methods for Multiphysics Phenomena in Visual Computing]] | B+ | **Normal（地图层）/ Hard（推导层）** | **中（★ Bender 组（RWTH Aachen）EG 2026 教程：能量 / 约束（PBD·XPBD）/ 粒子（SPH）/ 欧拉-混合（MPM）四族全景 + 耦合 + 框架选型 + ML 趋势——物理域"查阅式地图"，地位对照 [[Real-Time Rendering]]）** ★ 2026-10-08 |
 
-## Concepts（33）
+## Concepts（34）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -140,6 +144,7 @@ created: 2026-09-07
 - [[Neural Upscaling and Frame Generation]]（实为 Technology）
 - [[Temporal Stability and Artistic Intent]]
 - [[Animation Compression]] ★ 2026-10-06 入库（**动画线"数据侧"第一节点**：三本账（内存/解码/导入）+ 误差界即档位 + "运行时代码器 vs 装载时代码器"分工；源头 CurveCodec 2 / ACL）
+- [[Facial Animation]] ★ 2026-10-08 入库（**面部域开线（库内最后的大品类空白）**：重定向 = "身份 × 表情"分解 + 三种失败模式（表面噪声/全局耦合/身份泄漏）；首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（点基双因子，"四个不需要"）；挂载位：GALA（化身表示）/ emg2face（非光学捕捉，记名））
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -198,9 +203,9 @@ Research/
 
 ---
 
-最后更新：2026-10-06（Run #28：**分工日 —— 四样本同题"接管的边界" + 读者反馈闭环** —— 前沿 2 篇入库：**[[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]**（毛发**仿真轴**首节点；神经积分器镜像经典 I/O；0.460 ms/3000 股；动态 2000 帧打满）与 **[[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model|CurveCodec 2]]**（动画压缩域开线；0.37×/0.22× ACL；**"误差界即档位"**）；经典头条 **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]**（缓存族第四节点/现代形态——**Neural GI 桥经典侧完整**）；**🔴 PKM 已按实际阅读记录校正（27 篇已读）**——推送按校正结果组织；产业：**E-Day 发售日**（4K 原生需 5090 / Steam 85% / 峰值创系列纪录 / 遍历卡顿新样本））
+最后更新：2026-10-08（Run #30：**毛发生产化日 —— 六节点闭合 + 面部域开线** —— 经典：[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS 生产毛发模型；near-field 取消 70 点求积 / logistic / 第四叶；着色 ~20×；⚠️ 此前 "Pixar" 系误记，已更正）；前沿 3 篇入库：[[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（面部重定向"四个不需要"）· [[2026-10-07-DynaConTalk — Wavelet-Constrained Diffusion for Long-Form and Controllable Holistic Co-Speech 3D Motion|DynaConTalk]]（小波带扩散；同误差 −89.4%）· [[2026-10-07-Simulation Methods for Multiphysics Phenomena in Visual Computing|Multiphysics 教程]]（Bender 组）；新概念 [[Facial Animation]]；产业：**NVIDIA RTX Spark 发布**（N1X 平台；10-16 上架）+ E-Day 售后线）
+　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011（毛发能量页）+ NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry
+　　▸ **10-6 回顾**（Run #28）：**分工日**——Neuroll（毛发仿真轴）+ CurveCodec 2（动画压缩开线）+ DDGI 2019（缓存族封顶）；PKM 按实际阅读校正
 　　▸ **10-5 回顾**（Run #27）：**漫反射侧结账日**——Hammon 2017（阻塞 16 天经新 CDN 解除；PBR 经典队列清空）+ Budgeted-GS（GS 预算线开线、Zador 定律）
 　　▸ **10-4 回顾**（Run #26）：缓存族第三源日（Ward 1988）——三源齐 + W40 周报
 　　▸ **10-3 回顾**（Run #25）：缓存族双源日——RSM 2005 + IR 1997；"固定样本预算"四连；River + GALA
-　　▸ **10-2 回顾**（Run #24）：**立面细节日**——Wonka 2003（PCG 四节点齐全）+ Lens Flare（光学效应开线）+ E-Day 实测到账
-　　▸ **10-1 回顾**（Run #23）：**运动缝合日**——Kovar 2002（动画线首个经典锚点）+ NMS 变长转移（24 年对子）+ GS "取消排序"线第 5 节点

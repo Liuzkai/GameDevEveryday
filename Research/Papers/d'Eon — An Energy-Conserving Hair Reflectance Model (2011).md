@@ -51,7 +51,7 @@ Zinke-Weber 2007（BCSDF 形式化；但前向散射丢一半——本文图 6 �
         ↓
 ★ 2011 本文（Weta）：能量守恒重建 + 取消求根 + 任意阶
         ↓
-（后续：Chiang 2016 消除宽度积分 → 生产化主流实现；本库记名）
+（后续：Chiang 2016 消除宽度积分 → 生产化主流实现；**2026-10-08 已入库**）
 ```
 
 ## Core Idea
@@ -144,7 +144,7 @@ $$N_p(\varphi)=\frac{1}{2}\int_{-1}^{1}A(p,h)\,D_p\big(\varphi-\Phi(p,h)\big)\,d
         ↓
 ★ 2011 本文（Weta）：守恒 M_p + 取消求根 + 任意阶 —— 并把双散射"扶正"
         ↓
-2016 Chiang et al.（Pixar）：消除宽度积分 → 生产化主流（库外，记名）
+2016 Chiang et al.（**Walt Disney Animation Studios**；⚠️ 此前误记 "Pixar"，2026-10-08 更正）：near-field 消除宽度积分 + logistic + 第四叶 → 生产化主流（**2026-10-08 入库**）
 2016+ 影视/离线事实标准的一部分
 ```
 
@@ -172,7 +172,7 @@ $$N_p(\varphi)=\frac{1}{2}\int_{-1}^{1}A(p,h)\,D_p\big(\varphi-\Phi(p,h)\big)\,d
 
 ### Followed By
 
-- Chiang et al. 2016（Pixar，记名未入库：消除宽度积分的高效生产实现）；d'Eon et al. 2014（non-separable 模型，记名）
+- [[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]] —— ★ **2026-10-08 已入库**：本篇的直系生产实现（沿用守恒 M_p 与 dMH13 采样；near-field 取消求积 + logistic + 第四叶；着色 ~20×）；⚠️ 更正：作者单位为 WDAS（此前 "Pixar" 系误记）。另有 d'Eon et al. 2014（non-separable 模型，库外记名）
 
 ## Personal Knowledge State
 
