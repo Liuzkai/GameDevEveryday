@@ -155,6 +155,16 @@ Android_Low  保底，优先稳定帧率
 1. **调参次序（DDGI）："探针数量比探针分辨率更重要"** —— 低密度 → 漏光（质量崩），低分辨率 → 基本无感。**含义**：预算应先加在"数量"上再加"精度"上（探针数=网格密度 ↔ 你的"灯数/粒子数"；分辨率 ↔ "贴图尺寸/采样数"）——"我的预算该先加在哪一边"有了一条实证答案；附带 DDGI 的三旋钮（探针数 × 分辨率 × **更新率**）与"**收敛可从空间维度挪到时间维度**"（滞后摊销 = 第二根预算轴）。
 2. **误差界即档位（CurveCodec 2 / [[Animation Compression]]）**：动画数据侧把档位设计成**误差契约**（0.01 / 0.1 / 1 cm 连续可选），且**逐片段验证 + 不达标回退 + 回退率计数**——"预算的可认证性"（对偶证书 / Ward 容限之外）的**第三种工程形态**。**自查题**：我的任一维度（粒子/灯光/贴图）能不能从"数值上限"改写成"误差/质量声明 + 验证"？
 
+### 🔴 2026-10-07 续记：E-Day 全评测 + "标准层"变化两条
+
+> 《战争机器：E-Day》发售次日全评测落地（NVIDIA 官方 blog / DSOGaming / Gadgets360 / Gizbot）。三条与分档直接相关：
+
+1. **RTX Mega Geometry 将被微软 DXR 2.0 标准化（NVIDIA 官方原话：codifying "for the entire game industry"，"making ray-traced Nanite possible in all UE5 games"）**——**含义（推断）：光追 Nanite 从"NV 独占方案"变为"标准能力"**；跨平台"最高档几何流式"的差异是**时间窗口问题**，不是永久鸿沟。分档体系里凡"依赖厂商专属能力"的档位，都要标一个"**标准化的预计时间**"；
+2. **12GB 显存门槛进入游戏菜单 UI**（Gizbot RTX 5070 评测：菜单直接标示 "至少 12GB VRAM"，且 Mega Geometry 对 GPU/CPU/VRAM 三项影响均标 High）——**"显存 = 分档硬约束"的产品化样本**（继 Mega Geometry 2.0 门槛、DLSS 5 功耗之后第三例）；**UI 直接把"设置↔资源影响"讲清楚**这一点本身值得记录（分档沟通的界面范式）；
+3. **灯光成本的新结构（NEF）**：[[2026-10-05-Neural Emission Fields — Real-time Rendering of Pre-integrated Neural Emitters|NEF]] 给出"**画面里最贵的那个灯**"的专用解法——**0 采样（预集成 + 单次网络求值，与几何复杂度解耦）**，与 MegaLights 的"每像素采样预算"互补。**"动态灯光"维度的账本自此有三条路**：每灯 +1×（1978 经典 / 移动端）· 每像素预算（MegaLights / PC 档）· **零采样预集成（NEF / 单体复杂发射体）**。
+
+> 附带留痕：E-Day 的引擎版本口径仍不一致（DSOGaming 记 5.6.1 vs NVIDIA 侧 5.8）——两口径并列、不合并；DSOGaming 正文一处 "DLSS 5" 表述按**笔误/松散表述**处理（官方与其余评测均为 DLSS 4.5）。
+
 ## Prerequisites
 
 - [[Real-Time Rendering]]

@@ -1,16 +1,20 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-06
+updated: 2026-10-09
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
-read_paper_count: 27
+read_paper_count: 30
 ---
 
 # Personal Knowledge Model
 
 > **2026-10-05 已按实际阅读记录校正。** 用户自述已读到 9 月 18 日；本次核对论文 frontmatter，共 **27 篇标记为 `read`**。阅读记录是确定事实，概念掌握程度仍按明确自评与已有证据分层记录。
 > `reading_checkpoint` 是用户的阅读位置，不是按论文发布时间划定的已读边界，也不是实际完成阅读的日期。部分较晚入库的论文同样已标 `read`，一并计入；较早但仍为 `unread` 的论文不自动改成已读。
+>
+> **2026-10-07 更新（阅读推进，逐文件核实）**：已读 **27 → 30 篇**——[[Karis — Real Shading in Unreal Engine 4 (2013)]] / [[2026-09-17-DSD — Diffusion Skill Discovery]] / [[2026-09-27-Plate-Local River Generation]] 三篇转 `read`。**Karis 读后 PBR 阅读侧全清**（唯一剩余动作 = furnace test）；**Marschner 深读进行中**（status 仍为 `unread`，不代改——用户自制 R/TT/TRT 光路 SVG、三处勘误、挂载原文 PDF）；用户新建学习白板 `Learning/Canvas/Notes.canvas`（Shading Model D/G/F + IBL/Split-Sum + Marschner 三线，含 EnvBRDF LUT 补图）。
+> **2026-10-08 更新（仅资料侧；个人阅读状态无变化）**：毛发线第六节点补齐——[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS 生产模型；自测 18 → **21 条**；六节点闭合 1989→2016）；**面部域开线**——新概念 [[Facial Animation]] + 首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（结论层 Normal 可读）；物理域新增经典侧地图（Multiphysics 教程，待按需查阅）。
+> **2026-10-09 更新（读者侧产物记录 + 资料侧）**：**工作区新增自制五路线对比图解**（`pbr_multiple_scattering_comparison.html`，10-08 提交；含白炉测试交互计算器 + UE `ShadingEnergyConservation` 检查点）——**"先用自己的话比较五条路线"这个动作已出现实物产物**（不代改任何 `status`；引擎实测仍未记录）。资料侧：**路线⑤原始文献入库**（[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]，五条补法全节点闭合）；面部域捕捉层首节点（[[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG|emg2face]]）；NRC 镜面支线（NRC-Spec）。**已读账本维持 30 篇。**
 
 ## 如何理解和更新这个模型
 
@@ -76,7 +80,7 @@ read_paper_count: 27
 |---|---|---|
 | [[Differentiable Rendering]]、[[Inverse Rendering]] | GradRig、PBR-Latent 已读 | 自动微分、梯度估计、可微光栅化及优化实现；不能直接升为 Normal |
 | 神经 / 生成方法的训练层 | 渲染与动画方向已有多篇 Normal 材料 | 网络训练、扩散 / flow matching / 蒸馏推导与实现 |
-| [[Neural Global Illumination]] | Kajiya + Gaussian Light Transport 已读 | 神经缓存训练与更新；RSM / Instant Radiosity 仍未读；Gaussian Light Transport 是非神经对照，不等于神经 GI 已掌握 |
+| [[Neural Global Illumination]] | Kajiya + Gaussian Light Transport 已读 | 神经缓存训练与更新；RSM / Instant Radiosity 仍未读；Gaussian Light Transport 是非神经对照，不等于神经 GI 已掌握；**（10-09 资料侧新增：NRC 镜面支线 NRC-Spec——"旧概念的新组合"，按需 15 分钟）** |
 | 微面多次散射与随机几何的推导层 | Heitz、Dupuy、GPIS 已读 | 随机输运、自由程 / 相位函数、水平穿越统计与闭式推导 |
 | 瞬态扩散 / Monte Carlo 数学 | Grid-Free Monte Carlo 已读 | 热核、exit time 采样、PDE 与方差分析 |
 | [[Physics-based Character Animation]] 的 RL / 生物力学层 | Athletic Sprinting 已读 | 奖励、控制策略训练与肌肉仿真实现；DSD / LYRIC 尚未读 |
@@ -84,11 +88,12 @@ read_paper_count: 27
 
 ## 下一步：按实际阅读缺口衔接
 
-1. **优先补 PBR 工程环节**：[[Karis — Real Shading in Unreal Engine 4 (2013)]] 仍为 `unread`。从已读的 Walter / Schlick / Fdez-Agüera 接入 [[Split-Sum Approximation]]，重点看近似假设和 LUT 的输入输出。
-2. **多次散射由阅读转向验证**：四篇已读不必再按“首次介绍”推送。先用自己的话比较 Kulla–Conty、Heitz、Fdez-Agüera 与 Dupuy 的目标、假设和实时成本，再按所测 BSDF 的条件设计 white furnace test，记录能量守恒与补偿开关差异。普通环境光下的粗糙度对比可作观察，不能替代受控测试。
+1. **PBR 阅读侧已完成（2026-10-07 更新）**：[[Karis — Real Shading in Unreal Engine 4 (2013)]] 已转 `read`（含 EnvBRDF LUT 补图）——五篇经典 + Karis 的全部阅读材料**清账**。**唯一剩余动作 = furnace test 两项检查**（对照基线 = d'Eon 2022 手册 13.7.1/13.8.1）；完成后 [[Physically Based Rendering]] / [[Split-Sum Approximation]] 的阅读侧判据即全部满足。
+2. **多次散射由阅读转向验证（2026-10-09 更新）**：四篇已读不必再按"首次介绍"推送；**"用自己的话比较 Kulla–Conty / Heitz / Fdez-Agüera / Dupuy"已出实物产物**——工作区自制五路线对比图解（10-08 提交，含白炉测试交互与 UE 检查点），且 **10-09 补入路线⑤独立节点**（Turquin 2019：F_ms 四级简化链、非互易边界、"gain to the closure"形态——补齐"比较"所需的最后一块一手材料）。**剩余动作 = 按所测 BSDF 的条件设计 white furnace test（对照 d'Eon 2022 手册 13.7.1/13.8.1），记录能量守恒与补偿开关差异**；普通环境光下的粗糙度对比可作观察，不能替代受控测试。
 3. **动画线允许继续前进**：以 LMM 为检索 / 学习基线，对照 STyMo / FlexMoGen 的风格控制、UniMo 的表示、EMODY / GestureFAR 的音频驱动与流式延迟。Motion Matching 自测作为补缺工具，不要求完成后才读所有生成动画。
 4. **Hard 按具体问题建桥**：可微方向从已读 GradRig / PBR-Latent 引出“优化什么参数、损失是什么、梯度从哪里来”，再用 [[Learning Path — Differentiable Rendering]] 补缺；神经方向沿 [[Learning Path — Neural Rendering]] 补训练侧概念。
-5. **毛发与物理动画保留为待选支线**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]]、[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]、[[2026-09-17-DSD — Diffusion Skill Discovery]]、[[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]] 仍为未读，不因日期靠前而跳过。
+5. **毛发线已启动（2026-10-07 更新）**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] **深读进行中**（自制光路 SVG + 三处勘误 + 原文 PDF 挂载；status 未改）；配套材料已补 [[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]]（能量页，Weta 生产模型）。**（2026-10-08 更新）生产化页补入**：[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS；near-field 取消求积 + logistic + 第四叶）——**自测 18 → 21 条**，六节点闭合（1989→2016）；阅读顺序不变（Marschner → d'Eon 2011 → [可选] Chiang 2016 → 21 条自测）。仍为未读：[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]、[[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]；[[2026-09-17-DSD — Diffusion Skill Discovery]] ✅ 已读。
+6. **面部线开线（2026-10-08，资料侧）**：[[Facial Animation]] 概念建立 + [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]] 入库——**按需阅读（结论层 ≈20 分钟），不设硬动作**；blendshape 基础列为未来按需材料。
 
 后续推荐避免重讲已读论文；只有用于对照、回答具体疑问或支撑实践时才回引。优先延续 PBR / 微面理论主线，同时保留动画与神经渲染的工程入口。此处优先级来自本次阅读分布的推断，不代表用户已经承诺执行这些练习。
 
@@ -98,16 +103,16 @@ read_paper_count: 27
 |---|---|---|
 | Gaussian Splatting 基础四项 | 沿用 9 月 11 日完成记录 | 不要求重复验收 |
 | Cook–Torrance | 明确 Easy | 不再以“用户未校正”处理 |
-| PBR / BRDF 五篇、共 25 条自测清单 | 四篇已读，Karis 未读；无全部通过记录 | 完成相应自测后再判断整体是否 Easy |
-| 多次散射 | 四篇已读；推导与实践未确认 | 概念比较、数学理解、引擎实测分开记录；一次观感测试不代表掌握整个领域 |
+| PBR / BRDF 五篇、共 25 条自测清单 | **五篇全部已读（Karis 2026-10-07 转 read）**；无全部通过记录 | 完成相应自测后再判断整体是否 Easy |
+| 多次散射 | 四篇已读 + 路线⑤独立节点补入（**10-09**）；**"用自己的话比较"已出实物产物（自制五路线图解，10-08）**；推导与实践未确认 | 概念比较、数学理解、引擎实测分开记录；一次观感测试不代表掌握整个领域 |
 | Motion Matching 六项 | LMM 已读；判据完成情况未知 | 可按实际疑问检查，不自动增加必做任务 |
-| Hair Rendering 十五项 | 属于已备材料；无已通过证据 | 从未读的 Marschner 开始，后续按需补充 |
+| Hair Rendering 二十一项 | Marschner 深读中；d'Eon 2011 能量页 + Chiang 2016 生产化页入材料（2026-10-08） | 从进行中的 Marschner 继续，后续按需补充 |
 | 可微渲染四项 / 神经渲染五项 | 已有应用侧阅读入口；判据通过情况未知 | 沿对应 Learning Path 逐项确认 |
 | 阴影占比 / 屏占比粒子密度 / 动态灯光分档复审 | 旧模型提出过，未见执行结果 | 保留为可选实践；不得从资料入库推断已执行 |
 
-## 已读论文账本（27 篇）
+## 已读论文账本（30 篇）
 
-以下清单逐项来自本次 frontmatter 核对。**不推定阅读完成日期**；保留各篇自己的难度分层。以后有新标记时，以论文文件当前属性为准并刷新本表。
+以下清单逐项来自 frontmatter 核对（27 篇 = 2026-10-05 校正；**+3 篇 = 2026-10-07 更新**）。**不推定阅读完成日期**；保留各篇自己的难度分层。以后有新标记时，以论文文件当前属性为准并刷新本表。
 
 | 已读论文 | 当前笔记的 user_level |
 |---|---|
@@ -138,6 +143,9 @@ read_paper_count: 27
 | [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]] | Normal |
 | [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] | Normal |
 | [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] | Easy |
+| [[Karis — Real Shading in Unreal Engine 4 (2013)]] ★ 10-07 更新 | Normal（含 EnvBRDF LUT 补图） |
+| [[2026-09-17-DSD — Diffusion Skill Discovery]] ★ 10-07 更新 | Hard（可只取一个抽象） |
+| [[2026-09-27-Plate-Local River Generation]] ★ 10-07 更新 | Normal |
 
 ## 本次替代的旧判断
 

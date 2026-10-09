@@ -144,4 +144,5 @@ $$L_o\;\approx\;\underbrace{\text{PrefilteredColor}(R,\text{Roughness})}_{\text{
 - 与 [[Microfacet Theory]]、[[BRDF]] 一起，构成"微面 BRDF 三件套"的完整链条：**理论 → 三个因子的实现形式 → 成像（IBL）的最后一步**。
 - **2026-09-20 的重要补充**：本概念的 LUT **不只是为单次散射服务的**。它的两个通道相加就是 $E_{ss}$，因此**它同时是多次散射能量补偿的输入**。
   → **它从"一个近似"升级为"一个可以重复提取信息的固定资源"**。这改变了它在预算表里的定位：**不是"为 IBL 付一次钱"，而是"付一次钱、拿到两件事"**。
+- **🔴 2026-10-09 第三次委派（同一张表的第三个用途）**：[[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]]（NRC-Spec）用 **split-sum 作为神经缓存的镜面重建层**——缓存网络输出"预滤波入射辐射度"，乘以 **BRDF 积分图**得到出射辐射度。**汇总：同一张表 / 同一个积分图的三种用法** —— ① 单次散射 IBL 重建（Karis）；② 能量补偿缺口来源（Fdez：$r=\text{dfg}.y$）；③ 神经缓存的镜面重建（NRC-Spec）。**"表不变，问它要的东西在变"**。
 - ⚠️ **勘误提醒**：本概念的后续实现 [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] **有官方勘误**（JCGT 论文页，2018-02-01 修订版）。**引用与照抄该文时请走修订版。**

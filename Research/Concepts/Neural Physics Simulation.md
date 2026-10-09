@@ -37,6 +37,7 @@ tags: [physics, neural-simulator, particles]
 - TIE / Neural Operators（2021-2022，算子学习分支）
 - [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer|WorldParticle]]（2026，SIGGRAPH Asia — 首次单架构统一六类动力学）
 - [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]（2026，Meta × NVIDIA — **神经时间积分器**：镜像经典积分解算器的输入输出，模拟器在环监督；角色级（发丝）实时）
+- [[2026-10-06-PhysLDM — Latent Diffusion for High-Fidelity Deformable Simulation|PhysLDM]]（2026，NTU — **整轨迹分布建模**：时空 VAE（78× 压缩）+ 潜扩散一次性预测；**"混沌判据"**：混沌动力学上确定性回归收敛到非物理平均值，应改为建模分布）
 - 毛发神经仿真三代（同域对照）：GroomGen（2023）→ Quaffure（2025，准静态）→ Neuralocks（2026）→ **Neuroll（2026）**
 
 ## Related Concepts
@@ -53,7 +54,12 @@ tags: [physics, neural-simulator, particles]
 ## Important Papers
 
 - [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]]（★ 2026-10-06 入库：**"镜像经典 I/O"的神经积分器**——替代数值积分、保留经典接口语义；模拟器在环 + 随机视界；strand-space 消融 = "表示即先验"最干净量化）
+- [[2026-10-06-PhysLDM — Latent Diffusion for High-Fidelity Deformable Simulation]]（★ 2026-10-07 入库：**可形变体 + 分布建模**——时空 VAE + 潜扩散；**"混沌判据"**：扰动放大实验证明回归产生"non-physical averages"，扩散才建模分布；可微逆问题 40 秒级）
 - [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer]]
+
+## 一条新判据（2026-10-07，来自 PhysLDM）
+
+**"这个系统的预测目标是一个点，还是一个分布？"** —— 先做扰动实验判断系统是否处于混沌区（微小扰动被放大）：若是，**确定性回归在数学上就是错的**（收敛到非物理平均值），应改用生成式建模。此判据与"分工判据"（新旧工具各接管哪段）并列，收入本库选型工具箱。
 
 ## Personal Knowledge
 

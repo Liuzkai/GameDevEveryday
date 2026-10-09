@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>毛发能量守恒 — d'Eon 2011 与高斯函数对照图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a; --violet:#7a4fd0;
+    --code:#f0f3f7; --card:#fbfcfe;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61; --violet:#b39aff;
+      --code:#232a32; --card:#20262d;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:18px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px;color:var(--ink)}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  .figrow{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+  .figrow .fig{flex:1 1 320px;min-width:280px}
+  ul{margin:6px 0 6px 20px;padding:0}
+  li{margin:3px 0}
+  .tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 10px;color:var(--ink2);margin-right:6px}
+  .foot{font-size:13px;color:var(--ink2)}
+  svg{display:block;margin:0 auto;max-width:100%}
+  .svgtxt{font-family:"Segoe UI","PingFang SC",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>毛发能量守恒 — d'Eon 2011 × 高斯对照</h1>
+  <div class="sub">An Energy-Conserving Hair Reflectance Model · EGSR 2011 / CGF 30(4):1181–1187 · Weta Digital —
+  与 Marschner 2003 的"哪一近似被翻案、怎么翻"的图解</div>
+
+  <div class="panel">
+    <p><b>它要解决的问题（原文）：</b>Marschner 2003 的模型 <i>"widely successful, but based on several simplifying assumptions"</i>——
+    三处会漏账：<span class="tag">浅色发（低吸收）</span><span class="tag">掠射角</span><span class="tag">高粗糙度</span>。
+    此前的修补都只治局部，<b>"do not provide a globally energy-conserving model"</b>。</p>
+    <p><b>它的解法（一句话）：</b>把"守恒"从约束变成推导起点——<b>先构造一个在球面上归一的分布（球面高斯卷积），再取纵向剖面</b>，
+    得到新的 M<sub>p</sub>；方位向则<b>取消解方程，改成沿纤维宽度积分 + 高斯检测器</b>。对任意角度/粗糙度/吸收，总反射率恒等于 1。</p>
+  </div>
+
+  <!-- 1. 为什么高斯不守恒 -->
+  <div class="panel">
+    <h2><span class="num">1</span>为什么"套一个高斯"会漏账</h2>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 400 240" role="img" aria-label="光锥压缩与扩张">
+          <text class="svgtxt" x="200" y="20" text-anchor="middle" font-size="12.5" fill="var(--ink2)">光滑纤维：入射 → 只出射到一个"镜面锥"（θ_r = −θ_i）</text>
+          <!-- fiber cross-section -->
+          <circle cx="80" cy="140" r="42" fill="none" stroke="var(--ink2)" stroke-width="1.6"/>
+          <text class="svgtxt" x="80" y="200" text-anchor="middle" font-size="11.5" fill="var(--ink2)">纤维截面</text>
+          <!-- incoming ray -->
+          <line x1="10" y1="98" x2="52" y2="122" stroke="var(--accent)" stroke-width="2"/>
+          <polygon points="52,122 44,115 47,126" fill="var(--accent)"/>
+          <text class="svgtxt" x="12" y="90" font-size="11.5" fill="var(--accent)">入射 θ_i</text>
+          <!-- reflected cone -->
+          <line x1="108" y1="116" x2="180" y2="90" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <line x1="112" y1="124" x2="184" y2="132" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <text class="svgtxt" x="186" y="96" font-size="11.5" fill="var(--accent)">镜面锥 −θ_i</text>
+          <!-- rough cone -->
+          <path d="M120 118 C 200 40, 320 60, 372 128" stroke="var(--warn)" stroke-width="1.8" fill="none"/>
+          <path d="M120 122 C 200 200, 320 190, 372 140" stroke="var(--warn)" stroke-width="1.8" fill="none"/>
+          <text class="svgtxt" x="300" y="52" font-size="11.5" fill="var(--warn)">粗糙表面 → 散到非镜面锥</text>
+          <text class="svgtxt" x="300" y="196" font-size="11.5" fill="var(--warn)">向法平面偏折：锥变宽 → 辐亮度下降</text>
+        </svg>
+        <div class="cap">锥的"压缩 / 扩张"= 辐亮度变化。高斯近似只用一个 1/cos²θ_d 打算蒙混过去。</div>
+      </div>
+      <div class="fig">
+        <table>
+          <tr><th>不守恒的原因（原文逐条）</th><th>后果</th></tr>
+          <tr><td>① 高斯在 θ∈(−∞,∞) 归一，却在 θ_h∈(−π/2,π/2) 取值，且用 <b>θ_h 代替 θ</b></td><td><b>平均能量翻倍 ≈ 2</b>（Zinke-Weber 换 2θ_h 修掉这条）</td></tr>
+          <tr><td>② 锥压缩/扩张（见左图），1/cos²θ_d 只是近似</td><td>低粗糙度段的系统偏差</td></tr>
+          <tr><td>③ 掠射角：能量被偏折到<b>永远不会被接收</b>的角域之外</td><td><b>能量直接丢失</b></td></tr>
+        </table>
+        <div class="callout warn">
+          <b>判据：</b>一个分布只要"归一化的域"与"被使用的域"不一致，它就在漏账——先检查这两件事，再谈形状好不好看。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 白环境实验 -->
+  <div class="panel">
+    <h2><span class="num">2</span>白环境实验 = 毛发版 furnace test</h2>
+    <p>把一根<b>零吸收纤维</b>放进<b>均匀白色环境</b>：1/η² 的立体角压缩与扩张两两抵消，所有路径都通到白色 →
+    <b>纤维应该与背景不可区分</b>。因此<b>总反射率 H<sub>∞</sub>(θ_i) 必须恒等于 1</b>。</p>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 420 240" role="img" aria-label="总反射率曲线对照">
+          <!-- axes -->
+          <line x1="50" y1="200" x2="400" y2="200" stroke="var(--ink2)" stroke-width="1.4"/>
+          <line x1="50" y1="200" x2="50" y2="30" stroke="var(--ink2)" stroke-width="1.4"/>
+          <text class="svgtxt" x="225" y="232" text-anchor="middle" font-size="12" fill="var(--ink2)">入射角 θ_i（→ 越向右越掠射）</text>
+          <text class="svgtxt" x="22" y="120" font-size="12" fill="var(--ink2)" transform="rotate(-90 22 120)">总反射率 H∞</text>
+          <text class="svgtxt" x="40" y="70" text-anchor="end" font-size="11" fill="var(--ink2)">2</text>
+          <line x1="46" y1="63" x2="400" y2="63" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 3"/>
+          <text class="svgtxt" x="40" y="132" text-anchor="end" font-size="11" fill="var(--ink2)">1</text>
+          <line x1="46" y1="125" x2="400" y2="125" stroke="var(--accent2)" stroke-width="1.2" stroke-dasharray="5 4"/>
+          <text class="svgtxt" x="330" y="118" font-size="11" fill="var(--accent2)">应为 1（新 M_p：全程贴合）</text>
+          <!-- Gaussian curve: starts near 2 (small roughness), keeps >1 at grazing -->
+          <path d="M55 66 C 150 68, 260 60, 395 52" stroke="var(--warn)" stroke-width="2" fill="none"/>
+          <text class="svgtxt" x="120" y="48" font-size="11" fill="var(--warn)">高斯（小粗糙度）：≈2 —— 能量翻倍</text>
+          <!-- Gaussian high roughness: below 1 -->
+          <path d="M55 138 C 160 150, 280 140, 395 100" stroke="var(--gold)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+          <text class="svgtxt" x="120" y="176" font-size="11" fill="var(--gold)">高斯（高粗糙度）：&lt;1 —— 丢能量</text>
+        </svg>
+        <div class="cap">原文图 3 的示意：高斯版本三段失真（翻倍 / 掠射偏多 / 高粗糙度偏少）；新 M_p 全程 = 1。</div>
+      </div>
+      <div class="fig">
+        <div class="callout">
+          <b>为什么这个实验值钱：</b>它把"守恒"变成一个<b>可以肉眼执行的检查</b>——
+          零吸收 + 均匀白环境 → 看不见纤维。<br>
+          这与表面侧的 furnace test（粗糙端变暗 / 光滑端亮边）是同一族体检：
+          <b>先问"账平不平"，再问"像不像"。</b>
+        </div>
+        <p class="dim" style="font-size:13px">（本节为对原文 §4.1 的解释性改写 + 工程类比；"毛发版 furnace test"的称呼是本库的，不是原文术语。）</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 新 M_p -->
+  <div class="panel">
+    <h2><span class="num">3</span>新纵向函数：非高斯、非对称、有偏镜面峰</h2>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 400 220" role="img" aria-label="新纵向散射函数形状">
+          <line x1="40" y1="185" x2="380" y2="185" stroke="var(--ink2)" stroke-width="1.4"/>
+          <line x1="40" y1="185" x2="40" y2="30" stroke="var(--ink2)" stroke-width="1.4"/>
+          <text class="svgtxt" x="210" y="212" text-anchor="middle" font-size="12" fill="var(--ink2)">出射方向 θ_r（固定 θ_i）</text>
+          <text class="svgtxt" x="16" y="108" font-size="12" fill="var(--ink2)" transform="rotate(-90 16 108)">M_p</text>
+          <!-- specular position marker -->
+          <line x1="250" y1="185" x2="250" y2="52" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="4 4"/>
+          <text class="svgtxt" x="254" y="48" font-size="11" fill="var(--gold)">镜面锥 −θ_i</text>
+          <!-- asymmetric curve with off-specular peak to the left of specular -->
+          <path d="M60 176 C 130 168, 175 120, 215 66 C 232 44, 246 52, 252 84 C 262 130, 300 160, 370 172"
+                stroke="var(--accent)" stroke-width="2.4" fill="none"/>
+          <circle cx="215" cy="66" r="4" fill="var(--accent)"/>
+          <text class="svgtxt" x="120" y="80" font-size="11.5" fill="var(--accent)">off-specular peak（偏镜面峰）</text>
+          <text class="svgtxt" x="150" y="140" font-size="11.5" fill="var(--accent)">非对称</text>
+        </svg>
+        <div class="cap">原文图 4 的示意（固定 v=0.02）：形状源于球面几何，不是高斯。</div>
+      </div>
+      <div class="fig">
+        <p><b>公式（Eq 7）：</b></p>
+        <p class="mono" style="font-size:13px">M_p(v,θ_i,θ_r) = csch(1/v)/(2v) · e^{sin(−θ_i)sinθ_r / v} · I₀[ cos(−θ_i)cosθ_r / v ]</p>
+        <ul>
+          <li>v = β²（粗糙度方差）；I₀ = 第一类修正贝塞尔函数；</li>
+          <li><b>入射与出射因子全收在这一个互易函数里</b>：光栅化时"贡献 ∝ 覆盖 C × S"，不需要再乘 cosθ_i、也不需要 1/cos²θ_d；</li>
+          <li>归一：∫∫ N_R·M_p·cosθ_i dθ_i dφ = 1 —— <b>对全部 θ_i、全部 v 成立</b>（原文图 3 逐点验证）。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 取消求根 -->
+  <div class="panel">
+    <h2><span class="num">4</span>方位向：从"解 h"到"积 h"</h2>
+    <div class="figrow">
+      <div class="fig">
+        <table>
+          <tr><th></th><th>Marschner 2003：solve-for-h</th><th>★ d'Eon 2011：积分 + 高斯检测器</th></tr>
+          <tr><td>做法</td><td>解出光出射到相机的离散偏移 h（三次方程）</td><td>N_p(φ) = ½∫A(p,h)D_p(φ−Φ(p,h))dh，沿整个宽度积分</td></tr>
+          <tr><td>粗糙度</td><td>离散路径之外，无法表达扩散与色移</td><td>高斯检测器自然展宽 → <b>粗糙度相关色移</b>（图 8）</td></tr>
+          <tr><td>奇点</td><td>caustics 奇点需 ad-hoc 人工参数</td><td>caustics 以"一致且稳定"的方式进入</td></tr>
+          <tr><td>贴边</td><td>无贴边问题</td><td>D_p 对 2π 全部镜像求和——修掉 Zinke-Weber 在 φ=±π 的<b>前向丢一半</b>（图 6）</td></tr>
+          <tr><td>实现</td><td>求根器</td><td>高斯求积（<b>阶 35 够用</b>）；N_p 可按 (μa,βp) 预计算 2D 表</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="callout gold">
+      <b>"取消式优化"家族再添一员（2011 版）：</b>不是把三次方程解得更好，而是<b>让方程不存在</b>——
+      与 Scheuermann 2004 取消运行时排序、2026 取消 GS 排序/主机同步同一思路：<b>先问"它能不能不存在"。</b>
+    </div>
+  </div>
+
+  <!-- 5. 高阶与对接 -->
+  <div class="panel">
+    <h2><span class="num">5</span>高阶项与双散射对接</h2>
+    <div class="figrow">
+      <div class="fig">
+        <svg viewBox="0 0 380 190" role="img" aria-label="多阶路径">
+          <text class="svgtxt" x="190" y="18" text-anchor="middle" font-size="12.5" fill="var(--ink2)">光路阶数 p = 内部反射次数</text>
+          <g font-size="12">
+            <text class="svgtxt" x="30" y="52" fill="var(--accent)">R（p=0）</text>
+            <text class="svgtxt" x="200" y="52" fill="var(--ink2)">直接反射（白高光）</text>
+            <text class="svgtxt" x="30" y="82" fill="var(--accent)">TT（p=1）</text>
+            <text class="svgtxt" x="200" y="82" fill="var(--ink2)">透射（逆光亮边）</text>
+            <text class="svgtxt" x="30" y="112" fill="var(--accent)">TRT（p=2）</text>
+            <text class="svgtxt" x="200" y="112" fill="var(--ink2)">有色次级高光</text>
+            <text class="svgtxt" x="30" y="142" fill="var(--warn)">TRRT（p=3）…</text>
+            <text class="svgtxt" x="200" y="142" fill="var(--warn)">白发掠射下近 15% 能量在这里！</text>
+          </g>
+          <text class="svgtxt" x="190" y="176" text-anchor="middle" font-size="11.5" fill="var(--ink2)">Marschner 只算了前三阶；本篇可任意阶（无需求根，加阶只加积分项）</text>
+        </svg>
+      </div>
+      <div class="fig">
+        <div class="callout">
+          <b>与双散射的对接（原文 §7 自证）：</b>双散射把多次散射近似成"<b>一个大有效粗糙度</b>的单次计算"——
+          而大粗糙度区间恰好是高斯 M_p 丢能量最狠的地方。换成守恒 M_p 后：<b>光向暗部扩散得"更远"</b>（原文图 11 左/右对照）。
+          <br>—— 库内 [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)|Zinke-Yuksel 2008]] 的"浅色发账本"，在 2011 年被补上了守恒项。
+        </div>
+        <div class="callout warn">
+          <b>一个被推翻的旧猜测（原文 future work）：</b>漫射有色反射<b>不是</b>来自 TRRT 及更高阶——作者认为来自 <b>inner-core scattering（内芯散射）</b>。
+          数值（色素截面 σa,e={0.419,0.697,1.37} / σa,p={0.187,0.4,1.05}）自 §6.1 来，供实现核对。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">6</span>带走三句话</h2>
+    <ul>
+      <li><b>守恒是构造出来的，不是修正出来的。</b>先在正确的域上归一（球面高斯卷积），再取剖面——形状是推导的副产品。</li>
+      <li><b>旧近似的失效区就是新模型的价值区：</b>浅色发 + 高粗糙度 + 掠射（也就是接在双散射后面的场景）。深色发 + 中粗糙的场景，旧账"够用"——这是分档判断的材料。</li>
+      <li><b>"白环境 → 看不见"是最便宜的一次体检。</b>零吸收 + 均匀白背景，肉眼即可判断实现的能量账平不平。</li>
+    </ul>
+  </div>
+
+  <p class="foot">图解依据：d'Eon, Francois, Hill, Letteri, Aubry, <i>An Energy-Conserving Hair Reflectance Model</i>, EGSR 2011（CGF 30(4):1181–1187）。
+  图为教学示意（非按比例），公式与数值取自原文（本次运行已下载官方 PDF 逐页核对）。"毛发版 furnace test"与"取消式优化"的分类是本库的工程类比，非原文表述。</p>
+
+</div>
+</body>
+</html>

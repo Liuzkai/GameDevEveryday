@@ -37,6 +37,7 @@ first_introduced: "Kajiya-Kay 1989（各向异性经验模型）；Marschner et 
 | **Kajiya-Kay** | 1989 | 经验 | 把头发当作**圆柱**处理：切向各向异性高光。极便宜，至今仍是大量游戏的默认 → ★ **2026-09-25 已入库**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]]（含 texel 三要素、$\sin(t,l)$ 漫反射与圆锥高光的推导、与 Reeves 粒子系统的"对偶"关系） |
 | **Marschner et al.** | 2003 | 物理 | 把头发当作**半透明圆柱**，拆出三个 lobe：**R**（直接反射，白高光）、**TT**（透射-透射，逆光亮边）、**TRT**（透射-反射-透射，有色次级高光 + 发丝透光）→ ★ **2026-09-18 已入库**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] |
 | **双散射（Dual Scattering）** | 2008 | 物理近似 | **多次散射的实时近似**：全局（穿过体积到达邻域，沿单条原型路径统计）+ 局部（邻域内回散射 → 材质属性）→ ★ **2026-09-28 已入库**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]——**单散射只对深色发够用；浅色发的发色由多散射主导** |
+| **能量守恒模型（d'Eon）** | 2011 | 物理（守恒） | **Marschner 的修正版**：球面高斯卷积重建守恒 M_p（非高斯、off-specular peak）+ 方位向取消求根改积分 → ★ **2026-10-07 已入库**：[[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]]——**"白环境实验"= 毛发版 furnace test；双散射的高粗糙度区间由此"扶正"；pbrt-v4 采用本模型** |
 
 **三个 lobe 对应的视觉现象（这是判断"能不能砍"的唯一依据）：**
 
@@ -91,6 +92,10 @@ Kajiya-Kay 1989 —— texel（密度场）+ 各向异性经验模型；"近看�
         ↓
 ★ Zinke-Yuksel 2008 —— **多散射实时近似**：全局/局部分解 + "一条原型路径代表全部路径"；7.8h → 5.2min → 实时 14fps（**2026-09-28 入库**）
         ↓
+★ d'Eon et al. 2011（Weta）—— **守恒重建**：球面高斯卷积重推 M_p + 取消求根 + 任意阶（TRRT）；"白环境实验"验证（**2026-10-07 入库**）
+        ↓
+★ Chiang et al. 2016（WDAS）—— **生产化一跳**：near-field 取消 70 点求积（把宽度积分外包给路径追踪器；着色 ~20× / 整体 >10×）+ logistic 替代 wrapped Gaussian + 第四叶折无穷阶（furnace test 通过）+ 感知均匀参数化（**2026-10-08 入库**；此前误记 Pixar，已更正）
+        ↓
 发片 + 双高光 + 固定排序成为实时默认（此后十几年游戏毛发的主流做法）
         ↓
 UE Groom / TressFX / HairWorks —— 发丝进引擎，只服务高端档
@@ -123,9 +128,11 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 | [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] | 资产侧：发片 → 发丝 自动升档 |
 | [[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] | ★ 2026-09-26 入库：**实时工程侧**——"怎么把 2003 的物理模型塞进 2004 的硬件"：发片模型 / 两 lobe 移位近似（扰动切线 + shift 贴图）/ **取消运行时排序**（静态索引缓冲 + 四趟渲染） |
 | [[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] | ★ 2026-09-28 入库：**多次散射实时近似**——全局/局部分解、原型路径（透射连乘 + 方差求和）、fback 材质属性、三档实现；"浅色发"账本的闭合项 |
+| [[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]] | ★ **2026-10-07 入库（能量页）**：Weta 生产模型——**守恒 M_p**（球面高斯卷积；白环境实验验证）+ 方位向取消求根（积分 + 高斯检测器）+ 任意阶（TRRT ≈ 白发掠射 15%）；pbrt-v4 采用 |
+| [[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]] | ★ **2026-10-08 入库（生产化页）**：WDAS 生产模型——**near-field（宽度积分外包给路径追踪器，单次求值 O(1)）+ logistic 方位分布（可解析归一/采样）+ 第四叶（无穷高阶折几何级数闭式）**；毛发着色 ~20×、整帧 >10×（869→76 min）；感知均匀六参数；"让暴力路径追踪毛发在生产可行"（Hyperion 实装；前记 "Pixar" 系误记，已更正） |
 | [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]] | ★ **2026-10-06 入库（仿真轴首节点）**：神经时间积分器 = 镜像经典积分器 I/O（前状态+刚度+碰撞几何入、下一状态出）；模拟器在环 + 随机视界；3000 股 **0.460 ms/帧**、动态帧数 **2000**（前作 131）、密度无关扩到 12 万股；strand-space 规范化（运动比 0.632 vs 世界系 0.342） |
 
-**四节点已齐**：经验侧（Kajiya-Kay 1989）、物理侧（Marschner 2003）、实时工程侧（Scheuermann 2004）、**多散射近似（Zinke-Yuksel 2008）** 均入库。**物理与工程主干全部闭合**；剩余为可选深挖（双散射的后续演进、离线侧更多近似）。**仿真轴 2026-10-06 开线**（Neuroll）——"头发怎么动"独立于渲染轴，另行积累。
+**六节点已齐（生产化闭合）**：经验侧（Kajiya-Kay 1989）、物理侧（Marschner 2003）、实时工程侧（Scheuermann 2004）、多散射近似（Zinke-Yuksel 2008）、**能量守恒（d'Eon 2011）**、**生产化（Chiang 2016）** 均入库。**物理、工程与生产主干全部闭合，且能量账跨材质域接通**（与表面侧 Kulla-Conty / Hammon 同题）；剩余为纯可选深挖（d'Eon 2014 non-separable）。**仿真轴 2026-10-06 开线**（Neuroll）——"头发怎么动"独立于渲染轴，另行积累。
 
 ## Related Concepts
 
@@ -156,6 +163,8 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 - **（2026-09-25 更新）着色侧的两头现已齐备**：经验侧 [[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] + 物理侧 [[Marschner — Light Scattering from Human Hair Fibers (2003)]]，两条共 **9 条 Mastery 自测**。
 - **（2026-09-26 更新）实时工程侧补齐**：[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 入库，自测扩至 **12 条**（+3：两 lobe 移位机制 / "不排序"的前提假设 / early-Z 那一刀为什么值得多一趟）。
 - **（2026-09-28 更新）多散射节点补齐**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库，自测扩至 **15 条**（+3：单散射为何对浅色发不够 / "原型路径代表全部路径"的成立条件 / 全局局部为何像"阴影"与"材质"）——**15 条通过即可把"毛发着色（含实时工程与多散射）"整体标 Easy**。
+- **（2026-10-07 更新）能量页补齐 + 用户已启动阅读**：[[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]] 入库，自测扩至 **18 条**（+3：高斯 M_p 不守恒的至少两条原因 / "白环境实验"为什么要求总反射率为 1 / d'Eon 为何取消求根、代价收益各是什么）。**用户侧信号（10-06）：Marschner 深读进行中**——自制 R/TT/TRT 光路对照 SVG、三处精确勘误（含"$A$ 不能直接当作完整散射函数 $S$"）、挂载原文 PDF；此前的 PBR 研读法（读原文→自绘图→写勘误）正在毛发线复现。**d'Eon 2011 是 Marschner 的自然下一站（能量页）**。
+- **（2026-10-08 更新）生产化页补齐**：[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]] 入库，自测扩至 **21 条**（+3：积分搬家的无偏性与代价 / 第四叶代表全部高阶的两个前提 / 感知均匀参数化为何是生产采用的"决定项"）。**渲染着色六节点（1989→2016）自此全闭合**；用户侧仍处于 Marschner 深读中段——**顺序建议不变**（Marschner → d'Eon 2011 → [可选] Chiang 2016 → 21 条自测），本篇非必经。
 - **（2026-09-29 更新）"实战观察"数据已出**：《巫师 3》重制版今日 18:00 上线，评测解禁数据先行——**LSS 路径追踪毛发首发**（HairWorks 的光追演进形态）；IGN 实测（RTX 5080 @4K PT + DLSS Perf）：**开 HairWorks 30 fps ↔ 关 HairWorks 44 fps**、关 PT 55 fps。**两条可用结论**：① **毛发至今仍是帧预算重项**（2015 HairWorks → 2026 LSS，十一年同题）；② **LSS 是"换表示"（观感升级），不是"降成本"**——与 LOD 原理同构（换表示层级的目的是**在同等预算下换质量**，成本量级由"每像素覆盖"决定）。
 - 与你当前学习线的交汇点：**毛发是 D·G·F 框架的失效边界**——学 PBR 时把它当作反例记住，比多记一个公式有用。**同时它还是"预算与几何解耦"（Kajiya-Kay 1989）与"档位=换表示"（HairCS / LSS）的最佳案例库。**
 
@@ -165,13 +174,15 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 2. ~~**R / TT / TRT 三个 lobe 分别对应什么视觉现象**~~ ✅ 同篇补齐（见上表）。
 3. ~~**实时侧源头缺失**~~ ✅ **2026-09-25 再补**：[[Kajiya-Kay — Rendering Fur with Three Dimensional Textures (1989)]] 入库（texel 三元组、两条着色公式、"预算与几何解耦"、"texel↔几何切换"；含 4 条 Mastery 自测）。~~**剩余缺口：实时化工程文**~~ ✅ **2026-09-26 闭合**：[[Scheuermann — Practical Real-Time Hair Rendering and Shading (2004)]] 入库（发片模型 / 两 lobe 移位近似 / 取消运行时排序 + early-Z 权衡；含 3 条 Mastery 自测）。~~残余仅剩 dual scattering 类多次散射近似（可选）~~ ✅ **2026-09-28 闭合**：[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]] 入库（全局/局部分解 + 原型路径 + 三档实现；含 3 条 Mastery 自测）。**毛发着色谱系（1989 → 2003 → 2004 → 2008）全部闭合。**
 4. **实时毛发的真实成本结构**：发片 vs 发丝在同一角色上的 DrawCall / OverDraw / 显存对比。这一块没有公开基准，需要你自己测。
+5. **（2026-10-07）能量账的当代接口**：d'Eon 2011 的守恒 M_p 已是 pbrt-v4 实装；**UE 具体采用哪个 M_p 形式未核实**（待核实项）——若后续需要对照引擎实现，这是第一个查证点。
 
 ## Next Step
 
-1. ~~**补实时侧经典：Kajiya-Kay 1989（优先）**~~ ✅ **2026-09-25**。~~Scheuermann 2004（TRT 实时近似）~~ ✅ **2026-09-26**——**经验 / 物理 / 实时工程三层已齐**。~~dual scattering 类近似（可选）~~ ✅ **2026-09-28**——**多散射层也齐，着色谱系全闭合**。剩余完全可选：双散射后续（影视侧变体）、离线近似家族。
-2. **顺手可做的一次实测**（不需要读论文）：在 NGR 里挑一个代表性角色，测同一角色在发片与发丝两种表示下的 **OverDraw 与 GPUTime**，落成两个数字。这比任何论文都更能支撑你的分档判断。
-3. **一个可以直接试的降档实验**：把某个低档发片材质上的 TT（逆光亮边）关掉，看角色在逆光场景下的观感退化程度——**这是验证"TT 不能砍"这条判断的最快方式**。
-4. 跟踪 [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] 是否放出**输出发丝根数**——那是它对你是否有用的唯一硬门槛。
+1. ~~**补实时侧经典：Kajiya-Kay 1989（优先）**~~ ✅ **2026-09-25**。~~Scheuermann 2004（TRT 实时近似）~~ ✅ **2026-09-26**——**经验 / 物理 / 实时工程三层已齐**。~~dual scattering 类近似（可选）~~ ✅ **2026-09-28**——**多散射层也齐**。~~能量守恒（可选深挖）~~ ✅ **2026-10-07**（d'Eon 2011 入库）。~~Chiang 2016（生产化）~~ ✅ **2026-10-08**（入库）——**着色谱系六节点全闭合（1989/2003/2004/2008/2011/2016）**。剩余完全可选：d'Eon 2014（non-separable）。
+2. **（当前推荐路径）**：Marschner（进行中）→ **d'Eon 2011 能量页**（+30–60 分钟，读法见其笔记）→ [可选] **Chiang 2016 生产化页** → **21 条自测**；"白环境实验"可在引擎里做一次最低成本的实现体检（零吸收材质 + 均匀白环境 → 应该看不见）。
+3. **顺手可做的一次实测**（不需要读论文）：在 NGR 里挑一个代表性角色，测同一角色在发片与发丝两种表示下的 **OverDraw 与 GPUTime**，落成两个数字。这比任何论文都更能支撑你的分档判断。
+4. **一个可以直接试的降档实验**：把某个低档发片材质上的 TT（逆光亮边）关掉，看角色在逆光场景下的观感退化程度——**这是验证"TT 不能砍"这条判断的最快方式**。
+5. 跟踪 [[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]] 是否放出**输出发丝根数**——那是它对你是否有用的唯一硬门槛。
 
 ## Notes
 
@@ -183,3 +194,5 @@ DLSS 5 —— 把 hair 列为神经渲染要"增强微真实感"的对象之一
 - **2026-09-28**：**多散射节点闭合**（[[Zinke-Yuksel — Dual Scattering Approximation for Fast Multiple Scattering in Hair (2008)]]）——"浅色发的发色由多散射主导"这一整类现象的解法；三条可迁移抽象入库（原型路径的合法性检查 / 方差可加 / 三档实现=换采样与存储）；**与 PBR 能量账本"补能量 vs 推输运"跨域同构**。**四节点（1989 / 2003 / 2004 / 2008）齐全，自测 15 条。**
 - **2026-09-29**：《巫师 3》重制版上线（LSS 毛发）——**实测：HairWorks 开关 = 30 vs 44 fps（5080 4K PT）**。记录两条判断：**① 光追档正式进入商业首发**（"光追基元"这个新档位不再是研究展望）；**② "换表示 ≠ 降成本"**——LSS 把毛发搬进光追管线换来观感，但每像素覆盖率决定的成本量级不变（与 Kajiya-Kay 1989"渲染时间与几何复杂度解耦"合读：**解耦的是"几何复杂度"，不是"屏幕覆盖"**）。第 13 项"实战观察"数据点已备。
 - **2026-10-06**：**仿真轴开线**（[[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]）——毛发问题在库内第一次分成两个正交轴：**渲染 = 表示（本概念既有全部内容）**；**仿真 = 积分（Neuroll 起）**。Neuroll 与渲染侧自测（15 条）**无绑定关系**——它是 [[Neural Physics Simulation]] 域的样本，不改变"毛发着色"的 Easy 判据进度。可对照阅读点：Zinke 2008"一条原型路径代表全部路径"与 Neuroll"逐发丝独立网络"都在用**"线性可分解"**这把钥匙打开毛发问题。
+- **2026-10-07**：**能量页补齐（五节点闭合）**（[[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]]）——Weta 生产模型：守恒 M_p（球面高斯卷积 + 白环境实验）+ 取消求根 + 任意阶。三条要点入库：① "**守恒是构造出来的，不是修正出来的**"；② "**白环境 → 看不见**"= 毛发版 furnace test（最便宜的守恒体检）；③ **失效区即价值区**——差异集中在浅色发 + 高粗糙度 + 掠射（也就是双散射身后的场景），**深色发 + 中粗糙的画面旧近似"够用"**（分档判断材料）。**同日用户侧信号：Marschner 深读进行中**——本篇正好是其直系下一站。**自测 15 → 18 条。**
+- **2026-10-08**：**生产化页补齐（六节点闭合）**（[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]，WDAS）——"为路径追踪重写"：near-field 取消 70 点求积（**把宽度积分外包给渲染器的采样**，单次求值 O(1)；毛发着色 ~20×、整帧 >10×：869→76 min）+ logistic 方位分布（解析归一/采样）+ 第四叶折无穷阶（furnace test 通过）+ 感知均匀参数化（六参数）。三条要点：① "**让最擅长做积分的系统去做积分**"；② "**参数化 = 生产采用的决定项**"；③ **"内层积分的三种归宿"判据**（算 / 外包 / 预集成——本篇选外包，NEF 选预集成）。**自测 18 → 21 条**；同时**更正此前 "Pixar" 误记**（本篇为 Disney 动画工作室，2016 年作者均在 WDAS）。

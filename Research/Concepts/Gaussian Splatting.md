@@ -79,9 +79,9 @@ NeRF（隐式 MLP + volume rendering，慢）
 - **与本库三条既有线索的接点**：① "降档 = 降表示层级"（原始高斯 → 等价 plank → 聚合 plank）——与 Parish 2001 / ToCo-Mesh 同一母题；② "档位 = 部署时选择"的最干净形态（单标量扫全档）；③ **[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 的 working set 与可见复杂度上限，在此获得 GS 实现**；
 - **与随机子采样的量化对照**（859 MB 档）：LOD **-2.12 dB** vs 随机 **-7.08 dB**——"接 GS 资产时先把 LOD 层级问清楚"。
 
-## 排序线全景（2026-10-01 沉淀）
+## 排序线全景（2026-10-01 沉淀；2026-10-07 补第 6 节点）
 
-"取消排序"自成为库内固定线索以来已到第 5 个节点——**从"优化"到"置换"到"路由"**：
+"取消排序"自成为库内固定线索以来已到第 6 个节点——**从"优化"到"置换"到"路由"到"驯服随机性"**：
 
 | 节点 | 路线 | 代表 | 动作 |
 |---|---|---|---|
@@ -89,7 +89,10 @@ NeRF（隐式 MLP + volume rendering，慢）
 | ② | 顺序无关透明 | weighted-sum / hybrid transparency | 去全局排序（仍混合） |
 | ③ | 重设计基元 | surfel / depth peeling | 换几何锚定方式 |
 | ④ | 随机光栅化（全删） | StochasticSplats / [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising\|Stochastic GS Denoising]] | 排序与混合全删，噪声靠神经偿还 |
-| **⑤** | **随机透明混合路由** | **[[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering\|Gaussian Stippling]]（2026-09-29）** | **双流按成本分拣 + 跨场景重建 + 移动端落地** |
+| ⑤ | 随机透明混合路由 | [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering\|Gaussian Stippling]]（2026-09-29） | 双流按成本分拣 + 跨场景重建 + 移动端落地 |
+| **⑥** | **随机性驯服（表示 + 重采样）** | **[[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering\|SteadySplats]]（2026-10-04）** | **训练方差正则 + 时空重采样：1 spp +13.1 dB、收敛 L1 < 1e-4——噪声税基本取消** |
+
+> **第 6 节点的意义（2026-10-07）**：④ 时代的死穴是"压噪要数百 spp，抵消性能收益"；⑥ 把 **1 spp 变干净**（31.44 dB）且**高样本端收敛回排序质量**（L1 < 1e-4）——**"档位 = 采样数"（1 / 4–16 / 100+ spp）自此每一档都可交付**。与 ④ 的对照：**"测干净"（神经去噪）vs "生干净"（表示+重采样，无网络推理）**。
 
 ## Personal Knowledge
 
@@ -121,3 +124,5 @@ Current Level: **Easy**（2026-09-11 标 Easy，4 条 Mastery 判据全过）
 > **2026-10-01 更新**：排序线第 5 节点 —— [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering|Gaussian Stippling]]（**随机透明"混合路由"代**：fragment/primitive 双流按成本分拣 + 跨场景时空重建；桌面 2.3–2.7× 标准 3DGS、移动端 73.2 FPS@540p 含 NPU 重建；直接吃未修改资产）。**Easy 标记不变** —— 价值在"成本路由 + 移动端全管线"两层；**"档位 = 采样数（1/4/16-spp）"** 是该文提供的分档语言。
 
 > **2026-10-05 更新**：**LOD / 预算线开线** —— [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD|Budgeted-GS]]（post-hoc 因子树 + 容量下限）。**Easy 标记不变** —— 价值在"规模工程 + 预算理论"两层；对分档工作的直接接口：**"误差 ∝ N⁻¹ᐟ²"与"单参数扫连续曲线"**（详见 [[Scalability and Quality Tiers]] 10-05 续记）。
+
+> **2026-10-07 更新**：**排序线第 6 节点（收口性质）** —— [[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering|SteadySplats]]（**"生干净"路线**：训练端方差正则 $\mathcal{L}_{var}$ + 推理端历史感知空间重采样/时域重要度重采样）。**1 spp 31.44 dB（vs 前作 18.34，+13.1 dB）；收敛极限与排序版差距 L1 < 10⁻⁴**——排序免渲染的"画质税"基本取消。**Easy 标记不变** —— 价值在"降噪机制 + 采样-质量权衡"两层；判据：**"噪声的根源在第几层，修补就在第几层"**（对照 [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]] 的"网络偿还"路线）。

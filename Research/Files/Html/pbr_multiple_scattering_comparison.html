@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1017" />
+  <meta name="description" content="可交互 PBR 微表面多次散射研究图：Heitz、Kulla–Conty、Turquin、Fdez-Agüera、UE 与 Dupuy 路线差异。" />
+  <title>PBR · 微表面多次散射方案图解</title>
+  <style>
+    :root{--bg:#0a0e14;--surface:#111923;--raised:#15202a;--line:#263442;--line2:#1c2935;--text:#ecf1f5;--muted:#91a2af;--dim:#657785;--blue:#83cafa;--mint:#87dbba;--gold:#f1bf7c;--violet:#c0a3fa;--red:#f28c91;--white:#eff5fb;--mono:"SFMono-Regular",Consolas,"Liberation Mono","Cascadia Code",monospace;--sans:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.68;overflow-x:hidden} ::selection{background:#3a5b71;color:white}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(#71899e07 1px,transparent 1px),linear-gradient(90deg,#71899e07 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 78%)}
+    .shell{width:min(1460px,calc(100% - 72px));margin:auto;position:relative}
+    .topline{height:70px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:18px}
+    .wordmark{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.17em;color:#e6eef4}
+    .mark{width:31px;height:31px;border:1px solid #57748a;display:grid;place-items:center;font:800 13px var(--mono);color:var(--blue);border-radius:7px;background:#152633}
+    .topmeta{font:11px var(--mono);color:var(--dim);letter-spacing:.09em;white-space:nowrap}.topmeta span{color:var(--mint)}
+    header.hero{padding:58px 0 43px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:40px;align-items:end}
+    .eyebrow{font:11px var(--mono);letter-spacing:.17em;text-transform:uppercase;color:var(--mint);margin-bottom:13px}
+    h1{font-size:clamp(32px,4.1vw,57px);letter-spacing:-.056em;line-height:1.16;margin:0 0 18px;font-weight:750}
+    h1 em{font-style:normal;color:var(--blue)}
+    .intro{font-size:15px;color:var(--muted);max-width:780px;margin:0;line-height:1.85}
+    .hero-facts{border-left:1px solid var(--line);padding-left:24px;display:flex;flex-direction:column;gap:13px}
+    .fact{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line2);padding-bottom:10px}.fact:last-child{border:0;padding:0}
+    .fact strong{font:600 13px var(--mono);color:var(--white)}.fact span{font-size:12px;color:var(--dim)}
+    .section{margin:0 0 60px}.sectionbar{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:0 0 19px}.section-title{font-size:19px;font-weight:650;letter-spacing:-.03em;margin:0}.section-index{color:var(--mint);font:12px var(--mono);margin-right:14px}.section-note{font-size:12px;color:var(--dim)}
+    .stage-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr);gap:17px;align-items:stretch}
+    .panel{border:1px solid var(--line);background:linear-gradient(145deg,#121b24,#101821);border-radius:12px;overflow:hidden;min-width:0;position:relative}
+    .panel-hd{padding:19px 23px 0;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .panel-title{font-size:13px;font-weight:680;color:#dde9f2}.panel-sub{font:11px var(--mono);color:var(--dim)}
+    .toggle{display:flex;gap:7px;align-items:center;border:1px solid #365469;color:#bcddf1;background:#172b38;border-radius:7px;padding:6px 9px;cursor:pointer;font:11px var(--mono);transition:background .2s}
+    .toggle:hover{background:#1c3748}.toggle.off{color:var(--dim);background:transparent;border-color:var(--line)}
+    .diagram{width:100%;display:block;height:auto;margin-top:11px}.ray-blue{stroke:var(--blue);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}.ray-orange{stroke:var(--gold);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}.ray-ext{stroke:#6e8393;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-dasharray:5 7}.microedge{stroke:#8aa3b6;stroke-width:2.4;fill:none;stroke-linejoin:round}.microlayer{stroke:#334556;stroke-width:1;fill:none;opacity:.7}
+    .bounce-group{transition:opacity .25s}.hide-bounces .bounce-group{opacity:.08}.diagram text{font:12px var(--sans);fill:#c4d3df}.diagram .schemanote{font:11px var(--mono);fill:#718b9b}.diagram .blue-label{fill:#83cafa}.diagram .orange-label{fill:#f1bf7c}
+    .schematic-footer{display:flex;gap:10px 20px;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line2);padding:14px 22px 18px}
+    .legend{display:flex;gap:16px;flex-wrap:wrap}.legend span{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;background:var(--blue)}.legend .lg2{background:var(--gold)}
+    .math-chip{font:12px var(--mono);letter-spacing:-.025em;color:#bcd6e6;background:#102331;border:1px solid #244254;border-radius:6px;padding:6px 10px}
+    .control-panel{padding:17px 21px 16px}.control-panel .panel-hd{padding:0}.smalltip{color:var(--dim);font-size:11px}
+    .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+    button{font-family:inherit}.chip{color:var(--muted);border-radius:6px;padding:6px 9px;background:#19232e;border:1px solid #344350;cursor:pointer;font-size:11px;line-height:1.5}.chip:hover{color:var(--text)}.chip.active{border-color:#80a9be;background:#234055;color:#dbf1ff}
+    .sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:19px 0 9px}.inputrow{display:flex;flex-direction:column;gap:11px;min-width:0}.inputhead{display:flex;justify-content:space-between;gap:6px;align-items:center}.inputhead span{color:var(--muted);font-size:11px}.inputhead output{font:12px var(--mono);color:#e2f2ff;font-variant-numeric:tabular-nums}
+    input[type="range"]{width:100%;height:5px;appearance:none;background:#334656;border-radius:8px;outline:none;cursor:pointer;margin:4px 0 7px}input[type="range"]::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:#a8d6f3;box-shadow:0 0 0 3px #1a2c38;border:1px solid #f0f8ff}input[type="range"]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#a8d6f3;border:1px solid white}
+    .energy-summary{display:flex;gap:12px;align-items:center;background:#0c141c;border:1px solid #223240;border-radius:8px;padding:9px 12px;margin:6px 0 15px}.energy-summary strong{font:22px var(--mono);color:var(--gold)}.energy-summary span{font-size:11px;color:var(--muted);line-height:1.5}
+    .output-bars{display:flex;flex-direction:column;gap:8px}.barrow{display:grid;grid-template-columns:100px minmax(0,1fr) 45px;gap:12px;align-items:center}.barrow label{font-size:11px;color:#c0d0dc;white-space:nowrap}.bartrack{height:10px;background:#27343e;border-radius:3px;overflow:hidden;position:relative}.barfill{height:100%;width:0;transition:width .24s ease;background:var(--blue);border-radius:3px}.barrow output{font:12px var(--mono);text-align:right;color:#d5e2eb;tab-size:3;font-variant-numeric:tabular-nums}.outnote{font-size:10px;color:var(--dim);margin:10px 0 0;line-height:1.6}
+    .insight{border:1px solid #365c6d;border-left:3px solid var(--blue);padding:15px 18px;background:#10212c;border-radius:8px;color:#b9ccd9;font-size:13px;margin-top:16px}.insight strong{color:#e1f3ff}
+    .relationship{display:flex;align-items:center;gap:8px;min-height:55px;margin:8px 0 21px;flex-wrap:wrap}
+    .node{border:1px solid #345064;color:#cfe5f1;background:#142430;padding:8px 11px;border-radius:7px;font:12px var(--mono)}.node.primary{color:var(--mint);border-color:#476e60;background:#173129}.rel-arrow{color:#778c98;font:14px var(--mono)}.rel-branch{color:var(--dim);font-size:11px}
+    .cardgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .method{appearance:none;text-align:left;border:1px solid var(--line);background:#121b24;border-radius:11px;padding:20px 21px 18px;min-height:243px;color:var(--text);cursor:pointer;transition:border-color .18s, background .18s,transform .18s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+    .method:hover{border-color:#607b8d;background:#18232f;transform:translateY(-2px)}.method.active{border-color:var(--active-color,var(--blue));background:linear-gradient(145deg,#192935,#111d26);box-shadow:inset 0 0 0 1px #ffffff08}.method.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--active-color,var(--blue))}
+    .method-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.method-date{font:11px var(--mono);color:var(--dim)}.method-type{font:10px var(--mono);color:var(--active-color);border:1px solid currentColor;border-radius:4px;padding:1px 5px;white-space:nowrap}.method h3{font-size:18px;line-height:1.4;margin:0;font-weight:690;letter-spacing:-.02em}.method .method-mechanic{color:#d5e6f0;font-size:13px;margin:0}.method .desc{font-size:12px;color:var(--muted);line-height:1.65;margin:0;flex:1}.method .formula{font:12px var(--mono);color:var(--active-color);background:#0a131b;border:1px solid #223645;min-height:36px;padding:9px 10px;border-radius:6px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:-.025em}.method .bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;font:11px var(--mono);color:var(--dim)}.method .mini-arrow{color:var(--active-color)}
+    .detail-pane{margin-top:15px;display:grid;grid-template-columns:1.1fr 1fr;gap:26px;border:1px solid #365267;border-radius:12px;background:#11202d;padding:23px 26px;min-height:184px}.detail-pane .detail-kicker{font:11px var(--mono);color:var(--mint);letter-spacing:.08em}.detail-pane h3{font-size:21px;letter-spacing:-.025em;margin:7px 0}.detail-pane p{color:#a6bcca;margin:0;font-size:13px;line-height:1.75}.detail-pane .formula-big{border:1px solid #35546a;background:#0b1722;border-radius:8px;padding:14px 17px;font:13px var(--mono);overflow-x:auto;white-space:pre-wrap;line-height:1.7;color:#c7e6f9;margin-bottom:12px}.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:4px 7px;color:#a4c3d4;border:1px solid #385063;border-radius:4px;font:11px var(--mono)}
+    .matrixwrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;background:#111923}.matrix{width:100%;border-collapse:collapse;min-width:920px;font-size:12px}.matrix th,.matrix td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line2);vertical-align:top}.matrix thead th{font:11px var(--mono);font-weight:600;color:#d8e7ef;background:#192633}.matrix tbody th{color:#9eb0bb;font-weight:500;white-space:nowrap;background:#141f28}.matrix td{color:#c4d2dc}.matrix tr:last-child td,.matrix tr:last-child th{border-bottom:0}.matrix .muted{color:#7e95a3}
+    .engine-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.engine-card{border:1px solid var(--line);border-radius:11px;padding:21px 23px;background:#121b24}.engine-card h3{font-size:17px;letter-spacing:-.02em;margin:0 0 6px}.engine-card .sub{color:var(--dim);font:11px var(--mono);margin:0 0 18px}.code{background:#09131c;border:1px solid #243542;border-radius:8px;padding:16px 18px;margin:14px 0 16px;color:#cfe1ee;font:12px/1.9 var(--mono);white-space:pre;overflow-x:auto}.code .cmt{color:#7493a0}.code .lit{color:var(--gold)}.code .fn{color:var(--mint)}.engine-card p{font-size:12px;line-height:1.8;color:#9eafbc;margin:0}.check{border-top:1px solid #263744;margin-top:15px;padding-top:11px;color:#aebdcc!important}.check strong{color:#e6eff5}
+    .foot{border-top:1px solid var(--line);padding:25px 0 50px;margin-top:55px}.foothd{font-size:12px;color:#d9e7f1;font-weight:700;margin-bottom:12px}.sources{display:flex;flex-wrap:wrap;gap:8px 11px}.source{color:#99bfd4;text-decoration:none;border-bottom:1px solid #3b596a;font:11px/1.8 var(--mono)}.source:hover{color:var(--white);border-bottom-color:var(--white)}.foot p{color:#748b9a;font-size:11px;max-width:1200px;line-height:1.85;margin:15px 0 0}
+    .sticky-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.sticky-nav a{font:11px var(--mono);text-decoration:none;color:#92abba;padding:8px 12px;border:1px solid #2c4354;border-radius:7px;background:#101c26}.sticky-nav a:hover{color:#e1f0fa;border-color:#83cafa}
+    @media(max-width:1100px){.stage-grid{grid-template-columns:1fr}.cardgrid{grid-template-columns:repeat(2,1fr)}header.hero{grid-template-columns:1fr}.hero-facts{display:grid;grid-template-columns:repeat(3,1fr);border-left:0;border-top:1px solid var(--line);padding:17px 0 0}.fact{border-bottom:0;border-right:1px solid var(--line2);padding-right:10px}.fact:last-child{border-right:0}}
+    @media(max-width:720px){.shell{width:min(100% - 30px,600px)}.topline{height:60px}.topmeta{display:none}header.hero{padding:38px 0 28px;gap:20px}.hero-facts{grid-template-columns:1fr;gap:5px}.fact{border-right:0;border-bottom:1px solid var(--line2);padding:5px 0}.fact:last-child{border-bottom:0}.section{margin-bottom:43px}.sectionbar{align-items:start;flex-direction:column;gap:4px}.section-title{font-size:17px}.section-note{font-size:11px}.cardgrid{grid-template-columns:1fr}.method{min-height:215px}.detail-pane{grid-template-columns:1fr;gap:15px;padding:20px}.engine-grid{grid-template-columns:1fr}.stage-grid{gap:12px}.control-panel{padding:18px 14px}.panel-hd{padding:15px 14px 0}.sliders{gap:10px}.barrow{grid-template-columns:95px minmax(0,1fr) 41px;gap:8px}.schematic-footer{padding:12px}.relationship{gap:7px}.node{padding:6px 7px;font-size:11px}.section-index{margin-right:7px}.math-chip{font-size:10px}.panel .diagram{min-width:510px;max-width:none;width:100%;transform-origin:left top}.stage-diagram{overflow-x:auto}.insight{font-size:12px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <div class="topline">
+    <div class="wordmark"><span class="mark">R.</span><span>RENDERING RESEARCH ATLAS</span></div>
+    <div class="topmeta">MICROFACET / <span>MULTIPLE SCATTERING</span> &nbsp;&nbsp; 2016 → 2026</div>
+  </div>
+  <header class="hero">
+    <div>
+      <div class="eyebrow">GameDevEveryday · Technical Research · 2026.09.19</div>
+      <h1>微表面多次散射<br/><em>五种研究路线，一张图讲清</em></h1>
+      <p class="intro">所有方案都试图回答同一个问题：传统 GGX + Smith 单次散射 BRDF 遗漏了微表面之间的后续反弹。真正的分歧，不在“补不补能量”，而在<strong style="color:#dfedf5">如何估算能量、将它分配到哪些方向、付出多少计算成本</strong>。</p>
+      <nav class="sticky-nav" aria-label="页面目录">
+        <a href="#physical">01 / 物理缺口</a><a href="#methods">02 / 方案关系</a><a href="#matrix">03 / 横向比较</a><a href="#unreal">04 / UE 实践</a>
+      </nav>
+    </div>
+    <aside class="hero-facts" aria-label="核心事实">
+      <div class="fact"><span>问题来源</span><strong>Single-scatter GGX</strong></div>
+      <div class="fact"><span>基础变量</span><strong>D · G · F</strong></div>
+      <div class="fact"><span>共同目标</span><strong>E_ss + E_ms</strong></div>
+    </aside>
+  </header>
+
+  <section class="section" id="physical">
+    <div class="sectionbar"><h2 class="section-title"><span class="section-index">01 /</span>能量到底丢在哪里</h2><span class="section-note">先看光线路径，再调节参数观察能量账本</span></div>
+    <div class="stage-grid">
+      <div class="panel stage-diagram" id="rayContainer">
+        <div class="panel-hd"><span class="panel-title">微表面反弹示意 / Microfacet transport</span><button id="bounceToggle" class="toggle" type="button" aria-pressed="true">◉&nbsp; 显示多次反弹</button></div>
+        <svg viewBox="0 0 760 390" class="diagram" role="img" aria-label="蓝色光线单次反弹后出射，橙色光线发生更多次反弹再出射；传统单次散射模型没有计算橙色路径。">
+          <defs>
+            <marker id="arrBlue" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7Z" fill="#83cafa" /></marker>
+            <marker id="arrGold" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7Z" fill="#f1bf7c" /></marker>
+            <linearGradient id="dirt" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#263a49"/><stop offset="1" stop-color="#12212b"/></linearGradient>
+          </defs>
+          <rect x="22" y="18" width="716" height="350" fill="#0e1822" stroke="#253744" stroke-dasharray="3 6" rx="9" />
+          <g opacity=".34"><path d="M52 53H710M52 101H710M52 149H710M52 197H710M52 245H710M52 293H710" stroke="#354855" stroke-width=".6"/><path d="M100 35V350M180 35V350M260 35V350M340 35V350M420 35V350M500 35V350M580 35V350M660 35V350" stroke="#354855" stroke-width=".6"/></g>
+          <path d="M55 279 L128 257 L186 282 L252 225 L308 256 L357 219 L418 267 L481 239 L539 263 L600 228 L704 263 L704 345 L55 345 Z" fill="url(#dirt)" opacity=".7" />
+          <path class="microlayer" d="M55 293 L128 273 L186 299 L252 244 L308 278 L357 237 L418 287 L481 255 L539 279 L600 247 L704 280"/>
+          <path class="microedge" d="M55 279 L128 257 L186 282 L252 225 L308 256 L357 219 L418 267 L481 239 L539 263 L600 228 L704 263" />
+          <g><path class="ray-blue" d="M99 58 L252 224" marker-end="url(#arrBlue)"/><path class="ray-blue" d="M252 224 L421 62" marker-end="url(#arrBlue)"/><circle cx="252" cy="224" r="5" fill="#83cafa" stroke="#c7eafa" stroke-width="1.5"/>
+          <text x="62" y="49" class="blue-label">入射光线 Lᵢ</text><text x="433" y="57" class="blue-label">单次反射出射</text><text x="436" y="76" class="schemanote">f_ss</text></g>
+          <g class="bounce-group"><path d="M252 224 L357 220 L481 239 L598 95" class="ray-orange" marker-end="url(#arrGold)"/><circle cx="357" cy="220" r="4" fill="#f1bf7c"/><circle cx="481" cy="239" r="4" fill="#f1bf7c"/><path d="M338 184 L367 193" stroke="#f1bf7c" opacity=".5"/><path d="M465 197 L492 214" stroke="#f1bf7c" opacity=".5"/><text x="516" y="88" class="orange-label">后续反弹出射</text><text x="613" y="108" class="schemanote">f_ms</text></g>
+          <text x="68" y="333" class="schemanote">ROUGH MICROSURFACE / GGX + SMITH</text>
+          <g class="bounce-group"><path class="ray-ext" d="M354 150 L481 170"/><text x="441" y="156" class="schemanote">单次模型</text><text x="441" y="171" class="schemanote">遗漏的路径</text></g>
+        </svg>
+        <div class="schematic-footer"><div class="legend"><span><i></i> 单次散射 f_ss</span><span><i class="lg2"></i> 多次散射 f_ms</span></div><div class="math-chip">F = 1 时：E_ss + E_ms = 1</div></div>
+      </div>
+      <div class="panel control-panel">
+        <div class="panel-hd"><div><div class="panel-title">白炉测试 / White furnace</div><div class="smalltip">同一 BRDF，不同补偿方式的方向反照率</div></div><span class="panel-sub">LIVE · LUT</span></div>
+        <div class="presets" role="group" aria-label="材料预设">
+          <button type="button" data-f0="0.04" class="chip">电介质 · 0.04</button>
+          <button type="button" data-f0="0.75" class="chip active">金属示例 · 0.75</button>
+          <button type="button" data-f0="1" class="chip">理想反射 · 1.00</button>
+        </div>
+        <div class="sliders">
+          <div class="inputrow"><div class="inputhead"><span>Roughness</span><output id="roughOut">0.78</output></div><input id="rough" type="range" min="0.03" max="1" step="0.01" value="0.78" aria-label="Roughness" /></div>
+          <div class="inputrow"><div class="inputhead"><span>N·V</span><output id="novOut">0.65</output></div><input id="nov" type="range" min="0.03" max="1" step="0.01" value="0.65" aria-label="法线与视线夹角余弦" /></div>
+          <div class="inputrow"><div class="inputhead"><span>F₀</span><output id="f0Out">0.75</output></div><input id="f0" type="range" min="0" max="1" step="0.01" value="0.75" aria-label="垂直入射反射率" /></div>
+        </div>
+        <div class="energy-summary"><strong id="deficitOut">—</strong><span>几何层遗漏比例 1 − E_ss(F=1)<br/><span style="color:#668597">仅指 F=1 下的单次散射缺口</span></span></div>
+        <div class="output-bars" aria-live="polite">
+          <div class="barrow"><label>仅单次散射</label><div class="bartrack"><div class="barfill" id="b_single" style="background:#88b1c7"></div></div><output id="v_single">—</output></div>
+          <div class="barrow"><label>Kulla–Conty</label><div class="bartrack"><div class="barfill" id="b_kulla" style="background:#f1bf7c"></div></div><output id="v_kulla">—</output></div>
+          <div class="barrow"><label>Turquin</label><div class="bartrack"><div class="barfill" id="b_turquin" style="background:#87dbba"></div></div><output id="v_turquin">—</output></div>
+          <div class="barrow"><label>Fdez · IBL</label><div class="bartrack"><div class="barfill" id="b_fdez" style="background:#c0a3fa"></div></div><output id="v_fdez">—</output></div>
+        </div>
+        <p class="outnote">计算条件：各向同性 GGX、height-correlated Smith、Schlick Fresnel、α = Roughness²、均匀单位环境光；LUT 由数值积分预计算。数值是<strong>论文公式的教学近似</strong>，不是 UE 实机输出或论文测速。F₀≠1 时能量可被吸收，结果不应强行等于 1。</p>
+      </div>
+    </div>
+    <div class="insight"><strong>关键区分：</strong> <code style="font-family:var(--mono)">E_ss(μ,r)</code> 是单次散射 BRDF 在白色半球环境中的积分。<code style="font-family:var(--mono)">1 − E_ss</code> 在 <code style="font-family:var(--mono)">F=1</code> 时正好对应遗漏的多次散射能量；但<strong>补多少能量</strong>并不能唯一决定<strong>补偿项朝哪些方向反射</strong>。这正是各方案真正分叉的地方。</div>
+  </section>
+
+  <section class="section" id="methods">
+    <div class="sectionbar"><h2 class="section-title"><span class="section-index">02 /</span>同一个问题，五条不同的研究路线</h2><span class="section-note">点击方案卡片，查看公式、成立条件与限制</span></div>
+    <div class="relationship"><span class="node primary">GGX + Smith<br/>单次散射</span><span class="rel-arrow">→</span><span class="node">Heitz · 2016<br/>随机游走</span><span class="rel-arrow">↘</span><span class="node">Kulla–Conty · 2017<br/>附加 BRDF lobe</span><span class="rel-branch">或</span><span class="node">Turquin · 2019<br/>缩放原 lobe</span><span class="rel-branch">或</span><span class="node">Fdez · 2019<br/>IBL 积分近似</span></div>
+    <div class="cardgrid" id="methodCards">
+      <button class="method" data-key="heitz" style="--active-color:#83cafa" type="button" aria-pressed="false">
+        <div class="method-top"><span class="method-date">2016 / SIGGRAPH</span><span class="method-type">物理参考</span></div><h3>Heitz et al.</h3><p class="method-mechanic">随机游走，算每一次反弹</p><p class="desc">从 Smith 模型的几何假设出发构建多次散射 BSDF。精度高，但每次随机路径会增加求值和采样成本。</p><div class="formula">f = f¹ + f² + f³ + …</div><div class="bottom"><span>STOCHASTIC / ALL ORDERS</span><span class="mini-arrow">↗ 细节</span></div>
+      </button>
+      <button class="method active" data-key="kulla" style="--active-color:#f1bf7c" type="button" aria-pressed="true">
+        <div class="method-top"><span class="method-date">2017 / IMAGEWORKS</span><span class="method-type">附加项</span></div><h3>Kulla–Conty</h3><p class="method-mechanic">增加新的、近似漫反射形状的 lobe</p><p class="desc">使用 E(μ,r) 的二维 LUT 与 E_avg(r) 的一维 LUT 构造互易的额外 BRDF 项。重视能量账本和稳定性。</p><div class="formula">f_total = f_ss + f_ms</div><div class="bottom"><span>ADD / 2D + 1D LUT</span><span class="mini-arrow">↗ 细节</span></div>
+      </button>
+      <button class="method" data-key="turquin" style="--active-color:#87dbba" type="button" aria-pressed="false">
+        <div class="method-top"><span class="method-date">2018–19 / ILM</span><span class="method-type">缩放原项</span></div><h3>Turquin</h3><p class="method-mechanic">保留 GGX 高光形状，整体放大</p><p class="desc">用能量缺口计算 gain，在原单次 BRDF 上乘系数；便于复用已有求值与采样逻辑，但不保证互易性。</p><div class="formula">f_total ≈ f_ss × gain</div><div class="bottom"><span>SCALE / 2D LUT</span><span class="mini-arrow">↗ 细节</span></div>
+      </button>
+      <button class="method" data-key="fdez" style="--active-color:#c0a3fa" type="button" aria-pressed="false">
+        <div class="method-top"><span class="method-date">2019 / JCGT</span><span class="method-type">IBL 专项</span></div><h3>Fdez-Agüera</h3><p class="method-mechanic">利用 Split-Sum 的 BRDF LUT 补第二项</p><p class="desc">重用已有 DFG 积分，使用预过滤镜面环境辐射与余弦加权环境辐照度，近似多次反射。</p><div class="formula">L = SS·radiance + MS·irradiance</div><div class="bottom"><span>IBL / REUSE DFG</span><span class="mini-arrow">↗ 细节</span></div>
+      </button>
+      <button class="method" data-key="ue" style="--active-color:#89b8d8" type="button" aria-pressed="false">
+        <div class="method-top"><span class="method-date">UE 4.x → UE 5.x</span><span class="method-type">工程落地</span></div><h3>Unreal Engine</h3><p class="method-mechanic">借鉴多种近似，将能量项融合进 Shader</p><p class="desc">UE5 部分现代路径以 GGX 能量项调整镜面贡献，并同步约束漫反射预算。具体行为取决于版本、材质系统及平台分支。</p><div class="formula">Spec *= Conservation(terms)</div><div class="bottom"><span>ENGINE / SHADER PATHS</span><span class="mini-arrow">↗ 细节</span></div>
+      </button>
+      <button class="method" data-key="dupuy" style="--active-color:#e5b1be" type="button" aria-pressed="false">
+        <div class="method-top"><span class="method-date">2026 / PREPRINT</span><span class="method-type">解析特例</span></div><h3>Dupuy</h3><p class="method-mechanic">所有散射阶，特殊 NDF 的闭式解</p><p class="desc">精确、可直接重要性采样，但模型采用特殊微片法线分布，没有常规 GGX Roughness 控制参数。</p><div class="formula">f = (zᵢ + zₒ) / [π(1 + ωᵢ·ωₒ)]</div><div class="bottom"><span>EXACT / SPECIAL NDF</span><span class="mini-arrow">↗ 细节</span></div>
+      </button>
+    </div>
+    <div class="detail-pane" id="details" aria-live="polite">
+      <div><div class="detail-kicker" id="detailKicker">02 / SELECTED METHOD · 2017</div><h3 id="detailName">Kulla–Conty / Additive BRDF</h3><p id="detailDesc">在不改变原单次 GGX BRDF 的前提下，额外构造具有方向性、互易性的能量补偿项。沿用 Kelemen & Szirmay-Kalos 2001 的补偿思想，通过方向反照率 E 和半球平均值 E_avg 近似多次散射的方向分布；不需要模拟实际反弹轨迹。</p></div>
+      <div><div class="formula-big" id="detailFormula">f_total = f_ss + f_ms
+f_ms ∝ (1−E(μi))(1−E(μo)) / [π(1−E_avg)]</div><div class="pills" id="detailTags"><span class="pill">完整 roughness 范围</span><span class="pill">近似角分布</span><span class="pill">互易性</span></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="matrix">
+    <div class="sectionbar"><h2 class="section-title"><span class="section-index">03 /</span>差异矩阵：补偿项到底改了什么</h2><span class="section-note">移动端可左右滑动表格 · 成本是算法性质，并非统一平台测速</span></div>
+    <div class="matrixwrap"><table class="matrix"><thead><tr><th>比较维度</th><th>Heitz 2016</th><th>Kulla–Conty 2017</th><th>Turquin</th><th>Fdez-Agüera 2019</th><th>Dupuy 2026</th></tr></thead><tbody>
+      <tr><th>补偿来源</th><td>真实随机游走路径</td><td>单次方向反照率缺口</td><td>缺口驱动的 gain</td><td>复用 IBL DFG 积分</td><td>特制 NDF 的解析求和</td></tr>
+      <tr><th>补偿的方向形状</th><td>路径决定；较物理真实</td><td>额外近漫反射 lobe</td><td>和原单次 GGX lobe 同形</td><td>IBL 多次项近似为 irradiance</td><td>由闭式 BRDF 直接定义</td></tr>
+      <tr><th>数据 / 计算</th><td>随机路径样本</td><td>E 二维表 + E_avg 一维表</td><td>E LUT + 缩放系数</td><td>沿用 Split-Sum DFG A/B</td><td>初等函数，无标准 GGX LUT</td></tr>
+      <tr><th>优点</th><td>物理参考价值强</td><td>互易，工程稳健</td><td>实现精简，采样复用</td><td>为实时环境光设计，低额外开销</td><td>完整散射阶 + 可直接采样</td></tr>
+      <tr><th>主要限制</th><td>通常不适合实时逐像素暴力采样</td><td>补偿项方向形状是近似</td><td>一般不严格互易</td><td>依赖 Split-Sum 和 irradiance 假设</td><td>无法直接覆盖任意 Roughness GGX</td></tr>
+      <tr><th>与 Unreal 的关系</th><td class="muted">评估 / 离线参考</td><td>能量缺口与补偿思想</td><td>实时镜面缩放思路</td><td>环境光预积分思路</td><td class="muted">理论突破，非传统材质直接替换</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section" id="unreal">
+    <div class="sectionbar"><h2 class="section-title"><span class="section-index">04 /</span>放回 Unreal：应该对照哪一段 Shader</h2><span class="section-note">以下为示意接口，不是固定引擎版本的逐行源码</span></div>
+    <div class="engine-grid">
+      <div class="engine-card"><h3>UE 4.26 / 4.27：单次散射 + Split-Sum 基线</h3><p class="sub">LEGACY DEFAULT LIT · CONCEPTUAL</p>
+        <div class="code"><span class="cmt">// 直接光：Cook–Torrance GGX + Smith</span>
+Specular = <span class="fn">SpecularGGX</span>(D, G, F);
+
+<span class="cmt">// IBL：预过滤环境 + BRDF LUT</span>
+SpecIBL = PrefilteredEnv * (F0 * A + B);
+
+<span class="cmt">// A/B ≠ 自动包含完整微面多次反弹</span></div>
+        <p>传统 Split-Sum BRDF LUT 预计算的是单次散射积分。它减少实时计算开销，但<strong>不能仅因为查了 LUT，就认为微表面多次散射已经补齐</strong>。</p>
+        <p class="check">验证方式：针对实际 UE4 分支检查 <strong>BRDF.ush、ShadingModels.ush</strong> 以及项目修改项。</p>
+      </div>
+      <div class="engine-card"><h3>UE 5.x：镜面补偿与漫反射能量分配</h3><p class="sub">MODERN SHADING PATHS · VERSION / MATERIAL DEPENDENT</p>
+        <div class="code"><span class="cmt">// 示例函数名；以实际分支为准</span>
+terms = <span class="fn">ComputeGGXSpecEnergyTerms</span>(...);
+
+Specular *= <span class="fn">ComputeEnergyConservation</span>(terms);
+Diffuse  *= <span class="fn">ComputeEnergyPreservation</span>(terms);
+
+<span class="cmt">// Conservation: 补偿镜面多次散射</span>
+<span class="cmt">// Preservation: 控制 diffuse / specular 分配</span></div>
+        <p>在对应实现中，镜面多次散射补偿体现为对原镜面贡献的调整，形态上更接近 Turquin 式缩放；这<strong>不等于 UE 完整照搬某篇论文的全部公式</strong>。Substrate、Legacy、Path Tracer 的路径不能混为一谈。</p>
+        <p class="check">可检查：<strong>ShadingEnergyConservation.ush</strong>；<strong>r.Shading.EnergyConservation</strong>、<strong>r.Shading.EnergyPreservation</strong>。开关存在与默认值需按具体版本确认。</p>
+      </div>
+    </div>
+    <div class="insight" style="border-color:#396354;border-left-color:var(--mint);background:#0f221e"><strong>重要边界：</strong> 这里讨论的是<strong>材质内部微表面尺度</strong>的多次散射补偿；Lumen/Path Tracer 对<strong>场景中不同物体之间</strong>的多次光照反弹属于另一层问题。并且“能量保持”不意味着所有金属都应反射 100% 的白色入射能量：Fresnel 与吸收仍然决定实际亮度。</div>
+  </section>
+
+  <footer class="foot">
+    <div class="foothd">PRIMARY REFERENCES / 论文与工程资料</div>
+    <div class="sources">
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://eheitzresearch.wordpress.com/240-2/">Heitz et al. 2016 ↗</a>
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://blog.selfshadow.com/publications/s2017-shading-course/">Kulla &amp; Conty 2017 · SIGGRAPH Course ↗</a>
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://blog.selfshadow.com/publications/turquin/ms_comp_final.pdf">Turquin · Practical Multiple Scattering ↗</a>
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://jcgt.org/published/0008/01/03/">Fdez-Agüera 2019 · JCGT ↗</a>
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://arxiv.org/abs/2609.20394">Dupuy 2026 · arXiv ↗</a>
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://google.github.io/filament/Filament.html">Filament · Energy Compensation ↗</a>
+      <a class="source" target="_blank" rel="noopener noreferrer" href="https://unrealdirective.com/resources/console-variables/r-shading-energyconservation/">UE Energy Conservation CVar ↗</a>
+    </div>
+    <p>数值面板的 E(μ,r) 使用 GGX VNDF 低差异采样对单次 BRDF 做离线数值积分，离线烘焙为 48×48 网格；运行时双线性插值；F₀ 引入 Schlick Fresnel。Kulla–Conty 的补偿以论文简化 Fresnel 平均形式展示，Turquin 使用其最简 F₀ 缩放，Fdez-Agüera 使用论文对均匀单位环境的 IBL 表达式。所有数值是针对“相同假设下理解方案差异”的教学计算，不是参考路径追踪真值、渲染帧时间或真实材质光谱测量。本文设计为单文件离线运行，无需第三方 JS。</p>
+    <p>Research atlas · GameDevEveryday · 2026-09-19 · 交互图解</p>
+  </footer>
+</div>
+<script>
+(function(){
+  'use strict';
+  const baked={"n":48,"r0":0.03,"v0":0.025,"geom":"2f/5//z//f/+//7//v//////////////////////////////////////////////////////////////////////////////////////////////////////////////gP6Y/9b/4f/2//n/+v/7//z//f/9//3//v/+//7//v/+//7//v/+////////////////////////////////////////////////////////////////////////////v/k8/i7/h//F/9X/3P/h//P/9v/3//n/+v/7//v//P/8//z//f/9//3//f/+//7//v/+//7//v/+//7//v/+////////////////////////////////////////////mfHK+o/9qf4m/17/lP+6/83/1P/a/93/4P/r//P/9f/3//j/+f/5//r/+//7//v//P/8//z//f/9//3//f/+//7//v/+//7//v/+//7//v//////////////////////mek59Wf6ufzt/Y/+8P4o/03/af+S/6X/uf/A/8X/yf/M/8//0f/S/9v/4//l/+f/6P/o/+n/6v/q/+v/6//s/+z/7P/t/+3/7f/t/+7/7v/u/+7/7v/u/+//7//v/+//GOW/7tf1p/nA+wf91/1j/rT+9v4g/zr/U/9o/4T/mv+l/7T/vf/D/8f/yv/M/87/0P/R/9P/1P/V/+L/5f/n/+j/6f/q/+r/6//r/+z/7P/t/+3/7f/u/+7/7v/u/+//EuQe6WTwe/Ws+LL6/Pvq/I79Df5l/qL+0/7//hn/LP9B/07/X/9t/4X/kv+Z/5//qP+x/7b/uv+8/77/wP/C/8P/xf/G/8f/yP/I/83/1v/Z/9r/2//c/93/3f/e/97/QeWE5UbrtfC99Jr3hPnq+uL7pvwx/ab9Bf5H/nv+qv7P/vL+Cf8Y/yn/OP9D/03/Wv9k/3L/fP+I/4//lP+Y/5v/nf+i/6r/rv+y/7T/tv+3/7n/uv+7/7z/vf+9/77/bufx40rnGOxi8MXzXvZD+K75yPqb+0P8xfws/Yv93f0d/kn+bP6Q/q7+z/7p/vz+Cv8X/yb/Mf85/0D/TP9V/1z/Z/9v/3T/eP97/4D/h/+N/5D/k/+V/5f/mf+a/5v/2enn48HkOOgq7Lbvp/IA9ej2Wfh++W/6MfvG+0n8sPz+/Ef9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","fresnel0":"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"};
+  function unpack(s){const bin=atob(s),out=new Float32Array(bin.length/2);for(let i=0;i<out.length;i++)out[i]=(bin.charCodeAt(2*i)+(bin.charCodeAt(2*i+1)<<8))/65535;return out;}
+  const EG=unpack(baked.geom), EB=unpack(baked.fresnel0), N=baked.n;
+  const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+  function lut(table,r,v){
+    let fx=clamp((v-baked.v0)/(1-baked.v0))*(N-1), fy=clamp((r-baked.r0)/(1-baked.r0))*(N-1);
+    let x=Math.min(N-2,Math.floor(fx)),y=Math.min(N-2,Math.floor(fy)),dx=fx-x,dy=fy-y;
+    let p=y*N+x, a=table[p]*(1-dx)+table[p+1]*dx, b=table[p+N]*(1-dx)+table[p+N+1]*dx;
+    return a*(1-dy)+b*dy;
+  }
+  function eAvg(r){const s=64;let sum=0;for(let i=0;i<s;i++){const u=(i+.5)/s;sum+=lut(EG,r,u)*2*u/s;}return sum;}
+  const rough=document.getElementById('rough'),nov=document.getElementById('nov'),f0=document.getElementById('f0');
+  const ids=['single','kulla','turquin','fdez'];
+  function update(){
+    const r=+rough.value,v=+nov.value,F=+f0.value;
+    document.getElementById('roughOut').textContent=r.toFixed(2);document.getElementById('novOut').textContent=v.toFixed(2);document.getElementById('f0Out').textContent=F.toFixed(2);
+    document.querySelectorAll('[data-f0]').forEach(b=>b.classList.toggle('active',Math.abs(F-(+b.dataset.f0))<.004));
+    const E=clamp(lut(EG,r,v),.00001,1),B=clamp(lut(EB,r,v));
+    const S=clamp(F*E+(1-F)*B);
+    const deficit=clamp(1-E);
+    const EA=clamp(eAvg(r),.00001,1);
+    const FA=(1+20*F)/21;
+    const K=S+deficit*(FA*EA)/(1-FA*(1-EA));
+    const T=S*(1+F*deficit/E);
+    const D=S*(1+FA*deficit/(1-FA*deficit));
+    const outputs={single:S,kulla:K,turquin:T,fdez:D};
+    document.getElementById('deficitOut').textContent=(deficit*100).toFixed(1)+'%';
+    ids.forEach(id=>{
+      const x=clamp(outputs[id]);document.getElementById('b_'+id).style.width=(x*100).toFixed(2)+'%';document.getElementById('v_'+id).textContent=outputs[id].toFixed(3);
+    });
+  }
+  [rough,nov,f0].forEach(el=>el.addEventListener('input',update));
+  document.querySelectorAll('[data-f0]').forEach(b=>b.addEventListener('click',()=>{f0.value=b.dataset.f0;update()}));
+  const bounce=document.getElementById('bounceToggle');bounce.addEventListener('click',()=>{const shown=bounce.getAttribute('aria-pressed')!=='true';bounce.setAttribute('aria-pressed',shown);bounce.textContent=shown?'◉  显示多次反弹':'○  仅显示单次反弹';bounce.classList.toggle('off',!shown);document.getElementById('rayContainer').classList.toggle('hide-bounces',!shown)});
+  const details={
+    heitz:{kicker:'02 / PHYSICALLY GROUNDED REFERENCE · 2016',name:'Heitz et al. / Stochastic Transport',desc:'把 Smith 微面几何转化为随机游走过程，分别评估一次、两次、三次……散射路径。它为观察次级反射波瓣提供物理参考，但不能直接变成一个廉价的传统 GGX BRDF 闭式函数。',formula:'f_total = Σ (f_k),  k = 1…∞\n\n求和通过随机路径估计，而非 LUT 常数补偿。',tags:['模拟完整反弹路径','Smith 模型','成本高 · 可作参考']},
+    kulla:{kicker:'02 / ENERGY COMPENSATION LOBE · 2017',name:'Kulla–Conty / Additive BRDF',desc:'在不改变原单次 GGX BRDF 的前提下，额外构造具有方向性、互易性的能量补偿项。沿用 Kelemen & Szirmay-Kalos 2001 的补偿思想，通过方向反照率 E 和半球平均值 E_avg 近似多次散射的方向分布；不需要模拟实际反弹轨迹。',formula:'f_total = f_ss + f_ms\nf_ms = [(1−E_i)(1−E_o) / π(1−E_avg)] · F_ms',tags:['2D E LUT + 1D E_avg','额外近漫反射 lobe','互易性']},
+    turquin:{kicker:'02 / RESCALED SPECULAR LOBE · 2018–19',name:'Turquin / Rescale Original GGX',desc:'作者观察到多次反弹的次级波瓣更像缩小的原高光波瓣，因此尝试直接重用 f_ss 的形状与采样 PDF。极简版本用 F₀ 与单次几何能量 E 构造增益；由于系数仅依赖单侧方向，严格互易性通常无法保证。',formula:'f_total ≈ f_ss × [1 + F₀ · (1−E_o) / E_o]\n\nE_o = E_ss(F=1, ω_o, α)',tags:['缩放原有 lobe','低额外成本','非严格互易']},
+    fdez:{kicker:'02 / REAL-TIME IMAGE-BASED LIGHTING · 2019',name:'Fdez-Agüera / Split-Sum Reuse',desc:'不是简单把原有 GGX 高光乘上系数。论文专为 IBL 写出两个贡献：预过滤镜面环境 radiance 对应单次项，低频 irradiance 对应多次项；计算依赖 Split-Sum 的 A/B 表和 Fresnel 平均。',formula:'L_IBL ≈ S · Radiance + F_ms · (1−E) · Irradiance\nS = F₀·A + B；F_ms = S·F_avg / [1−F_avg(1−E)]',tags:['复用原 BRDF A/B LUT','IBL 专项','多次项近似漫反射']},
+    ue:{kicker:'02 / UNREAL ENGINE · IMPLEMENTATION FAMILY',name:'Unreal / Shading Energy Terms',desc:'不是一篇单独的 BRDF 理论论文。UE4.26/4.27 的传统基线侧重单次 GGX 与 Split-Sum IBL；部分现代 UE5 Shader 路径以预计算的 GGX 能量项调整 specular，并对 diffuse 进行分配约束。须区分 Legacy、Substrate、Path Tracer，以及代码分支中的宏开关。',formula:'terms = ComputeGGXSpecEnergyTerms(…)\nSpecular *= ComputeEnergyConservation(terms)\nDiffuse  *= ComputeEnergyPreservation(terms)',tags:['工程近似','平台 / 分支相关','微面尺度 ≠ Lumen 场景反弹']},
+    dupuy:{kicker:'02 / EXACT ELEMENTARY SPECIAL CASE · 2026',name:'Dupuy / Closed-Form Special NDF',desc:'不是一张更精确的 GGX 补偿表。论文选择特定二次微片法线分布，使所有散射阶的总和成为初等闭式，并支持直接重要性采样。但缺少普通微面材质所需要的 roughness 控制自由度。',formula:'f_r(ωᵢ,ωₒ) = (zᵢ + zₒ) / [π(1 + ωᵢ·ωₒ)]\n\n精确成立于论文选定的微片介质和假设。',tags:['所有散射阶精确','初等函数 / 可采样','特殊 NDF · 无常规 Roughness']}
+  };
+  function select(key){const d=details[key];if(!d)return;document.querySelectorAll('.method').forEach(el=>{const ok=el.dataset.key===key;el.classList.toggle('active',ok);el.setAttribute('aria-pressed',String(ok))});document.getElementById('detailKicker').textContent=d.kicker;document.getElementById('detailName').textContent=d.name;document.getElementById('detailDesc').textContent=d.desc;document.getElementById('detailFormula').textContent=d.formula;document.getElementById('detailTags').replaceChildren(...d.tags.map(v=>{let s=document.createElement('span');s.className='pill';s.textContent=v;return s;}));}
+  document.querySelectorAll('.method').forEach(b=>b.addEventListener('click',()=>select(b.dataset.key)));
+  update();select('kulla');
+})();
+</script>
+</body>
+</html>

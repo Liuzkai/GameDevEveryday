@@ -45,9 +45,14 @@ Light Propagation Volumes / VXGI
 Neural Radiance Caching（NRC，2021，已在 RTX Remix 中产品化）
         ↓
 神经 GI（2026：AMD attention GI、ArtiFixer 的单 pass GI 预测）
+        ↓
+★ 镜面支线开线（2026-10-09 入库）：[[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]]
+        —— 缓存对象从"视图无关的辐照度" → "反射方向参数化 + roughness 预滤波的辐射度"（split-sum 重建）
+        —— **缓存族（1988 起）第一次正面处理"视图相关"这个前提**
 ```
 
 值得注意：**NRC 已经产品化**（RTX Remix、《半条命 2 RTX》、《传送门 RTX》），说明神经 GI 不是纯未来技术。1080p 下典型开销约 2.6ms。
+**NRC 的覆盖是"漫反射半边"**——镜面（视图相关、roughness 相关）此前无人用缓存接住；2026-10-09 入库的镜面变体是这条支线的第一个节点（Ward 1988 的辐照度缓存能成立，恰恰因为"答案是视图无关的"——**这个前提一旦被打破，缓存就得换表示**）。
 
 ## Related Concepts
 
@@ -65,6 +70,7 @@ Neural Radiance Caching（NRC，2021，已在 RTX Remix 中产品化）
 - [[Lightweight Attention-based Indirect Illumination (AMD)]]
 - [[DLSS 5 — Generative Neural Rendering]]
 - [[2026-09-14-Gaussian Light Transport]]（⚠️ 非神经对照样本：显式 13D 高斯基函数 + 残差优化，视角无关、毫秒渲染、低显存——证明"神经"不是实时 GI 的唯一解；2026-09-14 入库）
+- [[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]]（**镜面缓存支线首节点**，2026-10-09 入库）：NRC 变体——反射方向参数化 + roughness 预滤波辐射度 + **split-sum 重建**（复用 BRDF 积分图）；1080p 实时、同性能下收敛更快；限制：继承 split-sum 掠射近似、动态场景未证明（**变体论文——诚实标注"初步"**）
 - **经典前置（桥材料，2026-10-03/04 入库，三源齐）**：[[Keller — Instant Radiosity (1997)]] · [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]——**AMD 论文的 RSM 输入通道就建在后者之上**（"加一路 RSM 渲染让轻量模型看到屏幕外几何"）；[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]——**NRC 缓存的对象（辐照度）即本篇定义**："缓存介质"从插值公式换成神经网络，问题定义未变
 
 ## Personal Knowledge
