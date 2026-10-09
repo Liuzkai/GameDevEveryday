@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>路线⑤ Turquin 缩放 lobe — 与四级简化链图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a; --violet:#7a4fd0;
+    --code:#f0f3f7; --card:#fbfcfe; --hl:#fff7e0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61; --violet:#b39aff;
+      --code:#232a32; --card:#20262d; --hl:#2a2517;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:940px;margin:0 auto}
+  h1{font-size:23px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:17.5px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  .figrow{display:flex;gap:14px;flex-wrap:wrap}
+  .figcol{flex:1 1 340px;min-width:300px}
+  .box{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card)}
+  .box h4{margin:0 0 6px;font-size:13.5px}
+  .step{border:1px dashed var(--line);border-radius:8px;padding:7px 10px;margin:5px 0;font-size:13px;background:var(--panel)}
+  .step b{color:var(--accent)}
+  .ladder .r{display:grid;grid-template-columns:44px 1fr 1fr;gap:8px;align-items:center;
+             border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;background:var(--card)}
+  .ladder .lv{font-weight:700;color:var(--accent);font-size:13px}
+  .ladder .fx{font-family:Consolas,monospace;font-size:13px}
+  .ladder .note{font-size:12.5px;color:var(--ink2)}
+  .tag{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:2px 4px 2px 0;color:var(--ink2);background:var(--code)}
+  .tl{position:relative;margin:10px 0 6px;padding-left:18px;border-left:2px solid var(--line)}
+  .tl .n{position:relative;margin:0 0 10px}
+  .tl .n::before{content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--ink2)}
+  .tl .n.star::before{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)}
+  .tl .y{font-weight:700;margin-right:6px}
+  .foot{font-size:12.5px;color:var(--ink2);margin-top:20px}
+  svg text{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .lobe-p{fill:var(--accent);opacity:.85}.lobe-d{fill:var(--gold);opacity:.75}.lobe-s{fill:var(--accent2);opacity:.8}
+  .ax{stroke:var(--line);stroke-width:1}.axl{font-size:11px;fill:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>路线⑤ — Turquin 缩放 lobe</h1>
+  <div class="sub">《Practical Multiple Scattering Compensation for Microfacet Models》· Emmanuel Turquin（ILM）· TR 2019（文档 2018-09）<br>
+  五条补法路线里最便宜的一条：<b>一次乘加</b>。本图为 2026-10-09 入库的独立节点图解——与读者自制五路线对照图配套。</div>
+
+  <div class="panel">
+    <h2><span class="num">1</span>核心动作：把"补一个新项"改成"缩放已有项"</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <svg viewBox="0 0 430 240" role="img" aria-label="左：Kulla-Conty 新增漫射形状 lobe；右：Turquin 缩放原 lobe">
+          <rect x="8" y="8" width="200" height="224" rx="10" fill="none" stroke="var(--line)"/>
+          <text x="108" y="30" text-anchor="middle" font-size="12.5" fill="var(--ink)">Kulla-Conty ③/④：新增项（漫射形状）</text>
+          <line class="ax" x1="30" y1="200" x2="190" y2="200"/>
+          <line class="ax" x1="30" y1="60" x2="30" y2="200"/>
+          <path class="lobe-p" d="M30 200 C50 200 62 80 108 80 C154 80 166 200 186 200 Z"/>
+          <text x="108" y="112" text-anchor="middle" font-size="11" fill="var(--ink2)">原高光 lobe</text>
+          <path class="lobe-d" d="M30 200 C70 200 96 162 108 162 C120 162 146 200 186 200 Z" opacity=".8"/>
+          <text x="108" y="188" text-anchor="middle" font-size="11" fill="var(--ink2)">+ 漫射状 f_ms（新项）</text>
+          <text x="108" y="224" text-anchor="middle" font-size="11.5" fill="var(--ink2)">互易 ✅ · 采样不再最优 ❌ · 两张表</text>
+
+          <rect x="222" y="8" width="200" height="224" rx="10" fill="none" stroke="var(--accent)"/>
+          <text x="322" y="30" text-anchor="middle" font-size="12.5" fill="var(--ink)">Turquin ⑤：缩放原项（同一个形状）</text>
+          <line class="ax" x1="244" y1="200" x2="404" y2="200"/>
+          <line class="ax" x1="244" y1="60" x2="244" y2="200"/>
+          <path class="lobe-s" d="M244 200 C264 200 276 66 322 66 C368 66 380 200 400 200 Z"/>
+          <text x="322" y="100" text-anchor="middle" font-size="11" fill="var(--ink2)">同一个 lobe × gain</text>
+          <path class="lobe-p" d="M244 200 C264 200 276 80 322 80 C368 80 380 200 400 200 Z" opacity=".35"/>
+          <text x="322" y="224" text-anchor="middle" font-size="11.5" fill="var(--ink2)">互易 ❌ · 采样完全相同 ✅ · 一张表</text>
+        </svg>
+        <div class="cap">两种"账平"哲学：③ 往旁边加一块；⑤ 直接把原块放大。<br>放大到多少？——由"少收的钱"决定：<code>gain = 1 + F₀·(1−E_ss)/E_ss</code></div>
+      </div>
+      <div class="figcol">
+        <div class="box">
+          <h4>为什么"除以自己的 albedo"就平了</h4>
+          <p class="dim">令 <code>ρ = ρ_ss / E_ss(ω_o)</code>，对出射半球积分：</p>
+          <p class="mono">E = ∫ (ρ_ss/E_ss)·cos dω = E_ss/E_ss = 1 ✅</p>
+          <p class="dim">F=1（不吸收）时能量完全守恒。<b>不需要建模多次散射——只需要把"已经丢掉多少"算准一次（E_ss），然后做除法。</b></p>
+        </div>
+        <div class="callout">
+          <b>两个必须配套的修正</b>
+          <p>① <b>Fresnel</b>：每次反弹都吸收一点 → 用 F_ms 修正（下一节砍到 F₀）；<br>
+          ② <b>电介质</b>：反射/透射的界面比例要一起守恒 → 表扩成 3D（IOR 维），无独立 F_ms。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">2</span>四级简化链：F_ms 从"精确形"砍到 F₀</h2>
+    <div class="ladder">
+      <div class="r"><span class="lv">Eq.12</span><span class="fx">F_ms = F_ss·E_avg / (1 − F_ss(1−E_avg))</span><span class="note">Kulla-Conty 精确形（Jakob 2014 §5.6 几何级数）。含 E_avg → 需要额外 1D 表</span></div>
+      <div class="r"><span class="lv">Eq.13</span><span class="fx">F_ms = F_ss^(α√α)</span><span class="note">对 Heitz 2016 实测：平均行走深度 α=0→1 时由 1 变到 ~2，用 1+α√α 拟合</span></div>
+      <div class="r"><span class="lv">Eq.14</span><span class="fx">F_ms = F_ss</span><span class="note">F_ms 主要在 α→1 起作用 → 直接取该处值</span></div>
+      <div class="r" style="border-color:var(--accent)"><span class="lv">Eq.15</span><span class="fx"><b>F_ms = F₀</b></span><span class="note"><b>裸公式</b>：物理 Fresnel（金/铜）下 F_ss≈F₀，肉眼不可分 → 连多项式都省</span></div>
+    </div>
+    <div class="callout gold">原文原句：<i>"no matter what Fresnel term is chosen between 12, 13, 14 and 15, the results are visually very close."</i><br>
+    <b>可背下来</b>：补回去的能量 90% 由 <code>1−E_ss</code> 决定，Fresnel 只剩一点饱和度差异。</div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">3</span>三方案对照：成本与覆盖</h2>
+    <table>
+      <tr><th></th><th>Heitz 2016 ①</th><th>Kulla-Conty ③</th><th><b>Turquin ⑤（本篇）</b></th></tr>
+      <tr><td>次级 lobe 形状</td><td>与主 lobe 相似</td><td>方位不变（漫射状）</td><td><b>与主 lobe 相同</b></td></tr>
+      <tr><td>互易性</td><td>✅</td><td>✅</td><td>❌</td></tr>
+      <tr><td>最优重要性采样</td><td>❌</td><td>❌（混入 lobe）</td><td>✅（复用原采样+PDF）</td></tr>
+      <tr><td>物理可信度 / 简单 / 速度 / 灵活</td><td>A+ / C / C / B</td><td>B / A / A / A+</td><td><b>B+ / A+ / A+ / A+</b></td></tr>
+      <tr><td>实测成本（Mitsuba vs Heitz）</td><td>基准</td><td>—</td><td><b>导体 7× / 电介质透射 15× 更快，视觉几乎无差</b></td></tr>
+      <tr><td>新增资源</td><td>随机数</td><td>2D+1D 表（≈4KB+）</td><td><b>1 张 2D 表（若复用 DFG 表 ⇒ 事实上零新增）</b></td></tr>
+    </table>
+    <p class="dim">Table 1 为原文自评（四列：物理可信度/简单度/速度/灵活性，A+ 最优）；成本数据为原文 §4 在 Mitsuba 的对照测试。</p>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">4</span>实现形态：gain 的两种接法</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <div class="box">
+          <h4>TR 原版：自己的 E_ss 表</h4>
+          <p class="mono">gain = 1 + F₀·(1−E_ss)/E_ss</p>
+          <p class="dim">32×32 表（cosθ_o × √α）；GTR/STD 扩到 32³；电介质 → 32³×2 张（含 IOR 维）。「可加入任何渲染器，含实时光栅化引擎」。</p>
+        </div>
+      </div>
+      <div class="figcol">
+        <div class="box">
+          <h4>Filament 形态：复用 DFG 表</h4>
+          <p class="mono">// r = dfg.y（非 Fresnel 项 = E_ss）<br>vec3 ec = 1.0 + f0 * (1.0/dfg.y − 1.0);<br>Fr *= ec;</p>
+          <p class="dim">"$E(l)$ 不仅可以预计算，还能与 IBL 预积分共享"——同一个 DFG LUT 的第二通道。<b>同一张表，先给 split-sum、再给能量补偿。</b>Unity HDRP 与 Filament 采用的即此形态。</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">原文关键实现优势：<b>"applied as a gain to the closure, instead of having to modify the closure itself"</b>——不过闭包、不改采样、PDF 不变。这是"最小侵入物理修正"的模板。</div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">5</span>在谱系中的位置</h2>
+    <div class="tl">
+      <div class="n"><span class="y">2014</span>Heitz JCGT：讲清"洞" + 三个待办（Q1 形状 / Q2 单 lobe / Q3 小表）</div>
+      <div class="n"><span class="y">2016</span>Heitz et al.：输运推对（贵）；<b>附带发现：次级 lobe ≈ 缩小的主 lobe</b></div>
+      <div class="n"><span class="y">2017</span>Kulla-Conty：账平（漫射形状 + 互易；自认近似）</div>
+      <div class="n star"><span class="y">2019</span><b>Turquin（本篇）</b>：账平 + 形状正确（缩放原 lobe）→ 最廉形态；Unity HDRP / Filament 采用</div>
+      <div class="n"><span class="y">2019</span>Fdez-Agüera：④ 零新增资源版（同时修"多发钱"的低粗糙度端）</div>
+      <div class="n"><span class="y">2026</span>Dupuy：精确闭式（理论天花板，无 roughness 旋钮）——五条路线全部有独立节点 ✅</div>
+    </div>
+    <p class="dim">⚠️ 本次按 TR 原文的修正：路线⑤<b>不是"只 IBL"</b>——gain 是 BRDF 级修正（只依赖 ω_o、不限光源）；"只 IBL"是对 ④ 的限制或对 Filament 实装语境的串行误记。⑤ 的真实边界：形状假设最粗、非互易、不修低粗糙度电介质超额。</p>
+  </div>
+
+  <div class="foot">
+    来源：Turquin, E. <i>Practical Multiple Scattering Compensation for Microfacet Models.</i> Technical Report, ILM, 2019（PDF 全文核对）；Filament 官方文档（Energy compensation 节，逐字核对）；Self Shadow 托管页说明。<br>
+    GameDevEveryday · Research/Files/Html · 生成于 2026-10-09（Run 31）
+  </div>
+</div>
+</body>
+</html>

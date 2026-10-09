@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-08]]（昨日：[[2026-10-07]]）
+- **今日**：[[2026-10-09]]（昨日：[[2026-10-08]]）
 - **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；下一周 W41 待产出，覆盖 10-5 ~ 10-11）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
 - **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-08（毛发线六节点闭合；面部域开线）**——推送按校正结果组织
 
-## Papers（92）
+## Papers（96）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -112,6 +112,10 @@ created: 2026-09-07
 | [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting]] | A- | **Normal（结论层）** | **高（★ 面部线首节点："四个不需要"（无 cage / 预计算坐标 / 解码器 / 全局求解）的点基双因子——身份权重算一次 × 表情控制点每帧 = 矩阵乘积；183 帧端到端 1 秒（对手 25 s / 17 s）；30 人用户研究双第一；风格化头泛化；GALA"分解家族"、ReFM"重定向对"）** ★ 2026-10-08 |
 | [[2026-10-07-DynaConTalk — Wavelet-Constrained Diffusion for Long-Form and Controllable Holistic Co-Speech 3D Motion]] | A- | **Normal（结论层）** | **高（★ "换空间"家族第 3 例（小波系数空间）：同位姿误差下时间抖动 −89.4% / 分布距离 −92.1%；FGD 1.75（对比最好 3.56）；matched-noise 三合一（延续/修复/参考）；自带 FGD 频带审计（99.51% / 9.14%）；代码已放出）** ★ 2026-10-08 |
 | [[2026-10-07-Simulation Methods for Multiphysics Phenomena in Visual Computing]] | B+ | **Normal（地图层）/ Hard（推导层）** | **中（★ Bender 组（RWTH Aachen）EG 2026 教程：能量 / 约束（PBD·XPBD）/ 粒子（SPH）/ 欧拉-混合（MPM）四族全景 + 耦合 + 框架选型 + ML 趋势——物理域"查阅式地图"，地位对照 [[Real-Time Rendering]]）** ★ 2026-10-08 |
+| [[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]] | A（经典） | **Normal** | **最高（★ 路线⑤原始文献——五条补法全节点闭合；F_ms 四级简化链 → F₀；"gain to the closure"（采样/PDF 全复用）；导体 7×/电介质 15×；Unity HDRP 与 Filament 采用；⚠️ 修正"只 IBL"旧记录——方法不限光源）** ★ 2026-10-09 |
+| [[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]] | B+ | **Normal（结论层）** | **高（★ 缓存族镜面支线开线："视图无关"前提被正面打破——反射方向参数化 + roughness 预滤波 + split-sum 重建；同一张 BRDF 积分图第三次委派）** ★ 2026-10-09 |
+| [[2026-10-08-Tabula Rasa — Monte Carlo estimation of unit-variance noise with controlled spatio-temporal correlation]] | B+ | **Normal（结论层）** | 中高（**"噪声 = 接口契约"**：单位方差给扩散模型 / 时空相关由光传输诱导；1024² 帧 2.44 ms；三行代码；UCL × Meta（Hery/Marshall））★ 2026-10-09 |
+| [[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG]] | B+ | **Normal（结论层）** | 中高（★ **面部域捕捉层首节点**：HD-sEMG 遮挡免疫（眼部 r 0.79）、0.43 mm、眼罩实验暴露光学"幻觉式失败"；非因果 1.3 s；UBC × Google × Imperial）★ 2026-10-09 |
 
 ## Concepts（34）
 
@@ -203,9 +207,9 @@ Research/
 
 ---
 
-最后更新：2026-10-08（Run #30：**毛发生产化日 —— 六节点闭合 + 面部域开线** —— 经典：[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS 生产毛发模型；near-field 取消 70 点求积 / logistic / 第四叶；着色 ~20×；⚠️ 此前 "Pixar" 系误记，已更正）；前沿 3 篇入库：[[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（面部重定向"四个不需要"）· [[2026-10-07-DynaConTalk — Wavelet-Constrained Diffusion for Long-Form and Controllable Holistic Co-Speech 3D Motion|DynaConTalk]]（小波带扩散；同误差 −89.4%）· [[2026-10-07-Simulation Methods for Multiphysics Phenomena in Visual Computing|Multiphysics 教程]]（Bender 组）；新概念 [[Facial Animation]]；产业：**NVIDIA RTX Spark 发布**（N1X 平台；10-16 上架）+ E-Day 售后线）
-　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011（毛发能量页）+ NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry
-　　▸ **10-6 回顾**（Run #28）：**分工日**——Neuroll（毛发仿真轴）+ CurveCodec 2（动画压缩开线）+ DDGI 2019（缓存族封顶）；PKM 按实际阅读校正
-　　▸ **10-5 回顾**（Run #27）：**漫反射侧结账日**——Hammon 2017（阻塞 16 天经新 CDN 解除；PBR 经典队列清空）+ Budgeted-GS（GS 预算线开线、Zador 定律）
+最后更新：2026-10-09（Run #31：**接口日 —— 五条路线全节点闭合 + 缓存族镜面开线** —— 经典：[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]（路线⑤原始文献；F_ms 四级简化链 → F₀；"gain to the closure"；导体 7×/电介质 15×；Unity HDRP 与 Filament 采用；⚠️ 修正"只 IBL"旧记录）；前沿 3 篇入库：[[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting|NRC-Spec]]（缓存族镜面支线开线：视图无关前提被打破）· [[2026-10-08-Tabula Rasa — Monte Carlo estimation of unit-variance noise with controlled spatio-temporal correlation|Tabula Rasa]]（噪声 = 接口契约）· [[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG|emg2face]]（面部捕捉层；⚠️ 归属更正 Meta→Google）；**读者反馈**：自制五路线对比图解挂入 9-20（"用自己的话比较"实物产物）；产业：**E-Day 深测到账**（MegaLights 首样本 / RTX Mega Geometry ~10% / 强制光追 / Advanced Shader Delivery））
+　　▸ **10-8 回顾**（Run #30）：**毛发生产化日**——Chiang 2016（六节点闭合）+ PDB / DynaConTalk / Multiphysics；新概念 [[Facial Animation]]；RTX Spark 发布
+　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011 + NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry
+　　▸ **10-6 回顾**（Run #28）：**分工日**——Neuroll + CurveCodec 2 + DDGI 2019；PKM 按实际阅读校正
+　　▸ **10-5 回顾**（Run #27）：**漫反射侧结账日**——Hammon 2017 + Budgeted-GS（GS 预算线开线、Zador 定律）
 　　▸ **10-4 回顾**（Run #26）：缓存族第三源日（Ward 1988）——三源齐 + W40 周报
-　　▸ **10-3 回顾**（Run #25）：缓存族双源日——RSM 2005 + IR 1997；"固定样本预算"四连；River + GALA

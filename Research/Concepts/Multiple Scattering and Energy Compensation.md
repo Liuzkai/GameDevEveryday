@@ -14,6 +14,7 @@ first_introduced: "问题自 Cook-Torrance 1981 就存在；工程解 Kelemen 20
 > 这个笔记就是那笔钱的账：**少了多少、怎么量、五条不同的补法各缺哪一角。**
 >
 > **🔴 2026-10-05 更新（"账本"的完整化）**：此前全篇（含五条补法与 4b）是 **specular（镜面）侧** 的账。[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] 入库后，**漫反射侧**的同题账目首次落库（新增 §4c）——**两册账不是"同一个洞的两半"，而是两个独立账本**：镜面侧的洞由 $G$ 遮挡造成；漫反射侧的洞由"忽略微面间多次弹射 + 出射 Fresnel 不对称"造成。成因不同、修法不同、成本量级也不同（查表 lobe vs 一行线性项）。
+> **🔴 2026-10-09 更新（五条路线全部有独立节点 + 两处修正）**：路线 ⑤ 的原始文献 [[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]] 入库——**五条补法路线自此全部有独立一手节点**。随本次全文核对修正两处：① **"⑤ 只 IBL"不成立于方法本身**——$\rho=\text{gain}(\omega_o)\cdot\rho_{ss}$ 是 BRDF 级修正（原文明说"适用于任意 BSDF"、"可加入实装光栅化引擎"；"只 IBL"系对 ④ 限制的串行误记/对实装语境的过度外推）；② ⑤ 的 Fms 有**四级简化链**（Eq.12→15，最终裸 $F_0$），且**只依赖 $\omega_o$** → 可实现为"**gain to the closure**"（直接乘在原镜面项上，采样/PDF 全复用）。同日另登记**读者侧自制图解**（见 §Visualization）。
 
 ## Definition
 
@@ -44,7 +45,7 @@ $$E(\mu_o)=\int_{0}^{2\pi}\!\!\int_{0}^{1} f(\mu_o;\mu_i,\phi)\,\mu_i\,d\mu_i\,d
 | **② 精确闭式多次散射** | 初等闭式 ✅ | 闭式 ✅ | ✅ 精确 | ❌ **无 roughness 参数** | 全部散射阶 | [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] |
 | **③ 能量补偿（新增查表 lobe）** | 便宜 ✅ | 便宜 ✅ | ⚠️ 近似（账平、分布是近似的） | 全 | **任意 BRDF、任意光源** | Kelemen 2001 → [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]] |
 | **④ 复用已有 LUT**（实时 IBL） | 便宜 ✅✅ | 便宜 ✅ | ⚠️ 近似（但**两端同修**） | 全 | ⚠️ **只 IBL**（窄光源不成立） | [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] |
-| **⑤ 缩放已有 lobe**（最便宜） | **一条乘加** ✅✅✅ | 零新增 | ⚠️ 近似 | 全 | ⚠️ **只 IBL**；只补高粗糙度端 | Filament 文档记作 [Lagarde18]（credit Turquin） |
+| **⑤ 缩放已有 lobe**（最便宜） | **一条乘加** ✅✅✅ | 零新增 | ⚠️ 近似 | 全 | ⚠️ 单端 gain（非互易）；分布假设最粗；不修低粗糙度电介质超额 | [[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]（ILM；Lagarde & Golubev 2018 课程版先行） |
 
 **这张表的读法（今天最值钱的一句）：**
 
@@ -54,7 +55,7 @@ $$E(\mu_o)=\int_{0}^{2\pi}\!\!\int_{0}^{1} f(\mu_o;\mu_i,\phi)\,\mu_i\,d\mu_i\,d
 - Kulla-Conty 2017（③）拿到"便宜 + 有参数"，代价是牺牲分布的精确性，且要**新增**资源；
 - Dupuy 2026（②）拿到"精确 + 便宜"，代价是**只有一个外观**（没有粗糙度旋钮）；
 - Fdez-Agüera 2019（④）拿到"便宜 + 有参数 + **零新增资源**"，代价是**只覆盖环境光**；
-- Lagarde/Turquin（⑤）拿到"**几乎无成本**"，代价是覆盖面更窄（只补高粗糙度端）。
+- Lagarde/Turquin（⑤）拿到"**几乎无成本**"，代价是形状假设最粗（"多次散射 ≈ 缩小的原 lobe"）且**非互易**——**"补多少"精确，"补向哪"完全交给原 lobe**。
 
 **两条新增的读法（2026-09-20）：**
 
@@ -96,7 +97,7 @@ $$E(\mu_o)=\int_{0}^{2\pi}\!\!\int_{0}^{1} f(\mu_o;\mu_i,\phi)\,\mu_i\,d\mu_i\,d
 | **② 精确闭式**（Dupuy 2026） | 真的把输运**算出来** | Smith 独立性 + 一个特制 NDF | 无 roughness 参数 |
 | **③ 查表 lobe**（Kelemen 2001 / Kulla-Conty 2017） | 只补**方向 albedo 这一个标量** | 多次散射是**漫射**的 | 新增 LUT；分布近似；path tracing 语境 |
 | **④ 复用 LUT**（Fdez-Agüera 2019） | 同上，但**信息取自已有的表** | 同上 + 可用 irradiance 近似二次以上散射 | **只 IBL**（窄光源不成立） |
-| **⑤ 缩放已有 lobe**（Lagarde/Turquin） | 同上，连新项都不加 | 同上 + $F_{avg} \approx F_0$ | 只 IBL；只补高粗糙度端 |
+| **⑤ 缩放已有 lobe**（[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)\|Turquin 2019]]） | 同上，但连新项都不加——**放大原 lobe 本身** | 同上 + $F_{ms} \approx F_0$（四级简化链） | 单端 gain（非互易）；分布假设最粗；不修低粗糙度超额 |
 
 **账平近似的核心巧思值得单独记住**（5 行数学，见 [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]）：
 
@@ -184,8 +185,13 @@ $$E_d=1-(F_{ss}E_{ss}+F_{ms}E_{ms}),\qquad K_d=\text{albedo}\cdot E_d$$
         ↓
 2018  ★ Hill 系列（**2026-09-24 入库**）：Fms 修正 → EFms 预计算 → Schlick 拆分（Σ wi·F0^i）→ 单贴图 3 MAD
         —— "更准 vs 能用"在方案内部再演两轮（3D LUT → 2D LUT → 1 贴图）
-2018  Lagarde & Golubev（credit Emmanuel Turquin）：F_avg 简化为 F_0 + 只缩放已有 lobe
-        —— **Turquin TR 已下载核对（2026-09-24）**；与 split-sum 共享同一张 DFG 表（本库第 ⑤ 条路线）
+2018  Lagarde & Golubev（Self Shadow 课程"Multiple Scattering GGX"节；credit Emmanuel Turquin）
+        —— F_avg 简化为 F_0 + 只缩放已有 lobe（课程版先行落地）
+        ↓
+★ 2019  [[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]（**2026-10-09 入库**）
+        —— **路线⑤原始文献**：k_ms=(1−E_ss)/E_ss + F_ms 四级简化链（→F_0）
+        —— "gain to the closure"：只依赖 ω_o → 采样/PDF 全复用；导体 7× / 电介质 15×（vs Heitz）
+        —— Unity HDRP 与 Filament 采用（"研究 → 引擎"最近的一条之一）
         ↓
 ★ 2019  Fdez-Agüera（JCGT，实时 IBL 版：缺口 = 1 − Ess，而 Ess 已经在表里）★ 2026-09-20 入库
         —— 零新增资源；**并且第一次处理了"低粗糙度端超额能量"**
@@ -214,7 +220,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 | [[2026-09-18-An Elementary Expression for Multiple Scattering in Homogeneous Microflake Media]] | **路线 ② 理论天花板**（精确闭式） | ✅ 入库 |
 | [[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] | **路线 ① 精确真值（随机）**；"不可实时"这句话定义了后面所有工作 | ✅ **2026-09-20 入库** |
 | [[Fdez-Agüera — A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting (2019)]] | **路线 ④ 实时 IBL 版**（零新增资源；首次处理低粗糙度端超额能量） | ✅ **2026-09-20 入库** |
-| Lagarde & Golubev 2018（credit Emmanuel Turquin） | **路线 ⑤ 最便宜版**（只缩放已有 lobe：$\rho=\rho_{ss}+F_{ms}k_{ms}\rho_{ss}$，$k_{ms}=(1-E_{ss})/E_{ss}$） | ✅ **2026-09-24 原始文献落地**：Turquin TR《Practical multiple scattering compensation for microfacet models》（ILM，5 页）已下载核对（要点见 [[Hill — A Multi-Faceted Exploration (2018-2019)]]）；`[Lagarde18]` 条目 = SIGGRAPH 2018 Advances 课程页（Hill Part 4 脚注） |
+| [[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]] | **路线 ⑤ 最便宜版**（只缩放已有 lobe：$\rho=\rho_{ss}+F_{ms}k_{ms}\rho_{ss}$，$k_{ms}=(1-E_{ss})/E_{ss}$；Fms 四级简化链 → $F_0$；gain to the closure） | ✅ **2026-10-09 入库**（原始 TR 全文逐页核对；Table 1 对照 + 7×/15× 成本；Lagarde & Golubev 2018 课程版为先行文档） |
 | Kelemen & Szirmay-Kalos 2001, Eurographics Short | 公式源头 | ❌ 未入库（较老，可只在本文引用） |
 | [[Hill — A Multi-Faceted Exploration (2018-2019)]] | **路线 ③ 的工程化中段**（Fms 修正 + EFms 预计算 + Schlick 拆分 → 单贴图 3 MAD）；"更准 vs 能用"的完整过程记录 | ✅ **2026-09-24 入库**（原文四篇逐篇核对；**两处"待核实"同日结案**） |
 | [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] | **系统性手册（746 页参考地图册）** | ✅ **2026-09-23 入库** —— 本书即"五条补法"谱系的**原文全谱**（VII.48）；13.3.4 给出 Heitz 式截面，13.7.1/13.8.1 给出**球面 albedo 的拟合闭式**（furnace test 的第一个客观对照基线）；14.2 节为 Kelemen 2001 归属提供手册级佐证 |
@@ -242,15 +248,15 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
   - **不新增任何表、不新增任何采样**，只增加几条标量运算 + 复用已有的 irradiance；
   - 输入就是**已有的 EnvBRDF LUT 采样结果**（UE 用的正是 **R16G16**，见 [[Split-Sum Approximation]]）；
   - **结论：在一个已经跑着 Sky Light 的场景里，它的边际成本约等于 0 → 应当默认开启，而不是当成分档项。**
-- **⑤ 的"一条乘加"版** —— 连新增项都不需要（直接把已有的镜面 lobe 缩放），但**覆盖面最窄**（只补高粗糙度端，不修电介质超额能量）；
+- **⑤ 的"一条乘加"版**（[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)|Turquin 2019]]）—— 连新增项都不需要（直接把已有的镜面 lobe 乘一个 gain）：**形状假设最粗、非互易**；不修低粗糙度电介质超额能量。**注意其方法不限光源**（BRDF 级 gain）——"成本 ≈ 0"的说法成立的前提是**它的接线位置**（复用了 IBL 的表；见下"覆盖边界"）；
 - **Substrate（UE5）** — 把能量守恒内建在分层框架里，而不是事后加一个 lobe。**注意这与 ③④⑤ 是两条哲学**：一条"内建"，一条"事后补标量"。**事后补只能补方向 albedo 这一个数，补不回分布形状**（[[Heitz — Multiple-Scattering Microfacet BSDFs with the Smith Model (2016)]] 是这句话的证据）。
-- **⚠️ 覆盖边界（必须写进任何技术文档）**：**④⑤ 只修 IBL，不修解析光。**"环境光那半边修好了" ≠ "能量补偿已经做了"。
+- **⚠️ 覆盖边界（必须写进任何技术文档，2026-10-09 修正）**：**④（Fdez-Agüera）只修 IBL——这是结构限制**（irradiance 近似，窄光源不成立）；**⑤（Turquin）的方法本身是 BRDF 级 gain、不限光源**——"实装即边界"：主流实装（Filament 等）把它接在 IBL 支路（复用 DFG 表），在解析光/动态灯光为主的场景里是否生效**取决于你管线的接线位置**——先查接线、再下结论。"环境光那半边修好了" ≠ "能量补偿已经做了"。
 
 ## Game Applications
 
 - **材质观感**：高粗糙度金属/塑料"发闷"的**标准解释与标准解**；**低粗糙度电介质掠射边缘的"亮边"**是同一个账的另一端（§4b）；
 - **分档**：见 [[Scalability and Quality Tiers]] —— 这是一条"**关掉后能看出但能忍**"的档位差异，适合放在中低档关闭。**但注意：只有 ③ 值得当成分档项；④⑤ 的边际成本约等于 0，应当默认开启**；
-- **⚠️ 一个容易误判的场景**：**在动态灯光/解析光占主导的场景（如 MegaLights 大量点光）里，④⑤ 不解决能量问题。**"IBL 侧已修"容易被误读成"能量补偿已完成"；
+- **⚠️ 一个容易误判的场景**：**在动态灯光/解析光占主导的场景（如 MegaLights 大量点光）里，④ 不解决能量问题（结构限制）；⑤ 取决于实装接线**（其 BRDF-gain 形态理论不限光源——见"MegaLights 动态灯光复审"）。"IBL 侧已修"容易被误读成"能量补偿已完成"；
 - **资产规范**：Kulla-Conty 原文提到美术把木材 IOR 调到 100+ 的案例。**建议在资产取值表里加入 IOR / 金属度 / F0 的允许范围** —— 这类"资产侧不物理"比性能问题更容易漏，而且会让不同档位的行为不一致；
 - **材质验收**：**furnace test** 可以直接作为材质检查项（不需要参考照片），**且要查两头**（暗 / 亮）。
 
@@ -258,6 +264,7 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 
 - **user_level: Normal。** 前置只有 [[Microfacet Theory]] 与 [[BRDF]]，都已经在库；
 - **本概念不计入 PBR 的 25 条收口清单** —— 它是清单之外的**最后一条具名缺口**，标为"读了，不是会了"；
+- **🔴 2026-10-08 读者动作（重要）**：工作区新增**自制五路线对比图解**（[[pbr_multiple_scattering_comparison.html]]，含白炉测试交互 + UE 检查点）—— **PKM"先用自己的话比较五条路线"这一步已出现实物产物**；剩余动作 = **引擎侧 furnace test 两项检查**（对照 d'Eon 2022 手册 13.7.1/13.8.1）；
 - **一句话检验**：能说出"被挡住的光不是被吸收了，所以单次散射把它当成消失是错的"即算抓住核心；
 - **第二条一句话检验（2026-09-20 新增）**：能说出 **"环境光那半边修好了，不代表灯光那半边也修好了"**。
 
@@ -273,12 +280,14 @@ Dupuy 2026 卡在"没有 roughness 参数"  →  明确的开放问题
 1. **把 furnace test 做成一次真实的自测**（30 分钟内可完成）：
    纯金属球 → Roughness 0→1 → 只有环境光 → 截图；**再加一个光滑白电介质球查掠射亮边**；然后切换引擎侧的能量补偿开关对比。**做完这一条，本概念即可从 Normal 升 Easy**；
    **🔴 2026-09-23 更新：现在有客观对照基线了** —— 先在 [[d'Eon — A Hitchhiker's Guide to Multiple Scattering (2022)]] 的 **13.7.1（Beckmann）/ 13.8.1（GGX）** 查到对应 $\eta$、$\alpha$ 的**球面 albedo 拟合闭式值**，再与引擎实测对照（不再是"凭感觉看变暗/变亮"）；
-2. **经典候选排队（2026-10-05 更新）**：~~Heitz et al. 2016~~ ✅ → ~~Fdez-Agüera 2019~~ ✅ → ~~d'Eon《Hitchhiker's Guide》~~ ✅（9-23）→ ~~Hill 2018 part 2/3~~ ✅（**9-24 入库**）→ ~~Hammon 2017~~ ✅（**10-05 入库，阻塞解除**）——**PBR 侧经典队列自此清空**。后续候选（低优先）：Kelemen 2001 原文（已在多处引用）、Shirley 1997（*A Practitioners' Assessment of Light Reflection Models*，**记名**——Hammon 的对称化归一化来源）;
+2. **经典候选排队（2026-10-09 更新）**：~~Heitz et al. 2016~~ ✅ → ~~Fdez-Agüera 2019~~ ✅ → ~~d'Eon《Hitchhiker's Guide》~~ ✅（9-23）→ ~~Hill 2018 part 2/3~~ ✅（**9-24 入库**）→ ~~Hammon 2017~~ ✅（**10-05 入库，阻塞解除**）→ ~~路线⑤原始文献（Turquin TR）~~ ✅（**10-09 入库——五条路线全部有独立节点**）。后续候选（低优先）：Kelemen 2001 原文（已在多处引用）、Shirley 1997（*A Practitioners' Assessment of Light Reflection Models*，**记名**——Hammon 的对称化归一化来源）;
 3. 与 [[Split-Sum Approximation]] 合并成一张"IBL 镜面半边固定开销表"（cubemap 预滤波 + EnvBRDF LUT + 能量补偿），纳入 [[Real-Time VFX Performance Budgeting]] 的参考账。**④ 让这张表多了一行"成本 ≈ 0"**。
 
 ## Visualization
 
-- [[多次散射_五条补法路线与实时落地图解]]（2026-09-20）—— **当前版本**：五条路线对照表 + Heitz 随机游走单步流程 + Fdez-Agüera 数据流 + 两头 furnace test 检查项 + 勘误提醒；
+- [[多次散射_五条补法路线与实时落地图解]]（2026-09-20）—— 五条路线对照表 + Heitz 随机游走单步流程 + Fdez-Agüera 数据流 + 两头 furnace test 检查项 + 勘误提醒；
+- [[多次散射_路线⑤_Turquin缩放lobe与简化链图解]]（2026-10-09）—— 路线⑤深潜版：缩放 vs 新增对照 + **F_ms 四级简化链** + Table 1/7×/15× + "gain 的两种接法"（TR 表 vs Filament DFG.y）；
+- [[pbr_multiple_scattering_comparison.html]] —— **读者侧/工作区自制（2026-10-08 提交）**：五路线 + UE 实装对照（含 `ShadingEnergyConservation.ush` / CVar 检查点）+ **白炉测试交互计算器**（48×48 baked LUT，四条补偿路线实时对比）——**PKM"用自己的话比较"步骤的实物产物**；
 - [[多次散射能量补偿_三条路线图解]]（2026-09-19）—— 早期版本（当时只有三条路线），第 5 节仍是 **furnace test 的具体做法**，仍可参考。
 
 ## Notes

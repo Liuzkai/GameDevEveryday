@@ -29,6 +29,7 @@ tags: [rendering, gi]
 ```
 G-buffer + 辅助 buffer → 神经网络 → 间接光分量
 代表：Neural Radiance Caching（已产品化）、[[Lightweight Attention-based Indirect Illumination (AMD)]]
+        ★ 镜面支线（2026）：NRC-Spec —— 反射方向参数化 + roughness 预滤波 + split-sum 重建
 ```
 
 ## Performance
@@ -123,9 +124,28 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 **读法（对实时工程的三条接口）**：
 - Lumen 的 Final Gather / 辐照度探针、UE4 早期的 ILC、DDGI——都是"**接收侧缓存**"的工程后裔（"探针密度为什么要自适应"的答案在这条链上）；
 - **NRC（2021）就是它的神经版**：缓存对象（辐照度）未变，"缓存介质"从解析插值升级为网络——本页路线 C 的谱系自此可读到 1988；
+  - **★ 2026-10-09 支线更新**：[[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]]（NRC-Spec）——**缓存对象第一次被换掉**：从"视图无关的辐照度"换成"反射方向参数化、roughness 预滤波的辐射度"——**Ward 1988 能成立的前提（答案视图无关）在镜面侧被正面打破**；
 - 对档位设计的启示：**"质量定死、开销自适应"**与"开销定死、质量浮动"是两条独立的档位轴——你的五维预算目前全是后者（数量上限），前者的接口是"误差容限 / 目标质量"（与 DLSS"目标帧时间"、ControlGS"功耗预算"同族）。
 
 关联：[[接收侧缓存_Ward 1988 辐照度缓存图解]]（第三源图解）
+
+## 🔴 补：E-Day 深测数据到账（2026-10-09）——MegaLights 首个实装样本
+
+**动态灯光复审的关键外部数据陆续到账**（Tom's Hardware 25-CPU / 43-GPU 测试、TechPowerUp 35-GPU + 掌机、DSOGaming、DF 技术细节综述）：
+
+| 观测 | 数据 | 含义 |
+|---|---|---|
+| **MegaLights 首个上市游戏** | Gears of War: E-Day（10-6 发售；The Coalition × NVIDIA PC 合作） | "实验 → 3A 实装"完成；上文"2026 每像素采样预算"行有了真实样本 |
+| **RTX Mega Geometry 成本** | 约 **10%**；**锁定 12GB+ 显存** | "光追 Nanite"的实测价码；显存硬门槛产品化又一例 |
+| **光追变为强制项** | 游戏**必须有硬件光追 GPU 才能运行**（GTX 10/16、RX 5000- 及更早无路可走） | "最低档"的硬件底线被抬高——**档位矩阵多了一条"不可降"的轴** |
+| **4K 原生** | 需 5090 级；4090 原生 4K 达不到 60 | 与 DLSS/FSR 捆绑成为事实必需 |
+| **CPU 侧** | 罕见 CPU-heavy UE5 游戏：80–90% 利用率、随核数扩展（9800X3D 比 7600X 快 42%） | "引擎升级 ≠ 只考 GPU"——帧预算的 CPU 半边值得单独记账 |
+| **Advanced Shader Delivery** | 云侧预编译着色器随游戏分发；启动 15–20 s 验证、首启无编译卡顿 | 着色器编译卡顿的"平台级"解法（与 [[Temporal Stability and Artistic Intent|时域稳定性]] 相关） |
+
+> **对"动态灯光维度复审"的含义**：MegaLights 从 Experimental→Beta→Production 的路径已走到"有上市样本"——**复审材料 100% 到位**（含成本函数口径："随机采样 + 固定每像素射线数"——即"每像素预算"，不是"每灯成本"）。对 VFX 侧的边界提醒：**MegaLights 不覆盖半透明/特效（仍为二手，未变）**——1978 的成本法则在特效侧照旧。
+> 〔口径留痕：DSOGaming 记引擎为 UE 5.6.1，与"MegaLights 进 UE 5.7"的官方口径并列存疑（疑为定制分支或媒体报道误差）；RTX Mega Geometry 的"10%"为 Tom's Hardware 汇总口径。〕
+
+关联：[[2026-10-06]]（E-Day 发售）/ [[Shadow Mapping]]（1978 成本法则）
 
 ## Game Engine Integration
 
@@ -134,7 +154,7 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 
 ## Unreal Engine Possibilities
 
-- **MegaLights 已在 UE 5.8 转 Production-Ready（2026-09，State of Unreal 2026 官方确认）**——路径 Experimental(5.5)→Beta(5.7)→Production(5.8)；官方定位本世代主机 60fps + 大量带阴影动态光。⚠️ 已触发 SABC 动态灯光维度复审条件（见 [[2026-09-14]]）；Gears E-Day（10-6）为首个 3A 实战样本
+- **MegaLights 已在 UE 5.8 转 Production-Ready（2026-09，State of Unreal 2026 官方确认）**——路径 Experimental(5.5)→Beta(5.7)→Production(5.8)；官方定位本世代主机 60fps + 大量带阴影动态光。⚠️ 已触发 SABC 动态灯光维度复审条件（见 [[2026-09-14]]）；Gears E-Day（10-6）为首个 3A 实战样本——**深测数据已到账（2026-10-09，见上文 §E-Day 深测数据到账）**
 - **Lumen Lite（UE 5.8 新增）**：2× Lumen 速度，Switch 2 60fps / 低端 PC——低端画质档 GI 新选项，与 Android 三档的策略同源
 - NRC 若通过 RTX Remix 路径进入，会改变老项目重制的 GI 策略
 - 长线观察：[[2026-09-14-Gaussian Light Transport]] 类"显式基函数烘焙"若成熟，可能抬高静态场景 GI 质量上限（含移动端）
@@ -151,6 +171,7 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 
 - [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] —— **"动态灯光"成本法则的地基**（每盏灯 ≈ +1× 场景渲染）
 - [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] —— **"误差预算"的原始文献**（辐照度缓存：a 容限决定点密度；NRC 祖先）
+- [[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]] —— **NRC 镜面支线首节点**（缓存对象换为反射方向参数化 + roughness 预滤波；split-sum 重建；2026-10-09 入库）
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]（烘焙路线 A 的数学根源：SH9 探针）
 - [[Lightweight Attention-based Indirect Illumination (AMD)]]
 - [[LightOpt — Lights Optimization for Real-Time Rendering]]

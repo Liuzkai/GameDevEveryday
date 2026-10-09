@@ -72,18 +72,20 @@ first_introduced: "blendshape / FACS（1970s 语境）；mesh-agnostic 神经重
         + 实时化身：blendshape 蒸馏（GALA 2026）
         ↓
 ★ 2026   点基双因子重定向（PDB）——"四个不需要"的工程极简形态
-        + 非光学捕捉探索（emg2face：HD-sEMG，HMD 遮挡场景）
+        + 非光学捕捉首节点入库（emg2face：HD-sEMG，HMD 遮挡场景；**2026-10-09**）
+        + 化身表示：blendshape 蒸馏（GALA）
 ```
 
 > ⚠️ 历史条目以公认事实为主；深入细分（各家首作时间线）在后续深挖时逐条核实。
+> **📌 2026-10-09 状态：三层首次都有独立节点** —— 捕捉（emg2face：EMG 通道）/ 重定向（PDB：点基双因子）/ 表示（GALA：blendshape 蒸馏；GNM 253+383 为 emg2face 输出空间）。
 
 ## Important Papers
 
 | 论文 | 角色 |
 |---|---|
 | [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting]] | ★ **2026-10-08 入库：本域库内第一节点（重定向子题）**。点基双因子：变形控制点（每帧）× 目标权重（每身份一次）；无 cage/坐标/解码器/全局求解；183 帧端到端 1 秒；风格化头泛化 |
+| [[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG]] | ★ **2026-10-09 入库：数据侧首节点（捕捉子题）**。高密度表面 EMG（64 通道；UBC × Google × Imperial）：**遮挡免疫**（r 0.79@眼部区 vs 0.75 其余）、0.43 mm 顶点误差、25 人系统评估；**"眼罩实验"暴露光学方法在遮挡下的"幻觉式失败"**；限制：非因果链、约 1.3 s 延迟、硬件依赖 |
 | [[2026-10-01-GALA — Gaussian Blendshape Distillation for Real-Time Avatars]] | 相邻子题（**化身表示**）：神经 → blendshape 基的蒸馏，"一套基代表全部身份"；手机 60 fps |
-| （记名）emg2face（arXiv 2610.09304） | **数据侧新通道**：高密度表面 EMG（64 通道；HMD 遮挡场景的非光学捕捉）；亚毫秒音爆同步；这一支若成熟会改变"头盔内怎么捕捉脸" |
 
 ## Related Concepts
 
@@ -121,5 +123,5 @@ first_introduced: "blendshape / FACS（1970s 语境）；mesh-agnostic 神经重
 ## Next Step
 
 1. **读 PDB 的结论层**（§1 失败模式 + §3 双因子 + 运行表）≈20 分钟——按你的"结论优先"读法；
-2. 观察 emg2face 类非光学捕捉的后续（HMD 场景的潜在刚需）；
+2. ~~观察 emg2face 类非光学捕捉的后续~~ → **已入库（2026-10-09）**：读法 ≈15 分钟（§4.1 主表 → §4.2 眼罩实验 → §5 限制）；**关注点转移为"延迟工程化"**（非因果链 → 因果网络 = 纯工程问题）；
 3. 若需要：把"blendshape 基础"列为未来经典候选（FACS/ArkIt 参数体系的操作性材料）。
