@@ -38,6 +38,7 @@ tags: [physics, neural-simulator, particles]
 - [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer|WorldParticle]]（2026，SIGGRAPH Asia — 首次单架构统一六类动力学）
 - [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling|Neuroll]]（2026，Meta × NVIDIA — **神经时间积分器**：镜像经典积分解算器的输入输出，模拟器在环监督；角色级（发丝）实时）
 - [[2026-10-06-PhysLDM — Latent Diffusion for High-Fidelity Deformable Simulation|PhysLDM]]（2026，NTU — **整轨迹分布建模**：时空 VAE（78× 压缩）+ 潜扩散一次性预测；**"混沌判据"**：混沌动力学上确定性回归收敛到非物理平均值，应改为建模分布）
+- [[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]]（2026，CUHK-Shenzhen × DexForce — **刚体接触**：跨物体推理限定在"稀疏局部接触邻域"（点级）、物体内 point transformer 汇总、锚点 + Kabsch 恢复刚体变换；**"接触是局部的"这一物理事实写进网络结构**）
 - 毛发神经仿真三代（同域对照）：GroomGen（2023）→ Quaffure（2025，准静态）→ Neuralocks（2026）→ **Neuroll（2026）**
 
 ## Related Concepts
@@ -55,11 +56,16 @@ tags: [physics, neural-simulator, particles]
 
 - [[2026-10-03-Neuroll — Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling]]（★ 2026-10-06 入库：**"镜像经典 I/O"的神经积分器**——替代数值积分、保留经典接口语义；模拟器在环 + 随机视界；strand-space 消融 = "表示即先验"最干净量化）
 - [[2026-10-06-PhysLDM — Latent Diffusion for High-Fidelity Deformable Simulation]]（★ 2026-10-07 入库：**可形变体 + 分布建模**——时空 VAE + 潜扩散；**"混沌判据"**：扰动放大实验证明回归产生"non-physical averages"，扩散才建模分布；可微逆问题 40 秒级）
+- [[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]]（★ 2026-10-10 入库：**"结构对齐物理"的接触推理**——跨物体信息交换的边界 = 物理作用边界；接触保真 ΔPTR 11.0% / ΔMPD 2.22 mm（基线 ~43% / ~270 mm）；**"指标看不见的价值"（符号距离消融）**）
 - [[WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer]]
 
 ## 一条新判据（2026-10-07，来自 PhysLDM）
 
 **"这个系统的预测目标是一个点，还是一个分布？"** —— 先做扰动实验判断系统是否处于混沌区（微小扰动被放大）：若是，**确定性回归在数学上就是错的**（收敛到非物理平均值），应改用生成式建模。此判据与"分工判据"（新旧工具各接管哪段）并列，收入本库选型工具箱。
+
+## 再一条判据（2026-10-10，来自 RiCo）
+
+**"这个输入/正则的价值由哪个指标度量？"** —— RiCo 的符号距离消融：去掉"符号"（只留纯距离）后**轨迹 RMSE 几乎不变、接触保真度翻倍变差**（ΔPTR 11.0% → 23.6%）。教训：一个设计元素的好坏必须由**它对应的指标**评估——否则会像本文之前的基线一样"在错误指标上看起来不错"。与 PhysLDM 的"混沌判据"并列收入选型工具箱。
 
 ## Personal Knowledge
 

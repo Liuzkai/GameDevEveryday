@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-09]]（昨日：[[2026-10-08]]）
-- **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；下一周 W41 待产出，覆盖 10-5 ~ 10-11）
+- **今日**：[[2026-10-10]]（昨日：[[2026-10-09]]）
+- **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；**下一周 W41 = 10-5 ~ 10-11，明日（10-11）收官产出**）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
 - **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-08（毛发线六节点闭合；面部域开线）**——推送按校正结果组织
 
-## Papers（96）
+## Papers（101）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -116,8 +116,13 @@ created: 2026-09-07
 | [[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]] | B+ | **Normal（结论层）** | **高（★ 缓存族镜面支线开线："视图无关"前提被正面打破——反射方向参数化 + roughness 预滤波 + split-sum 重建；同一张 BRDF 积分图第三次委派）** ★ 2026-10-09 |
 | [[2026-10-08-Tabula Rasa — Monte Carlo estimation of unit-variance noise with controlled spatio-temporal correlation]] | B+ | **Normal（结论层）** | 中高（**"噪声 = 接口契约"**：单位方差给扩散模型 / 时空相关由光传输诱导；1024² 帧 2.44 ms；三行代码；UCL × Meta（Hery/Marshall））★ 2026-10-09 |
 | [[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG]] | B+ | **Normal（结论层）** | 中高（★ **面部域捕捉层首节点**：HD-sEMG 遮挡免疫（眼部 r 0.79）、0.43 mm、眼罩实验暴露光学"幻觉式失败"；非因果 1.3 s；UBC × Google × Imperial）★ 2026-10-09 |
+| [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] | S（经典） | **Normal（结论层）** | **最高（★ 几何建模域第一个经典锚点：三条细分规则统治全部 DCC / 游戏 / 汽车曲面语义；"发明者无法证明、合作者实现验证"；Coons 命名奇异点；规则先凭审美（"too pointy"故事）；论文自认三个开放问题——与今日 SubDGuide 构成"正问题↔逆问题"48 年弧线）** ★ 2026-10-10 |
+| [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction]] | B+ | **Normal（结论层）** | **最高（重拓扑逆问题："planner 判断 / 工具构建 / 验证回滚"两权分离——"永不生成顶点/连接"；Chamfer-L1 0.641%→0.443%；Mercedes-Benz × TU Darmstadt；与 Catmull-Clark 1978 构成 48 年正逆对话）** ★ 2026-10-10 |
+| [[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning]] | B+ | **Hard（推导）/ Normal（结论层）** | 中高（**物理接触维度开线**："接触是局部的"写进网络结构——跨物体推理限定在稀疏局部接触邻域；接触保真 ΔPTR 11.0% / ΔMPD 2.22 mm；**"指标看不见的价值"判据**）★ 2026-10-10 |
+| [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization]] | B+ | Normal（结论层） | 中高（**GS 几何质量线**：视角无关局部 PCA 正则修 floaters——"看不见的高斯也有监督"；下游 Poisson 重建 / 分割免修直用）★ 2026-10-10 |
+| [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering]] | B+ | **Hard（推导）/ Normal（结论层）** | 中（**可微渲染"输出/检查层"开线**："导数是一等渲染输出" + deferred shading 式"算一次看多处" + 固定/自由双相机分离；SIGGRAPH Asia 2026 TC；同作者双篇之一）★ 2026-10-10 |
 
-## Concepts（34）
+## Concepts（35）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -149,6 +154,7 @@ created: 2026-09-07
 - [[Temporal Stability and Artistic Intent]]
 - [[Animation Compression]] ★ 2026-10-06 入库（**动画线"数据侧"第一节点**：三本账（内存/解码/导入）+ 误差界即档位 + "运行时代码器 vs 装载时代码器"分工；源头 CurveCodec 2 / ACL）
 - [[Facial Animation]] ★ 2026-10-08 入库（**面部域开线（库内最后的大品类空白）**：重定向 = "身份 × 表情"分解 + 三种失败模式（表面噪声/全局耦合/身份泄漏）；首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（点基双因子，"四个不需要"）；挂载位：GALA（化身表示）/ emg2face（非光学捕捉，记名））
+- [[Subdivision Surfaces]] ★ 2026-10-10 入库（**几何建模域第一个概念锚点**：三条规则 + 四结构性质 + 48 年弧线（1974 双源头 → 1978 正问题 → 2005 奥斯卡 → 2026 逆问题）；源头 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] + 逆问题 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]）
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -207,7 +213,8 @@ Research/
 
 ---
 
-最后更新：2026-10-09（Run #31：**接口日 —— 五条路线全节点闭合 + 缓存族镜面开线** —— 经典：[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]（路线⑤原始文献；F_ms 四级简化链 → F₀；"gain to the closure"；导体 7×/电介质 15×；Unity HDRP 与 Filament 采用；⚠️ 修正"只 IBL"旧记录）；前沿 3 篇入库：[[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting|NRC-Spec]]（缓存族镜面支线开线：视图无关前提被打破）· [[2026-10-08-Tabula Rasa — Monte Carlo estimation of unit-variance noise with controlled spatio-temporal correlation|Tabula Rasa]]（噪声 = 接口契约）· [[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG|emg2face]]（面部捕捉层；⚠️ 归属更正 Meta→Google）；**读者反馈**：自制五路线对比图解挂入 9-20（"用自己的话比较"实物产物）；产业：**E-Day 深测到账**（MegaLights 首样本 / RTX Mega Geometry ~10% / 强制光追 / Advanced Shader Delivery））
+最后更新：2026-10-10（Run #32：**48 年正逆弧线日 —— 几何建模域开域 + "对齐"三连 + UE 5.8 发布**——经典：[[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]]（S 经典：三条细分规则；"发明者无法证明、合作者实现验证"；Coons 命名奇异点；"too pointy"审美故事；三个开放问题；与今日 SubDGuide 构成正逆 48 年弧线）；前沿 4 篇入库：[[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]（重拓扑逆问题；"planner 判断/工具构建/验证回滚"）· [[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]]（局部接触推理；"指标看不见的价值"）· [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]]（GS 几何质量）· [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]]（可微渲染"输出层"）；新概念 [[Subdivision Surfaces]]；[[2026-09-26-Constant-Memory Differentiable Light Tracing|CMDLT]] 会议版到货；方法新规律：周五提交周六 API 不可见（**周末运行以 listing 为主**）；产业：**UE 5.8 正式发布**（MegaLights 生产可用 / PCG 手动编辑 / MCP 插件）+ E-Day 续报（GeForce NOW + 中文实测））
+　　▸ **10-9 回顾**（Run #31）：**接口日**——五条路线全节点闭合（Turquin 2019）+ NRC-Spec / Tabula Rasa / emg2face；读者自制五路线图解（"用自己的话比较"实物产物）；E-Day 深测到账
 　　▸ **10-8 回顾**（Run #30）：**毛发生产化日**——Chiang 2016（六节点闭合）+ PDB / DynaConTalk / Multiphysics；新概念 [[Facial Animation]]；RTX Spark 发布
 　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011 + NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry
 　　▸ **10-6 回顾**（Run #28）：**分工日**——Neuroll + CurveCodec 2 + DDGI 2019；PKM 按实际阅读校正

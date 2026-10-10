@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>细分曲面 — 1978 正问题 与 2026 逆问题图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a; --violet:#7a4fd0;
+    --code:#f0f3f7; --card:#fbfcfe; --hl:#fff7e0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61; --violet:#b39aff;
+      --code:#232a32; --card:#20262d; --hl:#2a2517;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:940px;margin:0 auto}
+  h1{font-size:23px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:17.5px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  .figrow{display:flex;gap:14px;flex-wrap:wrap}
+  .figcol{flex:1 1 340px;min-width:300px}
+  .box{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card)}
+  .box h4{margin:0 0 6px;font-size:13.5px}
+  .tag{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:2px 4px 2px 0;color:var(--ink2);background:var(--code)}
+  .tl{position:relative;margin:10px 0 6px;padding-left:18px;border-left:2px solid var(--line)}
+  .tl .n{position:relative;margin:0 0 10px}
+  .tl .n::before{content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--ink2)}
+  .tl .n.star::before{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)}
+  .tl .y{font-weight:700;margin-right:6px}
+  .foot{font-size:12.5px;color:var(--ink2);margin-top:20px}
+  svg text{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .ax{stroke:var(--line);stroke-width:1}
+  .p-old{fill:var(--ink)}.p-face{fill:var(--accent)}.p-edge{fill:var(--accent2)}
+  .gline{stroke:var(--line);stroke-width:1.2}
+  .arrow{stroke:var(--gold);stroke-width:1.4;stroke-dasharray:3 3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>细分曲面 — 1978 正问题 与 2026 逆问题</h1>
+  <div class="sub">Catmull-Clark《Recursively generated B-spline surfaces on arbitrary topological meshes》（CAD 10(6), 1978）<br>
+  与 SubDGuide《A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction》（2026）· 一条隔了 48 年的"反向弧线"。</div>
+
+  <div class="panel">
+    <h2><span class="num">1</span>正问题（1978）：cage → 曲面 — 三条规则</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <svg viewBox="0 0 430 260" role="img" aria-label="细分规则示意：面点、边点、顶点的位置关系">
+          <rect x="6" y="6" width="418" height="248" rx="10" fill="none" stroke="var(--line)"/>
+          <!-- 3x3 old vertices grid -->
+          <g class="gline">
+            <line x1="70" y1="60" x2="190" y2="60"/><line x1="190" y1="60" x2="310" y2="60"/>
+            <line x1="70" y1="120" x2="190" y2="120"/><line x1="190" y1="120" x2="310" y2="120"/>
+            <line x1="70" y1="180" x2="190" y2="180"/><line x1="190" y1="180" x2="310" y2="180"/>
+            <line x1="70" y1="60" x2="70" y2="180"/><line x1="190" y1="60" x2="190" y2="180"/><line x1="310" y1="60" x2="310" y2="180"/>
+            <line x1="70" y1="60" x2="190" y2="120" opacity=".35"/><line x1="190" y1="60" x2="310" y2="120" opacity=".35"/>
+            <line x1="70" y1="120" x2="190" y2="180" opacity=".35"/><line x1="190" y1="120" x2="310" y2="180" opacity=".35"/>
+          </g>
+          <!-- old vertices -->
+          <g class="p-old">
+            <circle cx="70" cy="60" r="4"/><circle cx="190" cy="60" r="4"/><circle cx="310" cy="60" r="4"/>
+            <circle cx="70" cy="120" r="4"/><circle cx="190" cy="120" r="4"/><circle cx="310" cy="120" r="4"/>
+            <circle cx="70" cy="180" r="4"/><circle cx="190" cy="180" r="4"/><circle cx="310" cy="180" r="4"/>
+          </g>
+          <!-- face points -->
+          <g class="p-face">
+            <circle cx="130" cy="90" r="5"/><circle cx="250" cy="90" r="5"/>
+            <circle cx="130" cy="150" r="5"/><circle cx="250" cy="150" r="5"/>
+          </g>
+          <!-- edge points (midpoints incl. diagonals of center) -->
+          <g class="p-edge">
+            <circle cx="130" cy="60" r="4"/><circle cx="250" cy="60" r="4"/>
+            <circle cx="130" cy="120" r="4"/><circle cx="250" cy="120" r="4"/>
+            <circle cx="130" cy="180" r="4"/><circle cx="250" cy="180" r="4"/>
+            <circle cx="70" cy="90" r="4"/><circle cx="70" cy="150" r="4"/>
+            <circle cx="190" cy="90" r="4"/><circle cx="190" cy="150" r="4"/>
+            <circle cx="310" cy="90" r="4"/><circle cx="310" cy="150" r="4"/>
+          </g>
+          <!-- vertex move arrows (center + one corner example) -->
+          <line class="arrow" x1="190" y1="120" x2="172" y2="112"/>
+          <line class="arrow" x1="70" y1="60" x2="86" y2="68"/>
+          <text x="150" y="212" font-size="11.5" fill="var(--ink2)">例：中心顶点被邻居"拉向"平滑位置（Q/n + 2R/n + S·(n−3)/n）</text>
+          <!-- legend -->
+          <circle cx="320" cy="216" r="4" fill="var(--ink)"/><text x="330" y="220" font-size="11" fill="var(--ink2)">旧顶点</text>
+          <circle cx="384" cy="216" r="4" fill="var(--accent)"/><text x="394" y="220" font-size="11" fill="var(--ink2)">面点</text>
+          <circle cx="320" cy="236" r="4" fill="var(--accent2)"/><text x="330" y="240" font-size="11" fill="var(--ink2)">边点</text>
+          <line class="arrow" x1="384" y1="236" x2="404" y2="236"/><text x="406" y="240" font-size="11" fill="var(--ink2)" text-anchor="end">移动</text>
+        </svg>
+        <div class="cap">一次细分的三件套：每个面收缩出一个<b>面点</b>、每条边收缩出一个<b>边点</b>、每个旧顶点被邻居<b>拉向</b>新位置——全部是局部平均。</div>
+      </div>
+      <div class="figcol">
+        <div class="box">
+          <h4>三条规则（任意拓扑）</h4>
+          <p class="dim" style="font-size:13px">
+          <b>A 面点</b> = 该面全部旧顶点的平均<br>
+          <b>B 边点</b> = 旧边中点 与 相邻两面点平均 的平均<br>
+          <b>C 顶点</b> = <code>Q/n + 2R/n + S·(n−3)/n</code><br>
+          <span class="dim">Q = 相邻面点平均 · R = 相邻边中点平均 · S = 旧顶点 · n = 价</span></p>
+          <h4 style="margin-top:10px">四个结构性质</h4>
+          <p class="dim" style="font-size:13px">
+          ① 一次细分后全部面变四边形<br>
+          ② 新顶点价恒为 4 → <b>奇异点数冻结</b><br>
+          ③ 规则点附近 = 标准 B-spline 片（切/曲率连续）<br>
+          ④ 奇异点：G¹ 为经验观察——<b>1978 年无解析证明</b></p>
+        </div>
+      </div>
+    </div>
+    <div class="callout gold">
+      <b>规则是怎么定下来的？（原文原话）</b> 顶点规则最初试的是 <code>Q/4 + R/2 + S/4</code>（"alternate"），但四面体案例"<b>too pointy（太尖）</b>"——于是重新找，换了 <code>Q/n + 2R/n + S·(n−3)/n</code>。作者自己写道："<i>更好的规则集、甚至比'图像定性外观'更好的评判标准，都有待发明。</i>" —— <b>先审美选规则，数学论证跟在后面。</b>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">2</span>逆问题（2026）：稠密网格 → cage — 两权分离</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <div class="box">
+          <h4>SubDGuide 的工作流</h4>
+          <p class="dim" style="font-size:13px">
+          <b>Stage A（规划）</b>：读多视角几何证据 → 紧凑计划（cage 分辨率 / 特征映射 / 大体拟合）<br>
+          <b>Stage B（闭环）</b>：检查表面 → 请求定向诊断 → <b>修复 / 回滚 / 停止</b><br>
+          ——"<b>planner 只做决策，永不生成顶点/连接</b>；几何工具执行并验证每一次改动。"</p>
+        </div>
+        <div class="callout" style="margin-top:10px">
+          <b>为什么不让 AI 直接生成几何？</b> 原文："把视觉判断与数值构建纠缠在一起，就没给验证留空间。" —— 判断归 planner、构建归工具、<b>验证进结构</b>（提案不通过就保留上一个 checkpoint）。
+        </div>
+      </div>
+      <div class="figcol">
+        <svg viewBox="0 0 430 210" role="img" aria-label="正逆问题对照：cage 到曲面 vs 稠密网格到 cage">
+          <rect x="6" y="6" width="418" height="198" rx="10" fill="none" stroke="var(--line)"/>
+          <!-- left: forward -->
+          <text x="107" y="30" text-anchor="middle" font-size="12.5" fill="var(--ink)">正问题（1978）</text>
+          <g class="gline">
+            <rect x="70" y="52" width="74" height="52" fill="none"/>
+            <line x1="70" y1="78" x2="144" y2="78"/><line x1="107" y1="52" x2="107" y2="104"/>
+          </g>
+          <text x="107" y="128" text-anchor="middle" font-size="11" fill="var(--ink2)">稀疏 cage（设计意图）</text>
+          <path class="arrow" d="M107 136 L107 158" fill="none"/>
+          <path d="M50 178 Q107 152 164 178 Z" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="107" y="196" text-anchor="middle" font-size="11" fill="var(--ink2)">细分规则 ×N → 光滑曲面</text>
+          <!-- arrow between -->
+          <text x="215" y="102" text-anchor="middle" font-size="15" fill="var(--gold)">⇄</text>
+          <text x="215" y="122" text-anchor="middle" font-size="10.5" fill="var(--ink2)">48 年</text>
+          <!-- right: inverse -->
+          <text x="323" y="30" text-anchor="middle" font-size="12.5" fill="var(--ink)">逆问题（2026）</text>
+          <path d="M266 74 Q323 48 380 74 Z" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="323" y="96" text-anchor="middle" font-size="11" fill="var(--ink2)">稠密网格（扫描/雕刻）</text>
+          <path class="arrow" d="M323 106 L323 128" fill="none"/>
+          <g class="gline">
+            <rect x="286" y="134" width="74" height="52" fill="none"/>
+            <line x1="286" y1="160" x2="360" y2="160"/><line x1="323" y1="134" x2="323" y2="186"/>
+          </g>
+          <text x="323" y="200" text-anchor="middle" font-size="11" fill="var(--ink2)">恢复 cage（找回设计结构）</text>
+        </svg>
+        <div class="cap">"有 cage 就能有曲面" ⇄ "有曲面怎么找回 cage"——<br>逆向之所以在今天成立，正因为 cage 的语义经受住了半个世纪检验。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">3</span>48 年弧线：从渲染动机到找回设计结构</h2>
+    <div class="tl">
+      <div class="n"><span class="y">1974</span>双源头：Catmull 博士论文（递归细分为<b>渲染</b>）+ Chaikin 切角法（曲线灵感）</div>
+      <div class="n star"><span class="y">1978 ★</span><b>Catmull-Clark</b>：任意拓扑规则（"Catmull 发明但无法证明、Clark 实现并泛化"）· 同刊下一篇 = Doo-Sabin 奇异点分析；"extraordinary points" 命名由 Coons 建议</div>
+      <div class="n"><span class="y">1987 / 1998</span>Loop（三角细分）· Stam 精确求值（不递归直接算极限点）· DeRose 角色动画（《Geri's Game》+ 半锐折痕）</div>
+      <div class="n"><span class="y">2005</span>Catmull / DeRose / Stam 获<b>奥斯卡技术成就奖</b></div>
+      <div class="n"><span class="y">2010s</span>OpenSubdiv（Pixar 开源）→ 全部 DCC / 引擎 / 汽车型面设计的标准表示</div>
+      <div class="n star"><span class="y">2026 ★</span><b>SubDGuide</b>：反方向——从稠密网格恢复 cage（"planner 判断 / 工具执行 / 验证回滚"）</div>
+    </div>
+    <div class="callout">
+      <b>论文自认的三个开放问题（1978）</b>：① 奇异点连续性<b>无解析证明</b>（三处自我标注）；② <b>高价奇异点行为不佳</b>（Sabin 建议的鞍面 z=xy 实验，8 价中心"not well behaved"——作者原话"还没找到最好的规则集"）；③ 结尾呼吁："任意拓扑网格上的近似格式需要<b>统一的数学处理</b>"——细分曲面整个理论领域的第一声。
+    </div>
+  </div>
+
+  <div class="foot">
+    来源：Catmull &amp; Clark, <i>Computer-Aided Design</i> 10(6): 350–355, Nov 1978（原文 6 页逐页核对；USTC 课程镜像 PDF）；SubDGuide, arXiv 2610.11721（Mercedes-Benz AG × TU Darmstadt）。<br>
+    本图解为 2026-10-10 入库节点配套（Papers/Catmull-Clark · Papers/SubDGuide · Concepts/Subdivision Surfaces）。
+  </div>
+</div>
+</body>
+</html>

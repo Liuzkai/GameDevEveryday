@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-09
+updated: 2026-10-10
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 30
@@ -15,6 +15,7 @@ read_paper_count: 30
 > **2026-10-07 更新（阅读推进，逐文件核实）**：已读 **27 → 30 篇**——[[Karis — Real Shading in Unreal Engine 4 (2013)]] / [[2026-09-17-DSD — Diffusion Skill Discovery]] / [[2026-09-27-Plate-Local River Generation]] 三篇转 `read`。**Karis 读后 PBR 阅读侧全清**（唯一剩余动作 = furnace test）；**Marschner 深读进行中**（status 仍为 `unread`，不代改——用户自制 R/TT/TRT 光路 SVG、三处勘误、挂载原文 PDF）；用户新建学习白板 `Learning/Canvas/Notes.canvas`（Shading Model D/G/F + IBL/Split-Sum + Marschner 三线，含 EnvBRDF LUT 补图）。
 > **2026-10-08 更新（仅资料侧；个人阅读状态无变化）**：毛发线第六节点补齐——[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS 生产模型；自测 18 → **21 条**；六节点闭合 1989→2016）；**面部域开线**——新概念 [[Facial Animation]] + 首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（结论层 Normal 可读）；物理域新增经典侧地图（Multiphysics 教程，待按需查阅）。
 > **2026-10-09 更新（读者侧产物记录 + 资料侧）**：**工作区新增自制五路线对比图解**（`pbr_multiple_scattering_comparison.html`，10-08 提交；含白炉测试交互计算器 + UE `ShadingEnergyConservation` 检查点）——**"先用自己的话比较五条路线"这个动作已出现实物产物**（不代改任何 `status`；引擎实测仍未记录）。资料侧：**路线⑤原始文献入库**（[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]，五条补法全节点闭合）；面部域捕捉层首节点（[[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG|emg2face]]）；NRC 镜面支线（NRC-Spec）。**已读账本维持 30 篇。**
+> **2026-10-10 更新（资料侧 + 方法侧；阅读状态无变化）**：**几何建模域开域**——经典 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] + 新概念 [[Subdivision Surfaces]]（三条规则 + 四性质；与逆问题样本 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]] 构成"正↔逆"48 年弧线，**可选 45 分钟小闭环已列入 Daily 动作清单**）；物理域材料层 +1（[[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]] 结论层；**"指标看不见的价值"判据**入工具箱）;可微桥 +1 软材料（[[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]]，≈10 分钟、无数学）；GS 线几何质量维度（[[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]]）。**已读账本维持 30 篇**；既有动作清单全部不变（furnace test / 毛发 21 条 / Neural GI 桥 / 动态灯光复审）。**方法侧新规律**：周五提交在周六的 API 中不可见（cs.GR/cs.CV 双验证）——周末运行以 listing 为主通道。
 
 ## 如何理解和更新这个模型
 

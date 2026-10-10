@@ -91,7 +91,8 @@ Inverse Rendering（从图像反推几何/材质/光照）
 - [[LightOpt — Lights Optimization for Real-Time Rendering]]
 - [[Inverse Rendering for Modeling with Line Primitives]]
 - [[Vicini — Path Replay Backpropagation (2021)]] ★ 2026-09-30 入库（**记忆轴起点**：相机侧"常数内存 + 线性时间"；重放三要素）
-- [[2026-09-26-Constant-Memory Differentiable Light Tracing]] ★ 2026-09-30 入库（**光源侧补全**：ResLRB / LRB-3-pass；1:1 vs 1:k 边界）
+- [[2026-09-26-Constant-Memory Differentiable Light Tracing]] ★ 2026-09-30 入库（**光源侧补全**：ResLRB / LRB-3-pass；1:1 vs 1:k 边界）——**2026-10-10 会议版到货**（SIGGRAPH Asia 2026 TC："Stochastic Graph Compression"，聚焦 ResLRB）
+- [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]] ★ 2026-10-10 入库（**输出/检查层开线**："**导数是一等渲染输出**"——sensitivity AOV + deferred shading 式"算一次看多处" + 固定/自由双相机分离；同作者 SIGGRAPH Asia 双篇之二）
 
 ## Personal Knowledge
 

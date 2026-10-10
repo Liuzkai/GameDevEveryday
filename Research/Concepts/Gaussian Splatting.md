@@ -64,6 +64,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 - [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]] —— **随机透明家族第二代（⑤）**：fragment / primitive 双流按成本路由 + 跨场景时空重建 + 移动端 NPU 全管线（92.6 FPS 裸渲染 / 73.2 FPS 含重建 @540p）；直接吃**未修改** 3DGS 资产；1080p 达 2.3–2.7× 标准 3DGS 吞吐 ★ 2026-10-01
 - [[Inverse Rendering for Modeling with Line Primitives]]（对比：显式线段 vs 体积基元）
 - [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD]] —— **LOD/预算线开线**：容量下限（误差 ∝ N⁻¹ᐟ²）+ 因子树（矩匹配聚合 119×）+ 单参数 c 扫连续内存-质量曲线；官方城市数据 71 fps @1080p 全 SH（vs Octree-GS 11.5 fps）；**"LOD 分层是比压缩率更本质的资产属性"（同内存 -2.12 vs 随机 -7.08 dB）** ★ 2026-10-05
+- [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]] —— **几何质量线（新）**：可微局部 PCA 正则（作用在中心邻域、**视角无关**）修复 floaters——"看不见的高斯也有监督"；特征值谱正则（表面化 + 各向同性切向）+ 法线对齐；DTU/T&T 上表面质量提升、**下游（点云分割 / Poisson 重建）免修直用** ★ 2026-10-10
 
 ## LOD / 预算线（2026-10-05 开线）
 

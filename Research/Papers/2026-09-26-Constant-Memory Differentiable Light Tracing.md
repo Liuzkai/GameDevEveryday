@@ -4,7 +4,7 @@ title: "Constant-Memory Differentiable Light Tracing"
 authors: [Linas Beresna, Eugene Fiume]
 year: 2026
 published: "2026-09-26 (arXiv)"
-venue: "arXiv preprint（Simon Fraser University；cs.GR；14 页）—— 实现于 Mitsuba 3 + DrJit，CUDA/OptiX 后端"
+venue: "arXiv preprint（Simon Fraser University；cs.GR；14 页）—— 实现于 Mitsuba 3 + DrJit，CUDA/OptiX 后端。**2026-10-10 更新：正式版投出——SIGGRAPH Asia 2026 Technical Communications（标题 "Stochastic Graph Compression for Constant-Memory Differentiable Light Tracing"，arXiv 2610.10847，4 页，聚焦 ResLRB）**"
 url: "https://arxiv.org/abs/2609.32920"
 code: ""
 project_page: ""
@@ -20,6 +20,8 @@ tags: [differentiable-rendering, light-tracing, inverse-rendering, monte-carlo, 
 ---
 
 # Constant-Memory Differentiable Light Tracing（Beresna & Fiume 2026）
+
+> **2026-10-10 更新（会议版到货）**：本工作的正式发表版出现——**"Stochastic Graph Compression for Constant-Memory Differentiable Light Tracing"**（arXiv 2610.10847；**SIGGRAPH Asia 2026 Technical Communications**，4 页）。该版本**聚焦 ResLRB 单方法**（原文："We describe Reservoir Light Replay Backpropagation (ResLRB)..."），可视为本预印本（14 页，含 ResLRB + LRB-3-pass 双策略）的**会议短文版**——按"同一研究实体"处理（更新本笔记，不新建）。同作者同日另有 [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]]（本库 10-10 入库）——**一篇机制、一篇接口，组稿阅读**。
 
 ## TL;DR
 
