@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>细分曲面 — 求值（Stam 1998）与生产化（DeRose 1998）图解</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f24; --ink2:#4a5560; --line:#dde2e8;
+    --accent:#2f6feb; --accent2:#0f8a70; --warn:#b4541f; --gold:#a6741a; --violet:#7a4fd0;
+    --code:#f0f3f7; --card:#fbfcfe; --hl:#fff7e0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171b; --panel:#1c2127; --ink:#e8ecf1; --ink2:#a9b4c0; --line:#2c343d;
+      --accent:#6ea8ff; --accent2:#4cc9a8; --warn:#e0a075; --gold:#e0bb61; --violet:#b39aff;
+      --code:#232a32; --card:#20262d; --hl:#2a2517;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 56px;background:var(--bg);color:var(--ink);
+       font:15px/1.75 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:940px;margin:0 auto}
+  h1{font-size:23px;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:13.5px;margin-bottom:18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  h2{font-size:17.5px;margin:6px 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--accent);
+       color:#fff;font-size:14px;align-items:center;justify-content:center;flex:0 0 auto}
+  h3{font-size:14.5px;margin:14px 0 6px}
+  p{margin:6px 0}
+  .dim{color:var(--ink2)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace;background:var(--code);border-radius:4px;padding:1px 6px;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .callout{border-left:4px solid var(--accent2);background:var(--card);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--gold)}
+  .cap{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:4px}
+  .figrow{display:flex;gap:14px;flex-wrap:wrap}
+  .figcol{flex:1 1 340px;min-width:300px}
+  .box{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card)}
+  .box h4{margin:0 0 6px;font-size:13.5px}
+  .tag{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin:2px 4px 2px 0;color:var(--ink2);background:var(--code)}
+  .tl{position:relative;margin:10px 0 6px;padding-left:18px;border-left:2px solid var(--line)}
+  .tl .n{position:relative;margin:0 0 10px}
+  .tl .n::before{content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--ink2)}
+  .tl .n.star::before{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)}
+  .tl .y{font-weight:700;margin-right:6px}
+  .foot{font-size:12.5px;color:var(--ink2);margin-top:20px}
+  svg text{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  .ax{stroke:var(--line);stroke-width:1}
+  .gline{stroke:var(--line);stroke-width:1.2}
+  .arrow{stroke:var(--gold);stroke-width:1.4;stroke-dasharray:3 3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>细分曲面 — 求值（Stam 1998）与生产化（DeRose 1998）</h1>
+  <div class="sub">
+    Stam《Exact Evaluation of Catmull-Clark Subdivision Surfaces at Arbitrary Parameter Values》（SIGGRAPH'98, pp.395–404）<br>
+    + DeRose / Kass / Truong《Subdivision Surfaces in Character Animation》（SIGGRAPH'98, pp.85–94）· 同届双节点：<b>算得出来</b> × <b>用得起来</b>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">1</span>核心反转：递归逼近 → 特征基直接求值</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <div class="box">
+          <h4>旧路径（1978–1997 的唯一选择）：递归细分</h4>
+          <p class="dim">给定 (u,v) 想知道曲面点？只能把网格多细分几次，逼近极限面。</p>
+          <svg viewBox="0 0 400 120" role="img" aria-label="递归细分路径示意">
+            <rect x="6" y="6" width="388" height="108" rx="8" fill="none" stroke="var(--line)"/>
+            <g class="gline">
+              <rect x="28" y="34" width="56" height="50" fill="none"/>
+              <rect x="120" y="42" width="40" height="34" fill="none"/>
+              <rect x="196" y="47" width="26" height="24" fill="none"/>
+              <rect x="254" y="50" width="18" height="18" fill="none"/>
+            </g>
+            <text x="34" y="26" font-size="11" fill="var(--ink2)">原网格</text>
+            <text x="118" y="34" font-size="11" fill="var(--ink2)">细分×1</text>
+            <text x="192" y="40" font-size="11" fill="var(--ink2)">×2</text>
+            <text x="250" y="44" font-size="11" fill="var(--ink2)">×3 …</text>
+            <path d="M 92 58 L 112 58" class="arrow" marker-end="url(#a1)"/>
+            <path d="M 168 58 L 188 58" class="arrow" marker-end="url(#a1)"/>
+            <path d="M 230 58 L 246 58" class="arrow" marker-end="url(#a1)"/>
+            <path d="M 282 58 L 320 58" class="arrow" marker-end="url(#a1)"/>
+            <text x="322" y="54" font-size="11" fill="var(--warn)">仍是逼近</text>
+            <text x="322" y="70" font-size="11" fill="var(--warn)">奇异点附近贵</text>
+            <text x="322" y="86" font-size="11" fill="var(--warn)">高阶导数不精确</text>
+            <defs><marker id="a1" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--gold)"/></marker></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="figcol">
+        <div class="box">
+          <h4>新路径（1998 Stam）：展开成矩阵幂 → 特征分解</h4>
+          <p class="dim">细分是线性变换 → 一切指数化 → 曲面 = 特征基函数之和。给定 (u,v) <b>一次算对</b>。</p>
+          <svg viewBox="0 0 400 120" role="img" aria-label="特征基直接求值示意">
+            <rect x="6" y="6" width="388" height="108" rx="8" fill="none" stroke="var(--line)"/>
+            <text x="26" y="40" font-size="12" fill="var(--ink)">v<sub>k</sub> = A<sup>k</sup>·v<sub>0</sub></text>
+            <text x="126" y="40" font-size="12" fill="var(--ink)">= V·Λ<sup>k</sup>·V<sup>-1</sup>·v<sub>0</sub></text>
+            <text x="26" y="66" font-size="12" fill="var(--accent)">p(u,v) = Σ λ<sub>i</sub><sup>n</sup>·φ<sub>i</sub>(u,v)·c<sub>i</sub></text>
+            <text x="26" y="92" font-size="11" fill="var(--ink2)">n = ⌊min(−log₂u, −log₂v)⌋ —— 层级由 (u,v) 直接算出，不细分</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <b>论点反转（原文）：</b>"我们推翻了一个在图形学界广泛流传的信念——Catmull-Clark 曲面无法在任意参数值处直接求值。" 求值成本 <b>≈ 双三次样条</b>（多一个 log₂ 和一次整数幂）。—— <span class="dim">"我们把一个理论工具升级成了非常实用的工具。"</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">2</span>Stam 求值三步（实现 = 一张表 + 两个函数）</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <svg viewBox="0 0 430 235" role="img" aria-label="单位参数域的层级瓷砖划分">
+          <rect x="10" y="10" width="410" height="215" rx="10" fill="none" stroke="var(--line)"/>
+          <!-- unit square -->
+          <rect x="60" y="34" width="180" height="180" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+          <line x1="150" y1="34" x2="150" y2="214" class="gline"/>
+          <line x1="60" y1="124" x2="240" y2="124" class="gline"/>
+          <text x="100" y="80" font-size="11" fill="var(--accent2)">Ω⁰ 规则片</text>
+          <text x="170" y="80" font-size="11" fill="var(--accent2)">Ω⁰ 规则片</text>
+          <text x="170" y="170" font-size="11" fill="var(--accent2)">Ω⁰ 规则片</text>
+          <!-- recursive center -->
+          <line x1="105" y1="124" x2="105" y2="214" class="gline"/>
+          <line x1="60" y1="169" x2="150" y2="169" class="gline"/>
+          <line x1="83" y1="169" x2="83" y2="214" class="gline"/>
+          <line x1="60" y1="191" x2="105" y2="191" class="gline"/>
+          <line x1="71" y1="191" x2="71" y2="214" class="gline"/>
+          <line x1="60" y1="203" x2="83" y2="203" class="gline"/>
+          <text x="150" y="105" font-size="11" fill="var(--ink2)">每层 3 个规则象限</text>
+          <text x="150" y="120" font-size="11" fill="var(--ink2)">= 双三次 B-spline 片</text>
+          <text x="110" y="210" font-size="10.5" fill="var(--warn)">中心无限缩向奇异点</text>
+          <!-- arrows -->
+          <path d="M 248 124 L 292 124" class="arrow" marker-end="url(#a2)"/>
+          <defs><marker id="a2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--gold)"/></marker></defs>
+          <!-- steps -->
+          <text x="300" y="60" font-size="12" fill="var(--ink)">① 投影（每片一次）</text>
+          <text x="300" y="80" font-size="11" fill="var(--ink2)">c = V⁻¹·v₀ ∈ 特征空间</text>
+          <text x="300" y="108" font-size="12" fill="var(--ink)">② 选层（每次求值）</text>
+          <text x="300" y="128" font-size="11" fill="var(--ink2)">n ← (u,v) 的 log₂</text>
+          <text x="300" y="156" font-size="12" fill="var(--ink)">③ 特征基求和</text>
+          <text x="300" y="176" font-size="11" fill="var(--ink2)">Σ λ<sup>n</sup>·φ(u,v)·c</text>
+          <text x="300" y="204" font-size="11" fill="var(--accent)">成本 ≈ bicubic</text>
+        </svg>
+        <div class="cap">单位参数域被分成无穷层瓷砖：每层 3 个规则象限（直接是 B-spline 片）+ 1 个更小的中心；层号由 (u,v) 直接算。</div>
+      </div>
+      <div class="figcol">
+        <h3>三个值得记住的结构事实</h3>
+        <ul style="padding-left:20px;margin:6px 0">
+          <li><b>7 个共享函数</b>：任意价的特征基里最后 7 个恒相同——正是"外层 7 个控制点"的 B-spline 张量基（外圈影响与价无关）；</li>
+          <li><b>n=4 时特征基 = 幂基</b>（power basis）——本文明首次指出；奇异点的特征基 = "幂基的推广"（分片双三次，一般不是多项式）；</li>
+          <li><b>预计算资产</b>：每个价（到 NMAX=500）一张 <code>EIGENSTRUCT</code> 表——特征结构只算一次，运行时只查用。</li>
+        </ul>
+        <div class="callout gold">
+          <b>读法（≈25 分钟）</b>：摘要 → §1 → §4 结论段 → §5 代码（<code>ProjectPoints</code> + <code>EvalSurf</code>）→ §6 曲率图与"奇异点曲率无穷大"。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">3</span>DeRose 1998：半锐折痕（把"锐度"做成连续谱）</h2>
+    <div class="figrow">
+      <div class="figcol">
+        <svg viewBox="0 0 430 170" role="img" aria-label="折痕锐度连续谱：0 到无穷">
+          <rect x="10" y="10" width="410" height="150" rx="10" fill="none" stroke="var(--line)"/>
+          <!-- five corner profiles -->
+          <g fill="none" stroke="var(--accent)" stroke-width="2.4">
+            <path d="M 36 122 L 36 92 Q 36 62 66 62 L 100 62"/>
+            <path d="M 112 122 L 112 92 Q 112 72 132 72 L 172 62"/>
+            <path d="M 188 122 L 188 92 Q 188 80 200 80 L 248 62"/>
+            <path d="M 264 122 L 264 92 Q 264 86 270 86 L 324 62"/>
+          </g>
+          <g fill="none" stroke="var(--warn)" stroke-width="2.6">
+            <path d="M 340 122 L 340 62 L 404 62"/>
+          </g>
+          <text x="38" y="142" font-size="12" fill="var(--ink)">s = 0</text>
+          <text x="114" y="142" font-size="12" fill="var(--ink)">s = 1</text>
+          <text x="190" y="142" font-size="12" fill="var(--ink)">s = 2</text>
+          <text x="266" y="142" font-size="12" fill="var(--ink)">s = 3</text>
+          <text x="342" y="142" font-size="12" fill="var(--warn)">s = ∞</text>
+          <text x="36" y="30" font-size="11" fill="var(--ink2)">光滑</text>
+          <text x="362" y="30" font-size="11" fill="var(--warn)">无限锐</text>
+        </svg>
+        <div class="cap">同一个立方体棱边的五种锐度（Figure 7 的二维读法）：0 全光滑 → 1/2/3 逐步收紧 → ∞ 完整直角。</div>
+      </div>
+      <div class="figcol">
+        <h3>机制：混合细分（hybrid subdivision）</h3>
+        <p>不推导"权重随锐度变化的规则"，而是：<b>前 s 步用"无限锐规则"，之后切换光滑规则</b>——"光滑性只取决于第二套规则"；锐度随细分"消化一层"（子边 s−1）。非整数锐度 = 上下整数版本线性混合。非整数且沿折痕变化 → 附录 B（Chaikin 式 3:1 传播）。</p>
+        <p class="dim">为什么不做参数化规则：折痕破坏"循环重索引对称性"（DFT 类证明失效）+ 规则会爆炸成"动物园"。<b>先锐后滑 = 把连续谱缩回两个已解决问题。</b></p>
+        <div class="callout warn">
+          <b>产品性关键句：</b>半锐折痕的法线跨折痕<b>平滑变化</b>——沿法线置换（displacement）时，<b>无限锐会撕裂，半锐不会</b>。"数学正确"与"生产可用"的距离，常常就在这样一个具体下游操作里。
+        </div>
+      </div>
+    </div>
+    <h3>另外两件套（同一篇论文）</h3>
+    <table>
+      <tr><th>障碍</th><th>方案</th><th>一句话</th></tr>
+      <tr><td>布料物理</td><td>能量泛函三件套：抗拉伸（边弹簧）/ 抗剪切（<b>对角弹簧能量之积</b>）/ 抗弯曲（虚拟线角度项）</td><td>织物经纬 ↔ 网格边方向——域对齐；虚拟线过奇异点"顺时针偏移 ⌊n/2⌋ 条边"</td></tr>
+      <tr><td>碰撞检测</td><td>粗化层级："反着建树"（合并面 → superface → 单一根）</td><td>没有全局 (s,t) 平面 → 向"粗"建无限细分的逆层级（<b>逆操作给出结构</b>）</td></tr>
+      <tr><td>纹理/着色</td><td>标量场 = (x,y,z,s,t) 五维一起细分（附录 C 证明）</td><td>纹理坐标与几何同规则细分 → 光滑；现代形态 = OpenSubdiv 的 face-varying 通道</td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2><span class="num">4</span>48 年弧线：中段三节点补齐（本库 10-10 ~ 10-11）</h2>
+    <div class="tl">
+      <div class="n"><span class="y">1974</span>双源头（Catmull 渲染动机 / Chaikin 切角法）</div>
+      <div class="n"><span class="y">1978</span>★ <b>Catmull-Clark 规则</b>（cage → 曲面；"发明者无法证明、合作者实现验证"）—— 10-10 入库</div>
+      <div class="n star"><span class="y">1998</span>★ <b>Stam 求值</b>（递归 → 特征基直接求值；"推翻一个信念"）+ <b>DeRose 生产化</b>（半锐折痕 / 布料 / 标量场 → Geri's Game）—— <b>今日双节点</b></div>
+      <div class="n"><span class="y">2005 / 2018</span>Catmull、DeRose、Stam 两获奥斯卡技术奖（"scientific and practical implementation"）</div>
+      <div class="n"><span class="y">2012</span>OpenSubdiv 开源标准化 / Nießner 特征自适应 GPU 求值</div>
+      <div class="n star"><span class="y">2026</span>★ <b>SubDGuide 逆问题</b>（曲面 → cage）—— 10-10 入库</div>
+    </div>
+    <div class="callout">
+      <b>三件套语汇（可背）：</b>规则（1978：怎么定义）→ 求值（1998 Stam：怎么算）→ 生产（1998 DeRose：怎么用）。<b>同一届 SIGGRAPH 的两篇论文互相无引用</b>——理论线与生产线在 1998 年夏天各自独立抵达。
+    </div>
+  </div>
+
+  <div class="foot">
+    来源：Stam, SIGGRAPH '98 pp.395–404（作者主页 PDF 全页核对）；DeRose / Kass / Truong, SIGGRAPH '98 pp.85–94（课程镜像 PDF 全页核对）。
+    图解：栈灯 · 2026-10-11 · 配合笔记 [[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]] · [[DeRose — Subdivision Surfaces in Character Animation (1998)]] · [[Subdivision Surfaces]]。
+  </div>
+</div>
+</body>
+</html>

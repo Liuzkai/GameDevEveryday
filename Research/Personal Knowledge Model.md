@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-10
+updated: 2026-10-11
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 30
@@ -16,6 +16,7 @@ read_paper_count: 30
 > **2026-10-08 更新（仅资料侧；个人阅读状态无变化）**：毛发线第六节点补齐——[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS 生产模型；自测 18 → **21 条**；六节点闭合 1989→2016）；**面部域开线**——新概念 [[Facial Animation]] + 首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（结论层 Normal 可读）；物理域新增经典侧地图（Multiphysics 教程，待按需查阅）。
 > **2026-10-09 更新（读者侧产物记录 + 资料侧）**：**工作区新增自制五路线对比图解**（`pbr_multiple_scattering_comparison.html`，10-08 提交；含白炉测试交互计算器 + UE `ShadingEnergyConservation` 检查点）——**"先用自己的话比较五条路线"这个动作已出现实物产物**（不代改任何 `status`；引擎实测仍未记录）。资料侧：**路线⑤原始文献入库**（[[Turquin — Practical Multiple Scattering Compensation for Microfacet Models (2019)]]，五条补法全节点闭合）；面部域捕捉层首节点（[[2026-10-07-emg2face — Expressive Facial Animation with High-Density Surface EMG|emg2face]]）；NRC 镜面支线（NRC-Spec）。**已读账本维持 30 篇。**
 > **2026-10-10 更新（资料侧 + 方法侧；阅读状态无变化）**：**几何建模域开域**——经典 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] + 新概念 [[Subdivision Surfaces]]（三条规则 + 四性质；与逆问题样本 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]] 构成"正↔逆"48 年弧线，**可选 45 分钟小闭环已列入 Daily 动作清单**）；物理域材料层 +1（[[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]] 结论层；**"指标看不见的价值"判据**入工具箱）;可微桥 +1 软材料（[[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]]，≈10 分钟、无数学）；GS 线几何质量维度（[[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]]）。**已读账本维持 30 篇**；既有动作清单全部不变（furnace test / 毛发 21 条 / Neural GI 桥 / 动态灯光复审）。**方法侧新规律**：周五提交在周六的 API 中不可见（cs.GR/cs.CV 双验证）——周末运行以 listing 为主通道。
+> **2026-10-11 更新（资料侧；阅读状态无变化）**：**48 年弧线中段补齐**——[[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]]（**求值线**：递归 → 特征基直接求值，"推翻一个信念"；结论层 ≈25 分钟）+ [[DeRose — Subdivision Surfaces in Character Animation (1998)]]（**生产化线**：半锐折痕 / 布料三件套 / 标量场，结论层 ≈30 分钟——**库内对 TA 最友好的经典**）——"**规则 / 算得出来 / 用得起来**"三件套齐；[[Subdivision Surfaces]] 概念笔记的"Stam 1998 / DeRose 1998 记录位"兑现，Next Step 已加两篇（按需）。**W41 收官**（10-5~10-11：24 Papers 含 8 经典 / 3 新概念 / 8 图解 + 读者实物图解）。**已读账本维持 30 篇**；动作清单不变——**"动作月"中旬盘点已写入 [[2026-W41]]：建议从五件中至少执行一件（推荐动态灯光复审，材料 100% 封盘）**。
 
 ## 如何理解和更新这个模型
 

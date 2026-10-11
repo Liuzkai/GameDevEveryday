@@ -215,9 +215,11 @@ Clark 1976（LOD：可见复杂度上限）→ 本文 1978（细分：细节按�
 
 ### Followed By
 
-- **Stam 1998 精确求值** / **DeRose et al. 1998 角色动画（半锐折痕）** / **Loop 1987**——（均未入库，作为谱系后继记录）；
+- [[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]] ★ 2026-10-11 入库——**求值线**（递归 → 特征基直接求值；"推翻一个普遍信念"）；姊妹篇 = Loop 求值（同届 CDROM）；
+- [[DeRose — Subdivision Surfaces in Character Animation (1998)]] ★ 2026-10-11 入库——**生产化线**（半锐折痕 + 布料 + 标量场 → Geri's Game）；
+- **Loop 1987**（三角细分，未入库，谱系记录位）；
 - **OpenSubdiv（Pixar，2012+）**——工业实现。
-- 未来：[[Subdivision Surfaces]] 概念笔记（本日建立）承载本条的"概念侧"。
+- [[Subdivision Surfaces]] 概念笔记（2026-10-10 建立）承载本条的"概念侧"。
 
 ## Personal Knowledge State
 

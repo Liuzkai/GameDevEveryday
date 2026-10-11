@@ -51,10 +51,13 @@ first_introduced: "1978（Catmull & Clark；前身：Catmull 1974 递归细分 /
       + Doo-Sabin：另一方案 + 奇异点分析（同期同刊，pp. 356–360）
         ↓
 1987  Loop：三角网格细分（三角形版）
-1998  理论化 + 工业化：Stam 精确求值（极限点直接算，不递归）；
-      DeRose/Kass/Truong 角色动画（《Geri's Game》= 首个 SubD 动画）＋ 半锐折痕
+1998  ★ 理论化 + 工业化（同届 SIGGRAPH 双节点，本库 10-11 同日入库）：
+      · [[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]]——
+        精确求值（递归展开为矩阵幂 → 特征基；任意 (u,v) 直接算，成本 ≈ 双三次样条）
+      · [[DeRose — Subdivision Surfaces in Character Animation (1998)]]——
+        角色动画（半锐折痕 + 布料接口 + 标量场；《Geri's Game》= SubD 首次大规模进电影）
         ↓
-2005  Catmull / DeRose / Stam 获奥斯卡技术成就奖
+2005  Catmull / DeRose / Stam 获奥斯卡技术成就奖（2018 再获 S&E Award）
 2010s Pixar OpenSubdiv（开源、GPU 求值）→ 行业标准化
 2012  Nießner et al.：特征自适应 GPU 求值（SubD 用于实时渲染）
         ↓
@@ -67,8 +70,10 @@ first_introduced: "1978（Catmull & Clark；前身：Catmull 1974 递归细分 /
 ## Important Papers
 
 - [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]]——**定义者**（★ 2026-10-10 入库：三条规则 + 奇异点命名（Coons）+ 两个开放问题 + "审美先行"的规则演化史）；
+- [[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]]——**求值线**（★ 2026-10-11 入库：递归 → 特征基直接求值；"推翻一个普遍信念"；成本 ≈ 双三次样条）；
+- [[DeRose — Subdivision Surfaces in Character Animation (1998)]]——**生产化线**（★ 2026-10-11 入库：半锐折痕 + 布料 + 标量场 → Geri's Game；"混合细分"机制）；
 - [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]（★ 2026-10-10 入库）——**逆问题**（稠密网格 → cage；"planner 判断 / 工具执行 / 验证回滚"）；
-- 谱系后继记录位（未入库）：Stam 1998（精确求值）· DeRose 1998（角色动画/半锐折痕）· Loop 1987（三角细分）。
+- 谱系后继记录位（未入库）：Loop 1987（三角细分）。
 
 ## Related Concepts
 
@@ -107,7 +112,8 @@ Current Level: **Normal**（结论层直接可读——三条规则 + 四性质 
 
 1. **读 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] 的结论层**（≈25 分钟：三条规则 + 图 2/3 + 结论 + 参考文献切片）——把"日用工具"接上"规则原文"；
 2. **对照读 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]**（≈20 分钟）——完成"正↔逆"弧线的个人版；
-3. （可选实验，DCC 内 30 分钟）**取一个带特征边的模型**：看细分后特征保持 vs 磨平的边界条件——用自己的话写"边流如何编码特征"三条。
+3. **（新增，10-11）中段两节点按需**：[[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)|Stam 1998]]（≈25 分钟，读法见笔记——"你的细分预览背后的数学"）+ [[DeRose — Subdivision Surfaces in Character Animation (1998)|DeRose 1998]]（≈30 分钟——**库内对 TA 最友好的经典**：半锐折痕 / 布料 / 标量场即日常工具）——"规则 → 求值 → 生产"三件套；
+4. （可选实验，DCC 内 30 分钟）**取一个带特征边的模型**：看细分后特征保持 vs 磨平的边界条件——用自己的话写"边流如何编码特征"三条；**半锐折痕实验（新增）**：同一棱边设 crease 0/1/2/∞，看置换/法线过渡差异。
 
 ---
 

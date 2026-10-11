@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-10]]（昨日：[[2026-10-09]]）
-- **本周综合**：[[2026-W40]]（覆盖 **9-28 ~ 10-4**，✅ 已收官；**下一周 W41 = 10-5 ~ 10-11，明日（10-11）收官产出**）
+- **今日**：[[2026-10-11]]（昨日：[[2026-10-10]]）
+- **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**下一周 W42 = 10-12 ~ 10-18**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
 - **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-08（毛发线六节点闭合；面部域开线）**——推送按校正结果组织
 
-## Papers（101）
+## Papers（103）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -121,6 +121,8 @@ created: 2026-09-07
 | [[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning]] | B+ | **Hard（推导）/ Normal（结论层）** | 中高（**物理接触维度开线**："接触是局部的"写进网络结构——跨物体推理限定在稀疏局部接触邻域；接触保真 ΔPTR 11.0% / ΔMPD 2.22 mm；**"指标看不见的价值"判据**）★ 2026-10-10 |
 | [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization]] | B+ | Normal（结论层） | 中高（**GS 几何质量线**：视角无关局部 PCA 正则修 floaters——"看不见的高斯也有监督"；下游 Poisson 重建 / 分割免修直用）★ 2026-10-10 |
 | [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering]] | B+ | **Hard（推导）/ Normal（结论层）** | 中（**可微渲染"输出/检查层"开线**："导数是一等渲染输出" + deferred shading 式"算一次看多处" + 固定/自由双相机分离；SIGGRAPH Asia 2026 TC；同作者双篇之一）★ 2026-10-10 |
+| [[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]] | S（经典） | **Normal（结论层）** | **最高（★ 细分"求值线"：递归展开为矩阵幂 → 特征基直接求值——"推翻一个普遍信念"；任意 (u,v) 成本 ≈ 双三次样条；七共享函数 / n=4 时=幂基；实现 = EIGENSTRUCT 一张表 + 两个函数；2005/2018 奥斯卡）** ★ 2026-10-11 |
+| [[DeRose — Subdivision Surfaces in Character Animation (1998)]] | A（经典） | **Normal（结论/生产层）** | **最高（★ 细分"生产化线"：半锐折痕 0→∞ 连续谱（混合细分"前 s 步锐→后光滑"）+ 布料能量三件套 + 粗化层级碰撞 + (x,y,z,s,t) 五维细分标量场 → 《Geri's Game》；**库内对 TA 最友好的经典**）** ★ 2026-10-11 |
 
 ## Concepts（35）
 
@@ -213,10 +215,10 @@ Research/
 
 ---
 
-最后更新：2026-10-10（Run #32：**48 年正逆弧线日 —— 几何建模域开域 + "对齐"三连 + UE 5.8 发布**——经典：[[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]]（S 经典：三条细分规则；"发明者无法证明、合作者实现验证"；Coons 命名奇异点；"too pointy"审美故事；三个开放问题；与今日 SubDGuide 构成正逆 48 年弧线）；前沿 4 篇入库：[[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]（重拓扑逆问题；"planner 判断/工具构建/验证回滚"）· [[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]]（局部接触推理；"指标看不见的价值"）· [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]]（GS 几何质量）· [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]]（可微渲染"输出层"）；新概念 [[Subdivision Surfaces]]；[[2026-09-26-Constant-Memory Differentiable Light Tracing|CMDLT]] 会议版到货；方法新规律：周五提交周六 API 不可见（**周末运行以 listing 为主**）；产业：**UE 5.8 正式发布**（MegaLights 生产可用 / PCG 手动编辑 / MCP 插件）+ E-Day 续报（GeForce NOW + 中文实测））
+最后更新：2026-10-11（Run #33：**中段闭合日 —— 48 年弧线中段双节点 + W41 收官**——经典双节点同日入库：[[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]]（**S 经典**：递归 → 特征基直接求值；"推翻一个信念"；成本 ≈ 双三次样条；七共享函数 / n=4 幂基；EIGENSTRUCT 一张表 + 两函数）+ [[DeRose — Subdivision Surfaces in Character Animation (1998)]]（**A 经典**：半锐折痕 0→∞ 连续谱 / 混合细分 + 布料三件套 + 标量场五维细分 → 《Geri's Game》）——**"规则 / 算得出来 / 用得起来"三件套齐**；前沿：周末黑窗**三通道 0 新条目**（未凑数）；**W41 周报收官**（10-5~10-11：24 Papers 含 8 经典 / 3 新概念 / 8 图解 + 读者实物图解 1 张）；动态灯光复审材料 100% 封盘）
+　　▸ **10-10 回顾**（Run #32）：**48 年正逆弧线日**——几何建模域开域（Catmull-Clark 1978 + Subdivision Surfaces 概念）+ "对齐"三连（RiCo / PCAsplat / GaussianBench）+ UE 5.8 正式发布
 　　▸ **10-9 回顾**（Run #31）：**接口日**——五条路线全节点闭合（Turquin 2019）+ NRC-Spec / Tabula Rasa / emg2face；读者自制五路线图解（"用自己的话比较"实物产物）；E-Day 深测到账
 　　▸ **10-8 回顾**（Run #30）：**毛发生产化日**——Chiang 2016（六节点闭合）+ PDB / DynaConTalk / Multiphysics；新概念 [[Facial Animation]]；RTX Spark 发布
 　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011 + NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry
 　　▸ **10-6 回顾**（Run #28）：**分工日**——Neuroll + CurveCodec 2 + DDGI 2019；PKM 按实际阅读校正
-　　▸ **10-5 回顾**（Run #27）：**漫反射侧结账日**——Hammon 2017 + Budgeted-GS（GS 预算线开线、Zador 定律）
 　　▸ **10-4 回顾**（Run #26）：缓存族第三源日（Ward 1988）——三源齐 + W40 周报
