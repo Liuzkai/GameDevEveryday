@@ -14,7 +14,7 @@ historical_importance: 1
 game_relevance: 3
 production_readiness: Research
 user_level: Normal
-status: unread
+status: read
 ---
 
 # WorldCrafter: Consistent Video World Model with Implicit 3D-aware Memory
