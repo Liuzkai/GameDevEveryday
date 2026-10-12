@@ -4,8 +4,17 @@
 # ===== WorkBuddy 本地项目数据（记忆日志，不进公开仓库）=====
 .workbuddy/
 
-# ===== Obsidian 本地 UI 状态（每次开关文件都会变化）=====
-.obsidian/workspace.json
+# ===== Obsidian：同步社区插件，其他配置留在各设备 =====
+# 首次迁移：每台设备先关闭 Obsidian/暂停自动 Git，并完整备份 .obsidian。
+# 拉取取消跟踪提交会删除其他设备上原已跟踪的配置；按需恢复本机配置。
+/.obsidian/*
+!/.obsidian/community-plugins.json
+!/.obsidian/plugins/
+
+# 插件目录完整保留代码、manifest、styles、资源和许可证；运行设置默认仅本地。
+/.obsidian/plugins/*/data.json
+# 图解使用 fit-content 高度；此文件只有可共享展示设置，保留以免退回 400px。
+!/.obsidian/plugins/embed-html/data.json
 
 # ===== 系统文件 =====
 .DS_Store
