@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>细分曲面 · 三角分支 — Loop 1987 与 Stam 1998 图解</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --sub:#5a6474; --line:#d9dee7;
+    --quad:#31579c; --quadbg:#eef3fb; --tri:#b4581a; --tribg:#fdf3ea;
+    --accent:#0a7d6b; --warn:#a33; --chipbg:#eef1f6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --card:#1c2027; --ink:#e8ebf1; --sub:#a3adbd; --line:#333a45;
+      --quad:#8fb3e8; --quadbg:#1e2735; --tri:#e8a06a; --tribg:#2a2118;
+      --accent:#5fd0bd; --warn:#e88; --chipbg:#242a33;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 40px;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:22px}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+  .col-quad{border-top:3px solid var(--quad);background:var(--quadbg)}
+  .col-tri{border-top:3px solid var(--tri);background:var(--tribg)}
+  .tagn{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--chipbg);color:var(--sub);margin-right:6px}
+  code,.mono{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  .kbd{background:var(--chipbg);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+  pre{background:var(--chipbg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:13px;line-height:1.5}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--chipbg)}
+  .note{font-size:13px;color:var(--sub)}
+  .warn{border-left:4px solid var(--warn);background:var(--card);padding:10px 14px;border-radius:6px;font-size:13.5px}
+  svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  .cap{font-size:12.5px;color:var(--sub);text-align:center;margin-top:6px}
+  .big{font-size:15.5px}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>细分曲面 · 三角分支 —— Loop 1987 与 Stam 1998 图解</h1>
+<div class="sub">配套笔记：[[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] · [[Stam — Evaluation of Loop Subdivision Surfaces (1998)]] · [[Subdivision Surfaces]]　（2026-10-12 入库）</div>
+
+<h2>① 48 年弧线的"另一半"——双轨全景</h2>
+<div class="card">
+  <svg viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+      </marker>
+    </defs>
+    <g color="#5a6474">
+      <!-- 四边形轨 -->
+      <text x="20" y="60" font-size="14" font-weight="700" fill="#31579c">四边形轨（quad）</text>
+      <line x1="20" y1="80" x2="880" y2="80" stroke="#31579c" stroke-width="2" marker-end="url(#ar)"/>
+      <g font-size="12.5" fill="#1f2430">
+        <circle cx="90" cy="80" r="5" fill="#31579c"/><text x="60" y="62">1974</text><text x="45" y="102">Catmull 源头</text>
+        <circle cx="230" cy="80" r="6" fill="#31579c"/><text x="195" y="62" font-weight="700">1978 ★</text><text x="185" y="102">Catmull-Clark</text>
+        <circle cx="420" cy="80" r="6" fill="#31579c"/><text x="375" y="62" font-weight="700">1998 ★★</text><text x="360" y="102">Stam 求值 + DeRose 生产</text>
+        <circle cx="580" cy="80" r="5" fill="#31579c"/><text x="545" y="62">2005/2018</text><text x="535" y="102">奥斯卡 · OpenSubdiv</text>
+        <circle cx="740" cy="80" r="6" fill="#31579c"/><text x="700" y="62" font-weight="700">2026</text><text x="672" y="102">SubDGuide 逆问题</text>
+      </g>
+      <!-- 三角轨 -->
+      <text x="20" y="200" font-size="14" font-weight="700" fill="#b4581a">三角轨（tri）</text>
+      <line x1="20" y1="220" x2="880" y2="220" stroke="#b4581a" stroke-width="2" marker-end="url(#ar)"/>
+      <g font-size="12.5" fill="#1f2430">
+        <circle cx="320" cy="220" r="6" fill="#b4581a"/><text x="278" y="202" font-weight="700">1987 ★</text><text x="262" y="242">Loop 三角规则</text>
+        <circle cx="430" cy="220" r="6" fill="#b4581a"/><text x="388" y="202" font-weight="700">1998 ★</text><text x="368" y="242">Stam 三角版求值（同月）</text>
+        <circle cx="600" cy="220" r="5" fill="#b4581a"/><text x="565" y="202">2010s</text><text x="548" y="242">GPU 求值时代</text>
+        <circle cx="740" cy="220" r="5" fill="#b4581a"/><text x="706" y="202">2026</text><text x="680" y="242">逆问题（共享下半场）</text>
+      </g>
+      <!-- 连线：三角第 0 章 -->
+      <path d="M230 92 C 260 140, 285 175, 318 208" stroke="#b4581a" stroke-dasharray="5,4" fill="none" stroke-width="1.6"/>
+      <text x="150" y="165" font-size="12" fill="#5a6474">"四边形方案垄断六年后，三角对偶出场"</text>
+      <!-- 连线：同月双发 -->
+      <path d="M420 92 C 425 140, 427 175, 430 208" stroke="#0a7d6b" fill="none" stroke-width="2"/>
+      <text x="440" y="150" font-size="12" fill="#0a7d6b" font-weight="700">同月、同单位、同一个 Jos Stam</text>
+    </g>
+    <!-- 底部要点 -->
+    <rect x="20" y="290" width="860" height="120" rx="10" fill="none" stroke="#d9dee7"/>
+    <text x="40" y="318" font-size="13.5" font-weight="700" fill="#1f2430">读法：两条轨的组合是一样的</text>
+    <text x="40" y="342" font-size="12.5" fill="#5a6474">四边形：1978 规则 → 1998 求值 → 生产化　｜　三角：1987 规则 → 1998 求值 → （三角原生域沿用）</text>
+    <text x="40" y="366" font-size="12.5" fill="#5a6474">"规则 / 算得出来 / 用得起来"三件套在两条轨上都成立——2026 的逆问题（SubDGuide）则是两条轨共享的下半场。</text>
+    <text x="40" y="392" font-size="12.5" fill="#5a6474">本库状态：四边形三件套（10-10/10-11）+ 三角"规则 + 求值"（10-12）——两侧弧线主体闭合。</text>
+  </svg>
+  <div class="cap">图 1 · 双轨弧线：四边形轨 1974→2026 / 三角轨 1987→2026</div>
+</div>
+
+<h2>② Loop 规则：两颗平均 + 一条"平方关系"</h2>
+<div class="grid2">
+  <div class="card col-tri">
+    <div class="tagn">拓扑</div><strong>分裂 1 → 4</strong>
+    <svg viewBox="0 0 340 190" xmlns="http://www.w3.org/2000/svg" style="margin-top:8px">
+      <g stroke="#b4581a" stroke-width="1.6" fill="none">
+        <polygon points="30,160 170,160 90,20" fill="#fdf3ea"/>
+      </g>
+      <g font-size="11" fill="#1f2430">
+        <text x="20" y="176">分裂前：1 个三角形</text>
+      </g>
+      <g stroke="#5a6474" stroke-width="0.8" stroke-dasharray="4,4">
+        <line x1="195" y1="20" x2="195" y2="170"/>
+      </g>
+      <g stroke="#b4581a" stroke-width="1.6" fill="none">
+        <polygon points="230,160 370,160 290,20" fill="#fdf3ea"/>
+        <line x1="260" y1="90" x2="330" y2="90" stroke-width="1.4"/>
+        <line x1="290" y1="20" x2="260" y2="90" stroke-width="1.4"/>
+        <line x1="290" y1="20" x2="330" y2="90" stroke-width="1.4"/>
+        <line x1="260" y1="90" x2="290" y2="160" stroke-width="1.4"/>
+        <line x1="330" y1="90" x2="290" y2="160" stroke-width="1.4"/>
+      </g>
+      <circle cx="260" cy="90" r="3.4" fill="#0a7d6b"/><circle cx="330" cy="90" r="3.4" fill="#0a7d6b"/><circle cx="290" cy="20" r="3.4" fill="#0a7d6b"/>
+      <g font-size="11" fill="#1f2430">
+        <text x="215" y="176">分裂后：4 个更小的三角形（边点+原顶点）</text>
+      </g>
+    </svg>
+    <div class="cap">每条边插 1 个"边点"；每个三角形 → 4 个</div>
+  </div>
+  <div class="card col-tri">
+    <div class="tagn">平均规则</div><strong>边点与顶点点</strong>
+    <pre>边点（新点，价恒 6）：
+  e = 3/8·(v1+v2) + 1/8·(v3+v4)
+      v1,v2 = 边两端点
+      v3,v4 = 两侧三角形的对顶点
+
+顶点点（原顶点重定位，价 N）：
+  v' = (1 − Nβ)·v + β·Σ(邻居)
+  β = (1/N)( 5/8 − (3/8 + (1/4)cos(2π/N))² )</pre>
+  </div>
+</div>
+<div class="card">
+  <strong>最关键的一行设计逻辑（Stam 1998 附录 B 转述）</strong>
+  <pre>细分矩阵的特征值：μ₁ = 1，μ₂ = (3/8 + (1/4)cos(2π/N))²，μ₃ = 3/8 + (1/4)cos(2π/N)
+观察：  μ₃² = μ₂
+原文："This is not surprising since Loop constructed his scheme from this relation."
+——"先定验收标准（平方关系），再反推权重 β(N)"——权重不是猜的，是解出来的。</pre>
+</div>
+
+<h2>③ Stam 三角版求值："3/4 免费午餐 + 无限瓦片"</h2>
+<div class="card col-tri">
+  <svg viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <!-- 左：3/4 -->
+    <g stroke="#b4581a" stroke-width="1.6" fill="none">
+      <polygon points="30,200 380,200 30,50" fill="#fdf3ea"/>
+      <line x1="205" y1="200" x2="130" y2="125" stroke-width="1.2"/>
+      <line x1="30" y1="125" x2="130" y2="125" stroke-width="1.2"/>
+      <line x1="130" y1="125" x2="205" y2="200" stroke-width="1.2" opacity="0.4" stroke-dasharray="3,3"/>
+      <line x1="130" y1="125" x2="30" y2="200" stroke-width="1.2" opacity="0.4" stroke-dasharray="3,3"/>
+    </g>
+    <circle cx="30" cy="50" r="6" fill="#a33"/>
+    <text x="20" y="40" font-size="12" fill="#a33">奇异点（价 N≠6）</text>
+    <g font-size="12" fill="#1f2430">
+      <text x="225" y="120">3/4 区域：一次细分后已有足够控制点</text>
+      <text x="225" y="140">→ 规则片区（12 控制点）直接求值</text>
+      <text x="60" y="175" font-size="11.5" fill="#0a7d6b">红点旁 1/4：仍需递归</text>
+    </g>
+    <!-- 右：无限瓦片 -->
+    <g transform="translate(500,30)">
+      <polygon points="0,170 340,170 0,20" fill="none" stroke="#b4581a" stroke-width="1.6"/>
+      <g stroke="#5a6474" stroke-width="0.9" fill="none" opacity="0.9">
+        <polygon points="0,95 85,95 0,52.5" fill="#eef3fb"/>
+        <polygon points="0,47.5 42.5,47.5 0,26.25" fill="#fdf3ea"/>
+        <polygon points="0,23.75 21.25,23.75 0,13.1" fill="#eef3fb"/>
+        <line x1="0" y1="95" x2="85" y2="95" /><line x1="85" y1="95" x2="170" y2="170"/>
+        <line x1="85" y1="95" x2="0" y2="170"/>
+        <line x1="0" y1="47.5" x2="42.5" y2="47.5"/><line x1="42.5" y1="47.5" x2="85" y2="95"/>
+        <line x1="42.5" y1="47.5" x2="0" y2="95"/>
+      </g>
+      <text x="95" y="120" font-size="11.5" fill="#5a6474">Ω₁¹</text>
+      <text x="60" y="185" font-size="11.5" fill="#5a6474">Ω₁ⁿ / Ω₂ⁿ / Ω₃ⁿ：无限缩小、贴向奇异点</text>
+      <text x="150" y="40" font-size="11.5" fill="#5a6474">缩放关系：Φ(v/2, w/2) = Λ·Φ(v,w)</text>
+    </g>
+  </svg>
+  <div class="cap">图 2 · 一次细分给足 3/4；剩下贴奇异点的 1/4 用"无限瓦片 + 特征基缩放关系"消化</div>
+</div>
+<div class="card">
+  <strong>实现 = 一张表 + 两个函数（与四边形版同构）</strong>
+  <pre>typedef struct {
+  double L[K];        /* 特征值            K = N + 6 */
+  double iV[K][K];    /* 特征向量逆（投影用）          */
+  double Phi[K][3][12];/* 特征基系数（3 个基础域×12）  */
+} EIGENSTRUCT;
+
+ProjectPoints()  —— 控制点 → 特征空间（一组控制点只算一次）
+EvalSurf(v,w,N)  —— 判断瓦片 n/k → 加权求值（每样本一次）
+
+数据：lpdata50.dat（价到 50）+ lptest.c  →  作者主页至今可下载
+特例：价 N=3 → 矩阵含 Jordan 块 → 附录 C 给解析幂公式，EvalSurf 多一个修正项</pre>
+</div>
+
+<h2>④ 两方案速查对照表</h2>
+<div class="card">
+<table>
+  <tr><th></th><th>Catmull-Clark（四边形）</th><th>Loop（三角形）</th></tr>
+  <tr><td>规则</td><td>面点 / 边点 / 顶点点（三条平均）</td><td>边点 / 顶点点（两条平均；分裂自带面点）</td></tr>
+  <tr><td>分裂</td><td>1 → n（产生 n 个四边形）</td><td>1 → 4（恒为 4）</td></tr>
+  <tr><td>规则区</td><td>双三次 B-spline 片（16 控制点）</td><td>四阶箱样条片（12 控制点）</td></tr>
+  <tr><td>参数域</td><td>方形 [0,1]²</td><td>单位三角形（重心坐标）</td></tr>
+  <tr><td>奇异点</td><td>G¹（后补证明）</td><td>C¹（方案声明，后续严格化）</td></tr>
+  <tr><td>求值矩阵尺寸</td><td>K = 2N + 8</td><td>K = N + 6</td></tr>
+  <tr><td>共享特征基</td><td>7 个与价无关</td><td>6 个与价无关</td></tr>
+  <tr><td>求值特例</td><td>无 Jordan 问题</td><td>N = 3 → Jordan 块（附录 C）</td></tr>
+  <tr><td>1998 求值</td><td>Stam（SIGGRAPH 正刊 pp.395–404）</td><td>Stam（同月，CDROM 姊妹篇）</td></tr>
+</table>
+</div>
+
+<h2>⑤ 对 TA 的三句话</h2>
+<div class="card">
+<ul class="big">
+  <li><strong>"表示决定方案"</strong>：四边形赢建模工作流，三角形赢三角原生域（游戏网格、有限元、几何处理）——三角域也有完整的"cage 语义"。</li>
+  <li><strong>"先定验收标准、再反推实现"</strong>：μ₃²=μ₂ 的权重构造 = 分档工作"先定判据、再定参数"的数学版先行样本。</li>
+  <li><strong>"一张表 + 两个函数"再 +1</strong>：细分求值（两次）与 EnvBRDF LUT、Kulla-Conty 4KB 表同族——把无穷/复杂折叠进有限的表，是本库最稳定的优化范式之一。</li>
+</ul>
+</div>
+
+<div class="warn">
+  <strong>核证状态</strong>：Stam 三角版（1998）已逐页原文精读（15 页 PDF）。Loop 1987 原文 PDF 直链全部失效（MSR 站点改版 + 存档服务限流），书目经三源交叉、技术内容经 Stam 附录 B 一手转述——详情见 [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] 的核证清单。
+</div>
+
+<div class="sub" style="margin-top:22px">生成于 2026-10-12 · 全球游戏研发研究 Agent（Run 34）· 本文件为自包含 HTML（无外部依赖），可在 Obsidian 中直接预览</div>
+</div>
+</body>
+</html>

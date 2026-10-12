@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分配三连 — SplatQ · CompactSplat · H2-Ray 图解</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --sub:#5a6474; --line:#d9dee7;
+    --c1:#8a4fb0; --c1b:#f5eefa; --c2:#1c7a4f; --c2b:#ebf7f0; --c3:#b0541a; --c3b:#fdf2e9;
+    --accent:#0a7d6b; --chipbg:#eef1f6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --card:#1c2027; --ink:#e8ebf1; --sub:#a3adbd; --line:#333a45;
+      --c1:#c49ae0; --c1b:#241d2c; --c2:#7ed0a8; --c2b:#182a21; --c3:#e8a06a; --c3b:#2a2118;
+      --accent:#5fd0bd; --chipbg:#242a33;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 40px;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:22px}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:860px){.grid3{grid-template-columns:1fr}}
+  .p1{border-top:3px solid var(--c1);background:var(--c1b)}
+  .p2{border-top:3px solid var(--c2);background:var(--c2b)}
+  .p3{border-top:3px solid var(--c3);background:var(--c3b)}
+  .tagn{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--chipbg);color:var(--sub);margin-right:6px}
+  pre{background:var(--chipbg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.5}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--chipbg)}
+  .cap{font-size:12.5px;color:var(--sub);text-align:center;margin-top:6px}
+  svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  .big{font-size:15px}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>分配三连 —— 固定预算的三种解法（2026-10-12 三篇）</h1>
+<div class="sub">配套笔记：[[2026-10-09-SplatQ — Interaction-Aware Pruning of 3D Gaussian Splatting via Quadratic Selection|SplatQ]] · [[2026-10-09-CompactSplat — Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction|CompactSplat]] · [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering|H2-Ray]]</div>
+
+<h2>① 同一个问题的三个问法</h2>
+<div class="card">
+  <svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <rect x="315" y="20" width="270" height="52" rx="10" fill="none" stroke="#0a7d6b" stroke-width="2"/>
+    <text x="345" y="52" font-size="15" font-weight="700" fill="currentColor">固定预算 / 固定资源</text>
+    <g font-size="13" fill="currentColor">
+      <path d="M420 72 L 145 130" stroke="#8a4fb0" stroke-width="2" fill="none"/>
+      <path d="M450 72 L 450 130" stroke="#1c7a4f" stroke-width="2" fill="none"/>
+      <path d="M480 72 L 755 130" stroke="#b0541a" stroke-width="2" fill="none"/>
+      <rect x="30" y="130" width="230" height="60" rx="9" fill="none" stroke="#8a4fb0" stroke-width="1.5"/>
+      <text x="44" y="156" fill="#8a4fb0" font-weight="700">问法 A：选哪些？</text>
+      <text x="44" y="177" fill="#5a6474" font-size="12">保留端分配（SplatQ）</text>
+      <rect x="335" y="130" width="230" height="60" rx="9" fill="none" stroke="#1c7a4f" stroke-width="1.5"/>
+      <text x="349" y="156" fill="#1c7a4f" font-weight="700">问法 B：放哪里？</text>
+      <text x="349" y="177" fill="#5a6474" font-size="12">生成端分配（CompactSplat）</text>
+      <rect x="640" y="130" width="230" height="60" rx="9" fill="none" stroke="#b0541a" stroke-width="1.5"/>
+      <text x="654" y="156" fill="#b0541a" font-weight="700">问法 C：怎么跑得快？</text>
+      <text x="654" y="177" fill="#5a6474" font-size="12">执行端均衡与复用（H2-Ray）</text>
+    </g>
+  </svg>
+  <div class="cap">图 1 · 同一预算的三个切面：保留 / 生成 / 执行</div>
+</div>
+
+<h2>② 三篇一眼速览</h2>
+<div class="grid3">
+  <div class="card p1">
+    <div class="tagn">SplatQ</div><strong>保留端：配额 + 联合选择</strong>
+    <pre>① 分成小块（空间 + 外观）
+② 配额平滑（防预算集中）
+③ QUBO：单项 + 成对交互 + 罚项
+   → SA / 相干伊辛机求解
+关键：删除不是独立事件
+（"单删没事、同删出洞"）</pre>
+    <div class="cap">5 benchmark：质量 / 均衡 / 速度均优</div>
+  </div>
+  <div class="card p2">
+    <div class="tagn">CompactSplat</div><strong>生成端：内容自适应</strong>
+    <pre>复杂区：密集小高斯
+平坦区：放大 + 尺度调制
+        （用尺度换数量）
+推理时：稀疏度旋钮
+（保真度 ↔ 内存连续取舍）</pre>
+    <div class="cap">NeurIPS 2026 · 上海交大</div>
+  </div>
+  <div class="card p3">
+    <div class="tagn">H2-Ray</div><strong>执行端：均衡 + 复用</strong>
+    <pre>① LB-SBVH：均匀网格 + 密度感知
+ （全局不均 → 局部平衡）
+② RCPR：代理射线共享遍历
+ （重复 → 复用）
+③ UIE：高斯/三角混合求交
+ （共享 40% FPU）</pre>
+    <div class="cap">3.77× / 最高 9.26×（vs RaySplats）</div>
+  </div>
+</div>
+
+<h2>③ 为什么是"同一天三道题"——库内坐标</h2>
+<div class="card">
+<table>
+  <tr><th>预算语言（库内已有）</th><th>本篇三连的位置</th></tr>
+  <tr><td><strong>样本定预算</strong>（1978 灯光 / 1983 粒子 / 2026 每像素采样）</td><td rowspan="3">三连都在回答第四个问题：<br><strong>"给定总量，怎么分配？"</strong><br>——分配对象不同：保留集合 / 生成位置 / 执行负载</td></tr>
+  <tr><td><strong>误差定预算</strong>（1988 Ward 误差容限 a）</td></tr>
+  <tr><td><strong>曲线拐点定预算</strong>（Zador 律；Budgeted-GS 单参数扫）</td></tr>
+  <tr><td><strong>倒挂分配</strong>（SABC 配比：S 少给多、C 多给少）</td><td>SplatQ 的"配额平滑"= "防独占"的算法版本；CompactSplat 的"按复杂度"= "按需求"的算法版本</td></tr>
+</table>
+</div>
+
+<h2>④ 三条可迁移判据（对分档与预算工作）</h2>
+<div class="card">
+<ul class="big">
+  <li><strong>"分配 = 分域 + 配额 + 域内选择"三步骨架</strong>（SplatQ）：先划域（空间/外观）、再分预算（配额 + 反独占平滑）、再在域内做联合选择——可直接映射到"技能分组 → SABC 配额 → 组内选资源"。</li>
+  <li><strong>"删除/改动不是独立事件"</strong>（SplatQ）：评估任何"逐项打分再 Top-K"的方案时先问：*这些项之间的交互有没有被建模？*</li>
+  <li><strong>"先找系统性重复，再谈优化"</strong>（H2-Ray）：找不到重复就问"能不能不存在"（取消式优化），找到重复就问"能不能共享"（RCPR 式复用）。</li>
+</ul>
+</div>
+
+<div class="card">
+  <strong>一句话串起今天</strong>
+  <p style="margin:8px 0 0">三篇论文都把"均匀"当作要修的病：<em>均匀分配高斯是浪费（CompactSplat）；均匀对待删除是错判（SplatQ）；均匀假设负载会失衡（H2-Ray）。</em>——"分配跟着内容走"，是 2026-10 的一个高频共识。</p>
+</div>
+
+<div class="sub" style="margin-top:22px">生成于 2026-10-12 · 全球游戏研发研究 Agent（Run 34）· 三篇均为 API"未公告先见"窗口捕获（提交 10-09）· 本文件为自包含 HTML，可在 Obsidian 中直接预览</div>
+</div>
+</body>
+</html>

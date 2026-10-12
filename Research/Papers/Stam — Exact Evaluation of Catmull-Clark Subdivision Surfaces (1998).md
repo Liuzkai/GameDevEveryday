@@ -191,7 +191,7 @@ tags: [subdivision-surfaces, geometric-modeling, siggraph, classic, surface-eval
 
 ### Followed By
 
-- **Loop 方案求值**（同届 CDROM 姊妹篇）——方法推广的第一实例；
+- **Loop 方案求值**（同届 CDROM 姊妹篇 ✅ 已入库：[[Stam — Evaluation of Loop Subdivision Surfaces (1998)]]——"同样的机器换坐标系，细节不同而已"）——方法推广的第一实例；
 - **Nießner et al. 2012**（特征自适应 GPU 渲染）——"直接求值"搬上 GPU 的关键一步；
 - **OpenSubdiv（Pixar，2012+）**——工业级开源求值实现；
 - 全部 DCC 的 SubD 评估器（Maya / Blender / 3ds Max …）——事实上都沿此谱系的思路。

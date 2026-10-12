@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-11]]（昨日：[[2026-10-10]]）
-- **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**下一周 W42 = 10-12 ~ 10-18**，下周日附近产出）
+- **今日**：[[2026-10-12]]（昨日：[[2026-10-11]]）
+- **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**本周 W42 = 10-12 ~ 10-18**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-08（毛发线六节点闭合；面部域开线）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-12（三角分支补齐：Loop 1987 + Stam 三角版）**——推送按校正结果组织
 
-## Papers（103）
+## Papers（109）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -123,6 +123,12 @@ created: 2026-09-07
 | [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering]] | B+ | **Hard（推导）/ Normal（结论层）** | 中（**可微渲染"输出/检查层"开线**："导数是一等渲染输出" + deferred shading 式"算一次看多处" + 固定/自由双相机分离；SIGGRAPH Asia 2026 TC；同作者双篇之一）★ 2026-10-10 |
 | [[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]] | S（经典） | **Normal（结论层）** | **最高（★ 细分"求值线"：递归展开为矩阵幂 → 特征基直接求值——"推翻一个普遍信念"；任意 (u,v) 成本 ≈ 双三次样条；七共享函数 / n=4 时=幂基；实现 = EIGENSTRUCT 一张表 + 两个函数；2005/2018 奥斯卡）** ★ 2026-10-11 |
 | [[DeRose — Subdivision Surfaces in Character Animation (1998)]] | A（经典） | **Normal（结论/生产层）** | **最高（★ 细分"生产化线"：半锐折痕 0→∞ 连续谱（混合细分"前 s 步锐→后光滑"）+ 布料能量三件套 + 粗化层级碰撞 + (x,y,z,s,t) 五维细分标量场 → 《Geri's Game》；**库内对 TA 最友好的经典**）** ★ 2026-10-11 |
+| [[2026-10-09-SplatQ — Interaction-Aware Pruning of 3D Gaussian Splatting via Quadratic Selection]] | B+ | Normal（结论层） | 中高（★ **保留端分配**：配额平滑 + 联合删除效应 → QUBO/相干伊辛机；"分域 → 配额（反独占）→ 域内联合选择"三步骨架 = SABC 配比工作的算法版；ICLR 2027 在审）★ 2026-10-12 |
+| [[2026-10-09-Sonic-AMG — Streaming Human Motion Generation from Spatial Audio]] | A- | Normal（结论层） | 高（★ **流式空间音频→全身动作首例**：what/where 双 token 分工 + rehearsal training + spatial feedback——"流式两错位"检查单入库；Brown × MIT × Yale × HKU；实时在线生成）★ 2026-10-12 |
+| [[2026-10-09-CompactSplat — Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction]] | B+ | Normal（结论层） | 中高（★ **生成端分配**：内容自适应（复杂区密集小高斯 / 平坦区放大尺度调制）+ "用尺度换数量" + 推理时稀疏度旋钮；NeurIPS 2026 / 上海交大）★ 2026-10-12 |
+| [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering]] | B+ | Normal（结论层） | 中（★ **GS 光追架构首开**：负载不均 / 遍历冗余 / 异构求交三难 + LB-SBVH / RCPR / UIE 三招；3.77×~9.26× vs RaySplats；"高斯的统计 ≠ 三角形的统计"）★ 2026-10-12 |
+| [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] | A（经典） | **Normal（结论层）** | **最高（★ 三角分支定义者：分裂 1→4 + 两条平均 + μ₃²=μ₂"平方关系反推权重"；四阶箱样条规则区；与 Catmull-Clark 构成四边/三角对偶；⚠️ 原文直链失效——核证清单入笔记）** ★ 2026-10-12 |
+| [[Stam — Evaluation of Loop Subdivision Surfaces (1998)]] | A（经典） | **Normal（结论层）** | **最高（★ 三角版求值："同样的机器换坐标系，细节不同而已"；12 点四阶箱样条 + 3/4 免费午餐 + 无限瓦片；K=N+6 / 6 个共享特征基；lpdata50.dat + lptest.c 公开；N=3 Jordan 特例）** ★ 2026-10-12 |
 
 ## Concepts（35）
 
@@ -156,7 +162,7 @@ created: 2026-09-07
 - [[Temporal Stability and Artistic Intent]]
 - [[Animation Compression]] ★ 2026-10-06 入库（**动画线"数据侧"第一节点**：三本账（内存/解码/导入）+ 误差界即档位 + "运行时代码器 vs 装载时代码器"分工；源头 CurveCodec 2 / ACL）
 - [[Facial Animation]] ★ 2026-10-08 入库（**面部域开线（库内最后的大品类空白）**：重定向 = "身份 × 表情"分解 + 三种失败模式（表面噪声/全局耦合/身份泄漏）；首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（点基双因子，"四个不需要"）；挂载位：GALA（化身表示）/ emg2face（非光学捕捉，记名））
-- [[Subdivision Surfaces]] ★ 2026-10-10 入库（**几何建模域第一个概念锚点**：三条规则 + 四结构性质 + 48 年弧线（1974 双源头 → 1978 正问题 → 2005 奥斯卡 → 2026 逆问题）；源头 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] + 逆问题 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]）
+- [[Subdivision Surfaces]] ★ 2026-10-10 入库、**10-12 三角分支补齐**（**几何建模域第一个概念锚点**：规则 + 四结构性质 + 双轨 48 年弧线——四边形轨（1974 双源头 → 1978 正问题 → 1998 求值/生产 → 2005 奥斯卡 → 2026 逆问题）+ **三角轨（1987 Loop 规则 → 1998 Stam 三角版求值 → 共享逆问题时代）**；源头 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] / [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] + 逆问题 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]）
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -215,10 +221,9 @@ Research/
 
 ---
 
-最后更新：2026-10-11（Run #33：**中段闭合日 —— 48 年弧线中段双节点 + W41 收官**——经典双节点同日入库：[[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]]（**S 经典**：递归 → 特征基直接求值；"推翻一个信念"；成本 ≈ 双三次样条；七共享函数 / n=4 幂基；EIGENSTRUCT 一张表 + 两函数）+ [[DeRose — Subdivision Surfaces in Character Animation (1998)]]（**A 经典**：半锐折痕 0→∞ 连续谱 / 混合细分 + 布料三件套 + 标量场五维细分 → 《Geri's Game》）——**"规则 / 算得出来 / 用得起来"三件套齐**；前沿：周末黑窗**三通道 0 新条目**（未凑数）；**W41 周报收官**（10-5~10-11：24 Papers 含 8 经典 / 3 新概念 / 8 图解 + 读者实物图解 1 张）；动态灯光复审材料 100% 封盘）
+最后更新：2026-10-12（Run #34：**三角对偶日 + 分配三连**——经典双节点：[[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]]（**A 经典**：三角分支定义者；μ₃²=μ₂"平方关系反推权重"；⚠️ 原文直链失效，核证清单入笔记）+ [[Stam — Evaluation of Loop Subdivision Surfaces (1998)]]（**A 经典**："同样的机器换坐标系"；3/4 免费午餐 + 无限瓦片；lpdata50.dat 公开）——**48 年弧线三角分支一次补齐**；前沿：API"未公告先见"窗口净新 89 条（4 篇入库：SplatQ / Sonic-AMG / CompactSplat / H2-Ray——**"分配三连"+ 流式动作**）；RTX Spark 预售细节（10-16）；W42 进行中）
+　　▸ **10-11 回顾**（Run #33）：**中段闭合日**——Stam 1998 + DeRose 1998（48 年弧线中段双节点）+ W41 收官；周末黑窗三通道 0 新条目（未凑数）
 　　▸ **10-10 回顾**（Run #32）：**48 年正逆弧线日**——几何建模域开域（Catmull-Clark 1978 + Subdivision Surfaces 概念）+ "对齐"三连（RiCo / PCAsplat / GaussianBench）+ UE 5.8 正式发布
 　　▸ **10-9 回顾**（Run #31）：**接口日**——五条路线全节点闭合（Turquin 2019）+ NRC-Spec / Tabula Rasa / emg2face；读者自制五路线图解（"用自己的话比较"实物产物）；E-Day 深测到账
 　　▸ **10-8 回顾**（Run #30）：**毛发生产化日**——Chiang 2016（六节点闭合）+ PDB / DynaConTalk / Multiphysics；新概念 [[Facial Animation]]；RTX Spark 发布
 　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011 + NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry
-　　▸ **10-6 回顾**（Run #28）：**分工日**——Neuroll + CurveCodec 2 + DDGI 2019；PKM 按实际阅读校正
-　　▸ **10-4 回顾**（Run #26）：缓存族第三源日（Ward 1988）——三源齐 + W40 周报
