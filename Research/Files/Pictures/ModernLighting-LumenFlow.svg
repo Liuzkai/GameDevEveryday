@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="920" viewBox="0 0 1180 920" role="img" aria-labelledby="title desc"><title id="title">Lumen 主要逻辑依赖</title><desc id="desc">场景追踪表示决定命中位置，Surface Cache 为命中点提供材质和光照。Screen Probe Gather 与世界空间 Radiance Cache 复用入射光，光滑反射有额外追踪和可选 hit lighting。</desc>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#34677d"/></marker><marker id="hist" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9b643a"/></marker></defs>
+<rect width="1180" height="920" rx="18" fill="#f7f9fb"/>
+<g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" fill="#17364b">
+<text x="35" y="45" font-size="29" font-weight="700" text-anchor="start">Lumen：求交、命中照明、接收与重建分开理解</text>
+<text x="35" y="78" font-size="18" font-weight="400" text-anchor="start">主要逻辑关系；实际分支和更新调度依版本、质量档与 tracing backend 而变</text>
+<rect x="40" y="130" width="320" height="120" rx="12" fill="#edf5ed" stroke="#95b494" stroke-width="2"/>
+<text x="58" y="162" font-size="23" font-weight="600" text-anchor="start">场景几何</text>
+<text x="58" y="191" font-size="19" font-weight="400" text-anchor="start">mesh、变换、LOD、动态变化</text>
+<rect x="40" y="335" width="320" height="135" rx="12" fill="#edf5ed" stroke="#95b494" stroke-width="2"/>
+<text x="58" y="367" font-size="23" font-weight="600" text-anchor="start">追踪表示</text>
+<text x="58" y="396" font-size="19" font-weight="400" text-anchor="start">Mesh / Global Distance Field</text>
+<text x="58" y="423" font-size="19" font-weight="400" text-anchor="start">或 hardware ray tracing BVH</text>
+<path d="M200 250V328" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="440" y="130" width="330" height="120" rx="12" fill="#edf5ed" stroke="#95b494" stroke-width="2"/>
+<text x="458" y="162" font-size="23" font-weight="600" text-anchor="start">Cards：捕获表面属性</text>
+<text x="458" y="191" font-size="19" font-weight="400" text-anchor="start">材质／覆盖 → Surface Cache</text>
+<path d="M360 190H433" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="440" y="335" width="330" height="135" rx="12" fill="#edf5ed" stroke="#95b494" stroke-width="2"/>
+<text x="458" y="367" font-size="23" font-weight="600" text-anchor="start">Surface Cache lighting</text>
+<text x="458" y="396" font-size="19" font-weight="400" text-anchor="start">计算并更新表面照明</text>
+<text x="458" y="423" font-size="19" font-weight="400" text-anchor="start">部分工作按预算分帧</text>
+<path d="M605 250V328" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="830" y="130" width="310" height="120" rx="12" fill="#fff3e5" stroke="#d9b48a" stroke-width="2"/>
+<text x="848" y="162" font-size="23" font-weight="600" text-anchor="start">灯光与场景变化</text>
+<text x="848" y="191" font-size="19" font-weight="400" text-anchor="start">触发光照刷新／有效性检查</text>
+<path d="M985 250V294H685V328" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="40" y="565" width="320" height="120" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="58" y="597" font-size="23" font-weight="600" text-anchor="start">光线命中在哪里</text>
+<text x="58" y="626" font-size="19" font-weight="400" text-anchor="start">screen traces 与场景追踪</text>
+<text x="58" y="653" font-size="19" font-weight="400" text-anchor="start">共同服务不同 tracing 路径</text>
+<path d="M200 470V558" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="440" y="565" width="330" height="120" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="458" y="597" font-size="23" font-weight="600" text-anchor="start">命中点返回什么光</text>
+<text x="458" y="626" font-size="19" font-weight="400" text-anchor="start">查询缓存照明</text>
+<text x="458" y="653" font-size="19" font-weight="400" text-anchor="start">或可选的反射 Hit Lighting</text>
+<path d="M360 625H433" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<path d="M605 470V558" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="830" y="565" width="310" height="120" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="848" y="597" font-size="23" font-weight="600" text-anchor="start">Screen Probe Gather</text>
+<text x="848" y="626" font-size="19" font-weight="400" text-anchor="start">复用并重建入射光</text>
+<text x="848" y="653" font-size="19" font-weight="400" text-anchor="start">结合主视图材质求 GI</text>
+<path d="M770 625H823" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="830" y="335" width="310" height="135" rx="12" fill="#edf5ed" stroke="#95b494" stroke-width="2"/>
+<text x="848" y="367" font-size="23" font-weight="600" text-anchor="start">World Radiance Cache</text>
+<text x="848" y="396" font-size="19" font-weight="400" text-anchor="start">world-space probe + 方向</text>
+<text x="848" y="423" font-size="19" font-weight="400" text-anchor="start">共享较远的入射光</text>
+<path d="M985 470V558" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="40" y="765" width="390" height="115" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="58" y="797" font-size="23" font-weight="600" text-anchor="start">光滑反射的重建</text>
+<text x="58" y="826" font-size="19" font-weight="400" text-anchor="start">专用反射 rays 取得命中照明</text>
+<text x="58" y="853" font-size="19" font-weight="400" text-anchor="start">再时空重建，不是 GI 简单模糊</text>
+<path d="M540 685V735H235V758" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="760" y="765" width="380" height="115" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="778" y="797" font-size="20" font-weight="600" text-anchor="start">主视图 GI / rough reflections</text>
+<text x="778" y="826" font-size="19" font-weight="400" text-anchor="start">按各自路径重建／过滤</text>
+<text x="778" y="853" font-size="19" font-weight="400" text-anchor="start">缓存历史与图像历史分别验证</text>
+<path d="M985 685V758" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<text x="453" y="815" font-size="20" font-weight="600" text-anchor="start">共享场景表示</text>
+<text x="453" y="848" font-size="20" font-weight="400" text-anchor="start">不等于共享同一种缓存</text>
+</g></svg>

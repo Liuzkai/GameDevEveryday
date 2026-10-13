@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="850" viewBox="0 0 1180 850" role="img" aria-labelledby="title desc"><title id="title">不透明表面的直接光数据流</title><desc id="desc">当前帧从 G-buffer 到候选、选样、可见性、权重着色与重建。选灯历史指导选样，去噪历史指导重建，场景表示供可见性查询。</desc>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#34677d"/></marker><marker id="hist" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9b643a"/></marker></defs>
+<rect width="1180" height="850" rx="18" fill="#f7f9fb"/>
+<g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" fill="#17364b">
+<text x="35" y="46" font-size="30" font-weight="700" text-anchor="start">一帧直接光：先选样，再验证，再重建</text>
+<text x="35" y="78" font-size="18" font-weight="400" text-anchor="start">逻辑依赖示意；不代表 UE 的实际 pass 数、buffer 布局或调度顺序</text>
+<rect x="40" y="180" width="290" height="135" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="58" y="212" font-size="23" font-weight="600" text-anchor="start">① 接收表面</text>
+<text x="58" y="241" font-size="19" font-weight="400" text-anchor="start">G-buffer / depth / motion</text>
+<text x="58" y="268" font-size="19" font-weight="400" text-anchor="start">位置、法线、材质与对应</text>
+<rect x="445" y="180" width="290" height="135" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="463" y="212" font-size="23" font-weight="600" text-anchor="start">② 候选与重要度</text>
+<text x="463" y="241" font-size="19" font-weight="400" text-anchor="start">剔除无关灯</text>
+<text x="463" y="268" font-size="19" font-weight="400" text-anchor="start">估计可能贡献，保留探索</text>
+<rect x="850" y="180" width="290" height="135" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="868" y="212" font-size="23" font-weight="600" text-anchor="start">③ 产生光样本</text>
+<text x="868" y="241" font-size="19" font-weight="400" text-anchor="start">选灯／灯上位置</text>
+<text x="868" y="268" font-size="19" font-weight="400" text-anchor="start">或 RIS 与 reservoir 复用</text>
+<path d="M330 247H438" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<path d="M735 247H843" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="850" y="440" width="290" height="135" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="868" y="472" font-size="23" font-weight="600" text-anchor="start">④ 当前可见性</text>
+<text x="868" y="501" font-size="19" font-weight="400" text-anchor="start">接收点 ↔ 光样本</text>
+<text x="868" y="528" font-size="19" font-weight="400" text-anchor="start">screen trace / BVH / VSM</text>
+<path d="M995 315V433" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="445" y="440" width="290" height="135" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="463" y="472" font-size="23" font-weight="600" text-anchor="start">⑤ 着色与统计权重</text>
+<text x="463" y="501" font-size="19" font-weight="400" text-anchor="start">材质响应 × 可见贡献</text>
+<text x="463" y="528" font-size="19" font-weight="400" text-anchor="start">与采样／重采样权重配套</text>
+<path d="M850 508H742" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="40" y="440" width="290" height="135" rx="12" fill="#eaf3f7" stroke="#79a6b8" stroke-width="2"/>
+<text x="58" y="472" font-size="23" font-weight="600" text-anchor="start">⑥ 重建／去噪</text>
+<text x="58" y="501" font-size="19" font-weight="400" text-anchor="start">跨时空降噪，保留边界</text>
+<text x="58" y="528" font-size="19" font-weight="400" text-anchor="start">输出直接光估计</text>
+<path d="M445 508H337" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="850" y="100" width="290" height="58" rx="12" fill="#fff3e5" stroke="#d9b48a" stroke-width="2"/>
+<text x="868" y="132" font-size="23" font-weight="600" text-anchor="start">有效的选灯历史</text>
+<path d="M995 158V174" fill="none" stroke="#9b643a" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#hist)"/>
+<rect x="820" y="660" width="330" height="120" rx="12" fill="#edf5ed" stroke="#95b494" stroke-width="2"/>
+<text x="838" y="692" font-size="23" font-weight="600" text-anchor="start">场景表示</text>
+<text x="838" y="721" font-size="19" font-weight="400" text-anchor="start">BVH 可包含离屏遮挡者</text>
+<text x="838" y="748" font-size="19" font-weight="400" text-anchor="start">但仍有简化、剔除与覆盖</text>
+<path d="M995 660V582" fill="none" stroke="#34677d" stroke-width="2.5" marker-end="url(#arr)"/>
+<rect x="40" y="660" width="290" height="120" rx="12" fill="#fff3e5" stroke="#d9b48a" stroke-width="2"/>
+<text x="58" y="692" font-size="23" font-weight="600" text-anchor="start">有效的去噪历史</text>
+<text x="58" y="721" font-size="19" font-weight="400" text-anchor="start">重投影后检查可信度</text>
+<text x="58" y="748" font-size="19" font-weight="400" text-anchor="start">变化时拒绝、减权或重置</text>
+<path d="M185 660V582" fill="none" stroke="#9b643a" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#hist)"/>
+<text x="380" y="680" font-size="21" font-weight="600" text-anchor="start">每次读取旧数据，都要检查有效性。</text>
+<text x="380" y="720" font-size="20" font-weight="400" text-anchor="start">选样历史 ≠ 可见性结果 ≠ 图像历史</text>
+<text x="35" y="818" font-size="19" font-weight="400" text-anchor="start">蓝色实线：本帧依赖     棕色虚线：跨帧历史输入     绿色框：场景空间数据</text>
+</g></svg>

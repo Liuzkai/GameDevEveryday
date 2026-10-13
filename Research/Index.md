@@ -201,6 +201,10 @@ created: 2026-09-07
 - [[Learning Path — Differentiable Rendering]] — 目标是读懂 LightOpt
 - [[Learning Path — Neural Rendering]] — 从你已懂的 TAA 出发
 
+### 专题报告
+
+- [[Modern Real-Time Lighting Framework|现代实时光照的共同设计框架]] — 比较 MegaLights、Lumen、ReSTIR 与 RTXDI 的采样、复用、重建和失效；含版本证据表、公开代码定位与流程图。[GitHub 阅读](Learning/Modern%20Real-Time%20Lighting%20Framework.md)
+
 ## 目录结构
 
 ```
