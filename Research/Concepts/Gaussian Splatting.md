@@ -65,6 +65,8 @@ NeRF（隐式 MLP + volume rendering，慢）
 - [[Inverse Rendering for Modeling with Line Primitives]]（对比：显式线段 vs 体积基元）
 - [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD]] —— **LOD/预算线开线**：容量下限（误差 ∝ N⁻¹ᐟ²）+ 因子树（矩匹配聚合 119×）+ 单参数 c 扫连续内存-质量曲线；官方城市数据 71 fps @1080p 全 SH（vs Octree-GS 11.5 fps）；**"LOD 分层是比压缩率更本质的资产属性"（同内存 -2.12 vs 随机 -7.08 dB）** ★ 2026-10-05
 - [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]] —— **几何质量线（新）**：可微局部 PCA 正则（作用在中心邻域、**视角无关**）修复 floaters——"看不见的高斯也有监督"；特征值谱正则（表面化 + 各向同性切向）+ 法线对齐；DTU/T&T 上表面质量提升、**下游（点云分割 / Poisson 重建）免修直用** ★ 2026-10-10
+- [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Efficient Confidence-Aware Densification for 3DGS]] —— **分配四端之"生长端"（密度控制）**：3DGS-MCMC 的"不透明度驱动"→"误差驱动"（梯度排名 × 低置信度加权采样 + 贡献度重定位）；24 场景 100k–2M 全预算超 MCMC；**"预算跟着缺口走，不跟着现状走"** ★ 2026-10-13
+- [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]] —— **场景动态化（"注入派"）**：静态 3DGS 的流体动效注入（光流 → 3D 欧拉运动场 → cinemagraph 式对称变形）；"三不"（无捕获/无重训/无模拟）+ 2 MB 可携带运动场 + 实时循环 ★ 2026-10-13
 
 ## LOD / 预算线（2026-10-05 开线）
 
@@ -79,6 +81,19 @@ NeRF（隐式 MLP + volume rendering，慢）
 
 - **与本库三条既有线索的接点**：① "降档 = 降表示层级"（原始高斯 → 等价 plank → 聚合 plank）——与 Parish 2001 / ToCo-Mesh 同一母题；② "档位 = 部署时选择"的最干净形态（单标量扫全档）；③ **[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 的 working set 与可见复杂度上限，在此获得 GS 实现**；
 - **与随机子采样的量化对照**（859 MB 档）：LOD **-2.12 dB** vs 随机 **-7.08 dB**——"接 GS 资产时先把 LOD 层级问清楚"。
+
+### 分配四端（2026-10-12 ~ 10-13 沉淀）
+
+"固定预算"之下的第四个问题——**"给定总量，怎么分配？"**——库内已集齐四端（分配对象不同）：
+
+| 端 | 问题 | 节点 | 核心动作 |
+|---|---|---|---|
+| **保留端** | 选哪些？ | [[2026-10-09-SplatQ — Interaction-Aware Pruning of 3D Gaussian Splatting via Quadratic Selection\|SplatQ]]（2026-10-12） | 分域 → 配额平滑（防独占）→ 域内联合选择（QUBO） |
+| **生成端** | 放哪里？ | [[2026-10-09-CompactSplat — Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction\|CompactSplat]]（2026-10-12） | 内容自适应（复杂区密小 / 平坦区"用尺度换数量"）+ 推理旋钮 |
+| **执行端** | 怎么跑得快？ | [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering\|H2-Ray]]（2026-10-12） | 负载均衡 + 遍历复用 + 混合求交 |
+| **生长端** | **预算给谁？（密度控制）** | [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS\|Confidence-Aware Densification]]（2026-10-13） | **误差驱动采样 + 贡献度重定位**（"预算跟着缺口走"） |
+
+> **两条横向判据（四端共用）**：① **"分配依据测的是现状还是缺口？"**——按"现状"分配（不透明度/已建成度）会富者愈富（Confidence-Aware 的前景偏差）；按"缺口"（误差/欠重建）才是补短板；**倒挂分配（SABC）与"按缺口分配"是同一原则**。② **"防独占"**——SplatQ 的配额平滑与 Confidence-Aware 的误差采样是同一问题的两端实现。
 
 ## 排序线全景（2026-10-01 沉淀；2026-10-07 补第 6 节点）
 
@@ -127,3 +142,5 @@ Current Level: **Easy**（2026-09-11 标 Easy，4 条 Mastery 判据全过）
 > **2026-10-05 更新**：**LOD / 预算线开线** —— [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD|Budgeted-GS]]（post-hoc 因子树 + 容量下限）。**Easy 标记不变** —— 价值在"规模工程 + 预算理论"两层；对分档工作的直接接口：**"误差 ∝ N⁻¹ᐟ²"与"单参数扫连续曲线"**（详见 [[Scalability and Quality Tiers]] 10-05 续记）。
 
 > **2026-10-07 更新**：**排序线第 6 节点（收口性质）** —— [[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering|SteadySplats]]（**"生干净"路线**：训练端方差正则 $\mathcal{L}_{var}$ + 推理端历史感知空间重采样/时域重要度重采样）。**1 spp 31.44 dB（vs 前作 18.34，+13.1 dB）；收敛极限与排序版差距 L1 < 10⁻⁴**——排序免渲染的"画质税"基本取消。**Easy 标记不变** —— 价值在"降噪机制 + 采样-质量权衡"两层；判据：**"噪声的根源在第几层，修补就在第几层"**（对照 [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising|Stochastic GS Denoising]] 的"网络偿还"路线）。
+
+> **2026-10-13 更新**：**"分配四端"补齐（生长端）** —— [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Efficient Confidence-Aware Densification for 3DGS]]（**固定预算加密从"不透明度驱动"改回"误差驱动"**：梯度排名 × 低置信度加权采样 + 贡献度重定位；"预算跟着缺口走"）。**Easy 标记不变** —— 价值在"分配判据 + 前景偏差诊断"两层；同时 [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]] 开"场景动态化（注入派）"微线索（静态场景 + ~2 MB 可携带运动场 = 无缝循环水体动效）。

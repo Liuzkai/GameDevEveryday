@@ -71,6 +71,8 @@ first_introduced: "1978（Catmull & Clark；前身：Catmull 1974 递归细分 /
       [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]
 ```
 
+> **同事不同域（2026-10-13 补记）**：2005 年那座奥斯卡的三人之一 **Stam** 的另一条身份是**流体**——同一年代的 [[Stam — Stable Fluids (1999)]]（**库内流体域开域篇**：无条件稳定求解器）+ 后来的 Maya Fluid Effects（2008 奥斯卡，获奖人含 Stam）。**"换空间"是他的两种手法**：细分把参数域换到特征基、流体把空间域换到傅里叶——同一个人，两台"对角化"机器。库内 `Stam 1998 ×2 → 1999` 三连自此可作"作者画像"读。
+
 **弧线的意义**：多数技术谱系是"更强/更快"（同方向演化）；细分曲面的故事多了一笔——**48 年后"反过来解"**（cage→曲面 与 曲面→cage），而逆向成立的前提恰是"资产要 cage 的语义"经受住了半个世纪检验。
 
 ## Important Papers

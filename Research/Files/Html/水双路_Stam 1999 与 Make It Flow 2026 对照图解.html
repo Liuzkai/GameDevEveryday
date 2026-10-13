@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水双路 — Stam 1999 与 Make It Flow 2026 对照图解</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --sub:#5a6474; --line:#d9dee7;
+    --cA:#1668a8; --cAb:#e9f2f9; --cB:#1c7a4f; --cBb:#ebf7f0;
+    --accent:#0a7d6b; --chipbg:#eef1f6; --warn:#b0541a;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --card:#1c2027; --ink:#e8ebf1; --sub:#a3adbd; --line:#333a45;
+      --cA:#8cc4ea; --cAb:#152430; --cB:#7ed0a8; --cBb:#182a21;
+      --accent:#5fd0bd; --chipbg:#242a33; --warn:#e8a06a;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 40px;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:22px}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr}}
+  .pA{border-top:3px solid var(--cA);background:var(--cAb)}
+  .pB{border-top:3px solid var(--cB);background:var(--cBb)}
+  .tagn{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--chipbg);color:var(--sub);margin-right:6px}
+  pre{background:var(--chipbg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.5}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--chipbg)}
+  .cap{font-size:12.5px;color:var(--sub);text-align:center;margin-top:6px}
+  svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:3px 0}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--chipbg);border-radius:0 8px 8px 0;font-size:13.5px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>水的两条路 —— 模拟（1999）与感知（2026），相隔 27 年的同一立场</h1>
+<div class="sub">[[Stam — Stable Fluids (1999)|Stam 1999《Stable Fluids》]]（SIGGRAPH 99，库里流体域开域篇） · [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow (2026)]]（静态 3DGS 的水动效注入）</div>
+
+<div class="card">
+<blockquote>"<strong>在计算机图形学中，流体的形状与行为是第一位的，物理精度是次要的甚至无关的。</strong>" —— Stam 1999 引言（原话）<br>
+"我们不做物理精确的模拟——<strong>视觉可信</strong>的动效就足以提升场景感知，同时保持高效。" —— Make It Flow 2026 引言（转述）</blockquote>
+<div class="cap">两句 27 年后的同义宣言——本图解的主线</div>
+</div>
+
+<h2>① 路 A：模拟线 —— Stam 1999 的"四步一投影"</h2>
+<div class="card">
+  <svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13" fill="currentColor">
+      <rect x="20" y="40" width="150" height="72" rx="9" fill="none" stroke="#1668a8" stroke-width="1.8"/>
+      <text x="36" y="66" font-weight="700" fill="#1668a8">① 加外力</text>
+      <text x="36" y="88" font-size="11.5" fill="#5a6474">重力 / 风 / 鼠标</text>
+      <text x="36" y="104" font-size="11.5" fill="#5a6474">(最简单的一步)</text>
+
+      <rect x="200" y="40" width="210" height="72" rx="9" fill="none" stroke="#1668a8" stroke-width="2.4"/>
+      <text x="216" y="66" font-weight="700" fill="#1668a8">② 对流（关键）</text>
+      <text x="216" y="88" font-size="11.5" fill="#5a6474">回溯粒子 + 线性插值</text>
+      <text x="216" y="104" font-size="11.5" fill="#5a6474">"取 Δt 前你在哪的速度"</text>
+
+      <rect x="440" y="40" width="180" height="72" rx="9" fill="none" stroke="#1668a8" stroke-width="1.8"/>
+      <text x="456" y="66" font-weight="700" fill="#1668a8">③ 扩散（隐式）</text>
+      <text x="456" y="88" font-size="11.5" fill="#5a6474">(I − νΔt∇²)w = w0</text>
+      <text x="456" y="104" font-size="11.5" fill="#5a6474">稀疏线性系统</text>
+
+      <rect x="650" y="40" width="230" height="72" rx="9" fill="none" stroke="#1668a8" stroke-width="2.4"/>
+      <text x="666" y="66" font-weight="700" fill="#1668a8">④ 投影（质量守恒）</text>
+      <text x="666" y="88" font-size="11.5" fill="#5a6474">∇²q = ∇·w，再 w − ∇q</text>
+      <text x="666" y="104" font-size="11.5" fill="#5a6474">"删掉梯度分量 → 涡旋被逼出"</text>
+
+      <path d="M170 76 L 200 76" stroke="#1668a8" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <path d="M410 76 L 440 76" stroke="#1668a8" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <path d="M620 76 L 650 76" stroke="#1668a8" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+      <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1668a8"/></marker></defs>
+
+      <rect x="20" y="146" width="410" height="80" rx="9" fill="none" stroke="#0a7d6b" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="36" y="172" font-weight="700" fill="#0a7d6b">稳定性从哪来？两个"不放大"</text>
+      <text x="36" y="194" font-size="12" fill="#5a6474">② 回溯：新场最大值 ≯ 旧场最大值（不放大）</text>
+      <text x="36" y="214" font-size="12" fill="#5a6474">③ 隐式：放大因子被钉在 (0,1)；④ 投影只减不增</text>
+
+      <rect x="470" y="146" width="410" height="80" rx="9" fill="none" stroke="#b0541a" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="486" y="172" font-weight="700" fill="#b0541a">代价（原文自陈）</text>
+      <text x="486" y="194" font-size="12" fill="#5a6474">数值耗散：流"衰减得比实验快"</text>
+      <text x="486" y="214" font-size="12" fill="#5a6474">→ 补账者 = 动画师（不断施力，"把流续命"）</text>
+    </g>
+  </svg>
+  <div class="cap">图 1 · 每个时间步：外力 → 对流 → 扩散 → 投影；"无条件稳定"= 任何时间步都不爆炸</div>
+  <pre>彩蛋 · 换到傅里叶域（周期边界）——只剩两行：
+  扩散 = 乘低通滤波器（衰减 ∝ Δt·ν·k²）
+  投影 = 把速度里平行于波数 k 的分量删掉（"无散场的频谱永远垂直于 k"）
+  ——"只需粒子追踪器 + FFT"；同作者 1998 细分求值的"换特征基"在这里变成"换傅里叶"</pre>
+</div>
+
+<h2>② 路 B：感知线 —— Make It Flow 2026 的"三段注入"</h2>
+<div class="card">
+  <svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13" fill="currentColor">
+      <rect x="20" y="42" width="230" height="76" rx="9" fill="none" stroke="#1c7a4f" stroke-width="1.8"/>
+      <text x="36" y="68" font-weight="700" fill="#1c7a4f">① 逐视角光流估计</text>
+      <text x="36" y="90" font-size="11.5" fill="#5a6474">预训练网络 + 用户运动提示</text>
+      <text x="36" y="106" font-size="11.5" fill="#5a6474">（提示只在"不对"处补）</text>
+
+      <rect x="290" y="42" width="270" height="76" rx="9" fill="none" stroke="#1c7a4f" stroke-width="2.2"/>
+      <text x="306" y="68" font-weight="700" fill="#1c7a4f">② 提升为 3D 欧拉运动场</text>
+      <text x="306" y="90" font-size="11.5" fill="#5a6474">基于深度重投影 → 体素融合</text>
+      <text x="306" y="106" font-size="11.5" fill="#5a6474">静态/动态命中比 + 视角命中阈值精修</text>
+
+      <rect x="600" y="42" width="280" height="76" rx="9" fill="none" stroke="#1c7a4f" stroke-width="2.2"/>
+      <text x="616" y="68" font-weight="700" fill="#1c7a4f">③ 对称变形驱动高斯</text>
+      <text x="616" y="90" font-size="11.5" fill="#5a6474">协方差传播 + 保密度不透明度</text>
+      <text x="616" y="106" font-size="11.5" fill="#5a6474">+ 随机时间相位 → 无缝循环</text>
+
+      <path d="M250 80 L 290 80" stroke="#1c7a4f" stroke-width="2" fill="none" marker-end="url(#ar2)"/>
+      <path d="M560 80 L 600 80" stroke="#1c7a4f" stroke-width="2" fill="none" marker-end="url(#ar2)"/>
+      <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1c7a4f"/></marker></defs>
+
+      <rect x="20" y="146" width="860" height="48" rx="9" fill="none" stroke="#0a7d6b" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="36" y="168" font-weight="700" fill="#0a7d6b">"三不"</text>
+      <text x="96" y="168" font-size="12.5" fill="#5a6474">无动态捕获（随手拍即可） · 无重训（接静态 3DGS 直接用） · 无模拟（不做物理）</text>
+      <text x="36" y="187" font-size="12" fill="#5a6474">产物 = ~2 MB 可携带运动场（随场景分发）；运动、几何、外观三层解耦</text>
+    </g>
+  </svg>
+  <div class="cap">图 2 · 运动是"注入"的，不是"重建"的；循环由构造保证（对称变形）</div>
+  <pre>预处理代价（7 场景平均）：约 55 秒（对照 LoopGaussian 6 分 01 秒）
+渲染：>300 FPS 保持；显存 3.8 GiB；运动场存储平均 2.1 MB
+局限：强依赖重建质量；高反射/歧义水面（镜面湖）会失败</pre>
+</div>
+
+<h2>③ 对照表 —— 同一条河，两种取水方式</h2>
+<div class="card">
+<table>
+  <tr><th>维度</th><th>路 A：Stam 1999（模拟）</th><th>路 B：Make It Flow 2026（感知）</th></tr>
+  <tr><td>目标</td><td>让流体"真的动"（解 NS 方程；可交互响应）</td><td>让场景"看起来在动"（视觉可信即可）</td></tr>
+  <tr><td>手段</td><td>拉格朗日对流 + 隐式扩散 + 投影</td><td>光流 → 3D 欧拉场 → 对称变形（免模拟）</td></tr>
+  <tr><td>成本轴</td><td>网格单元数 × 步数（O(N)）</td><td>预处理一次 ~55 秒 + 2 MB 运动场（运行时≈免费）</td></tr>
+  <tr><td>取舍</td><td>稳定性 ↔ 数值耗散（"动画师续命"）</td><td>物理正确性 ↔ 感知可信（"注入即可")</td></tr>
+  <tr><td>谁在环</td><td>动画师施力（外力=能量源）</td><td>用户运动提示（只在偏差处补）</td></tr>
+  <tr><td>产业形态</td><td>Maya Fluid Effects（2008 奥斯卡）· Houdini FLIP · 引擎实时流体</td><td>新（2026）：静态场景资产 + 可携带动效层</td></tr>
+</table>
+<div class="cap">两路的交汇点：都拒绝"为物理正确付全价"，都把"人"放在成本最低的环上</div>
+</div>
+
+<h2>④ 三条可迁移判据</h2>
+<div class="card">
+  <ul>
+    <li><strong>"这段效果需要物理演化，还是只需要视觉可信？"</strong>——需要交互响应的走模拟线；氛围项（水流、植被摆动）先问感知线；</li>
+    <li><strong>"把'必须对'和'尽量好'分开付费"</strong>——Stam 用"小尺度精度"换"稳定性"；Make It Flow 用"物理"换"成本"；两者的账本都是"近似 + 谁补账"；</li>
+    <li><strong>"运动层可以从几何/外观里拆出来"</strong>——2 MB 级可携带运动场（对照 [[Animation Compression]]：同样需要"误差契约"式的预算语言）。</li>
+  </ul>
+</div>
+
+<div class="cap" style="margin-top:22px">本图解为研究笔记配套，随库版本管理 · 关联 Daily：[[2026-10-13]]</div>
+</div>
+</body>
+</html>

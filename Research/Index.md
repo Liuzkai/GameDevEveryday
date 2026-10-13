@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-12]]（昨日：[[2026-10-11]]）
+- **今日**：[[2026-10-13]]（昨日：[[2026-10-12]]）
 - **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**本周 W42 = 10-12 ~ 10-18**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-12（三角分支补齐：Loop 1987 + Stam 三角版）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-13（WorldCrafter 转 read——已读 31 篇；流体域开域 + 分配四端 + 重定向概念）**——推送按校正结果组织
 
-## Papers（109）
+## Papers（113）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -129,8 +129,12 @@ created: 2026-09-07
 | [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering]] | B+ | Normal（结论层） | 中（★ **GS 光追架构首开**：负载不均 / 遍历冗余 / 异构求交三难 + LB-SBVH / RCPR / UIE 三招；3.77×~9.26× vs RaySplats；"高斯的统计 ≠ 三角形的统计"）★ 2026-10-12 |
 | [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] | A（经典） | **Normal（结论层）** | **最高（★ 三角分支定义者：分裂 1→4 + 两条平均 + μ₃²=μ₂"平方关系反推权重"；四阶箱样条规则区；与 Catmull-Clark 构成四边/三角对偶；⚠️ 原文直链失效——核证清单入笔记）** ★ 2026-10-12 |
 | [[Stam — Evaluation of Loop Subdivision Surfaces (1998)]] | A（经典） | **Normal（结论层）** | **最高（★ 三角版求值："同样的机器换坐标系，细节不同而已"；12 点四阶箱样条 + 3/4 免费午餐 + 无限瓦片；K=N+6 / 6 个共享特征基；lpdata50.dat + lptest.c 公开；N=3 Jordan 特例）** ★ 2026-10-12 |
+| [[Stam — Stable Fluids (1999)]] | A（经典） | **Normal（结论层）** | **最高（★ 流体域开域：无条件稳定求解器（拉格朗日回溯 + 隐式扩散 + 投影）——"不管时间步多大都不爆炸"；"感知优先"设计哲学原话出处；傅里叶"换空间"彩蛋；Maya Fluid Effects 理论来源；2005/2008/2019 三座奥斯卡谱系）** ★ 2026-10-13 |
+| [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS]] | B+ | Normal（结论层） | 中高（★ **分配四端之"生长端"**：误差驱动加密（梯度排名 × 低置信度 + 贡献度重定位）——"预算跟着缺口走，不跟着现状走"；"先跑的不一定先到"；24 场景全预算超 MCMC）★ 2026-10-13 |
+| [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes]] | B+ | Normal（结论层） | 中（★ **水线第二节点 / 场景动态化"注入派"**："三不"（无捕获/无重训/无模拟）+ 2 MB 可携带运动场 + 无缝循环；"感知优先"2026 样本）★ 2026-10-13 |
+| [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting]] | B+ | Normal（结论层） | 中高（★ **重定向三节点之优化式**：优先级层级取代加权求和（空空间投影 + 误差向量保护）；"重要的东西用约束保护"；真机验证 + 下游 RL）★ 2026-10-13 |
 
-## Concepts（35）
+## Concepts（37）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -163,6 +167,8 @@ created: 2026-09-07
 - [[Animation Compression]] ★ 2026-10-06 入库（**动画线"数据侧"第一节点**：三本账（内存/解码/导入）+ 误差界即档位 + "运行时代码器 vs 装载时代码器"分工；源头 CurveCodec 2 / ACL）
 - [[Facial Animation]] ★ 2026-10-08 入库（**面部域开线（库内最后的大品类空白）**：重定向 = "身份 × 表情"分解 + 三种失败模式（表面噪声/全局耦合/身份泄漏）；首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（点基双因子，"四个不需要"）；挂载位：GALA（化身表示）/ emg2face（非光学捕捉，记名））
 - [[Subdivision Surfaces]] ★ 2026-10-10 入库、**10-12 三角分支补齐**（**几何建模域第一个概念锚点**：规则 + 四结构性质 + 双轨 48 年弧线——四边形轨（1974 双源头 → 1978 正问题 → 1998 求值/生产 → 2005 奥斯卡 → 2026 逆问题）+ **三角轨（1987 Loop 规则 → 1998 Stam 三角版求值 → 共享逆问题时代）**；源头 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] / [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] + 逆问题 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]）
+- [[Fluid Simulation]] ★ 2026-10-13 入库（**物理/仿真域开域（流体）**：四步分解（外力→对流→扩散→投影）+ 三路线（网格/粒子/混合 FLIP）+ 时间线 1965→2026；"水的两条路"（模拟 vs 感知）与"预算轴 = 网格 × 步数"；首节点 [[Stam — Stable Fluids (1999)]]）
+- [[Motion Retargeting]] ★ 2026-10-13 入库（**动画数据管线第三环**（检索/压缩/转换）："要保清单"五级 + 三路线（IK 优化 / 数据驱动 / 优先级优化）；节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]] / [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement|Skinned Retargeting]] / [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]）
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -221,7 +227,8 @@ Research/
 
 ---
 
-最后更新：2026-10-12（Run #34：**三角对偶日 + 分配三连**——经典双节点：[[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]]（**A 经典**：三角分支定义者；μ₃²=μ₂"平方关系反推权重"；⚠️ 原文直链失效，核证清单入笔记）+ [[Stam — Evaluation of Loop Subdivision Surfaces (1998)]]（**A 经典**："同样的机器换坐标系"；3/4 免费午餐 + 无限瓦片；lpdata50.dat 公开）——**48 年弧线三角分支一次补齐**；前沿：API"未公告先见"窗口净新 89 条（4 篇入库：SplatQ / Sonic-AMG / CompactSplat / H2-Ray——**"分配三连"+ 流式动作**）；RTX Spark 预售细节（10-16）；W42 进行中）
+最后更新：2026-10-13（Run #35：**流体开域 + 感知优先日**——经典头条：[[Stam — Stable Fluids (1999)]]（**A 经典**：无条件稳定求解器 + "感知优先"原话出处 + **Stam 双身份闭环**（2005 细分奥斯卡三人组 × 2008 Maya Fluid Effects）；新概念 [[Fluid Simulation]]）；前沿：**周一公告组首次实证**（cs.GR 8 + cs.CV 153 全量扫描；3 篇入库——[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Confidence-Aware Densification]]（**分配四端之"生长端"**）/ [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（**"水的两条路"**）/ [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]（**"优先级 > 权重"**）+ 新概念 [[Motion Retargeting]]）；**读者反馈**：WorldCrafter 转 read（**31 篇**）+ README 许可章节；产业：Epic "AI 大转向" / RTX Spark 评测波（10-16）；W42 进行中）
+　　▸ **10-12 回顾**（Run #34）：**三角对偶日 + 分配三连**——Loop 1987 + Stam 三角版（48 年弧线三角分支一次补齐）；前沿 4 篇（SplatQ / Sonic-AMG / CompactSplat / H2-Ray——"分配三连"+ 流式动作）
 　　▸ **10-11 回顾**（Run #33）：**中段闭合日**——Stam 1998 + DeRose 1998（48 年弧线中段双节点）+ W41 收官；周末黑窗三通道 0 新条目（未凑数）
 　　▸ **10-10 回顾**（Run #32）：**48 年正逆弧线日**——几何建模域开域（Catmull-Clark 1978 + Subdivision Surfaces 概念）+ "对齐"三连（RiCo / PCAsplat / GaussianBench）+ UE 5.8 正式发布
 　　▸ **10-9 回顾**（Run #31）：**接口日**——五条路线全节点闭合（Turquin 2019）+ NRC-Spec / Tabula Rasa / emg2face；读者自制五路线图解（"用自己的话比较"实物产物）；E-Day 深测到账

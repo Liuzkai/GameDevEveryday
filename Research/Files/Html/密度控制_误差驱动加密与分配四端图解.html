@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生长端 — 误差驱动加密与"分配四端"图解</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --sub:#5a6474; --line:#d9dee7;
+    --c1:#8a4fb0; --c1b:#f5eefa; --c2:#1c7a4f; --c2b:#ebf7f0; --c3:#b0541a; --c3b:#fdf2e9;
+    --c4:#0a6ea8; --c4b:#e9f3fa; --accent:#0a7d6b; --chipbg:#eef1f6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --card:#1c2027; --ink:#e8ebf1; --sub:#a3adbd; --line:#333a45;
+      --c1:#c49ae0; --c1b:#241d2c; --c2:#7ed0a8; --c2b:#182a21; --c3:#e8a06a; --c3b:#2a2118;
+      --c4:#7fc0e8; --c4b:#152430; --accent:#5fd0bd; --chipbg:#242a33;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 40px;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:22px}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media (max-width:860px){.grid2,.grid4{grid-template-columns:1fr}}
+  .k1{border-top:3px solid var(--c1);background:var(--c1b)}
+  .k2{border-top:3px solid var(--c2);background:var(--c2b)}
+  .k3{border-top:3px solid var(--c3);background:var(--c3b)}
+  .k4{border-top:3px solid var(--c4);background:var(--c4b)}
+  .tagn{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--chipbg);color:var(--sub);margin-right:6px}
+  pre{background:var(--chipbg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.5}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--chipbg)}
+  .cap{font-size:12.5px;color:var(--sub);text-align:center;margin-top:6px}
+  svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:3px 0}
+  .hl{background:linear-gradient(transparent 62%, rgba(10,125,107,.25) 62%)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>生长端 —— 固定预算的第四个问题：「预算给谁？」（2026-10-13）</h1>
+<div class="sub">配套笔记：[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Efficient Confidence-Aware Densification for 3DGS]] · 关联：[[2026-10-09-SplatQ — Interaction-Aware Pruning of 3D Gaussian Splatting via Quadratic Selection|SplatQ]] / [[2026-10-09-CompactSplat — Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction|CompactSplat]] / [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering|H2-Ray]]</div>
+
+<h2>① 分配四端 —— 完整拼图（10-12 ~ 10-13 两天集齐）</h2>
+<div class="card">
+  <svg viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <rect x="330" y="16" width="240" height="48" rx="10" fill="none" stroke="#0a7d6b" stroke-width="2"/>
+    <text x="352" y="45" font-size="14.5" font-weight="700" fill="currentColor">固定预算 / 固定资源</text>
+    <g font-size="12.5" fill="currentColor">
+      <path d="M370 64 L 110 108" stroke="#8a4fb0" stroke-width="2" fill="none"/>
+      <path d="M415 64 L 300 108" stroke="#1c7a4f" stroke-width="2" fill="none"/>
+      <path d="M520 64 L 600 108" stroke="#b0541a" stroke-width="2" fill="none"/>
+      <path d="M560 64 L 790 108" stroke="#0a6ea8" stroke-width="2" fill="none"/>
+      <rect x="20" y="108" width="185" height="84" rx="9" fill="none" stroke="#8a4fb0" stroke-width="1.5"/>
+      <text x="32" y="132" fill="#8a4fb0" font-weight="700">保留端：选哪些？</text>
+      <text x="32" y="153" font-size="11.5" fill="#5a6474">SplatQ（10-12）</text>
+      <text x="32" y="172" font-size="11.5" fill="#5a6474">分域 → 配额 → 联合选择</text>
+      <rect x="215" y="108" width="185" height="84" rx="9" fill="none" stroke="#1c7a4f" stroke-width="1.5"/>
+      <text x="227" y="132" fill="#1c7a4f" font-weight="700">生成端：放哪里？</text>
+      <text x="227" y="153" font-size="11.5" fill="#5a6474">CompactSplat（10-12）</text>
+      <text x="227" y="172" font-size="11.5" fill="#5a6474">内容自适应 + 推理旋钮</text>
+      <rect x="410" y="108" width="185" height="84" rx="9" fill="none" stroke="#b0541a" stroke-width="1.5"/>
+      <text x="422" y="132" fill="#b0541a" font-weight="700">执行端：怎么跑快？</text>
+      <text x="422" y="153" font-size="11.5" fill="#5a6474">H2-Ray（10-12）</text>
+      <text x="422" y="172" font-size="11.5" fill="#5a6474">均衡 + 复用 + 混合求交</text>
+      <rect x="605" y="108" width="185" height="84" rx="9" fill="none" stroke="#0a6ea8" stroke-width="1.5"/>
+      <text x="617" y="132" fill="#0a6ea8" font-weight="700">生长端：预算给谁？</text>
+      <text x="617" y="153" font-size="11.5" fill="#5a6474">Confidence-Aware（10-13）</text>
+      <text x="617" y="172" font-size="11.5" fill="#5a6474">误差驱动密度控制</text>
+    </g>
+    <text x="330" y="216" font-size="12" fill="#5a6474">四端共同回答：给定总量，"怎么分配"</text>
+  </svg>
+  <div class="cap">图 1 · 分配四端：保留 / 生成 / 执行 / 生长</div>
+</div>
+
+<h2>② 生长端核心问题：3DGS-MCMC 的"前景偏差"</h2>
+<div class="card">
+  <div class="grid2">
+    <div>
+      <svg viewBox="0 0 430 250" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+        <text x="20" y="22" font-size="13" font-weight="700" fill="#b0541a">不透明度驱动（MCMC 原版）</text>
+        <rect x="20" y="36" width="390" height="190" rx="8" fill="none" stroke="#d9dee7" stroke-width="1"/>
+        <!-- 前景物体 + 密集点簇 -->
+        <ellipse cx="150" cy="140" rx="52" ry="44" fill="none" stroke="#8a4fb0" stroke-width="1.6"/>
+        <g fill="#8a4fb0">
+          <circle cx="140" cy="128" r="3.4"/><circle cx="152" cy="120" r="3.2"/><circle cx="162" cy="134" r="3.4"/>
+          <circle cx="146" cy="146" r="3.6"/><circle cx="158" cy="152" r="3.2"/><circle cx="136" cy="156" r="3"/>
+          <circle cx="168" cy="146" r="3"/><circle cx="150" cy="134" r="3.4"/><circle cx="142" cy="118" r="2.8"/>
+          <circle cx="158" cy="112" r="2.8"/><circle cx="170" cy="124" r="2.6"/><circle cx="128" cy="142" r="2.8"/>
+          <circle cx="164" cy="160" r="2.6"/><circle cx="146" cy="164" r="2.6"/><circle cx="152" cy="142" r="3"/>
+        </g>
+        <!-- 背景大片空白 -->
+        <g fill="#c9cfda">
+          <circle cx="270" cy="82" r="2"/><circle cx="330" cy="120" r="2"/><circle cx="300" cy="170" r="2"/>
+          <circle cx="255" cy="200" r="2"/><circle cx="360" cy="70" r="2"/><circle cx="380" cy="160" r="2"/>
+          <circle cx="80" cy="70" r="2"/><circle cx="230" cy="60" r="2"/>
+        </g>
+        <text x="262" y="205" font-size="11.5" fill="#5a6474">背景 大片欠重建</text>
+        <text x="96" y="66" font-size="11.5" fill="#5a6474">前景 点簇集中</text>
+      </svg>
+      <pre>不透明度高 → 被抽为"源"概率高
+→ 新点继续放前景 → 更富
+"富者愈富"，预算越小越糟
+（100k 档重定位占比最低）</pre>
+    </div>
+    <div>
+      <svg viewBox="0 0 430 250" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+        <text x="20" y="22" font-size="13" font-weight="700" fill="#0a6ea8">误差驱动（本篇）</text>
+        <rect x="20" y="36" width="390" height="190" rx="8" fill="none" stroke="#d9dee7" stroke-width="1"/>
+        <ellipse cx="150" cy="140" rx="52" ry="44" fill="none" stroke="#8a4fb0" stroke-width="1.6"/>
+        <g fill="#8a4fb0">
+          <circle cx="140" cy="128" r="3"/><circle cx="160" cy="130" r="3"/><circle cx="146" cy="150" r="3"/>
+          <circle cx="156" cy="116" r="2.8"/>
+        </g>
+        <g fill="#0a6ea8">
+          <circle cx="270" cy="82" r="3.2"/><circle cx="330" cy="120" r="3.4"/><circle cx="300" cy="170" r="3.2"/>
+          <circle cx="255" cy="200" r="3.4"/><circle cx="360" cy="70" r="3"/><circle cx="380" cy="160" r="3.2"/>
+          <circle cx="80" cy="70" r="3.2"/><circle cx="230" cy="60" r="3"/><circle cx="345" cy="205" r="3"/>
+          <circle cx="210" cy="195" r="3"/><circle cx="395" cy="95" r="2.8"/><circle cx="60" cy="185" r="3"/>
+        </g>
+        <text x="256" y="42" font-size="11.5" fill="#0a6ea8">新点去"梯度大 + 置信度低"处</text>
+        <text x="86" y="66" font-size="11.5" fill="#5a6474">已建好处少分</text>
+      </svg>
+      <pre>采样依据 = 误差（缺口视角）：
+80% 梯度排名 × 低置信度加权
+20% SSIM 结构误差
+重定位 = 贡献最小者腾位
+（max blending weight）</pre>
+    </div>
+  </div>
+  <div class="cap">图 2 · 同一个"给定预算"问题，两种分配依据：现状（不透明度）vs 缺口（误差）</div>
+</div>
+
+<h2>③ 两条规则的公式与"必须成对"</h2>
+<div class="card">
+  <pre>采样概率（80% 源）：P_i = r_i(∇abs) · ((1−η) + η·(1.2 − r_i(γ̄)))
+  · r(·) = 排名归一化（尺度无关、抗支配）
+  · η 在前 5000 迭代 0→1：先纯梯度（冷启动可用），后混置信度
+  · 置信度因子 1.2（最不自信）~ 0.2（最自信）——自信的仍会被抽到
+
+重定位（谁腾位）：各训练视图中 max blending weight w_i 最低者
+  ——而不是"不透明度衰减到 0.005 以下"者
+
+消融（原文）：两处单独改，几乎无增益；两处同改，全面超过基线
+  ——"系统性偏差，需要系统性修正"</pre>
+  <table>
+    <tr><th>结果（24 场景 / 100k–2M）</th><th>数字</th></tr>
+    <tr><td>全预算档 vs 3DGS-MCMC</td><td>PSNR / SSIM / LPIPS 三指标全面超</td></tr>
+    <tr><td>100k 档（无先验、无初始化阶段）</td><td>收回 ConeGS 领先差额 1.05 dB 中的 0.84 dB</td></tr>
+    <tr><td>500k 起</td><td>全部 fixed-budget 方法中 PSNR/SSIM 最高</td></tr>
+    <tr><td>训练用时 @500k</td><td>2.8 分钟（ConeGS 14 分钟，其中初始化 2.2 分钟）</td></tr>
+    <tr><td>prior 的另一面</td><td>2M 档 ConeGS/EDGS 反落于 MCMC——"先发优势 ≠ 终局质量"</td></tr>
+  </table>
+</div>
+
+<h2>④ 三条可迁移判据（对 SABC 配比与分档工作）</h2>
+<div class="card">
+  <ul>
+    <li><span class="hl">分配依据测的是"现状"还是"缺口"？</span>——按现状分配（谁已建成/谁占用多）必然富者愈富；按缺口分配（误差/欠账）才是补短板。<strong>倒挂分配（S 少给多、C 多给少）与"按缺口分配"是同一原则的两种表述。</strong></li>
+    <li><span class="hl">"防独占"是分配系统的标配</span>——SplatQ 用"配额平滑"、本篇用"误差采样"，都是在防"已满足者继续吸走预算"。自查：你的配比机制里，谁在"按惯性"继续拿资源？</li>
+    <li><span class="hl">"先跑的不一定先到"</span>——prior 给的是低预算先发优势，不是终局质量（ConeGS 初始化 2.2 分钟 ≈ 完整训练 2.8 分钟）——"起点投入"要点两笔账。</li>
+  </ul>
+</div>
+
+<div class="cap" style="margin-top:22px">本图解为研究笔记配套，随库版本管理 · 关联 Daily：[[2026-10-13]]</div>
+</div>
+</body>
+</html>

@@ -1,10 +1,10 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-12
+updated: 2026-10-13
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
-read_paper_count: 30
+read_paper_count: 31
 ---
 
 # Personal Knowledge Model
@@ -18,6 +18,7 @@ read_paper_count: 30
 > **2026-10-10 更新（资料侧 + 方法侧；阅读状态无变化）**：**几何建模域开域**——经典 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] + 新概念 [[Subdivision Surfaces]]（三条规则 + 四性质；与逆问题样本 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]] 构成"正↔逆"48 年弧线，**可选 45 分钟小闭环已列入 Daily 动作清单**）；物理域材料层 +1（[[2026-10-08-RiCo — Neural Simulation of Rigid-Body Interactions via Local Contact Reasoning|RiCo]] 结论层；**"指标看不见的价值"判据**入工具箱）;可微桥 +1 软材料（[[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]]，≈10 分钟、无数学）；GS 线几何质量维度（[[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]]）。**已读账本维持 30 篇**；既有动作清单全部不变（furnace test / 毛发 21 条 / Neural GI 桥 / 动态灯光复审）。**方法侧新规律**：周五提交在周六的 API 中不可见（cs.GR/cs.CV 双验证）——周末运行以 listing 为主通道。
 > **2026-10-11 更新（资料侧；阅读状态无变化）**：**48 年弧线中段补齐**——[[Stam — Exact Evaluation of Catmull-Clark Subdivision Surfaces (1998)]]（**求值线**：递归 → 特征基直接求值，"推翻一个信念"；结论层 ≈25 分钟）+ [[DeRose — Subdivision Surfaces in Character Animation (1998)]]（**生产化线**：半锐折痕 / 布料三件套 / 标量场，结论层 ≈30 分钟——**库内对 TA 最友好的经典**）——"**规则 / 算得出来 / 用得起来**"三件套齐；[[Subdivision Surfaces]] 概念笔记的"Stam 1998 / DeRose 1998 记录位"兑现，Next Step 已加两篇（按需）。**W41 收官**（10-5~10-11：24 Papers 含 8 经典 / 3 新概念 / 8 图解 + 读者实物图解）。**已读账本维持 30 篇**；动作清单不变——**"动作月"中旬盘点已写入 [[2026-W41]]：建议从五件中至少执行一件（推荐动态灯光复审，材料 100% 封盘）**。
 > **2026-10-12 更新（资料侧；阅读状态无变化）**：**三角分支补齐（"三角对偶日"）**——[[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]]（**A 经典**：三角分支定义者；分裂 1→4 + 两条平均 + **μ₃²=μ₂"平方关系反推权重"**；⚠️ 原文 PDF 直链全部失效——书目三源交叉 + Stam 附录 B 一手转述，核证清单入笔记）+ [[Stam — Evaluation of Loop Subdivision Surfaces (1998)]]（**A 经典**：三角版求值，"**同样的机器换坐标系，细节不同而已**"；12 点四阶箱样条 / **3/4 免费午餐 + 无限瓦片** / K=N+6 / N=3 Jordan 特例；**lpdata50.dat + lptest.c 可下载**——1998 年求值器实测材料）——**48 年弧线双轨（四边/三角）主体闭合**；[[Subdivision Surfaces]]"Loop 1987 记录位"兑现、Next Step 新增三角两篇（按需 ≈40 分钟 + 可选打印实验）。**前沿资料侧**：GS"**分配三连**"（[[2026-10-09-SplatQ — Interaction-Aware Pruning of 3D Gaussian Splatting via Quadratic Selection|SplatQ]] 保留端配额+联合选择 / [[2026-10-09-CompactSplat — Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction|CompactSplat]] 生成端内容自适应+推理旋钮 / [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering|H2-Ray]] 执行端均衡复用）+ 流式动作 [[2026-10-09-Sonic-AMG — Streaming Human Motion Generation from Spatial Audio|Sonic-AMG]]（"**流式两错位**"检查单）——材料层就绪，按需取用（各 10–25 分钟）。**已读账本维持 30 篇**；动作清单不变。
+> **2026-10-13 更新（读者侧 + 资料侧）**：**WorldCrafter 转 `read`（读者自己在另一设备标记）——已读账本 30 → 31 篇**（[[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory|WorldCrafter]] 入账）；读者同时落定 **README 许可章节**（MIT 范围 = 原创代码 + `Files/Html/` 自写图解；第三方按原许可）与仓库基础设施（Obsidian 插件同步策略）。**资料侧（"流体开域 + 感知优先日"）**：**[[Stam — Stable Fluids (1999)]] 入库（A 经典）**——**流体域开域**（无条件稳定求解器：拉格朗日回溯 + 隐式扩散 + 投影；"感知优先"设计哲学的 1999 原话出处；傅里叶"换空间"）；新概念 [[Fluid Simulation]]（四步分解 + 三路线 + 时间线）；**Stam 双身份闭环**（2005 细分奥斯卡三人组 × 2008 Maya Fluid Effects——与库内 10-10~10-12 细分弧线由同一人串起）。**前沿 3 篇**：[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Confidence-Aware Densification]]（**分配四端之"生长端"**："预算跟着缺口走"）/ [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（**"水的两条路"**：感知路线 2026 样本）/ [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]（**"优先级 > 权重"**）——新概念 [[Motion Retargeting]] 建立（动画数据管线第三环）。**已读账本 31 篇**；动作清单不变（**furnace test / 动态灯光复审为两大首件**）。
 
 ## 如何理解和更新这个模型
 
@@ -113,9 +114,9 @@ read_paper_count: 30
 | 可微渲染四项 / 神经渲染五项 | 已有应用侧阅读入口；判据通过情况未知 | 沿对应 Learning Path 逐项确认 |
 | 阴影占比 / 屏占比粒子密度 / 动态灯光分档复审 | 旧模型提出过，未见执行结果 | 保留为可选实践；不得从资料入库推断已执行 |
 
-## 已读论文账本（30 篇）
+## 已读论文账本（31 篇）
 
-以下清单逐项来自 frontmatter 核对（27 篇 = 2026-10-05 校正；**+3 篇 = 2026-10-07 更新**）。**不推定阅读完成日期**；保留各篇自己的难度分层。以后有新标记时，以论文文件当前属性为准并刷新本表。
+以下清单逐项来自 frontmatter 核对（27 篇 = 2026-10-05 校正；**+3 篇 = 2026-10-07 更新**；**+1 篇 = 2026-10-13 更新（WorldCrafter）**）。**不推定阅读完成日期**；保留各篇自己的难度分层。以后有新标记时，以论文文件当前属性为准并刷新本表。
 
 | 已读论文 | 当前笔记的 user_level |
 |---|---|
@@ -149,6 +150,7 @@ read_paper_count: 30
 | [[Karis — Real Shading in Unreal Engine 4 (2013)]] ★ 10-07 更新 | Normal（含 EnvBRDF LUT 补图） |
 | [[2026-09-17-DSD — Diffusion Skill Discovery]] ★ 10-07 更新 | Hard（可只取一个抽象） |
 | [[2026-09-27-Plate-Local River Generation]] ★ 10-07 更新 | Normal |
+| [[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory]] ★ 10-13 更新（读者标记） | Normal（世界模型线） |
 
 ## 本次替代的旧判断
 
