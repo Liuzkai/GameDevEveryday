@@ -729,7 +729,8 @@ status: unread
 
 ## Visualization
 
-![[paper-visualization.html]]
+![[Research/Files/Pictures/<作者 年份 — 图N 描述>.png]]
+（论文原图优先，附"读图"说明与出处；仅当确为"MD 无法表达的复杂图示"时才自绘 HTML——见 §25）
 
 ## Notes
 ```
@@ -961,24 +962,33 @@ Do not claim mastery merely because the user read one paper.
 
 ---
 
-# 25. HTML Visualization
+# 25. Visual Material Policy — Paper Figures First; HTML Only for Complex Diagrams
 
-When a concept or paper is easier to understand visually, create a standalone HTML visualization.
+**（用户 2026-10-14 反馈定型）** 视觉材料只有一个目的：解释知识。两条规则，按优先级执行：
 
-Typical use cases:
+## 25.1 默认：复制论文自己的图表（首选）
 
-- algorithm pipeline
-- architecture
-- rendering pipeline
-- data flow
-- coordinate system
-- neural network structure
-- simulation flow
-- paper relationship graph
-- technology timeline
-- comparison
-- before / after
-- prerequisite graph
+论文含承载核心内容的图表（管线 / 结果 / 机制 / 对照）时，**从原文提取原图嵌入笔记，不要重画**：
+
+- 提取方式：源 PDF（PyMuPDF：嵌入位图 `extract_image`；矢量图用高分辨率区域渲染裁剪）或官方项目页 / arXiv HTML；
+- 存放：`Research/Files/Pictures/`；命名：`作者 年份 — 图N 中文简短描述.png`；
+- 嵌入：`![[Research/Files/Pictures/<file>]]`，紧随一行中文"**读图**"（看什么）+ 出处（图号 + 论文）；
+- 版权：第三方图片保留原作者版权，只标注来源；不并入本库 MIT 内容的再分发。
+
+## 25.2 HTML 仅限"MD / 表格 / 原图无法表达"的复杂图示
+
+同时满足三条才做 HTML：① Markdown / 表格 / 论文原图确实表达不了；② 内容是真·复杂图示（多面板系统图、密集管线/数据流、坐标与索引域对照、跨论文关系图、长谱系时间线、需要精确 SVG 几何的对比或参数扫描）；③ HTML 真的在"**画**"而不是在"排文字"。
+
+**禁止**：文字卡片、表格、3~5 节点简单流程、公式块、名词表——凡是 Markdown 能干的一律用 Markdown；论文已有可用图的一律用图。
+
+**做 HTML 前自查三问**：① MD 能做吗？② 论文有现成图吗？③ 真的在画复杂图吗？——任一不满足，就不做。
+
+## 25.3 适用场景（当 §25.2 满足时）
+
+- 算法 / 系统管线（部件多、有并联与反馈回路）
+- 坐标 / 索引域对照（screen / probe / froxel / atlas 等）
+- 跨论文关系图、谱系时间线（节点多、需要二维布局）
+- 需要精确几何的前后对比 / 参数扫描（before-after、M/N 权衡之类）
 
 Example structure:
 
@@ -994,6 +1004,8 @@ Embed in Markdown using:
 ```markdown
 ![[2026-09-11-Example-Paper.html]]
 ```
+
+## 25.4 设计约束（HTML 获准时）
 
 The HTML must explain knowledge, not merely decorate the page.
 
@@ -1267,7 +1279,7 @@ Follow this sequence on each run:
 11. Update historical timelines and relationship links.
 12. For Hard targets, find the smallest useful Normal bridge.
 13. Create/update Learning Paths.
-14. Generate HTML visualizations when visual explanation materially improves understanding.
+14. Visuals: extract and embed the paper's own key figures by default; build an HTML only for genuinely complex diagrams that Markdown/figures cannot express (see §25).
 15. Update the daily note.
 16. Update weekly/monthly artifacts when due.
 17. Do not repeat Easy content unless an exception rule applies.

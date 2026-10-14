@@ -205,11 +205,24 @@ V(Î_ris) = 1/N · [ (1/M)(e3 − e2) + (e2 − e1) ]
 
 ## Visualization
 
-![[采样端_RIS 2005 重采样与校正因子图解]]
+![[Research/Files/Pictures/Talbot 2005 — 图2 方差向量劈分.png]]
+> **读图**（原论文 Figure 2）：标准重要性采样的方差向量（e3−e1）被 RIS 劈成两段——增 N 缩整条；**增 M 只缩 (e3−e2) 一段**。"两段预算"的原始图示。
+
+![[Research/Files/Pictures/Talbot 2005 — 图3 M与N权衡与最优比例.png]]
+> **读图**（Figure 3）：上排——等时间下 N=20/M=1（左）与 N=1/M=60（右）的龙首对照（原文："右图方差更小，除非可见性主导"）；下排——逐像素最优 M/N 比例（**绿 = 大 M，红 = 大 N**）。
+
+![[Research/Files/Pictures/Talbot 2005 — 图4 鲁棒RIS方差削减对照.png]]
+> **读图**（Figure 4）：等时间对照——左：标准重要性采样（M=1, N=20）；右：鲁棒 RIS（M=15.75, N=10.64）——该场景整体**方差削减 70%**（差异在软阴影/地面反射区最明显）。
+
+![[Research/Files/Pictures/Talbot 2005 — 图5 BRDF通用采样.png]]
+> **读图**（Figure 5）：两对球——左对 diffuse、右对 Cook-Torrance；每对中左为无重采样（N=1, M=1）、右为 RIS（N=1, M=20）——**同一套实现，跨 BRDF 模型都降方差**。
+
+> **视觉材料说明（2026-10-14）**：以上为**论文原图**（图 2/3 自原始 PDF 矢量重渲染与拼合，图 4/5 为嵌入位图原样提取；第三方版权归原作者与 EGSR）；原"重绘 HTML 图解"按读者反馈移除——重绘 HTML 仅在 MD 无法表达的复杂图示时才使用（规则 §25）。
 
 ## Notes
 
 - **核证记录**：EGSR 2005 会议文集（Bala & Dutré 编）pp. 139–146；2005-06-29 出版（ACM DL 记录）；作者站点 PDF（justintalbot.com/research/importance-resampling.pdf）8 页全文提取 + 逐页核读；BYU 硕士论文版（scholarsarchive.byu.edu/etd/663，2005-09-16）摘要含 stratification/MIS 组合与"默认 BRDF 采样"建议；
 - **与 ReSTIR 的关系有一手引用为证**：GRIS（Lin et al. 2022）摘要原话 "building on Talbot et al.'s [2005] resampled importance sampling (RIS)"；ReSTIR 2020 项目页及后续所有 reservoir 工作皆引本篇；
 - **数字口径**：10%–70% 来自 EGSR 版（直接光，等时间对照）；"最高 33%"来自硕士论文版——**两版口径并列存疑，不混用**；
-- 同日入库重建端经典 [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]；相关概念页 [[Resampled Importance Sampling]] / [[Reservoir Sampling]] 同日建立。
+- 同日入库重建端经典 [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]；相关概念页 [[Resampled Importance Sampling]] / [[Reservoir Sampling]] 同日建立；
+- **配图（2026-10-14）**：图 2–5 已自原始 PDF 提取至 `Files/Pictures/`（替代重绘 HTML 图解）。

@@ -213,10 +213,20 @@ SVGF：    每像素方差（可信度）→ 驱动滤波强度：
 
 ## Visualization
 
-![[重建端_SVGF 2017 时空方差引导滤波图解]]
+![[Research/Files/Pictures/SVGF 2017 — 图1 1spp输入与重建对照.png]]
+> **读图**（原论文 Figure 1）：(左) 1 spp 有噪输入 → (中) SVGF 重建（10 ms）→ (右) 2048 spp 参考；虚线 inset 对比间接光/光泽反射/软阴影的重建质量。
+
+![[Research/Files/Pictures/SVGF 2017 — 图3 重建滤波器总览.png]]
+> **读图**（Figure 3）：核心重建滤波器全览——**当前帧数据 + 历史缓冲** → 时域累积 → Integrated Color/Moments → 方差估计 → 五级 à-trous 小波（**方差逐级传播**）→ 输出；下方三条反馈回路（moments history / color history / updated variance）。
+
+![[Research/Files/Pictures/SVGF 2017 — 图5 方差低估与空间回退.png]]
+> **读图**（Figure 5）：(a) 无空间方差滤波（低估方差 → 残噪）→ (b) 1 spp 输入 → (c) **加空间方差滤波后**（贴近参考）→ (d) 4096 spp 参考；下两行为蓝/橙框放大对照——"**方差估计错了，重建就错了**"的最直观证据。
+
+> **视觉材料说明（2026-10-14）**：以上为**论文原图**（自 NVIDIA 官方 pre-print 提取：图 1 为嵌入位图；图 3/5 为高分辨率区域渲染裁剪；第三方版权归原作者与 ACM/HPG）；原"重绘 HTML 图解"按读者反馈移除。
 
 ## Notes
 
 - **核证记录**：HPG 2017（Los Angeles，7-28~30；DOI 10.1145/3105762.3105770）；NVIDIA Research 页 + 官方 pre-print（svgf_preprint.pdf，12 页全文提取核读）；作者单位（NVIDIA / KIT / McGill / U Montreal）；性能数字出自 §5.3–5.5（TITAN X Pascal）；限制六条出自 §6；Falcor 参考实现（NVIDIAGameWorks/Falcor `SVGFPass`）；
 - **同期旁证**：Mara et al.《An Efficient Denoising Algorithm for Global Illumination》为 HPG 2017 同期独立工作（原文致谢/对照提及）；
-- 同日入库采样端经典 [[Talbot — Importance Resampling for Global Illumination (2005)]]；相关概念页 [[Temporal Stability and Artistic Intent]] 已同步互链。
+- 同日入库采样端经典 [[Talbot — Importance Resampling for Global Illumination (2005)]]；相关概念页 [[Temporal Stability and Artistic Intent]] 已同步互链；
+- **配图（2026-10-14）**：图 1/3/5 已自官方 pre-print 提取至 `Files/Pictures/`（替代重绘 HTML 图解）。
