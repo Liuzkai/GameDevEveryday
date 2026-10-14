@@ -147,6 +147,25 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 
 关联：[[2026-10-06]]（E-Day 发售）/ [[Shadow Mapping]]（1978 成本法则）
 
+## 🔴 补：读者专题报告与"采样/重建"双端经典（2026-10-14）
+
+读者（另一设备，10-13 提交）产出**专题报告《现代实时光照的共同设计框架：MegaLights、Lumen、ReSTIR 与 RTXDI》**（[[Modern Real-Time Lighting Framework]]，含版本证据表与固定代码提交）——把本页"路线 B"（实时路径追踪 + 去噪）的机制层组织成**四阶段阅读框架**：
+
+```text
+采样 → 时空复用 → 重建／去噪 → 更新／失效
+```
+
+本页此前的"路线 B"只有一句话（"少量 spp 路径追踪 → 时空降噪器 → 输出"）；**今日两端各补一篇经典锚点**：
+
+| 阶段 | 经典锚点 | 一句话 |
+|---|---|---|
+| **采样** | [[Talbot — Importance Resampling for Global Illumination (2005)]]（★ 10-14 入库） | RIS：从易抽的 p 抽候选、按权重重采样向 g、校正因子保无偏——**ReSTIR 的理论前置**（报告自己指认的缺口） |
+| **重建／去噪** | [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（★ 10-14 入库） | SVGF：1 spp + 时域累积 + **方差引导的 à-trous 滤波**——实时重建的行业基座 |
+
+> **口径**（与报告一致）：算法（RIS/ReSTIR）、引擎系统（MegaLights/Lumen）、SDK（RTXDI）不是同一层级——本页只做"机制层"的谱系对接，不越级声称源码级实现对应。**缓存族（1988/1997/2005/2019）之外，本页的光照谱系自此多了"采样族与重建族"两支理论根系。**
+
+关联：[[Resampled Importance Sampling]] · [[Reservoir Sampling]]（新概念）· [[Modern Real-Time Lighting Framework]]（读者报告）
+
 ## Game Engine Integration
 
 - UE：Lumen / SSGI / Lightmass

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重建端 — SVGF 2017 时空方差引导滤波图解</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --sub:#5a6474; --line:#d9dee7;
+    --cA:#1668a8; --cAb:#e9f2f9; --cB:#1c7a4f; --cBb:#ebf7f0;
+    --accent:#0a7d6b; --chipbg:#eef1f6; --warn:#b0541a; --warnb:#fdf3ea;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --card:#1c2027; --ink:#e8ebf1; --sub:#a3adbd; --line:#333a45;
+      --cA:#8cc4ea; --cAb:#152430; --cB:#7ed0a8; --cBb:#182a21;
+      --accent:#5fd0bd; --chipbg:#242a33; --warn:#e8a06a; --warnb:#2a2118;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 40px;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:22px}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+  pre{background:var(--chipbg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.55}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--chipbg)}
+  .cap{font-size:12.5px;color:var(--sub);text-align:center;margin-top:6px}
+  svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:3px 0}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--chipbg);border-radius:0 8px 8px 0;font-size:13.5px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>重建端 —— SVGF 2017：1 spp → 10 ms 的三段管道</h1>
+<div class="sub">[[Schied — Spatiotemporal Variance-Guided Filtering (2017)|Schied et al. — HPG 2017]]（库内重建/去噪端开域篇） · 对接 [[Modern Real-Time Lighting Framework|读者报告：采样 → 时空复用 → 重建/去噪 → 更新/失效]]</div>
+
+<div class="card">
+<blockquote>"Noise increases variance, <strong>but variance can occur without noise</strong>." —— SVGF 原文（论"方差只是噪声的不完美代理"）<br>
+"重建可以利用相邻像素和历史，但要避免把另一表面的亮度混进来……对应 SVGF 的时空重建思想。" —— 读者专题报告（§2.5）</blockquote>
+<div class="cap">一句话主线：<strong>"把'该不该滤、滤多狠'变成每像素可估计的量——方差"</strong></div>
+</div>
+
+<h2>① 三段管道：时域累积 → 方差估计 → 方差引导的小波滤波</h2>
+<div class="card">
+  <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13">
+      <!-- inputs -->
+      <rect x="20" y="30" width="170" height="88" rx="9" fill="none" stroke="#b0541a" stroke-width="1.8"/>
+      <text x="36" y="56" font-weight="700" fill="#b0541a">输入：1 spp</text>
+      <text x="36" y="76" font-size="11.5" fill="#5a6474">路径追踪 1 条/像素</text>
+      <text x="36" y="94" font-size="11.5" fill="#5a6474">demodulate：先除 albedo</text>
+      <text x="36" y="110" font-size="11.5" fill="#5a6474">"只滤光照，不糊纹理"</text>
+
+      <rect x="20" y="140" width="170" height="88" rx="9" fill="none" stroke="#1668a8" stroke-width="1.8"/>
+      <text x="36" y="166" font-weight="700" fill="#1668a8">无噪声 G-buffer</text>
+      <text x="36" y="186" font-size="11.5" fill="#5a6474">depth / 法线 / mesh ID</text>
+      <text x="36" y="204" font-size="11.5" fill="#5a6474">+ motion vectors</text>
+      <text x="36" y="220" font-size="11.5" fill="#5a6474">（一致性测试的安全带）</text>
+
+      <!-- pass 1 -->
+      <rect x="240" y="60" width="180" height="120" rx="9" fill="none" stroke="#1668a8" stroke-width="2.2"/>
+      <text x="256" y="86" font-weight="700" fill="#1668a8">① 时域累积</text>
+      <text x="256" y="106" font-size="11.5" fill="#5a6474">回投上一帧 + 三件套一致性</text>
+      <text x="256" y="124" font-size="11.5" fill="#5a6474">EMA：C'=αC+(1−α)C'₋₁</text>
+      <text x="256" y="140" font-size="11.5" fill="#5a6474">α = 0.2</text>
+      <text x="256" y="158" font-size="11.5" fill="#5a6474">失败 → 2×2 / 3×3 → 弃历史</text>
+
+      <!-- pass 2 -->
+      <rect x="460" y="60" width="180" height="120" rx="9" fill="none" stroke="#0a7d6b" stroke-width="2.6"/>
+      <text x="476" y="86" font-weight="700" fill="#0a7d6b">② 方差估计 ★</text>
+      <text x="476" y="106" font-size="11.5" fill="#5a6474">时间累积一阶/二阶矩</text>
+      <text x="476" y="124" font-size="11.5" fill="#5a6474">σ'² = µ'₂ − µ'²₁</text>
+      <text x="476" y="142" font-size="11.5" fill="#5a6474">历史 < 4 帧 → 7×7 双边回退</text>
+      <text x="476" y="160" font-size="11.5" fill="#5a6474">"可信度旋钮"</text>
+
+      <!-- pass 3 -->
+      <rect x="680" y="60" width="200" height="120" rx="9" fill="none" stroke="#1668a8" stroke-width="2.2"/>
+      <text x="696" y="86" font-weight="700" fill="#1668a8">③ 五级 à-trous 小波</text>
+      <text x="696" y="106" font-size="11.5" fill="#5a6474">5×5 cross-bilateral 核</text>
+      <text x="696" y="124" font-size="11.5" fill="#5a6474">h=(1/16,1/4,3/8,1/4,1/16)</text>
+      <text x="696" y="142" font-size="11.5" fill="#5a6474">5 级 → 等效 65×65 足迹</text>
+      <text x="696" y="160" font-size="11.5" fill="#5a6474">方差随级数传播/更新</text>
+
+      <!-- arrows -->
+      <defs><marker id="ar4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#92a1b5"/></marker></defs>
+      <path d="M190 74 L 240 88" stroke="#92a1b5" stroke-width="1.8" fill="none" marker-end="url(#ar4)"/>
+      <path d="M190 184 L 240 156" stroke="#92a1b5" stroke-width="1.8" fill="none" marker-end="url(#ar4)"/>
+      <path d="M420 120 L 460 120" stroke="#92a1b5" stroke-width="2" fill="none" marker-end="url(#ar4)"/>
+      <path d="M640 120 L 680 120" stroke="#92a1b5" stroke-width="2" fill="none" marker-end="url(#ar4)"/>
+
+      <!-- feedback -->
+      <path d="M780 180 C 780 218, 330 218, 330 180" stroke="#b0541a" stroke-width="1.6" fill="none" stroke-dasharray="6 4" marker-end="url(#ar5)"/>
+      <defs><marker id="ar5" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#b0541a"/></marker></defs>
+      <text x="520" y="236" font-size="11.5" fill="#b0541a">第一级输出 ⇄ 下帧时域历史（三个缓冲区互喂）</text>
+
+      <!-- output -->
+      <rect x="240" y="256" width="420" height="34" rx="8" fill="none" stroke="#92a1b5" stroke-width="1.4"/>
+      <text x="256" y="278" font-size="12" fill="#5a6474">输出 → re-modulate albedo → 色调映射 → TAA（最后再时域反走样）</text>
+    </g>
+  </svg>
+  <div class="cap">图 1 · 三段：时间给样本数（①），统计给可信度（②），可信度决定怎么滤（③）</div>
+</div>
+
+<h2>② "方差 = 可信度旋钮"：哪里敢滤、哪里要保</h2>
+<div class="card">
+  <svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13">
+      <rect x="20" y="30" width="280" height="88" rx="9" fill="none" stroke="#b0541a" stroke-width="1.8"/>
+      <text x="36" y="56" font-weight="700" fill="#b0541a">方差大（噪声多 / 不可信）</text>
+      <text x="36" y="78" font-size="11.5" fill="#5a6474">亮度差阈值被放宽</text>
+      <text x="36" y="96" font-size="11.5" fill="#5a6474">→ 跨更大足迹借样本（多滤）</text>
+
+      <rect x="330" y="30" width="280" height="88" rx="9" fill="none" stroke="#0a7d6b" stroke-width="1.8"/>
+      <text x="346" y="56" font-weight="700" fill="#0a7d6b">方差小（稳定区 / 可信）</text>
+      <text x="346" y="78" font-size="11.5" fill="#5a6474">亮度差阈值收得很紧</text>
+      <text x="346" y="96" font-size="11.5" fill="#5a6474">→ 几乎不动（保细节）</text>
+
+      <rect x="640" y="30" width="240" height="88" rx="9" fill="none" stroke="#1668a8" stroke-width="1.8"/>
+      <text x="656" y="56" font-weight="700" fill="#1668a8">自收敛</text>
+      <text x="656" y="78" font-size="11.5" fill="#5a6474">方差随滤波迭代下降 →</text>
+      <text x="656" y="96" font-size="11.5" fill="#5a6474">权重越来越保守（防过糊）</text>
+
+      <rect x="20" y="138" width="860" height="56" rx="9" fill="none" stroke="#1668a8" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="36" y="162" font-weight="700" fill="#1668a8" font-size="12.5">三条边缘停止函数：w(p,q) = w_z · w_n · w_l（全场景通用常数，不暴露给用户）</text>
+      <text x="36" y="182" font-size="12" fill="#5a6474">w_z：depth（局部线性平面模型，容忍斜视；σ_z=1）　w_n：法线（cos^σn；σ_n=128）　w_l：亮度（用局部标准差归一化的自适应阈值；σ_l=4）</text>
+    </g>
+  </svg>
+  <div class="cap">图 2 · "重建误差被钉在方差估计不准的地方"——不确定性显式建模，就不会全局地糊</div>
+</div>
+
+<h2>③ 数字卡 + 四阶段框架位置</h2>
+<div class="card">
+  <table>
+    <tr><th>指标</th><th>数值</th><th>口径</th></tr>
+    <tr><td>帧成本（1920×1080）</td><td><strong>10 ms（±15%）</strong></td><td>TITAN X (Pascal)，2017</td></tr>
+    <tr><td>1280×720 平均</td><td>4.4 ms（4.1–5.8）</td><td>波动源 = disocclusion 的空间方差回退</td></tr>
+    <tr><td>吞吐 / 缩放</td><td>约 200 MPixels/s；随分辨率线性</td><td>与场景复杂度近乎无关</td></tr>
+    <tr><td>时域稳定性</td><td><strong>约 10×</strong>（对照先前工作）</td><td>逐帧亮度差的平均（temporal error）</td></tr>
+    <tr><td>质量</td><td>SSIM 匹配参考图好 5–47%</td><td>vs 4096 spp 参考（摘要口径）</td></tr>
+  </table>
+  <svg viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13">
+      <rect x="20" y="30" width="200" height="60" rx="9" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="52" y="56" font-weight="700" fill="#5a6474">采样</text>
+      <text x="52" y="76" font-size="11.5" fill="#5a6474">同日 Talbot RIS 2005</text>
+
+      <rect x="250" y="30" width="200" height="60" rx="9" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="282" y="56" font-weight="700" fill="#5a6474">时空复用</text>
+      <text x="282" y="76" font-size="11.5" fill="#5a6474">SVGF 也含（历史缓冲）</text>
+
+      <rect x="480" y="30" width="200" height="60" rx="9" fill="none" stroke="#b0541a" stroke-width="2.6"/>
+      <text x="512" y="56" font-weight="700" fill="#b0541a">★ 重建 / 去噪</text>
+      <text x="512" y="76" font-size="11.5" fill="#5a6474">SVGF 2017（本篇）</text>
+
+      <rect x="710" y="30" width="170" height="60" rx="9" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="742" y="56" font-weight="700" fill="#5a6474">更新 / 失效</text>
+      <text x="742" y="76" font-size="11.5" fill="#5a6474">disocclusion / 历史拒绝</text>
+
+      <path d="M220 60 L 250 60" stroke="#92a1b5" stroke-width="1.6" marker-end="url(#ar6)"/>
+      <path d="M450 60 L 480 60" stroke="#92a1b5" stroke-width="1.6" marker-end="url(#ar6)"/>
+      <path d="M680 60 L 710 60" stroke="#92a1b5" stroke-width="1.6" marker-end="url(#ar6)"/>
+      <defs><marker id="ar6" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#92a1b5"/></marker></defs>
+    </g>
+  </svg>
+  <pre>谱系（1990 → 2026）：
+  1990s 非线性滤波萌芽 → 1998 双边 → 2004 交叉双边（"边缘停止"语言）
+  → 2010 Dammertz à-trous（结构前身）→ 2014 TAA 普及
+  → ★ 2017 SVGF（1 spp + 时域 + 方差引导 → 10 ms 实时）
+  → 2018+ A-SVGF 等 → NVIDIA 实时降噪器产品线
+  → 2020s 神经重建接管（DLSS RR 等）——库内 GS 续线：SteadySplats / Stochastic GS Denoising / Tabula Rasa
+  ——骨架不变：时域 + 可信度 + 边缘感知</pre>
+  <blockquote>对分档的直接映射：<strong>历史不足 → 空间回退</strong>——"高质量来源不可用时退回廉价来源、恢复后再切回"，实时系统的标准降级形态。</blockquote>
+</div>
+
+</div>
+</body>
+</html>

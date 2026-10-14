@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-13]]（昨日：[[2026-10-12]]）
+- **今日**：[[2026-10-14]]（昨日：[[2026-10-13]]）
 - **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**本周 W42 = 10-12 ~ 10-18**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-13（WorldCrafter 转 read——已读 31 篇；流体域开域 + 分配四端 + 重定向概念）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-13（WorldCrafter 转 read——已读 31 篇；流体域开域 + 分配四端 + 重定向概念）/ 10-14 追加（读者专题报告 + 采样/重建双端经典；阅读状态不变）**——推送按校正结果组织
 
-## Papers（113）
+## Papers（118）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -133,8 +133,13 @@ created: 2026-09-07
 | [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS]] | B+ | Normal（结论层） | 中高（★ **分配四端之"生长端"**：误差驱动加密（梯度排名 × 低置信度 + 贡献度重定位）——"预算跟着缺口走，不跟着现状走"；"先跑的不一定先到"；24 场景全预算超 MCMC）★ 2026-10-13 |
 | [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes]] | B+ | Normal（结论层） | 中（★ **水线第二节点 / 场景动态化"注入派"**："三不"（无捕获/无重训/无模拟）+ 2 MB 可携带运动场 + 无缝循环；"感知优先"2026 样本）★ 2026-10-13 |
 | [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting]] | B+ | Normal（结论层） | 中高（★ **重定向三节点之优化式**：优先级层级取代加权求和（空空间投影 + 误差向量保护）；"重要的东西用约束保护"；真机验证 + 下游 RL）★ 2026-10-13 |
+| [[Talbot — Importance Resampling for Global Illumination (2005)]] | A（经典） | Normal（结论层） | **最高（★ 采样端开域：RIS——"ReSTIR 的理论前置"当场结清；校正因子（reservoir W 的祖先）/ 方差劈分 / 等时间准则 M=TY/TX；直接光 10–70%）** ★ 2026-10-14 |
+| [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]] | A（经典） | Normal（结论层） | **最高（★ 重建端开域：1spp → 10ms 实时重建；时域累积 + 方差引导 à-trous + 三条边缘停止；"可信度旋钮"；库内降噪条目的共同祖先（Wyman 血统））** ★ 2026-10-14 |
+| [[2026-10-09-MeshRepair — Autoregressive Topology Repair for Generated Artisan Meshes]] | B+ | Normal（结论层） | 中高（★ **AI 资产返修工位**："编辑序列而非新网格"（未触及面原样通过）；"quad 率 = 下游硬约束"；SubD 链前置节点）★ 2026-10-14 |
+| [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology]] | A- | Normal（结论层） | 高（★ **动捕 ⇄ 重定向边界合并**：可观测性分析 + 可靠性门控（"能测的用几何、测不到的交给学习"）；A100 51+ FPS，代码开源；Motion Retargeting 捕捉侧节点）★ 2026-10-14 |
+| [[2026-10-10-TETRIS-4DGS — Efficient Post-Training Compression of 4D Gaussian Splatting]] | B+ | Normal（结论层） | 中（★ **4DGS 部署端**：后训练 + codec 复用 + 重要度码率；秒级 40×；"翻译给旧工具"接口复用）★ 2026-10-14 |
 
-## Concepts（37）
+## Concepts（39）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -168,7 +173,9 @@ created: 2026-09-07
 - [[Facial Animation]] ★ 2026-10-08 入库（**面部域开线（库内最后的大品类空白）**：重定向 = "身份 × 表情"分解 + 三种失败模式（表面噪声/全局耦合/身份泄漏）；首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（点基双因子，"四个不需要"）；挂载位：GALA（化身表示）/ emg2face（非光学捕捉，记名））
 - [[Subdivision Surfaces]] ★ 2026-10-10 入库、**10-12 三角分支补齐**（**几何建模域第一个概念锚点**：规则 + 四结构性质 + 双轨 48 年弧线——四边形轨（1974 双源头 → 1978 正问题 → 1998 求值/生产 → 2005 奥斯卡 → 2026 逆问题）+ **三角轨（1987 Loop 规则 → 1998 Stam 三角版求值 → 共享逆问题时代）**；源头 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] / [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] + 逆问题 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]）
 - [[Fluid Simulation]] ★ 2026-10-13 入库（**物理/仿真域开域（流体）**：四步分解（外力→对流→扩散→投影）+ 三路线（网格/粒子/混合 FLIP）+ 时间线 1965→2026；"水的两条路"（模拟 vs 感知）与"预算轴 = 网格 × 步数"；首节点 [[Stam — Stable Fluids (1999)]]）
-- [[Motion Retargeting]] ★ 2026-10-13 入库（**动画数据管线第三环**（检索/压缩/转换）："要保清单"五级 + 三路线（IK 优化 / 数据驱动 / 优先级优化）；节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]] / [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement|Skinned Retargeting]] / [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]）
+- [[Motion Retargeting]] ★ 2026-10-13 入库（**动画数据管线第三环**（检索/压缩/转换）："要保清单"五级 + 三路线（IK 优化 / 数据驱动 / 优先级优化）；节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]] / [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement|Skinned Retargeting]] / [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]；★ 10-14 新增捕捉侧节点 [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]]）
+- [[Resampled Importance Sampling]] ★ 2026-10-14 入库（**采样端理论**：三步重采样 + 校正因子 + 方差劈分 + 等时间准则 M=TY/TX；ReSTIR 谱系的底座；与 [[Reservoir Sampling]] 互链）
+- [[Reservoir Sampling]] ★ 2026-10-14 入库（**流式加权抽样容器**："一个槽位代表整条候选流"；RTXDI 固定提交可直读；"一个表示代表全部"家族成员）
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -231,10 +238,10 @@ Research/
 
 ---
 
-最后更新：2026-10-13（Run #35：**流体开域 + 感知优先日**——经典头条：[[Stam — Stable Fluids (1999)]]（**A 经典**：无条件稳定求解器 + "感知优先"原话出处 + **Stam 双身份闭环**（2005 细分奥斯卡三人组 × 2008 Maya Fluid Effects）；新概念 [[Fluid Simulation]]）；前沿：**周一公告组首次实证**（cs.GR 8 + cs.CV 153 全量扫描；3 篇入库——[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Confidence-Aware Densification]]（**分配四端之"生长端"**）/ [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（**"水的两条路"**）/ [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]（**"优先级 > 权重"**）+ 新概念 [[Motion Retargeting]]）；**读者反馈**：WorldCrafter 转 read（**31 篇**）+ README 许可章节；产业：Epic "AI 大转向" / RTX Spark 评测波（10-16）；W42 进行中）
+最后更新：2026-10-14（Run 36：**读者框架对接日 + 采样/重建双端开域**——**读者产出专题报告《现代实时光照的共同设计框架》**（MegaLights/Lumen/ReSTIR/RTXDI；四阶段框架 + 版本证据表 + 固定代码提交；**不改变已读/掌握状态**）；经典双纳入库：[[Talbot — Importance Resampling for Global Illumination (2005)]]（**采样端 RIS**：校正因子 / 方差劈分 / 等时间准则 M=TY/TX；"ReSTIR 的理论前置"缺口当场结清）+ [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（**重建端 SVGF**：1spp→10ms、≈10× 稳定性、"可信度旋钮"）；新概念 [[Resampled Importance Sampling]] + [[Reservoir Sampling]]；前沿 **周三批次（"周末清关"首次实证）**：cs.GR 9 + cs.CV 87 全量扫描，3 篇入库（[[2026-10-09-MeshRepair — Autoregressive Topology Repair for Generated Artisan Meshes|MeshRepair]] **就地修复** / [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]] **可靠性门控** / [[2026-10-10-TETRIS-4DGS — Efficient Post-Training Compression of 4D Gaussian Splatting|TETRIS-4DGS]] **秒级 40×**）+ 6 记名；产业：RTX Spark 上市周反作弊清单 + DLSS 5 模型 10× 成本压缩）
+　　▸ **10-13 回顾**（Run #35）：**流体开域 + 感知优先日**——经典头条：[[Stam — Stable Fluids (1999)]]（**A 经典**：无条件稳定求解器 + "感知优先"原话出处 + **Stam 双身份闭环**（2005 细分奥斯卡三人组 × 2008 Maya Fluid Effects）；新概念 [[Fluid Simulation]]）；前沿：**周一公告组首次实证**（cs.GR 8 + cs.CV 153 全量扫描；3 篇入库——[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Confidence-Aware Densification]]（**分配四端之"生长端"**）/ [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（**"水的两条路"**）/ [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]（**"优先级 > 权重"**）+ 新概念 [[Motion Retargeting]]）；**读者反馈**：WorldCrafter 转 read（**31 篇**）+ README 许可章节；产业：Epic "AI 大转向" / RTX Spark 评测波（10-16）；W42 进行中）
 　　▸ **10-12 回顾**（Run #34）：**三角对偶日 + 分配三连**——Loop 1987 + Stam 三角版（48 年弧线三角分支一次补齐）；前沿 4 篇（SplatQ / Sonic-AMG / CompactSplat / H2-Ray——"分配三连"+ 流式动作）
 　　▸ **10-11 回顾**（Run #33）：**中段闭合日**——Stam 1998 + DeRose 1998（48 年弧线中段双节点）+ W41 收官；周末黑窗三通道 0 新条目（未凑数）
 　　▸ **10-10 回顾**（Run #32）：**48 年正逆弧线日**——几何建模域开域（Catmull-Clark 1978 + Subdivision Surfaces 概念）+ "对齐"三连（RiCo / PCAsplat / GaussianBench）+ UE 5.8 正式发布
 　　▸ **10-9 回顾**（Run #31）：**接口日**——五条路线全节点闭合（Turquin 2019）+ NRC-Spec / Tabula Rasa / emg2face；读者自制五路线图解（"用自己的话比较"实物产物）；E-Day 深测到账
 　　▸ **10-8 回顾**（Run #30）：**毛发生产化日**——Chiang 2016（六节点闭合）+ PDB / DynaConTalk / Multiphysics；新概念 [[Facial Animation]]；RTX Spark 发布
-　　▸ **10-7 回顾**（Run #29）：**能量日**——d'Eon 2011 + NEF / SteadySplats / PhysLDM；DXR 2.0 将标准化 Mega Geometry

@@ -55,10 +55,15 @@ IK 式优化（工业主流）：把上面清单写成目标/约束，逐链或�
 2026-10      ★ 库内节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]
              （**优先级层级 + 空空间投影**：把"谁让路"从权重升级为约束；
               逐帧投影使长序列/多角色可用；下游 RL 验证）
+2026-10      ★ 库内节点：[[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]]（**捕捉侧**）
+             （目标骨架拓扑 ≠ 视频主体时的单目动捕：可观测性分析把旋转分量分成
+              "骨骼方向可约束 / 不可约束"，可靠性门控做几何修正、其余交给学习——
+              **"捕捉 + 重定向"的边界开始合并**；A100 51+ FPS，代码开源）
 ```
 
 ## Important Papers
 
+- [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST（2026）]] —— **捕捉侧**：任意目标拓扑的单目动捕（可观测性分析 + 可靠性门控；"捕捉即重定向"雏形）★ 2026-10-14 入库
 - [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget（2026）]] —— **优先级层级重定向**（约束取代权重；向量误差保护；逐帧工程化）★ 2026-10-13 入库
 - [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement]] —— 学习式（伪影驱动先验）
 - [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM（2026）]] —— 生成式精修

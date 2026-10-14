@@ -69,6 +69,9 @@ first_introduced: "1978（Catmull & Clark；前身：Catmull 1974 递归细分 /
         ↓
 2026  【逆问题时代】稠密网格遍地（扫描/AI 生成）→ 从网格找回 cage：
       [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]
+      ＋（★ 10-14 补前置工位）[[2026-10-09-MeshRepair — Autoregressive Topology Repair for Generated Artisan Meshes|MeshRepair]]
+      ——生成网格的"**就地拓扑修复**"（洞/游离面/重复面；quad-equivalent F1——
+      **四边语义被写成修复器的验收指标**）；链条 = 生成 → **修复** → 逆问题 → 生产
 ```
 
 > **同事不同域（2026-10-13 补记）**：2005 年那座奥斯卡的三人之一 **Stam** 的另一条身份是**流体**——同一年代的 [[Stam — Stable Fluids (1999)]]（**库内流体域开域篇**：无条件稳定求解器）+ 后来的 Maya Fluid Effects（2008 奥斯卡，获奖人含 Stam）。**"换空间"是他的两种手法**：细分把参数域换到特征基、流体把空间域换到傅里叶——同一个人，两台"对角化"机器。库内 `Stam 1998 ×2 → 1999` 三连自此可作"作者画像"读。

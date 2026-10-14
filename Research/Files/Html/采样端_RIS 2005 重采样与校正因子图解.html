@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>采样端 — RIS 2005 重采样与校正因子图解</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --sub:#5a6474; --line:#d9dee7;
+    --cA:#1668a8; --cAb:#e9f2f9; --cB:#1c7a4f; --cBb:#ebf7f0;
+    --accent:#0a7d6b; --chipbg:#eef1f6; --warn:#b0541a; --warnb:#fdf3ea;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14171c; --card:#1c2027; --ink:#e8ebf1; --sub:#a3adbd; --line:#333a45;
+      --cA:#8cc4ea; --cAb:#152430; --cB:#7ed0a8; --cBb:#182a21;
+      --accent:#5fd0bd; --chipbg:#242a33; --warn:#e8a06a; --warnb:#2a2118;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 18px 40px;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:22px}
+  h2{font-size:17px;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+  .tagn{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--chipbg);color:var(--sub);margin-right:6px}
+  pre{background:var(--chipbg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.55}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--chipbg)}
+  .cap{font-size:12.5px;color:var(--sub);text-align:center;margin-top:6px}
+  svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:3px 0}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--chipbg);border-radius:0 8px 8px 0;font-size:13.5px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>采样端 —— RIS 2005：三步重采样与"校正因子"</h1>
+<div class="sub">[[Talbot — Importance Resampling for Global Illumination (2005)|Talbot / Cline / Egbert — EGSR 2005]]（库内采样端开域篇） · 对接 [[Modern Real-Time Lighting Framework|读者报告：采样 → 时空复用 → 重建/去噪 → 更新/失效]]</div>
+
+<div class="card">
+<blockquote>"Standard importance sampling is a <strong>special case</strong> of RIS." —— Talbot 2005（原文）<br>
+"先从易抽取的分布产生候选，<strong>再向目标分布重采样</strong>。" —— 读者专题报告（对本篇的一句话概括）</blockquote>
+<div class="cap">同一件事的两个说法：理论版（推广）与工程版（重采样）——本图解的主线</div>
+</div>
+
+<h2>① 核心机器：三步把"抽不动"变成"抽得动"</h2>
+<div class="card">
+  <svg viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13">
+      <!-- Step 1 -->
+      <rect x="20" y="40" width="180" height="104" rx="9" fill="none" stroke="#1668a8" stroke-width="1.8"/>
+      <text x="36" y="66" font-weight="700" fill="#1668a8">① 从 p 抽 M 个候选</text>
+      <text x="36" y="88" font-size="11.5" fill="#5a6474">p = 易抽的"源分布"</text>
+      <text x="36" y="106" font-size="11.5" fill="#5a6474">（甚至可以是均匀分布）</text>
+      <text x="36" y="124" font-size="11.5" fill="#5a6474">M ≥ 1（数量 = 预算旋钮）</text>
+      <!-- dots -->
+      <circle cx="44" cy="136" r="3" fill="#1668a8"/><circle cx="60" cy="136" r="3" fill="#1668a8"/><circle cx="76" cy="136" r="3" fill="#1668a8"/><circle cx="92" cy="136" r="3" fill="#1668a8"/><circle cx="108" cy="136" r="3" fill="#1668a8"/>
+
+      <!-- Step 2 -->
+      <rect x="250" y="40" width="220" height="104" rx="9" fill="none" stroke="#1668a8" stroke-width="2.2"/>
+      <text x="266" y="66" font-weight="700" fill="#1668a8">② 计权 w = g(X)/p(X)</text>
+      <text x="266" y="88" font-size="11.5" fill="#5a6474">g = 想要的目标分布（可未归一化）</text>
+      <text x="266" y="106" font-size="11.5" fill="#5a6474">权重比 = 概率密度比（便宜操作）</text>
+      <text x="266" y="124" font-size="11.5" fill="#5a6474">越像 g 的候选权重越高</text>
+      <!-- weight bars -->
+      <rect x="266" y="132" width="6" height="8" fill="#1668a8"/>
+      <rect x="278" y="128" width="6" height="12" fill="#1668a8"/>
+      <rect x="290" y="124" width="6" height="16" fill="#1668a8"/>
+      <rect x="302" y="136" width="6" height="4" fill="#92a1b5"/>
+      <rect x="314" y="126" width="6" height="14" fill="#1668a8"/>
+
+      <!-- Step 3 -->
+      <rect x="520" y="40" width="200" height="104" rx="9" fill="none" stroke="#0a7d6b" stroke-width="2.2"/>
+      <text x="536" y="66" font-weight="700" fill="#0a7d6b">③ 按权重重采样出 Y</text>
+      <text x="536" y="88" font-size="11.5" fill="#5a6474">Y 的分布 ≈ g（近似）</text>
+      <text x="536" y="106" font-size="11.5" fill="#5a6474">"过滤"：p 的样本被筛成 g 的形状</text>
+      <text x="536" y="124" font-size="11.5" fill="#5a6474">M=1 → Y~p；M→∞ → Y~g</text>
+
+      <!-- Result -->
+      <rect x="760" y="55" width="120" height="74" rx="9" fill="none" stroke="#b0541a" stroke-width="1.8"/>
+      <text x="776" y="82" font-weight="700" fill="#b0541a">f(Y) 求值</text>
+      <text x="776" y="102" font-size="11.5" fill="#5a6474">贵操作只做</text>
+      <text x="776" y="118" font-size="11.5" fill="#5a6474">在最终样本上</text>
+
+      <!-- arrows -->
+      <defs><marker id="ar1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1668a8"/></marker>
+      <marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#b0541a"/></marker></defs>
+      <path d="M200 92 L 250 92" stroke="#1668a8" stroke-width="2" fill="none" marker-end="url(#ar1)"/>
+      <path d="M470 92 L 520 92" stroke="#1668a8" stroke-width="2" fill="none" marker-end="url(#ar1)"/>
+      <path d="M720 92 L 760 92" stroke="#b0541a" stroke-width="2" fill="none" marker-end="url(#ar2)"/>
+
+      <!-- bottom note -->
+      <rect x="20" y="172" width="860" height="46" rx="9" fill="none" stroke="#0a7d6b" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <text x="36" y="192" font-weight="700" fill="#0a7d6b" font-size="12.5">贵/便宜分工（成本结构）：</text>
+      <text x="36" y="210" font-size="12" fill="#5a6474">候选生成与计权（便宜）× M·N 次　vs　f 求值 / 可见性（贵）× N 次 —— "用便宜的候选换贵的样本"</text>
+    </g>
+  </svg>
+  <div class="cap">图 1 · 三步：抽 M 个候选 → 计权 → 重采样一个；M 是"分布插值旋钮"</div>
+</div>
+
+<h2>② 账本：校正因子 + 方差劈分（RIS 的两个核心公式）</h2>
+<div class="card">
+  <pre>无偏估计器（论文式 1）：
+  Î_ris = (1/N) Σᵢ [ f(Yᵢ)/g(Yᵢ) · (1/M) Σⱼ g(Xᵢⱼ)/p(Xᵢⱼ) ]
+                            └── 校正因子 = 重采样步权重的平均（"简单得出奇"）
+                                —— 它就是日后 reservoir 的 W 的祖先</pre>
+  <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13">
+      <text x="20" y="34" font-weight="700" fill="#5a6474">标准重要性采样的方差向量（一整条）：</text>
+      <rect x="20" y="46" width="560" height="30" rx="6" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="270" y="66" fill="#5a6474" font-size="12.5">e3 − e1　（1/N 缩放）</text>
+
+      <text x="20" y="110" font-weight="700" fill="#1668a8">RIS 把它劈成两段（1/N 缩放）：</text>
+      <rect x="20" y="122" width="300" height="30" rx="6" fill="none" stroke="#1668a8" stroke-width="2"/>
+      <text x="100" y="142" fill="#1668a8" font-size="12.5">(1/M)·(e3 − e2)</text>
+      <rect x="326" y="122" width="254" height="30" rx="6" fill="none" stroke="#0a7d6b" stroke-width="2"/>
+      <text x="380" y="142" fill="#0a7d6b" font-size="12.5">(e2 − e1)</text>
+
+      <text x="620" y="70" font-size="12" fill="#5a6474">增 N：两段一起缩</text>
+      <text x="620" y="92" font-size="12" fill="#5a6474">增 M：只缩左段（蓝色）</text>
+      <text x="620" y="142" font-size="12" fill="#5a6474">g∝p → 左段=0；g∝f → 右段=0</text>
+
+      <rect x="20" y="166" width="860" height="30" rx="8" fill="none" stroke="#b0541a" stroke-width="1.6"/>
+      <text x="36" y="186" fill="#b0541a" font-size="12.5" font-weight="700">等时间准则：M = TY / TX</text>
+      <text x="230" y="186" font-size="12" fill="#5a6474">（让"候选生成段"与"精算段"等时间；鲁棒、≤2× 最优方差；无法估计时取 M=1 安全回退）</text>
+    </g>
+  </svg>
+  <div class="cap">图 2 · "方差向量劈成两段"——M 与 N 各管一段；等时间准则 = 2005 年的两段预算分配法则</div>
+</div>
+
+<h2>③ 谱系与四阶段框架位置</h2>
+<div class="card">
+  <svg viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <g font-size="13">
+      <rect x="20" y="30" width="200" height="60" rx="9" fill="none" stroke="#b0541a" stroke-width="2.6"/>
+      <text x="52" y="56" font-weight="700" fill="#b0541a">★ 采样</text>
+      <text x="52" y="76" font-size="11.5" fill="#5a6474">RIS 2005（本篇）</text>
+
+      <rect x="250" y="30" width="200" height="60" rx="9" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="282" y="56" font-weight="700" fill="#5a6474">时空复用</text>
+      <text x="282" y="76" font-size="11.5" fill="#5a6474">ReSTIR / reservoir</text>
+
+      <rect x="480" y="30" width="200" height="60" rx="9" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="512" y="56" font-weight="700" fill="#5a6474">重建 / 去噪</text>
+      <text x="512" y="76" font-size="11.5" fill="#5a6474">同日 SVGF 2017</text>
+
+      <rect x="710" y="30" width="170" height="60" rx="9" fill="none" stroke="#92a1b5" stroke-width="1.6"/>
+      <text x="742" y="56" font-weight="700" fill="#5a6474">更新 / 失效</text>
+      <text x="742" y="76" font-size="11.5" fill="#5a6474">可见性/历史有效性</text>
+
+      <path d="M220 60 L 250 60" stroke="#92a1b5" stroke-width="1.6" marker-end="url(#ar3)"/>
+      <path d="M450 60 L 480 60" stroke="#92a1b5" stroke-width="1.6" marker-end="url(#ar3)"/>
+      <path d="M680 60 L 710 60" stroke="#92a1b5" stroke-width="1.6" marker-end="url(#ar3)"/>
+      <defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#92a1b5"/></marker></defs>
+      <text x="20" y="112" font-size="11.5" fill="#5a6474">读者报告的四阶段框架（《现代实时光照的共同设计框架》）：RIS 是第一阶段"采样"的 2005 年理论底座</text>
+    </g>
+  </svg>
+  <pre>谱系（1949 → 2026）：
+  1949 Monte Carlo → 1986 渲染方程 → 1987 SIR（统计学）→ 1995/96/04 民间 resampling
+  → ★ 2005 RIS（本篇：形式化 + 方差劈分 + 等时间准则 + 直接光 10–70%）
+  → 2020 ReSTIR DI（"building on Talbot et al.'s RIS"）→ 2021 GI → 2022 GRIS/PT
+  → 2021- RTXDI 工程化 → 2026 读者框架（四阶段）</pre>
+</div>
+
+<h2>④ 两个数字 + 一条边界</h2>
+<div class="card">
+  <table>
+    <tr><th>实验（等时间对照标准重要性采样）</th><th>结果</th><th>原因解读</th></tr>
+    <tr><td>直接光：龙 + 两个多边形光源 + <strong>环境贴图</strong></td><td><strong>方差削减 70%</strong></td><td>Le 项的大方差被 g 覆盖，RIS 能修</td></tr>
+    <tr><td>同场景，<strong>去掉环境贴图</strong></td><td>只剩 <strong>10%</strong></td><td>剩余方差主要在 visibility——<strong>g 里没有它</strong></td></tr>
+    <tr><td>BRDF 通用采样（g = Fs·cosθ，diffuse + Cook-Torrance）</td><td>一套实现通吃</td><td>只要求"BRDF 可求值"（Monte Carlo 本来就需要）</td></tr>
+  </table>
+  <blockquote><strong>"g 修不了它不包含的东西。"</strong> —— 70% → 10% 的落差是这句判据的原实验：选 g 时，先问"方差的主源在不在 g 里"。</blockquote>
+  <div class="cap">数据出自 Talbot 2005（EGSR）§5；等时间准则见 §4.3（M = TY/TX，可证明 ≤2× 最优方差）</div>
+</div>
+
+</div>
+</body>
+</html>
