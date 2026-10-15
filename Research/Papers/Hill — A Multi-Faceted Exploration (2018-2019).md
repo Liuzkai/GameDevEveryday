@@ -14,7 +14,7 @@ historical_importance: 4
 game_relevance: 5
 production_readiness: "Industry Adopted（路线 ③ 的工程化中段；④⑤ 两族的直接上游）"
 user_level: Normal
-status: unread
+status: read
 ---
 
 # A Multi-Faceted Exploration（2018–2019，Self Shadow 博客系列）
