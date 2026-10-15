@@ -15,7 +15,7 @@ historical_importance: 2
 game_relevance: 4
 production_readiness: Early Production（腾讯 Visvise 产品线方向的学术成果）
 user_level: Normal
-status: unread
+status: read
 ---
 
 # PartLLM: A Unified Multimodal Foundation for 3D Part Segmentation
