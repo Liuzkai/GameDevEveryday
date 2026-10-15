@@ -25,7 +25,7 @@ historical_importance: 2
 game_relevance: 4
 production_readiness: Research
 user_level: Normal
-status: unread
+status: read
 tags:
   - neural-rendering
   - gaussian-splatting
