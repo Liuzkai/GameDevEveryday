@@ -63,6 +63,7 @@ first_introduced: "1987（统计学 SIR，Rubin）；2005 图形学形式化（T
 ## Related Concepts
 
 - [[Reservoir Sampling]]——**容器侧**：RIS 的重采样在实现上由加权 reservoir（单槽流式）完成；"校正因子"演化为 reservoir 里携带的 W；
+- [[ReSTIR]]——**实时化下游**（2026-10-15 建立）：流式 RIS + 时空复用 + MIS 无偏化；本篇的三步与校正因子是它的直接数学基座；
 - [[Rendering Equation]]——被估计的积分；[[Global Illumination]]——应用域；
 - [[Importance Sampling]] 无独立页——其"抽不动"的边界正是 RIS 的起点（本页 Definition 已覆盖）；
 - 家族对照：**"一个表示代表全部"（IR 1997 的 VPL 场 / Zinke 2008 的原型路径 / reservoir 的候选集合）**——"用少量保留的统计量代表大规模中间集合"。
@@ -91,5 +92,5 @@ first_introduced: "1987（统计学 SIR，Rubin）；2005 图形学形式化（T
 ## Next Step
 
 1. （≈20 分钟）读 [[Talbot — Importance Resampling for Global Illumination (2005)]] 结论层——三行公式 + "等时间准则"一句即可；
-2. （观察项）ReSTIR DI（2020）入库时，对照"校正因子 → W"的演化——本篇笔记的预留对读位；
+2. ✅ ReSTIR DI（2020）已入库（2026-10-15）——对照"校正因子 → W"的演化已完成（见 [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI]] 的 §4：多源 PDF 的 |Z(y)|/M 偏差与 MIS 修正）；
 3. 把"等时间准则"写进个人预算方法论草稿（两段管线各测一次单次成本）。

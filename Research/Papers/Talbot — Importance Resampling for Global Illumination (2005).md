@@ -190,7 +190,7 @@ V(Î_ris) = 1/N · [ (1/M)(e3 − e2) + (e2 − e1) ]
 
 ### Followed By
 
-- **ReSTIR DI（Bitterli et al. 2020，待入库）**——reservoir 重采样 + 时空复用；**ReSTIR GI（2021）/ GRIS（2022）**——把 RIS 理论推广到相关样本与多域；**RTXDI**——工程化；**2026 的随机直接光产品线**。
+- ✅ **[[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI（Bitterli et al. 2020）]]（2026-10-15 已入库）**——reservoir 重采样 + 时空复用（对读位当日兑现："校正因子 → 蓄水池 W"直系 + 多源 PDF 的 O(M) MIS 无偏化 vs 本篇 O(M²)）；**ReSTIR GI（2021）/ GRIS（2022）**——把 RIS 理论推广到相关样本与多域；**RTXDI**——工程化；**2026 的随机直接光产品线**（MegaLights）。
 
 ## Personal Knowledge State
 

@@ -78,7 +78,8 @@ read_paper_count: 31
 | [[Tile-Based Rendering]]、[[GPU-Driven Rendering]] | 沿用 Normal；From Splats to Silicon 提供性能分析阅读依据，不等于全部管线知识已掌握 |
 | [[Neural Upscaling and Frame Generation]]、[[Temporal Stability and Artistic Intent]] | 沿用 Normal；DLSS 5 / Magpie 可作为已读对照，项目内效果与延迟尚未验证 |
 | [[Hair Rendering]] | 沿用角色渲染基础与待补状态；HairCS / Marschner 仍未读，毛发 15 条判据不能计为通过 |
-| [[Resampled Importance Sampling]]、[[Reservoir Sampling]]（★ 2026-10-14 新增） | 读者专题报告已提供概念层入口（"先从易抽取的分布产生候选，再向目标分布重采样"）；[[Talbot — Importance Resampling for Global Illumination (2005)]] 原文已入库待读——**分层推断为 Normal 入口**；方差公式推导与 W 的字段级构造另列 Hard |
+| [[Resampled Importance Sampling]]、[[Reservoir Sampling]]（★ 2026-10-14 新增 / **10-15 更新**） | 读者专题报告已提供概念层入口（"先从易抽取的分布产生候选，再向目标分布重采样"）；[[Talbot — Importance Resampling for Global Illumination (2005)]] 原文已入库——**分层推断为 Normal 入口**；**10-15：[[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI]] 原文入库 + 6 张论文原图**——"校正因子 → 蓄水池 W"对读材料齐备；方差公式推导与 \|Z(y)\|/M 定理另列 Hard |
+| [[ReSTIR]]（★ 2026-10-15 新增） | 三组件分工表 + 1982→2026 谱系 + 读者框架四阶段逐项咬合表已入库——**结论层 Normal**（读 ReSTIR DI 结论层 ≈30 分钟即覆盖）；推导层（\|Z\|/M 偏差定理、GRIS 一般化）列 Hard 后置 |
 
 ### Hard — 已接触，但推导或实现仍需桥接
 
@@ -100,7 +101,7 @@ read_paper_count: 31
 4. **Hard 按具体问题建桥**：可微方向从已读 GradRig / PBR-Latent 引出“优化什么参数、损失是什么、梯度从哪里来”，再用 [[Learning Path — Differentiable Rendering]] 补缺；神经方向沿 [[Learning Path — Neural Rendering]] 补训练侧概念。
 5. **毛发线已启动（2026-10-07 更新）**：[[Marschner — Light Scattering from Human Hair Fibers (2003)]] **深读进行中**（自制光路 SVG + 三处勘误 + 原文 PDF 挂载；status 未改）；配套材料已补 [[d'Eon — An Energy-Conserving Hair Reflectance Model (2011)]]（能量页，Weta 生产模型）。**（2026-10-08 更新）生产化页补入**：[[Chiang — A Practical and Controllable Hair and Fur Model for Production Path Tracing (2016)]]（WDAS；near-field 取消求积 + logistic + 第四叶）——**自测 18 → 21 条**，六节点闭合（1989→2016）；阅读顺序不变（Marschner → d'Eon 2011 → [可选] Chiang 2016 → 21 条自测）。仍为未读：[[2026-09-17-HairCS — Reconstructing Strand-Based Hair from Hair Cards]]、[[2026-09-18-LYRIC — Language-Driven Physics-Based Character Control]]；[[2026-09-17-DSD — Diffusion Skill Discovery]] ✅ 已读。
 6. **面部线开线（2026-10-08，资料侧）**：[[Facial Animation]] 概念建立 + [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]] 入库——**按需阅读（结论层 ≈20 分钟），不设硬动作**；blendshape 基础列为未来按需材料。
-7. **光照框架线（2026-10-14 新增）**：读者专题报告《现代实时光照的共同设计框架》把 MegaLights / Lumen / ReSTIR / RTXDI 组织成四阶段阅读框架；库内两端经典同步入库（[[Talbot — Importance Resampling for Global Illumination (2005)|RIS 2005]] / [[Schied — Spatiotemporal Variance-Guided Filtering (2017)|SVGF 2017]]）。推荐闭合动作：两篇结论层各 ≈20 分钟 + 报告自带的"两盏灯采样实验"（≈1 小时）；**ReSTIR DI（2020）列为下一入库候选**（RIS 的对读位）。
+7. **光照框架线（2026-10-14 新增 / 10-15 更新）**：读者专题报告《现代实时光照的共同设计框架》把 MegaLights / Lumen / ReSTIR / RTXDI 组织成四阶段阅读框架；库内三段原文现已齐备（[[Talbot — Importance Resampling for Global Illumination (2005)|RIS 2005]] / [[Schied — Spatiotemporal Variance-Guided Filtering (2017)|SVGF 2017]] / **[[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI 2020]]（10-15 入库，含 6 张原图）**）。推荐闭合动作：**ReSTIR DI 结论层 ≈30 分钟**（四问自测见 Daily 10-15）+ 报告自带的"两盏灯采样实验"（≈1 小时）；可选 RTXDI `Reservoir.hlsli` 15 分钟只读。**读者已按 STE 重写框架文档（10-14）——对读时以新版表述为准**。
 
 后续推荐避免重讲已读论文；只有用于对照、回答具体疑问或支撑实践时才回引。优先延续 PBR / 微面理论主线，同时保留动画与神经渲染的工程入口。此处优先级来自本次阅读分布的推断，不代表用户已经承诺执行这些练习。
 

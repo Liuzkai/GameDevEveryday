@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-14]]（昨日：[[2026-10-13]]）
+- **今日**：[[2026-10-15]]（昨日：[[2026-10-14]]）
 - **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**本周 W42 = 10-12 ~ 10-18**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-13（WorldCrafter 转 read——已读 31 篇；流体域开域 + 分配四端 + 重定向概念）/ 10-14 追加（读者专题报告 + 采样/重建双端经典；阅读状态不变）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-15（ReSTIR DI 经典入库 + 采样线四段齐 + 读者 STE 重写框架文档；阅读状态不变）**——推送按校正结果组织
 
-## Papers（118）
+## Papers（121）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -138,8 +138,11 @@ created: 2026-09-07
 | [[2026-10-09-MeshRepair — Autoregressive Topology Repair for Generated Artisan Meshes]] | B+ | Normal（结论层） | 中高（★ **AI 资产返修工位**："编辑序列而非新网格"（未触及面原样通过）；"quad 率 = 下游硬约束"；SubD 链前置节点）★ 2026-10-14 |
 | [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology]] | A- | Normal（结论层） | 高（★ **动捕 ⇄ 重定向边界合并**：可观测性分析 + 可靠性门控（"能测的用几何、测不到的交给学习"）；A100 51+ FPS，代码开源；Motion Retargeting 捕捉侧节点）★ 2026-10-14 |
 | [[2026-10-10-TETRIS-4DGS — Efficient Post-Training Compression of 4D Gaussian Splatting]] | B+ | Normal（结论层） | 中（★ **4DGS 部署端**：后训练 + codec 复用 + 重要度码率；秒级 40×；"翻译给旧工具"接口复用）★ 2026-10-14 |
+| [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)]] | A（经典） | **Normal（结论层）** | **最高（★ ReSTIR 家族定义文献：流式 RIS + 蓄水池可合并时空复用 + 多源 PDF 的 O(M) MIS 无偏化；"过滤 PDF 而非颜色"；340 万动态灯 50 ms；Talbot 2005 对读位当日结清；读者框架采样+复用+失效三阶段原文锚齐备）** ★ 2026-10-15 |
+| [[2026-10-13-Image Diffusion Models Are Good 3D Human Motion Generators]] | A- | Normal（结论层） | 高（★ **"不动数据、动表示"跨骨架第二答案**：拓扑感知 joint-time 图像 + 双潜流 SiT；HumanML3D+KIT-ML 单模型不 retarget；表示兼容=预训练继承权）★ 2026-10-15 |
+| [[2026-10-13-Co-DSL — Human-LLM Co-design of Reusable Spatial Concepts for Layout Generation]] | B+ | Normal（取三条抽象） | 中高（★ **"生成只做决策层"第 6 例**：概念库人机协同养成 + concept-graph + 求解器；PCG 规则获取 20 年演化收口：手写→学习→对话）★ 2026-10-15 |
 
-## Concepts（39）
+## Concepts（40）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -176,6 +179,7 @@ created: 2026-09-07
 - [[Motion Retargeting]] ★ 2026-10-13 入库（**动画数据管线第三环**（检索/压缩/转换）："要保清单"五级 + 三路线（IK 优化 / 数据驱动 / 优先级优化）；节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]] / [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement|Skinned Retargeting]] / [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]；★ 10-14 新增捕捉侧节点 [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]]）
 - [[Resampled Importance Sampling]] ★ 2026-10-14 入库（**采样端理论**：三步重采样 + 校正因子 + 方差劈分 + 等时间准则 M=TY/TX；ReSTIR 谱系的底座；与 [[Reservoir Sampling]] 互链）
 - [[Reservoir Sampling]] ★ 2026-10-14 入库（**流式加权抽样容器**："一个槽位代表整条候选流"；RTXDI 固定提交可直读；"一个表示代表全部"家族成员）
+- [[ReSTIR]] ★ 2026-10-15 入库（**采样线合流点**：流式 RIS + 时空复用 + MIS 无偏化；DI/GI/GRIS/RTXDI/MegaLights 方法族底座；与读者框架"采样+复用+失效"逐项咬合）
 
 **Hard 待建桥**
 - [[Neural Rendering]]

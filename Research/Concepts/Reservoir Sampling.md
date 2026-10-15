@@ -66,6 +66,7 @@ first_introduced: "1982/1985（统计学：Vitter / Chao 的加权蓄水池）�
 ## Related Concepts
 
 - [[Resampled Importance Sampling]]——**理论侧**：reservoir 是 RIS 重采样的容器化/流式化；
+- [[ReSTIR]]——**合流下游**（2026-10-15 建立）：流式 RIS + 时空复用；本页"可合并性"（合并蓄水池 = 合并候选流）是全文支点（Alg. 4）；
 - "**一个表示代表全部**"家族：IR 1997（一组 VPL 场景灯光场）/ Zinke 2008（一条原型路径代表全部路径）/ GALA 2026（一套基代表全部身份）/ **reservoir（一个槽位代表全部候选）**——"用少量保留统计量代表大规模中间集合"的又一样本；
 - [[Gaussian Splatting]]（其压缩/预算线）——工程上的"统计量携带"对照（如 SteadySplats 的方差统计量）。
 
@@ -93,5 +94,5 @@ first_introduced: "1982/1985（统计学：Vitter / Chao 的加权蓄水池）�
 ## Next Step
 
 1. （≈15 分钟）沿读者报告的代码地图，只读 RTXDI `Reservoir.hlsli` 的 `RTXDI_StreamSample` / `RTXDI_UpdateReservoir` 两个函数——**看 WRS 循环的工程形态**；
-2. （观察项）ReSTIR DI（2020）入库时做"概念 ↔ 原文"对读；
+2. ✅ ReSTIR DI（2020）已入库（2026-10-15）——"概念 ↔ 原文"对读位已兑现（[[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI]] Alg. 2 ↔ 本页伪代码；Alg. 4 ↔ 两流合并性质）；
 3. 一个跨域小练习：用 30 行伪代码写"单槽加权蓄水池 + 两流合并"，自测三条性质（可选）。
