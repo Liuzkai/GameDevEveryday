@@ -16,7 +16,7 @@ production_readiness: Prototype
 user_level: Normal
 status: read
 aliases: [CuACD, GPU convex decomposition, 全 GPU 凸分解]
-tags: [gpu-computing, collision, physics, pipeline, asset-processing, important, algorithm]
+tags: [gpu-computing, collision, physics, pipeline, asset-processing, important, algorithm, has-code]
 ---
 
 # CuACD: A Fully GPU-Resident Approximate Convex Decomposition
