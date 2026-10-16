@@ -156,7 +156,7 @@ status: read
 
 ### Followed By
 
-- ReSTIR GI (2021) / GRIS (2022) / RTXDI / ReGIR / MegaLights (UE 5.6) — 整个 ReSTIR 家族
+- [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI (2021)]]（已入库：候选改表面点 + Jacobian 修正 + 样本验证）/ GRIS (2022) / RTXDI / ReGIR / MegaLights (UE 5.6) — 整个 ReSTIR 家族
 
 ## Personal Knowledge State
 

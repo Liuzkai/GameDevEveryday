@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-15]]（昨日：[[2026-10-14]]）
+- **今日**：[[2026-10-16]]（昨日：[[2026-10-15]]）
 - **本周综合**：[[2026-W41]]（覆盖 **10-5 ~ 10-11**，✅ 已收官；**本周 W42 = 10-12 ~ 10-18**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-15（ReSTIR DI 经典入库 + 采样线四段齐 + 读者 STE 重写框架文档；阅读状态不变）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-16（ReSTIR GI 入库补家族中段；读者标记 4 篇 read——已读账本 31→38 口径：含 Obsidian 块列表格式实测）**——推送按校正结果组织
 
-## Papers（121）
+## Papers（124）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -139,8 +139,11 @@ created: 2026-09-07
 | [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology]] | A- | Normal（结论层） | 高（★ **动捕 ⇄ 重定向边界合并**：可观测性分析 + 可靠性门控（"能测的用几何、测不到的交给学习"）；A100 51+ FPS，代码开源；Motion Retargeting 捕捉侧节点）★ 2026-10-14 |
 | [[2026-10-10-TETRIS-4DGS — Efficient Post-Training Compression of 4D Gaussian Splatting]] | B+ | Normal（结论层） | 中（★ **4DGS 部署端**：后训练 + codec 复用 + 重要度码率；秒级 40×；"翻译给旧工具"接口复用）★ 2026-10-14 |
 | [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)]] | A（经典） | **Normal（结论层）** | **最高（★ ReSTIR 家族定义文献：流式 RIS + 蓄水池可合并时空复用 + 多源 PDF 的 O(M) MIS 无偏化；"过滤 PDF 而非颜色"；340 万动态灯 50 ms；Talbot 2005 对读位当日结清；读者框架采样+复用+失效三阶段原文锚齐备）** ★ 2026-10-15 |
+| [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)]] | A（经典） | Normal（结论层） | **最高（★ 家族中段补齐：候选从光源点改表面点；Jacobian 修正（方向采样系特有）+ 样本验证（"复用必须自带失效条件"第三例·主动重验证级）；UE4 内 8–18 ms，MSE 9.3–166×；48 B/蓄水池、25% 像素跑多跳——预算劈分两样本）** ★ 2026-10-16 |
 | [[2026-10-13-Image Diffusion Models Are Good 3D Human Motion Generators]] | A- | Normal（结论层） | 高（★ **"不动数据、动表示"跨骨架第二答案**：拓扑感知 joint-time 图像 + 双潜流 SiT；HumanML3D+KIT-ML 单模型不 retarget；表示兼容=预训练继承权）★ 2026-10-15 |
+| [[2026-10-14-GLoD-LVSM — Learning Geometry-Grounded Continuous-LoD Scene Representations for Large View Synthesis Models|GLoD-LVSM]] | A- | Normal（结论层） | 高（★ **引擎三件套（LoD/预算/剔除）回归神经表示**：连续场锚点数=预算输入（token −33.4% ↔ 1.23×，放宽档 −85.5% ↔ 3×）；几何接地→视锥剔除可用；涌现深度+锚点贴表面；与 Budgeted-GS 构成 LVSM/GS 双子）★ 2026-10-16 |
 | [[2026-10-13-Co-DSL — Human-LLM Co-design of Reusable Spatial Concepts for Layout Generation]] | B+ | Normal（取三条抽象） | 中高（★ **"生成只做决策层"第 6 例**：概念库人机协同养成 + concept-graph + 求解器；PCG 规则获取 20 年演化收口：手写→学习→对话）★ 2026-10-15 |
+| [[2026-10-14-Q-MAGIC — Quad-only Mesh Autoregressive Generation|Q-MAGIC]] | B+ | Normal | 中高（★ **网格资产线"生成侧出四边形"工位**：奇点优先序列化（约束最紧先走）+ 环形相对偏移 tokenization；MeshRepair（修复）→ 本文（生成）→ SubDGuide（SubD）→ CuACD（碰撞）四工位闭合）★ 2026-10-16 |
 
 ## Concepts（40）
 
@@ -242,7 +245,9 @@ Research/
 
 ---
 
-最后更新：2026-10-14（Run 36：**读者框架对接日 + 采样/重建双端开域**——**读者产出专题报告《现代实时光照的共同设计框架》**（MegaLights/Lumen/ReSTIR/RTXDI；四阶段框架 + 版本证据表 + 固定代码提交；**不改变已读/掌握状态**）；经典双纳入库：[[Talbot — Importance Resampling for Global Illumination (2005)]]（**采样端 RIS**：校正因子 / 方差劈分 / 等时间准则 M=TY/TX；"ReSTIR 的理论前置"缺口当场结清）+ [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（**重建端 SVGF**：1spp→10ms、≈10× 稳定性、"可信度旋钮"）；新概念 [[Resampled Importance Sampling]] + [[Reservoir Sampling]]；前沿 **周三批次（"周末清关"首次实证）**：cs.GR 9 + cs.CV 87 全量扫描，3 篇入库（[[2026-10-09-MeshRepair — Autoregressive Topology Repair for Generated Artisan Meshes|MeshRepair]] **就地修复** / [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]] **可靠性门控** / [[2026-10-10-TETRIS-4DGS — Efficient Post-Training Compression of 4D Gaussian Splatting|TETRIS-4DGS]] **秒级 40×**）+ 6 记名；产业：RTX Spark 上市周反作弊清单 + DLSS 5 模型 10× 成本压缩）
+最后更新：2026-10-16（Run 38：**ReSTIR 家族中段补齐 + 资产/表示双线**——经典头条：[[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI (2021)]]（**A 经典**：候选从光源点改表面点；**Jacobian 修正**（方向采样系特有）+ **样本验证**（"复用必须自带失效条件"第三例·主动重验证级）；UE4 内 8–18 ms / MSE 9.3–166×；6 图原图提取）；前沿：cs.GR 5 + cs.CV 114 周四批次扫描，2 篇入库（[[2026-10-14-GLoD-LVSM — Learning Geometry-Grounded Continuous-LoD Scene Representations for Large View Synthesis Models|GLoD-LVSM]] **A-：引擎三件套回归神经表示——连续 LoD 场，锚点数=预算输入** / [[2026-10-14-Q-MAGIC — Quad-only Mesh Autoregressive Generation|Q-MAGIC]] **B+：奇点优先序列化，网格资产线"生成侧出四边形"工位**）+ 4 记名（DiffGIPC 可微接触物理 4133× / VisibilitySplat / OmniPoser / DreamHMR）；**读者反馈**：4 篇标记 read（PartLLM / Stochastic GS Denoising / CuACD / Hill，CuACD 加 important+algorithm+has-code——**已读账本 31→38**，资产线四工位读者已读其三）；产业：**RTX Spark 10-16 全球上市 + DLSS 5 2× 模型同日上线**（NBA 2K27 首发 1.4×；118M 参数 / 4K 显存 −20% / 比 3 月 10×；霍格沃茨 11-05、燕云十六声 11 月下旬、RTX Remix 10-23）；Papers 121→**124**）
+　　▸ **10-15 回顾**（Run #37）：**对读位结清日**——经典头条 [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI 2020]]（A 经典 17 页精读，Talbot 对读位当日结清）+ 新概念 [[ReSTIR]] + 6 图（**新视觉政策首次完整执行**）；前沿 IDM 升级 A- + Co-DSL 漏网捞回 B+；Papers 118→121；git `c330b00`
+　　▸ **10-14 回顾**（Run #36）：**读者框架对接日**——读者产出《现代实时光照的共同设计框架》专题报告（四阶段+证据表+固定代码提交）；经典双纳 [[Talbot — Importance Resampling for Global Illumination (2005)|Talbot RIS 2005]]（采样端开域）+ [[Schied — Spatiotemporal Variance-Guided Filtering (2017)|SVGF 2017]]（重建端开域）；新概念 [[Resampled Importance Sampling]] + [[Reservoir Sampling]]；前沿周三批次 3 入库（MeshRepair / CAST / TETRIS-4DGS）+ 6 记名；产业 DLSS 5 模型 10× 压缩
 　　▸ **10-13 回顾**（Run #35）：**流体开域 + 感知优先日**——经典头条：[[Stam — Stable Fluids (1999)]]（**A 经典**：无条件稳定求解器 + "感知优先"原话出处 + **Stam 双身份闭环**（2005 细分奥斯卡三人组 × 2008 Maya Fluid Effects）；新概念 [[Fluid Simulation]]）；前沿：**周一公告组首次实证**（cs.GR 8 + cs.CV 153 全量扫描；3 篇入库——[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Confidence-Aware Densification]]（**分配四端之"生长端"**）/ [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（**"水的两条路"**）/ [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]（**"优先级 > 权重"**）+ 新概念 [[Motion Retargeting]]）；**读者反馈**：WorldCrafter 转 read（**31 篇**）+ README 许可章节；产业：Epic "AI 大转向" / RTX Spark 评测波（10-16）；W42 进行中）
 　　▸ **10-12 回顾**（Run #34）：**三角对偶日 + 分配三连**——Loop 1987 + Stam 三角版（48 年弧线三角分支一次补齐）；前沿 4 篇（SplatQ / Sonic-AMG / CompactSplat / H2-Ray——"分配三连"+ 流式动作）
 　　▸ **10-11 回顾**（Run #33）：**中段闭合日**——Stam 1998 + DeRose 1998（48 年弧线中段双节点）+ W41 收官；周末黑窗三通道 0 新条目（未凑数）

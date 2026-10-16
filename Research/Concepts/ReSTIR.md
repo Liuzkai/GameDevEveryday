@@ -38,7 +38,7 @@ first_introduced: 2020
 2005  Talbot RIS（图形学形式化；候选池要全存）
 2019  Moreau light BVH（实时数据结构派天花板）
 2020  ★ReSTIR DI（直接光；"过滤 PDF 而非颜色"）
-2021  ReSTIR GI（间接光）
+2021  ★ReSTIR GI（间接光；方向域候选 + Jacobian + 样本验证）
 2022  GRIS（统一理论）+ RTXDI SDK（DI/GI/PT/ReGIR）
 2025  MegaLights 进 UE 5.6（产品化高峰）
 2026  读者框架文档四阶段化：采样→时空复用→重建→失效
@@ -47,6 +47,7 @@ first_introduced: 2020
 ## Important Papers
 
 - [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)]]（首篇/本库锚点）
+- [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI (2021)]]（间接光版：候选改表面点 + Jacobian 修正 + 样本验证）
 - [[Talbot — Importance Resampling for Global Illumination (2005)]]（理论前置）
 - [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（重建端正交互补）
 
@@ -72,10 +73,10 @@ first_introduced: 2020
 
 ## Learning Gap
 
-- 偏差修正推导层未读（首篇 §4.2 + 附录 A/B）；GRIS 2022 未入库；RTXDI `Reservoir.hlsli` 15 分钟只读未执行。
+- 偏差修正推导层未读（DI 首篇 §4.2 + 附录 A/B；GI 的 Jacobian 推导与 |Z| 无偏化证明）；GRIS 2022 未入库；RTXDI `Reservoir.hlsli` 15 分钟只读未执行。
 
 ## Next Step
 
-1. 读 [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI]] 结论层（本库已入库）；
+1. 读 [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI]] 结论层（2026-10-16 入库）——重点：Jacobian 为何是 GI 特有、样本验证为何要用相同随机数；
 2. RTXDI `Reservoir.hlsli` 只读（固定提交已给，材料零成本）；
-3. 后续候选：ReSTIR GI (2021) / GRIS (2022) 入库补家族中段。
+3. 后续候选：GRIS (2022) 入库补统一理论段。
