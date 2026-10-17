@@ -48,6 +48,7 @@ first_introduced: 2020
 
 - [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)]]（首篇/本库锚点）
 - [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI (2021)]]（间接光版：候选改表面点 + Jacobian 修正 + 样本验证）
+- [[Lin — Generalized Resampled Importance Sampling Foundations of ReSTIR (2022)|GRIS (2022)]]（统一理论：相关样本+未知 PDF+跨域 shift mapping；M=置信权重，M-cap 成理论必需；ReSTIR PT）
 - [[Talbot — Importance Resampling for Global Illumination (2005)]]（理论前置）
 - [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（重建端正交互补）
 
@@ -69,14 +70,15 @@ first_introduced: 2020
 
 ## Personal Knowledge
 
-- **Normal（结论层）**；推导层（|Z(y)|/M 偏差定理、GRIS 一般化）为 Hard 桥，前置已就位（RIS 方差劈分 Normal）。
+- **Normal（结论层）**；推导层（GRIS 附录 A 定理链：权重等价/分布收敛/渐近方差/MIS 界）为 Hard 桥，前置已就位（RIS 方差劈分 Normal）。
 
 ## Learning Gap
 
-- 偏差修正推导层未读（DI 首篇 §4.2 + 附录 A/B；GI 的 Jacobian 推导与 |Z| 无偏化证明）；GRIS 2022 未入库；RTXDI `Reservoir.hlsli` 15 分钟只读未执行。
+- ~~GRIS 2022 未入库~~（**2026-10-17 入库**：四级推广阶梯 + 收敛条件清单 + M-cap 语义 + ReSTIR PT）；剩余：GRIS 附录 A/S.5 推导层未读；RTXDI `Reservoir.hlsli` 15 分钟只读未执行（挂起第 3 周）。
 
 ## Next Step
 
-1. 读 [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI]] 结论层（2026-10-16 入库）——重点：Jacobian 为何是 GI 特有、样本验证为何要用相同随机数；
-2. RTXDI `Reservoir.hlsli` 只读（固定提交已给，材料零成本）；
-3. 后续候选：GRIS (2022) 入库补统一理论段。
+1. ~~读 [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI]] 结论层~~（2026-10-16 入库）；
+2. ~~GRIS (2022) 入库补统一理论段~~（2026-10-17 完成——家族四篇 DI/GI/GRIS/RTXDI 结构齐了）；
+3. 剩余推导桥：GRIS 附录 A 定理链（可与 DI §4.2 + GI Jacobian 推导组一个"复用理论推导周"）；
+4. RTXDI `Reservoir.hlsli` 只读（固定提交已给，材料零成本）。

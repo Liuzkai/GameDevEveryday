@@ -159,7 +159,7 @@ MegaLights（UE 5.6）/ 读者框架四阶段
 
 ### Followed By
 
-- GRIS 2022（统一理论）/ RTXDI（SDK 化）/ MegaLights（UE 5.6 产品线）
+- [[Lin — Generalized Resampled Importance Sampling Foundations of ReSTIR (2022)|GRIS 2022]]（统一理论：本文的 Jacobian 修正被一般化为 shift mapping 框架；隐式使用的重连接 shift 在其中被点名"以正确性换性能"）/ RTXDI（SDK 化）/ MegaLights（UE 5.6 产品线）
 
 ## Personal Knowledge State
 
