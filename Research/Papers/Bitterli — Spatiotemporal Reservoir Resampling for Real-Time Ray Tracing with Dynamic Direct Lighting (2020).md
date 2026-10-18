@@ -45,7 +45,7 @@ status: read
 2020  ReSTIR —— 立场：把"维护数据结构"整个取消，用"流式候选 + 时空复用"替代
 ```
 
-另一侧的理论根：**1982 Chao 加权蓄水池采样**（单遍流式选样，为磁带机而生）+ **2005 RIS**（[[Resampled Importance Sampling]]）+ **1995 MIS**（Veach-Guibas）。三件旧工具的组合，出现在一个新位置上。论文附录 B 还补了一条数学史：WUS/WIS 等 ratio estimator 本身有偏，**RIS 可以看成"把 ratio estimator 变无偏"的方法**。
+另一侧的理论根：**1982 Chao 加权蓄水池采样**（单遍流式选样，为磁带机而生）+ **2005 RIS**（[[Resampled Importance Sampling]]）+ **1995 MIS**（[[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|Veach-Guibas，已入库]]）。三件旧工具的组合，出现在一个新位置上。论文附录 B 还补了一条数学史：WUS/WIS 等 ratio estimator 本身有偏，**RIS 可以看成"把 ratio estimator 变无偏"的方法**。
 
 ## Previous Work
 
@@ -141,7 +141,7 @@ status: read
 
 - [[Talbot — Importance Resampling for Global Illumination (2005)]] — RIS 三步 + 校正因子，本文的直接数学基座（一手引用 "building on Talbot et al.'s [2005] RIS"）
 - [[Reservoir Sampling]]（概念）— Chao 1982 流式加权选样 + Efraimidis-Spirakis 2006 加权版
-- Multiple Importance Sampling（Veach-Guibas 1995）— 无偏化的权重来源
+- [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|Multiple Importance Sampling（Veach-Guibas 1995）]] — 无偏化的权重来源（其 §5.4"近似权重仍无偏"条款是本文 O(M) MIS 的理论许可）
 
 ### Extends
 

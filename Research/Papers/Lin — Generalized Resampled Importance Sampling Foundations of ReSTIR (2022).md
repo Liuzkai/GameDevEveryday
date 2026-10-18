@@ -35,7 +35,7 @@ ReSTIR 家族的**统一理论**：把 Talbot RIS 从"独立同分布（i.i.d.�
 
 ```text
 1987  Rubin SIR（统计学的 RIS 原型：bootstrap filter 前身）
-1995  Veach-Guibas MIS（多策略无偏合并；后在"重采样 MIS"中复活）
+1995  [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|Veach-Guibas MIS]]（多策略无偏合并；后在"重采样 MIS"中复活）
 2002  Bekaert et al. 子路径顶点重连接（跨像素复用先祖）
 2005  Talbot RIS（图形学形式化；i.i.d. 假设从这里写进理论）
 2013-15  梯度域渲染的 shift mapping 家族（reconnection / random replay /

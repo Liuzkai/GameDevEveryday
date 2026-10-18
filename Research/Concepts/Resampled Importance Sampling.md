@@ -86,7 +86,7 @@ first_introduced: "1987（统计学 SIR，Rubin）；2005 图形学形式化（T
 ## Learning Gap
 
 - 方差劈分公式（e1/e2/e3）的推导——可跳过（结论可用）；
-- RIS × MIS 的组合方式（硕士论文版有章节，按需）；
+- RIS × MIS 的组合方式（硕士论文版有章节，按需；**MIS 原文已入库**（2026-10-18）：[[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)]]——§3.3 balance heuristic + §3.4 power heuristic）；
 - 从 RIS 到 reservoir 的字段级对应（等 ReSTIR 原文入库补齐）。
 
 ## Next Step

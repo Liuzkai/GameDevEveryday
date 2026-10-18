@@ -28,13 +28,14 @@ first_introduced: 2020
 
 - [[Resampled Importance Sampling]] — 三步重采样 + 校正因子（W 的来源）
 - [[Reservoir Sampling]] — 流式加权选样容器（可合并性的数学基础）
-- Multiple Importance Sampling — 无偏权重的出处
+- [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|Multiple Importance Sampling]] — 无偏权重的出处（1995 原文已入库）
 
 ## Historical Evolution
 
 ```text
 1982  Chao 加权蓄水池采样（磁带机流式选样）
 1987  Rubin SIR（统计学里的 RIS 原型）
+1995  MIS（Veach-Guibas：多技术无偏组合；三件旧工具之一，2026-10-18 入库）
 2005  Talbot RIS（图形学形式化；候选池要全存）
 2019  Moreau light BVH（实时数据结构派天花板）
 2020  ★ReSTIR DI（直接光；"过滤 PDF 而非颜色"）
@@ -49,6 +50,7 @@ first_introduced: 2020
 - [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)]]（首篇/本库锚点）
 - [[Ouyang — ReSTIR GI Path Resampling for Real-Time Path Tracing (2021)|ReSTIR GI (2021)]]（间接光版：候选改表面点 + Jacobian 修正 + 样本验证）
 - [[Lin — Generalized Resampled Importance Sampling Foundations of ReSTIR (2022)|GRIS (2022)]]（统一理论：相关样本+未知 PDF+跨域 shift mapping；M=置信权重，M-cap 成理论必需；ReSTIR PT）
+- [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|MIS (Veach-Guibas 1995)]]（组合权重的理论根基；balance/power 启发式 + 定理 1/2；§5.4 近似权重许可 = O(M) MIS 的理论前提）
 - [[Talbot — Importance Resampling for Global Illumination (2005)]]（理论前置）
 - [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（重建端正交互补）
 

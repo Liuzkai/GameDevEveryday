@@ -86,7 +86,7 @@ V(Î_ris) = 1/N · [ (1/M)(e3 − e2) + (e2 − e1) ]
 
 - **Weighted Importance Sampling**（Bekaert et al. 2000）：同样用两个 pdf 降方差——但"**consistent, not unbiased**（相容而非无偏）"，且不能优化算力分配；
 - **Combined Correlated and Importance Sampling**（Szécsi et al. 2004）：需要"积分函数的闭式近似"——限制通用性；
-- **MIS**（Veach 1997）：多分布+权重组合——**与 RIS 正交**（"多策略加权" vs "候选重采样"；后续 ReSTIR 里两者并用）。
+- **MIS**（[[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|Veach-Guibas 1995，已入库]]）：多分布+权重组合——**与 RIS 正交**（"多策略加权" vs "候选重采样"；后续 ReSTIR 里两者并用）。
 
 ## Core Idea
 
