@@ -94,6 +94,7 @@ Substrate（UE 5.2+）—— 多 lobe 可组合化，微面仍是底层积木
 | [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] | 框架来源：D·G·F 与能量守恒 |
 | [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] | **GGX 与 Smith height-correlated 的来源**——你实际在用的那个 D 和 G |
 | **[[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]** ★ 2026-09-17 | **你实际在用的那个 F**（$F_0+(1-F_0)(1-\cos\theta)^5$）。三因子至此全部有出处 |
+| **[[Kelemen — Coupled Specular-Matte BRDF Model with Importance Sampling (2001)]]** ★ 2026-10-19 | **G 项的简化路线 + 可采样化**：$\frac{G}{4(N\cdot L)(N\cdot V)}\to\frac{1}{4(1+\vec L\cdot\vec V)}$（分母消失、"密度×一维表"分解）；**附录含 CT 模型的完整概率推导**（含半程向量 Jacobian）——学 D/G/F 物理来源的对读件；"Kelemen 近似"是实时引擎（移动端/IBL）真实在用的第二套 Vis |
 | Heitz 2014《Understanding the Masking-Shadowing Function in Microfacet-Based BRDFs》 | 把 G 与可见法线分布讲透（推荐作为 G 项的深入读物） |
 | [[2026-09-16-Gaussian Process Implicit Surfaces as Participating Media]] | 2026：D 与 G 被从随机几何反推，Smith 成为 height-field 极限 |
 | **[[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]** ★ 2026-09-19 | **单次散射丢失的能量怎么补回来**（工程解：4KB 表 + 5 行证明）；附带 Furnace Test 这个可执行的自测方法 |

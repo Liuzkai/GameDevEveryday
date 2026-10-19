@@ -64,6 +64,7 @@ LLM 直接生成布局的两个老问题：① 一次性 prompt 生成难以沉�
 
 - **关卡/场景 PCG 的工作流样本**："工作室概念库 + LLM 排布 + 求解器落地"可对照库内 PCG 线（[[Müller — Procedural Modeling of Buildings (2006)|CGA shape grammar]] 的规则由专家写死；Co-DSL 的规则由人机对话增量养成）——**规则获取方式的 20 年演化：手写 grammar → 学习 grammar → 对话养成 grammar**；
 - 与 [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies|ProxyBuild]] 对读：同为"LLM 做决策层"，ProxyBuild 锚定几何代理，Co-DSL 锚定概念约束——**锚定物从几何上升到语义**；
+- ★ 2026-10-19 对照面出现：[[2026-10-16-Scene-Designer — Learning Design Intelligence for Agentic 3D Scene Generation|Scene-Designer]]——把设计知识**训练进模型**（agentic 直接操作 + 学习型 Critic），与本文"知识**资产化为概念库**"构成 LLM-PCG 的架构分岔：可审计可编辑（概念库） vs 端到端可学习（模型）；
 - 概念库 = 可版本控制、可评审、可复用的**资产化规则**——与"生成物是资产、规则也是资产"的 PCG 资产观一致。
 
 ## Unreal Engine Relevance

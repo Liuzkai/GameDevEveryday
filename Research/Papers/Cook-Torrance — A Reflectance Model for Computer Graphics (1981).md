@@ -229,6 +229,7 @@ lightWeight 是引擎计算的入射光权重，包含适用的灯光强度和�
 
 ### Followed By
 
+- **[[Kelemen — Coupled Specular-Matte BRDF Model with Importance Sampling (2001)]]**——G 项简化（分母消失）+ matte 耦合 + 重要性采样；**附录含本模型的完整光子概率推导**（D·G·F 三事件相乘的最干净讲法，学 D/G/F 物理来源的对读件）
 - GGX（Walter 2007）、Disney Principled（2012）、Karis UE4 实时化（2013）
 - [[LightOpt — Lights Optimization for Real-Time Rendering]] 一类现代工作默认材质侧已是 PBR，优化目标移到了灯光侧
 
