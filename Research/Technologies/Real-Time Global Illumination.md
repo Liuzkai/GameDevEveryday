@@ -169,6 +169,7 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 ## Game Engine Integration
 
 - UE：Lumen / SSGI / Lightmass
+- [[Lightmass in the Rendering Knowledge Map|Lightmass 与预计算光照专题]]：从渲染方程与 BRDF 输入，接到烘焙、Lightmap 及结果失效；与上面的运行时光照框架对照阅读。CPU/GPU 具体实现及官方／社区版本需分开核实。
 - 外接：NVIDIA RTX GI、RTX Remix（NRC）
 
 ## Unreal Engine Possibilities

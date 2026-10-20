@@ -225,6 +225,7 @@ created: 2026-09-07
 ### 专题报告
 
 - [[Modern Real-Time Lighting Framework|现代实时光照的共同设计框架]] — 比较 MegaLights、Lumen、ReSTIR 与 RTXDI 的采样、复用、重建和失效；含版本证据表、公开代码定位与流程图。[GitHub 阅读](Learning/Modern%20Real-Time%20Lighting%20Framework.md)
+- [[Lightmass in the Rendering Knowledge Map|Lightmass 在渲染知识体系中的位置]] — 连接渲染方程、BRDF、GI 缓存与预计算；含层级关系图、红墙到 Lightmap 的几何／索引图、论文对照和来源边界。[GitHub 阅读](Learning/Lightmass%20in%20the%20Rendering%20Knowledge%20Map.md)
 
 ## 目录结构
 

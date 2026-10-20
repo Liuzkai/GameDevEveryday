@@ -60,7 +60,7 @@ Radiosity（Goral et al. 1984，漫反射互反射特解）
 
 ## Technologies
 
-- 烘焙（Lightmass / Lightmap）= 离线解缓存
+- 烘焙（Lightmass / Lightmap）= 离线解缓存；展开见 [[Lightmass in the Rendering Knowledge Map|Lightmass 与预计算光照专题]]（区分数学问题、引擎系统与存储数据）。
 - SH Irradiance / Light Probe = 漫反射压缩解
 - Lumen / 硬件 RT = 实时近似
 - Path Tracer 参照模式 = 离线真值

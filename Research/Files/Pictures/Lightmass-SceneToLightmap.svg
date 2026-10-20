@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 565" width="1000" height="565" role="img" aria-labelledby="title desc">
+  <title id="title">从红墙反弹光到表面 Lightmap：几何与索引的对应</title>
+  <desc id="desc">左侧为教学场景：灯光照到红墙，红墙向地板反射，地板接收点 P 被相机观察。右侧为抽象光照 UV 贴图，蓝色虚线把 P 连接到其对应记录。颜色仅示意红墙贡献，并非 UE 的实际编码。</desc>
+  <defs>
+    <marker id="yellow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#bd821c"/></marker>
+    <marker id="red-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#bd5342"/></marker>
+    <marker id="blue-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#347caa"/></marker>
+    <marker id="green-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#357658"/></marker>
+    <radialGradient id="bounce-color"><stop stop-color="#ce8a76" stop-opacity=".78"/><stop offset="1" stop-color="#d9dfd4" stop-opacity="0"/></radialGradient>
+    <clipPath id="floor-clip"><path d="M70 305L215 270L460 375L270 435Z"/></clipPath>
+  </defs>
+  <rect width="1000" height="565" rx="14" fill="#f4f5ee"/>
+  <g font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif" fill="#283b31">
+    <text x="30" y="42" font-size="25" font-weight="700">先看光路，再看表面位置如何找到缓存记录</text>
+    <rect x="25" y="65" width="500" height="405" rx="12" fill="#fffef9" stroke="#c6d3c7"/>
+    <rect x="555" y="65" width="420" height="405" rx="12" fill="#fffef9" stroke="#c6d3c7"/>
+    <text x="45" y="99" font-size="19" font-weight="600">具体场景：几何、材质、灯光共同参与</text>
+    <path d="M70 140L215 115L215 270L70 305Z" fill="#d89482" stroke="#974d40" stroke-width="2"/>
+    <path d="M70 305L215 270L460 375L270 435Z" fill="#d9dfd4" stroke="#658368" stroke-width="2"/>
+    <ellipse cx="270" cy="351" rx="120" ry="64" fill="url(#bounce-color)" clip-path="url(#floor-clip)"/>
+    <text x="86" y="249" font-size="17" fill="#73382e">红墙</text>
+    <text x="344" y="413" font-size="17">浅色地板</text>
+    <circle cx="335" cy="140" r="19" fill="#f2d787" stroke="#bd821c" stroke-width="2"/>
+    <text x="361" y="146" font-size="17">固定灯</text>
+    <path d="M316 147L158 192" fill="none" stroke="#bd821c" stroke-width="3" marker-end="url(#yellow-arrow)"/>
+    <text x="224" y="177" font-size="16" fill="#946414">① 直接照射</text>
+    <circle cx="151" cy="194" r="5" fill="#974d40"/>
+    <path d="M156 200L280 347" fill="none" stroke="#bd5342" stroke-width="3" marker-end="url(#red-arrow)"/>
+    <text x="135" y="330" font-size="16" fill="#a34133">② 反弹光</text>
+    <circle cx="286" cy="354" r="7" fill="#fffef9" stroke="#347caa" stroke-width="3"/>
+    <text x="299" y="373" font-size="19" fill="#236a95" font-weight="600">P</text>
+    <path d="M292 344L398 253" fill="none" stroke="#357658" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#green-arrow)"/>
+    <rect x="400" y="224" width="40" height="29" rx="5" fill="#d9e7de" stroke="#357658" stroke-width="2"/>
+    <path d="M440 232L454 224V253L440 245Z" fill="#d9e7de" stroke="#357658" stroke-width="2"/>
+    <text x="342" y="278" font-size="16" fill="#357658">运行时观察方向</text>
+    <text x="577" y="99" font-size="19" font-weight="600">抽象 Lightmap：按光照 UV 找到记录</text>
+    <rect x="610" y="138" width="294" height="252" fill="#f2e0d6" stroke="#b59b89" stroke-width="2"/>
+    <path d="M610 180H904M610 222H904M610 264H904M610 306H904M610 348H904M652 138V390M694 138V390M736 138V390M778 138V390M820 138V390M862 138V390" fill="none" stroke="#ccb3a4"/>
+    <rect x="652" y="180" width="42" height="42" fill="#e5b4a2"/>
+    <rect x="694" y="180" width="42" height="42" fill="#dca18b"/>
+    <rect x="652" y="222" width="42" height="42" fill="#dca18b"/>
+    <rect x="694" y="222" width="42" height="42" fill="#cb846c"/>
+    <rect x="736" y="222" width="42" height="42" fill="#dfa78f"/>
+    <rect x="694" y="264" width="42" height="42" fill="#dca18b"/>
+    <rect x="736" y="264" width="42" height="42" fill="#e7b8a4"/>
+    <rect x="694" y="222" width="42" height="42" fill="none" stroke="#347caa" stroke-width="3"/>
+    <path d="M297 354L510 354L570 243L706 243" fill="none" stroke="#347caa" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#blue-arrow)"/>
+    <text x="397" y="340" font-size="16" fill="#236a95">P → 光照UV(P)</text>
+    <text x="752" y="249" font-size="17" fill="#236a95">对应记录</text>
+    <text x="610" y="416" font-size="16">UV 索引随表面绑定，不随相机移动。</text>
+    <text x="610" y="445" font-size="16">实际还包含过滤、编码与其他数据约定。</text>
+    <text x="35" y="504" font-size="18" font-weight="600">相机移动：可复用固定表面的漫反射照明。灯光、遮挡或反弹材质改变：检查烘焙是否失效。</text>
+    <text x="35" y="539" font-size="15" fill="#586d5f">原创教学示意；只画一段间接反弹。右侧颜色强调贡献关系，不代表 UE 的纹理编码、通道布局或完整功能。</text>
+  </g>
+</svg>
