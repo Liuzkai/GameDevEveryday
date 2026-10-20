@@ -60,6 +60,7 @@ $$L_{o,\mathrm{diffuse}}(x)=\frac{\rho(x)}{\pi}\,E(x).$$
 |---|---|---|
 | [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]、[[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]、[[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] | 提供理解局部材质响应的基础：光碰到表面后如何反射？ | BRDF 是光传输求解的输入；不能由此推断某版烘焙器使用完整 GGX 镜面路径。 |
 | [[Kajiya — The Rendering Equation (1986)]] | 提供全局光传输的统一表述，以及数值求解的入口。 | Lightmass 要近似求解相关光照问题；它的工程身份不能等同于渲染方程或单个求解算法。 |
+| [[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]] | **Radiosity 源头**（2026-10-20 入库）：封闭腔 form factor + 能量矩阵解漫反射互反射；摘要一句"视角无关⇒可预计算"是烘焙路线的法理起点；红蓝盒"color bleeding"实验与本文第 2 节红墙实验同构。 | 论文的实现不含遮挡、仅凸四边形——它提供问题定义与合法性，不提供 Lightmass 的实现蓝图；具体求解器版本差异仍需单独核实。 |
 | [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] | 理解“昂贵的间接辐照度可以缓存与复用”的思想入口。 | Ward 的自适应辐照度样本与插值，和最终 UV 贴图属于不同的数据组织；没有证据就不能宣称某版 GPU Lightmass 使用该算法。 |
 | [[Karis — Real Shading in Unreal Engine 4 (2013)]] | 通过 Split-sum 对照“哪些计算可以移到运行时之前”。 | BRDF LUT 以粗糙度、视角等索引材质响应积分；Lightmap 把具体场景的光照与表面位置关联。预滤波环境图是 Split-sum 的另一部分。 |
 | [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]] | 提供理解漫反射光照如何压缩表示的入口。 | SH 是表示方法；Lightmap 是表面光照数据组织。不能仅因“都存光照”就认定产品使用同一种表示。 |
@@ -106,4 +107,4 @@ $$L_{o,\mathrm{diffuse}}(x)=\frac{\rho(x)}{\pi}\,E(x).$$
 - **实现身份**：Epic 内置插件与 Luoshuang 社区版、补丁版须分别记录版本和来源；不能混用安装方法与功能清单。
 - **图示来源**：知识关系图及红墙／Lightmap 示意均为本专题原创教学图，未复制论文图或引擎界面。
 
-相关：[[Rendering Equation]] · [[Global Illumination]] · [[Real-Time Global Illumination]] · [[Split-Sum Approximation]] · [[Modern Real-Time Lighting Framework]]
+相关：[[Rendering Equation]] · [[Global Illumination]] · [[Real-Time Global Illumination]] · [[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)|Goral 1984（Radiosity 源头）]] · [[Split-Sum Approximation]] · [[Modern Real-Time Lighting Framework]]

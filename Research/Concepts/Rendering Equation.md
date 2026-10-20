@@ -32,7 +32,7 @@ $$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)
 辐射度量学（物理传统）
   ↓
 Whitted 递归光线追踪（1980，镜面特解）
-Radiosity（Goral et al. 1984，漫反射互反射特解）
+Radiosity（[[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)|Goral et al. 1984]]，漫反射互反射特解；"视角无关⇒可预计算"）
   ↓
 ★ Kajiya 统一表述（1986）→ [[Kajiya — The Rendering Equation (1986)]]
   ↓

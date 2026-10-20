@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-19]]（昨日：[[2026-10-18]]）
+- **今日**：[[2026-10-20]]（昨日：[[2026-10-19]]）
 - **本周综合**：[[2026-W42]]（覆盖 **10-12 ~ 10-18**，✅ 2026-10-18 收官——主线：采样理论四连发 DI/GI/GRIS/MIS + 视觉政策定型 + 资产四工位 + 产业双事件；**本周 W43 = 10-19 ~ 10-25**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-19（Kelemen 2001 入库——对接读者 Cook-Torrance 三因子学习焦点与 PBR 复习窗口（近编辑 Heitz/Fdez-Agüera 两篇）；已读账本维持 38，10-16 口径：含 Obsidian 块列表格式实测）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-20（已读账本 38→40：读者标 Scheuermann 2004 毛发 + ToCo-Mesh 两篇 read；读者自建 Lightmass 与预计算光照专题——烘焙线焦点打开；frontmatter read_paper_count 过期值 31 修正为 40）**——推送按校正结果组织
 
-## Papers（131）
+## Papers（133）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -148,6 +148,8 @@ created: 2026-09-07
 | [[2026-10-15-DisplacementQueries — Geometric Queries on Tessellation-Free Displaced Surfaces|DisplacementQueries]] | A- | Normal（结论层） | 高（★ **位移曲面"免细分"路线补齐查询能力**：一阶纹理空间层级（仿射高度平面+保守残差）——求交之外解锁表面采样/最近点/specular 搜索；内存省 ≥55.4× GM vs FCPW 预细分（速度换 7.48×）；Nanite 细分路线的对照证据；位移发光体采样直接可搬 VFX）★ 2026-10-17 |
 | [[2026-10-15-LinfCub — Compression of Uniformly Distributed Unit Quaternions|LinfCub]] | B+ | Normal | 高（★ **四元数压缩第一次有解析误差座次**：ℓ∞cub（八面体+单参数立方 warp）最大误差最小；48 bit/动画关键帧、32 bit/切线帧、30 bit/GS 旋转（24 bit≈Exp 30 bit）——动画资产位宽预算维度的理论依据）★ 2026-10-17 |
 | [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|MIS — Optimally Combining Sampling Techniques]] | A（经典·历史重要性 5） | Normal（结论层） | **最高（★ 采样线三件旧工具就此集齐：multi-sample 模型 + balance/power 启发式 + 定理 1/2——不用知道 f 就 provably good；β=2 是 30 年事实标准；§5.4"近似权重仍无偏"= ReSTIR DI O(M) MIS 的理论许可；§5.2"坏权重任意坏、坏样本配比最多差 n 倍"= 预算论证样板；4 图原图提取）** ★ 2026-10-18 |
+| [[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]] | A（经典） | Normal（结论层 ≈25 分钟） | **最高（★ Radiosity 源头 / 烘焙法理起点："视角无关⇒可预计算"；form factor 三约束 + 能量矩阵 B=E+ρH；红蓝盒 color bleeding + 实体模型实拍验证——读者 Lightmass 专题红墙实验的 40 年前原型；GI 概念页谱系表第 3 行落位，全表行行有节点；3 图原图）** ★ 2026-10-20 |
+| [[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning\|PhysSkin++]] | A- | Normal（系统侧 ≈20 分钟） | 中高（★ CVPR 2026 Highlight 期刊扩展：前馈蒙皮场自编码器免逐对象训练 + PISSL 稳定化 + rig 互补弹性响应；每步 12–14 ms 与网格规模解耦；mesh/点云/3DGS 通用绑定；"预算决定表示精度"第 5 员——handle 数 m 旋钮；代码开源）★ 2026-10-20 |
 | [[Kelemen — Coupled Specular-Matte BRDF Model with Importance Sampling (2001)]] | A（经典） | Normal（研读中·对接 CT 焦点） | **最高（★ PBR×采样双线交汇：G 项简化"分母消失"（1/(1+LV)）+ D·F 合并"密度×一维表" + matte 耦合 = Kulla-Conty 补偿公式代数雏形——能量补偿路线③源头；Ward 密度闭式逆采样 + 近最优权重；附录含 CT 完整光子概率推导（半程向量 Jacobian 1D 版）；"Kelemen 给公式 → Kulla-Conty 给工程 → Heitz 给真值"；8 图原图）** ★ 2026-10-19 |
 | [[2026-10-16-Structural Affinity — An Algorithm for Coherent Cage-Based Shape Design\|Structural Affinity]] | A- | Normal（结论层） | 高（★ 变形域"正则进参数化"：双笼 min-cap 亲和矩阵，O(N+L) 传播 + 可逆性=表达力不减；"参数化承担 93–98% 正则"；"预算决定表示精度"第 4 员——α/d 是变形预算旋钮）★ 2026-10-19 |
 | [[2026-10-16-Scene-Designer — Learning Design Intelligence for Agentic 3D Scene Generation\|Scene-Designer]] | B+ | Normal（取三条抽象） | 中高（★ "设计智能 = 会设计 + 会评判"：受控降级造偏好排序 + 轨迹压缩 110→30 步 + Scene-GRPO 双局部奖励；与 Co-DSL 构成 LLM-PCG 架构分岔（模型化 vs 资产化）；全开源）★ 2026-10-19 |
@@ -253,7 +255,9 @@ Research/
 
 ---
 
-最后更新：2026-10-19（Run #41：**PBR×采样双线交汇日 + 周一积压回补窗口**；前沿美东周日批首扫（周五 14:00 后提交件）：cs.GR 新增 2 + cs.CV 筛 54/120，2 篇入库（[[2026-10-16-Structural Affinity — An Algorithm for Coherent Cage-Based Shape Design|Structural Affinity]] **A-：变形域"正则进参数化"——双笼亲和矩阵 + "参数化承担 93–98% 正则"，预算旋钮 α/d** / [[2026-10-16-Scene-Designer — Learning Design Intelligence for Agentic 3D Scene Generation|Scene-Designer]] **B+：设计智能=设计+评判，受控降级造偏好排序，与 Co-DSL 构成 LLM-PCG 架构分岔，全开源**）+ 3 记名（N-Dim Splatting 直接条件参数化 / TriFold GS-VAE / LonGaussian 流式前馈）；经典头条：[[Kelemen — Coupled Specular-Matte BRDF Model with Importance Sampling (2001)]]（**A 经典**：G 项简化分母消失 + "密度×一维表" + matte 耦合 = Kulla-Conty 代数雏形——能量补偿路线③源头落位；附录 CT 完整概率推导含半程向量 Jacobian；Ward 可逆采样；8 图原图提取；Multiple Scattering 概念页清单 ✅ + Microfacet Theory 表 + Cook-Torrance Followed By 三处互链）；"动作月"催办第 7 日；Papers 128→**131**）
+最后更新：2026-10-20（Run #42：**烘焙线开题日**。读者侧：**已读账本 38→40**（Scheuermann 2004 毛发 + ToCo-Mesh 两篇 read）+ **读者自建 [[Lightmass in the Rendering Knowledge Map|Lightmass 与预计算光照专题]]**（四层区分 + 红墙三步实验 + 核验纪律模范执行）；前沿周二小批窗口（美东周一 20:00 批）：1 篇入库（[[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning|PhysSkin++]] **A-：CVPR 2026 Highlight 期刊扩展——前馈蒙皮场自编码器 + PISSL 稳定化 + rig 互补目标；每步 12–14 ms 与网格规模解耦；mesh/点云/3DGS 通用绑定**）+ 3 记名（Open-Form GeoStyle / FunCAD / FluidGen）；经典头条：[[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]]（**A 经典·历史重要性 5**：Radiosity 源头 / "视角无关⇒可预计算"= 烘焙法理起点；红蓝盒 color bleeding + 实体模型实拍双真值；GI 概念页谱系表第 3 行落位——全表行行有节点；与 Lightmass 专题红墙实验同构当日对接；3 图原图）；"动作月"催办第 8 日 + 新增最低门槛动作（红墙三步实验 ≈30 分钟）；Papers 131→**133**）
+
+　　▸ **10-19 回顾**（Run #41）：**PBR×采样双线交汇日**——Kelemen 2001 经典入库（Kulla-Conty 代数雏形 + CT 附录推导）+ Structural Affinity / Scene-Designer 前沿双入库（"正则进参数化" / LLM-PCG 架构分岔）+ 8 图原图
 　　▸ **10-18 回顾**（Run #40）：**采样线理论源头补齐**——经典头条 [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|MIS (1995)]]（**A 经典·历史重要性 5**：multi-sample 模型 + balance/power 启发式 + 定理 1/2；§5.4 近似权重许可 = ReSTIR O(M) MIS 的理论前提；§5.2 权重/样本数不对称 = 预算论证样板；4 图原图提取；ReSTIR 概念页 + Talbot/Bitterli/GRIS 三处互链更新）；**W42 周报（10-12~10-18）产出**；前沿周末空批不凑数；Papers 127→**128**
 　　▸ **10-17 回顾**（Run #39）：**ReSTIR 家族统一理论入库 + 位移/压缩工程双线**——经典头条 [[Lin — Generalized Resampled Importance Sampling Foundations of ReSTIR (2022)|GRIS (2022)]]（**A 经典**：RIS 推广到相关样本+未知 PDF+跨域——M=置信权重、M-cap 成理论必需、canonical 占比收敛条件、ReSTIR PT；3 图原图提取；家族四篇结构齐）；前沿 cs.GR 11 + cs.CV ~110 周五批次扫描，2 篇入库（[[2026-10-15-DisplacementQueries — Geometric Queries on Tessellation-Free Displaced Surfaces|DisplacementQueries]] **A-：一阶层级让位移曲面免细分可查询，内存 55.4× vs 速度 7.48× 的量化取舍** / [[2026-10-15-LinfCub — Compression of Uniformly Distributed Unit Quaternions|LinfCub]] **B+：四元数压缩解析误差座次，动画 48 bit/切线帧 32 bit/GS 30 bit**）+ 记名（STRUCTPARTS 分件生成 NeurIPS 2026 / ResStreamGS 移动端 GS 流送 / 服装布料 4 篇批次 / cs.CV 世界模型批次）；Papers 124→127
 　　▸ **10-15 回顾**（Run #37）：**对读位结清日**——经典头条 [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI 2020]]（A 经典 17 页精读，Talbot 对读位当日结清）+ 新概念 [[ReSTIR]] + 6 图（**新视觉政策首次完整执行**）；前沿 IDM 升级 A- + Co-DSL 漏网捞回 B+；Papers 118→121；git `c330b00`

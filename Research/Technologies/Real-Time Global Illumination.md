@@ -190,6 +190,7 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 ## Related Papers
 
 - [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] —— **"动态灯光"成本法则的地基**（每盏灯 ≈ +1× 场景渲染）
+- [[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]] —— **Radiosity 源头 / 烘焙路线 A 的法理起点**（"视角无关⇒可预计算"；"改 X 重算什么"三档失效价目表；2026-10-20 入库）
 - [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] —— **"误差预算"的原始文献**（辐照度缓存：a 容限决定点密度；NRC 祖先）
 - [[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]] —— **NRC 镜面支线首节点**（缓存对象换为反射方向参数化 + roughness 预滤波；split-sum 重建；2026-10-09 入库）
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]（烘焙路线 A 的数学根源：SH9 探针）
