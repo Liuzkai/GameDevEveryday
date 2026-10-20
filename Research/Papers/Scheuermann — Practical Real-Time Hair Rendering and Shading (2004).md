@@ -14,7 +14,7 @@ historical_importance: 4
 game_relevance: 5
 production_readiness: Industry Adopted
 user_level: Normal
-status: unread
+status: read
 aliases: [Scheuermann 2004, 实时毛发工程三刀]
 tags: [hair, rendering, real-time, sorting, early-z]
 ---
