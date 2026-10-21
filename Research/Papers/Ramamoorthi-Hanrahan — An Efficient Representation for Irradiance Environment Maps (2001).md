@@ -119,8 +119,8 @@ Lumen Radiance Probes / [[2026-09-14-Gaussian Light Transport]] 等现代探针�
 
 ### Followed By
 
-- **Precomputed Radiance Transfer**（Sloan, Kautz, Snyder 2002）——本文的直接下一代
-- 全部游戏引擎的 SH 探针体系
+- **[[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)|Precomputed Radiance Transfer（Sloan, Kautz, Snyder 2002）]]** —— 本文的直接下一代：**本文的"9 系数"就是 PRT 三档里的 `DU`（无遮挡漫反射）档**，且 $M=H_N$ 有解析式、无需存储；PRT 的增量只有两项——**可见性 $V$（9 → 25 系数）与互反射**。★ 2026-10-21 入库
+- 全部游戏引擎的 SH 探针体系（UE 的 ILC / Volumetric Lightmap、Unity Light Probes）
 
 ### Related
 

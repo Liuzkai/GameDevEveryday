@@ -68,6 +68,10 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 2026-09    地形/水系线（新分支）：[[2026-09-27-Plate-Local River Generation]]
            （板块局部河流："确定性 + 地形感知 + 下坡保证 + 无限域"四者首次同时成立；
            懒加载逐板块缓存——"有界域 + 确定性"首次进入 PCG 生成算法内部）★ 2026-10-03 入库
+2026-10    ★ 编辑线（新分支）：[[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]]
+           （**不写新库、改既有库**：AST 深度 2 依赖闭包圈出"可编辑表面"，三类策略
+            Tweak/Create/Promote；放置改为确定性视锥网格 + 五道闸门，拒绝让 VLM 猜坐标）
+           —— "规则编写费力"的第三种解法：不是替你写，是替你**改**）★ 2026-10-21 入库
 ```
 
 ## Important Papers
@@ -78,11 +82,14 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 - [[2026-09-20-ProxyBuild — Text-Guided Structured 3D Building Generation with Mesh-Anchored Procedural Proxies]] —— **2026 前沿样本**（推理 + 检索的混合范式；"结构锚定拓扑"原则；回应 2001 起就存在的"规则编写费力"）
 - [[2026-09-20-Mira-Scene — Pixel-Aligned Layouts for Generative 3D Scene Reconstruction]] —— **2026 前沿样本（续）**（单图→场景；"稠密有界对应"替代"稀疏无界位姿"）
 - [[2026-09-27-Plate-Local River Generation]] —— **自然地形 / 水系侧首个样本（2026）**（"确定性 + 地形感知 + 下坡保证 + 无限域"四者同时成立；板块双表示 + 懒加载逐板块缓存 + 构造性下坡保证——**"有界域"从空间/布局问题延伸到"生成算法自身的域划分"**；开放世界水系）★ 2026-10-03 入库
+- [[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]] —— **"改规则"侧样本（2026）**（SCE：AST 深度 2 的依赖闭包 = 可编辑表面；Tweak/Create/Promote 三策略；确定性视锥网格放置 + 五道闸门；池化 N→K）。**"规则编写费力"的第三种解法——不替你写，替你改** ★ 2026-10-21 入库
 - 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Perlin 1985《An Image Synthesizer》
 
 > **"结构锚定"母题三例**（9-21 ~ 9-23 连续入库）：Müller 2006 锚在"二维 scope" → ProxyBuild 锚在"面-边拓扑" → Mira-Scene 锚在"像素 ↔ 规范坐标"。**锚什么可以变，但"生成必须作用在可对齐、可查询、可修正的中间表示上"不变。** Mira-Scene 还给出本母题目前最干净的量化判据：**稠密化不够，"有界"才是关键**（场景空间稠密预测 3D-IoU 0.379 vs 有界规范空间 0.727）。
 
 > **"拆出去"三步曲（2026-10-02 随 Wonka 2003 入库沉淀）**：2001 把**参数**移出规则（ideal successor）→ 2003 把**设计想法 + 选择策略**移出规则（control grammar + attribute matching）→ 2006 把**表面**移出规则（两阶段中间表示）。**每次都是把"不属于规则职责的东西"移出去、给它独立的表示**——"规则只管结构"被三次推到极致。
+
+> **"决策 / 构造分离"的三种资产形态（2026-10-21 随 InfiniDream 入库沉淀）**：[[2026-10-13-Co-DSL — Human-LLM Co-design of Reusable Spatial Concepts for Layout Generation|Co-DSL]] 让 LLM 养成**概念库**（资产化）；[[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]] 让 LLM 编辑**程序化代码库**（模型化）；[[2026-10-16-Scene-Designer — Learning Design Intelligence for Agentic 3D Scene Generation|Scene-Designer]] 把判断力**训进模型**。三条路的共同前提完全一致：**VLM 只做离散、可验证的决策，连续几何交给确定性算法**——差别只在"被编辑的那个资产"长什么样。
 
 ## Related Concepts
 
@@ -117,6 +124,7 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
   3. **细节层次 = 迭代深度**（decreasing apices）——LOD 可以是生成语法的副产品，不必是独立资产链；
   4. **"选择策略"独立于"规则内容"**（[[Wonka — Instant Architecture (2003)]]）——规则库越大越需要独立的规则选择层（attribute matching：硬条件过滤 + 软偏好抽样）；判据：*约束越多，检查"怎么选"是否已从"规则本身"里拆出来*。
   5. **"先定域、后算局部"**（2026 河流线，[[2026-09-27-Plate-Local River Generation]]）——**确定性构造的域划分**让"需要全局视野"的问题逐块独立（**懒加载的前提是确定性**：可任意丢弃、重建、并行）；判据：*你面对的问题能否切进一个"可确定性构造的分区"，使每块独立可算？*（与"有界性"母题、chunk streaming / World Partition 同源）
+  6. **"可改范围"要可机械判定，"放哪里"要能搜出来**（2026 编辑线，[[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]]）——自由度不是"给不给权限"，而是**权限的拓扑范围**（AST 深度 2 的依赖闭包）；位置不是"预测出来的"，而是**搜索 + 五道布尔闸门**出来的（可见 / 碰撞 / 间距 / 表面策略 / 投影面积）；判据：*你的工具里"哪些参数能被上层改"是约定还是可计算？"放哪"是猜的还是枚举的？*
 - **成本账本（2001 原始数据）**：13,000 栋建筑 ≈ 路网 <10 秒 + 建筑约 10 分钟（2001 硬件）——"database amplification"的另一面是**生成时间成本**；与"离线生成量 ≠ 运行时负载"是同一条账本。
 
 ## Learning Gap

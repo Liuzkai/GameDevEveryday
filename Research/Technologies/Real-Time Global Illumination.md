@@ -194,6 +194,7 @@ Arm × Sumo Digital 的《Neural Dawn》（UE 5.6.1）是**全球首款在移动
 - [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] —— **"误差预算"的原始文献**（辐照度缓存：a 容限决定点密度；NRC 祖先）
 - [[2026-10-08-Neural Caching of Prefiltered Radiance for Specular Lighting]] —— **NRC 镜面支线首节点**（缓存对象换为反射方向参数化 + roughness 预滤波；split-sum 重建；2026-10-09 入库）
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]（烘焙路线 A 的数学根源：SH9 探针）
+- [[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]] —— **"烘算子 vs 烘答案"的分水岭**（PRT：换灯一次点积、几何锁死；探针族 = 它的退化版——只留辐照度、丢掉可见性 transfer；2026-10-21 入库）
 - [[Lightweight Attention-based Indirect Illumination (AMD)]]
 - [[LightOpt — Lights Optimization for Real-Time Rendering]]
 - [[DLSS 5 — Generative Neural Rendering]]

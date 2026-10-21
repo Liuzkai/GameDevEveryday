@@ -40,6 +40,9 @@ tags: [vfx]
 | [[MotionBricks — Scalable Real-Time Motions]] | VFX 时序锚点从帧 → 语义事件 | 长期 |
 | [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization]] | tile-local 思维与移动端排序 | 弱 |
 | [[LLM-Guided RL for Adaptive NPC Behavior]] | 低频智能 + 高频执行的结构可迁移 | 弱 |
+| [[2026-10-19-Wan-Alpha++ — Animating a Single RGBA Asset into Controllable Transparent Video Effects\|Wan-Alpha++]] | **素材生产侧**（序列帧/flipbook 的 alpha 与"出现–消失"时序）：不改运行时预算，改试错速度 | 中期（离线工具链） |
+
+> 关于最后一行的一句话：它**不进**运行时预算表（不降低 overdraw、不减少 draw call），只影响"技能 2D 素材怎么做出来"。把它放在这张表里，是为了区分**素材账**与**运行时账**——两条账本不要混算。
 
 ## Open Questions（值得你自己回答）
 
