@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-21]]（昨日：[[2026-10-20]]）
+- **今日**：[[2026-10-22]]（昨日：[[2026-10-21]]）
 - **本周综合**：[[2026-W42]]（覆盖 **10-12 ~ 10-18**，✅ 2026-10-18 收官——主线：采样理论四连发 DI/GI/GRIS/MIS + 视觉政策定型 + 资产四工位 + 产业双事件；**本周 W43 = 10-19 ~ 10-25**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-20（已读账本 38→40：读者标 Scheuermann 2004 毛发 + ToCo-Mesh 两篇 read；读者自建 Lightmass 与预计算光照专题——烘焙线焦点打开；frontmatter read_paper_count 过期值 31 修正为 40）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-22（资料侧：已读账本维持 40 篇——今日无读者新动作；新增判断："预算"一词在库内已分成四种计价对象（容量 / 成本 / 精度 / 时间），见 PKM 2026-10-22 块）**——推送按校正结果组织
 
-## Papers（136）
+## Papers（139）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -156,6 +156,9 @@ created: 2026-09-07
 | [[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]] | A（经典·历史重要性 5） | Normal（结论层 ≈30 分钟） | **最高（★ 烘焙线第二节点 / "烘算子 vs 烘答案"的开篇：换灯只需一次点积，成本与灯数灯尺寸无关；三档价目 DU 9 / DS 25 / 光泽 25×25——"阴影 +2 阶、光泽 平方"；三条锁：几何静态/运动刚性/光照低频；GI 谱系表第 4 行落位；4 图原图）** ★ 2026-10-21 |
 | [[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation\|InfiniDream]] | A- | Normal（结论层 ≈20 分钟） | 中高（★ **"不要让 VLM 写程序化代码，要让它改"**：AST 深度 2 依赖闭包 = 可编辑表面 + Tweak/Create/Promote 三策略；确定性视锥网格放置 + 五道闸门（不可读率 50.9%→7.8%）；池化 N→K；**放置是镜头优先、不是玩法优先**）★ 2026-10-21 |
 | [[2026-10-19-Wan-Alpha++ — Animating a Single RGBA Asset into Controllable Transparent Video Effects\|Wan-Alpha++]] | B+ | Normal（结论层 ≈15 分钟） | 中（**素材侧**：alpha 一等公民的透明视频生成——TABD 符号掩码 + 透明引导均值采样 + **时间相位重参数化**（换时间原点让首尾帧条件重新可用）；不降 overdraw、不进预算表，只改试错速度）★ 2026-10-21 |
+| [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds\|Matrix-Game 4.0]] | A | **Normal（系统侧 ≈20 分钟）** | **最高（★ 世界模型"层次 2"最强样本：可执行 harness 三角色（agent 写规则 / 引擎管状态 / 视频模型管画面）——**规则可执行因此标注可零模型推断**（114,334 段 / 1,712 小时字幕全由模板渲染，不用 VLM）；三阶段因果蒸馏 + 九项推理优化；**4.5→83.4 FPS / 1110→112 ms @5090** ——"实时是系统账，不是模型账"；5090/5080/5070Ti 三档硬件）** ★ 2026-10-22 |
+| [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting\|RLSplat]] | A | **Normal（结论层 ≈15 分钟）** | **高（★ GS 预算的"成本侧"：用"分配"替代"裁剪"——GSPO 策略学高斯配额 k~Mult(B,p)（Σk=B）+ 资源线性解码（局部 cross-attn + 层次邻居搜索 O(BK)）；2K 预算 +0.9 dB / 显存 9.6× 少 / 速度 4.1×；**关键诚实点：策略 24.83 vs Sobel 启发式 24.76 dB（仅 +0.07）——学到的是"分配"这个动作**；Voronoi/offset/projection 三正则消融分别 −2.51 / −0.53 / 训崩）** ★ 2026-10-22 |
+| [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting\|KoalaGS]] | B+ | **Normal（结论层 ≈15 分钟）** | 中高（★ 连续 LoD 的排序键：用**优化前**的图像复杂度（delentropy 最强，2D ρ≈−0.60 / 3D −0.64）做空间先验 —— "先验在训练前就可得"；p=αe^C̃ 迁移偏置 + complexity dropout δ=0.2；排序键 S=α+λs/e^C̃ + 残差方差正则；100%→0.1% 连续全谱评测；**如实边界：对 MGS 只 +0.12/+1.23 dB，主要增益来自与不排序 MCMC 的对比**；NeurIPS 2026 Spotlight） ★ 2026-10-22 |
 
 ## Concepts（41）
 
@@ -259,17 +262,4 @@ Research/
 
 ---
 
-最后更新：2026-10-21（Run #43：**烘焙线第二节点 / 空批补扫日**。读者侧：**无新动静**（fetch 后 HEAD == 远程，已读账本维持 40 篇）；前沿：美东周二 20:00 批延迟未放（**不凑数**），改做 10-19 批次全量补扫——**2 篇入库**（[[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]] **A-："不要让 VLM 写程序化代码，要让它改"——AST 深度 2 可编辑表面 + 三策略 + 确定性视锥网格五道闸门（不可读率 50.9%→7.8%）** / [[2026-10-19-Wan-Alpha++ — Animating a Single RGBA Asset into Controllable Transparent Video Effects|Wan-Alpha++]] **B+：alpha 一等公民 + 时间相位重参数化（换时间原点让首尾帧条件重新可用）**）+ 3 记名；经典头条：[[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]]（**A 经典·历史重要性 5**："烘算子 vs 烘答案"开篇——换灯一次点积、成本与灯数灯尺寸无关；三档价目 9 / 25 / 25×25；三条锁；**GI 谱系表第 4 行落位**，第 3/4/6 行自此连成"冻结哪个变量"一条轴；4 图原图）+ 新概念 [[Spherical Harmonics]]（**SH 第一次有自己的页**）；"动作月"催办第 9 日 + 新增 5 分钟动作（把档位翻译成 9/16/25 系数）；Papers 133→**136**，Concepts 40→**41**）
-
-　　▸ **10-20 回顾**（Run #42）：**烘焙线开题日**——Goral 1984 Radiosity 源头入库（GI 谱系表第 3 行落位）+ PhysSkin++ 前沿入库 + **读者标 2 篇 read（38→40）与自建 Lightmass 专题** + 6 图原图
-　　▸ **10-19 回顾**（Run #41）：**PBR×采样双线交汇日**——Kelemen 2001 经典入库（Kulla-Conty 代数雏形 + CT 附录推导）+ Structural Affinity / Scene-Designer 前沿双入库（"正则进参数化" / LLM-PCG 架构分岔）+ 8 图原图
-　　▸ **10-18 回顾**（Run #40）：**采样线理论源头补齐**——经典头条 [[Veach — Optimally Combining Sampling Techniques for Monte Carlo Rendering (1995)|MIS (1995)]]（**A 经典·历史重要性 5**：multi-sample 模型 + balance/power 启发式 + 定理 1/2；§5.4 近似权重许可 = ReSTIR O(M) MIS 的理论前提；§5.2 权重/样本数不对称 = 预算论证样板；4 图原图提取；ReSTIR 概念页 + Talbot/Bitterli/GRIS 三处互链更新）；**W42 周报（10-12~10-18）产出**；前沿周末空批不凑数；Papers 127→**128**
-　　▸ **10-17 回顾**（Run #39）：**ReSTIR 家族统一理论入库 + 位移/压缩工程双线**——经典头条 [[Lin — Generalized Resampled Importance Sampling Foundations of ReSTIR (2022)|GRIS (2022)]]（**A 经典**：RIS 推广到相关样本+未知 PDF+跨域——M=置信权重、M-cap 成理论必需、canonical 占比收敛条件、ReSTIR PT；3 图原图提取；家族四篇结构齐）；前沿 cs.GR 11 + cs.CV ~110 周五批次扫描，2 篇入库（[[2026-10-15-DisplacementQueries — Geometric Queries on Tessellation-Free Displaced Surfaces|DisplacementQueries]] **A-：一阶层级让位移曲面免细分可查询，内存 55.4× vs 速度 7.48× 的量化取舍** / [[2026-10-15-LinfCub — Compression of Uniformly Distributed Unit Quaternions|LinfCub]] **B+：四元数压缩解析误差座次，动画 48 bit/切线帧 32 bit/GS 30 bit**）+ 记名（STRUCTPARTS 分件生成 NeurIPS 2026 / ResStreamGS 移动端 GS 流送 / 服装布料 4 篇批次 / cs.CV 世界模型批次）；Papers 124→127
-　　▸ **10-15 回顾**（Run #37）：**对读位结清日**——经典头条 [[Bitterli — Spatiotemporal Reservoir Resampling for Real-Time Ray Tracing with Dynamic Direct Lighting (2020)|ReSTIR DI 2020]]（A 经典 17 页精读，Talbot 对读位当日结清）+ 新概念 [[ReSTIR]] + 6 图（**新视觉政策首次完整执行**）；前沿 IDM 升级 A- + Co-DSL 漏网捞回 B+；Papers 118→121；git `c330b00`
-　　▸ **10-14 回顾**（Run #36）：**读者框架对接日**——读者产出《现代实时光照的共同设计框架》专题报告（四阶段+证据表+固定代码提交）；经典双纳 [[Talbot — Importance Resampling for Global Illumination (2005)|Talbot RIS 2005]]（采样端开域）+ [[Schied — Spatiotemporal Variance-Guided Filtering (2017)|SVGF 2017]]（重建端开域）；新概念 [[Resampled Importance Sampling]] + [[Reservoir Sampling]]；前沿周三批次 3 入库（MeshRepair / CAST / TETRIS-4DGS）+ 6 记名；产业 DLSS 5 模型 10× 压缩
-　　▸ **10-13 回顾**（Run #35）：**流体开域 + 感知优先日**——经典头条：[[Stam — Stable Fluids (1999)]]（**A 经典**：无条件稳定求解器 + "感知优先"原话出处 + **Stam 双身份闭环**（2005 细分奥斯卡三人组 × 2008 Maya Fluid Effects）；新概念 [[Fluid Simulation]]）；前沿：**周一公告组首次实证**（cs.GR 8 + cs.CV 153 全量扫描；3 篇入库——[[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Confidence-Aware Densification]]（**分配四端之"生长端"**）/ [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（**"水的两条路"**）/ [[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]]（**"优先级 > 权重"**）+ 新概念 [[Motion Retargeting]]）；**读者反馈**：WorldCrafter 转 read（**31 篇**）+ README 许可章节；产业：Epic "AI 大转向" / RTX Spark 评测波（10-16）；W42 进行中）
-　　▸ **10-12 回顾**（Run #34）：**三角对偶日 + 分配三连**——Loop 1987 + Stam 三角版（48 年弧线三角分支一次补齐）；前沿 4 篇（SplatQ / Sonic-AMG / CompactSplat / H2-Ray——"分配三连"+ 流式动作）
-　　▸ **10-11 回顾**（Run #33）：**中段闭合日**——Stam 1998 + DeRose 1998（48 年弧线中段双节点）+ W41 收官；周末黑窗三通道 0 新条目（未凑数）
-　　▸ **10-10 回顾**（Run #32）：**48 年正逆弧线日**——几何建模域开域（Catmull-Clark 1978 + Subdivision Surfaces 概念）+ "对齐"三连（RiCo / PCAsplat / GaussianBench）+ UE 5.8 正式发布
-　　▸ **10-9 回顾**（Run #31）：**接口日**——五条路线全节点闭合（Turquin 2019）+ NRC-Spec / Tabula Rasa / emg2face；读者自制五路线图解（"用自己的话比较"实物产物）；E-Day 深测到账
-　　▸ **10-8 回顾**（Run #30）：**毛发生产化日**——Chiang 2016（六节点闭合）+ PDB / DynaConTalk / Multiphysics；新概念 [[Facial Animation]]；RTX Spark 发布
+最后更新：2026-10-22（Run #44：**世界模型层次 2 收口 / 水体经典开线日**。读者侧：**无新动静**（`git pull --ff-only` 返回 Already up to date，已读账本维持 40 篇）；前沿：美东周三 20:00 批 = **10-21（周三）全新批次**，cs.GR 14 条 + cs.CV 关键词筛选——**3 篇入库**：[[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]] **A：“规则可执行 → 标注零模型推断”——harness 三角色 + 模板字幕 + 三阶段因果蒸馏，83.4 FPS** / [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting|RLSplat]] **A：预算的成本侧，以分配代裁剪；并诚实模型告知“策略仅 +0.07 dB 于 Sobel”** / [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting|KoalaGS]] **B+：连续 LoD 排序键用优化前复杂度做先验（NeurIPS Spotlight）**）+ 3 记名；经典头条：[[Tessendorf 2001 — Simulating Ocean Water|Tessendorf 2001]]（**A 经典·历史重要性 5**：水面“谱合成”开篇 —— Phillips 谱 + 一次 IFFT；“**不解方程，采统计**”与 Stam 1999 的“解 NS”并列为水的两条路；**不可剔除是 FFT 路线的结构性代价**；Jacobian J<0 作泡沫遮罩；3 图原图）+ 新建 [[World Models for Games]] 第四维度（状态可读性）；“动作月”催办第 10 日；Papers 136→**139**，Concepts 维持 41（今日无新页，三条新线全部落在既有概念页内））

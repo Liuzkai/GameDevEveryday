@@ -38,6 +38,21 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 
 **核心权衡（本域第一账）**：**精度 ↔ 稳定性/速度**——Stam 1999 的名言是"CG 要的是形状与行为，物理精度次要甚至无关"；降档语言 = 降网格分辨率、降步数、换更省的表示。
 
+### 水的第二条路：不求解，采样统计（2026-10-22 落位）
+
+流体的三条路线都在**解方程**；水面还有一条**不解方程**的路——**谱合成**（[[Tessendorf 2001 — Simulating Ocean Water|Tessendorf 2001]]）：
+
+```text
+按实测海浪谱（Phillips: k⁻⁴ 衰减 + 风向余弦）随机生成频域系数
+    → 每帧只乘相位 e^{iωt}（色散 ω=√gk，帧间无状态）
+    → 一次 2D IFFT 变回高度场
+    → 水平位移造尖峰（Creamer）+ Jacobian J<0 处起泡沫
+```
+
+**它值钱的地方是成本模型**：每帧 $O(N^2\log N)$，**只与网格分辨率有关，与"水面上有什么/镜头看到多少"完全无关**——是**固定成本型**（像后处理），不是**按元素计费型**（像粒子、像网格求解）。代价是**不可剔除、不可局部加密、无拓扑变化**：想让船扰动水面就得换 iWave 一类的显式波动方程，想做"近细远粗"只能多级 patch。
+
+> **判据（放进预算工具箱）**：*这个水面项的成本，随"画面里有多少水"变、还是随"分辨率"变？* 前者可剔除、可降档；后者一旦开就全帧付账——**游戏最终普遍选 Gerstner 叠加（顶点可控、可剔除）而非 FFT，原因在此**。
+
 ## Prerequisites
 
 - **向量场直觉**：梯度、散度（"流体是否在源/汇"）、无散场的含义（不可压）；
@@ -54,6 +69,9 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 1996/97  Foster-Metaxas：完整 3D NS 首次进 CG（液体 / 热湍流气体）——显式、会爆炸
 1999  ★ [[Stam — Stable Fluids (1999)|Stam《Stable Fluids》]]：无条件稳定求解器
       （拉格朗日对流 + 隐式扩散 + 投影；"动画师续命"的耗散取舍）
+2001  ★ [[Tessendorf 2001 — Simulating Ocean Water|Tessendorf《Simulating Ocean Water》]]：**水的第二条路——谱合成**
+      （不解 NS，按 Phillips 谱随机造频域系数 + 一次 IFFT；色散 ω=√gk 只管相位；
+       尖锐位移 + Jacobian 折叠判据→泡沫；"全有或全无"的固定成本模型）★ 2026-10-22 入库
 2001  Fedkiw 等《Visual Simulation of Smoke》：+ 涡量约束（找回被耗散的小涡）
 2003  Stam《Real-Time Fluid Dynamics for Games》（GDC 版）
 2005±  FLIP 引入图形学（Zhu & Bridson 等）→ 影视管线主流
@@ -67,6 +85,7 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 ## Important Papers
 
 - [[Stam — Stable Fluids (1999)]] —— **CG 流体域枢纽**（无条件稳定：拉格朗日对流 + 隐式扩散 + 投影；"感知优先"哲学出处；Maya Fluid Effects 的理论来源）★ 2026-10-13 入库
+- [[Tessendorf 2001 — Simulating Ocean Water]] —— **水面谱合成源头**（"不解方程、采统计"：Phillips 谱 + 一次 IFFT + 色散只管相位；尖锐位移与 Jacobian 泡沫判据；**固定成本、不可剔除**的成本模型；游戏/影视水面二十年事实模板）★ 2026-10-22 入库
 - 记名（未单独入库）：Foster-Metaxas 1996/1997（完整 NS 进 CG）；Fedkiw 等 2001（Vorticity Confinement）；Zhu & Bridson 2005（FLIP 进图形学）；Stam 2003 GDC（游戏向实时版）
 - 对照样本：[[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（2026，感知路线——"不模拟的水"）
 
@@ -88,7 +107,7 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 ## Game Applications
 
 - **环境与战斗特效**：烟、火、雾、魔法流体、破坏烟尘（多为烘焙管线：Houdini→翻页图）
-- **水体**：水面渲染（波面/FFT）≠ 流体求解；水花/飞溅走 FLIP 或粒子；氛围水（溪流/瀑布）2026 起出现"感知注入"路线（Make It Flow）
+- **水体**：水面渲染（波面/FFT）≠ 流体求解——**水面是本域的"半独立分支"**（[[Tessendorf 2001 — Simulating Ocean Water|Tessendorf 2001]]：不做流体，只造"水面的样子"）；水花/飞溅走 FLIP 或粒子；氛围水（溪流/瀑布）2026 起出现"感知注入"路线（Make It Flow）
 - **交互响应**：需要"跟着玩家/交互动"的流体 → 真实时求解（网格法/轻量 FLIP）或引擎内简化方案
 
 ## Personal Knowledge
@@ -105,5 +124,6 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 ## Next Step
 
 1. （可选，≈25 分钟）读 [[Stam — Stable Fluids (1999)]] 结论层 + 今日图解——"四步分解"即全部要点；
+2. （可选，≈25 分钟）读 [[Tessendorf 2001 — Simulating Ocean Water]] 结论层——**只取三件**：谱造初值 / 相位演化 / Jacobian→泡沫；这是"不求解"那条路的全部要点（水花/水面技能可直接搬）；
 2. （可选对照）看一遍手中 Houdini FLIP 工程（若在项目中）：**"粒子携带的是什么量、网格解的是什么"**——对照混合法定义；
 3. （观察项）EmberGen/引擎内外"实时演化 vs 烘焙"的分界是否随时间推移向实时侧移动。

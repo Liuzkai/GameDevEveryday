@@ -67,6 +67,8 @@ NeRF（隐式 MLP + volume rendering，慢）
 - [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]] —— **几何质量线（新）**：可微局部 PCA 正则（作用在中心邻域、**视角无关**）修复 floaters——"看不见的高斯也有监督"；特征值谱正则（表面化 + 各向同性切向）+ 法线对齐；DTU/T&T 上表面质量提升、**下游（点云分割 / Poisson 重建）免修直用** ★ 2026-10-10
 - [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Efficient Confidence-Aware Densification for 3DGS]] —— **分配四端之"生长端"（密度控制）**：3DGS-MCMC 的"不透明度驱动"→"误差驱动"（梯度排名 × 低置信度加权采样 + 贡献度重定位）；24 场景 100k–2M 全预算超 MCMC；**"预算跟着缺口走，不跟着现状走"** ★ 2026-10-13
 - [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]] —— **场景动态化（"注入派"）**：静态 3DGS 的流体动效注入（光流 → 3D 欧拉运动场 → cinemagraph 式对称变形）；"三不"（无捕获/无重训/无模拟）+ 2 MB 可携带运动场 + 实时循环 ★ 2026-10-13
+- [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting|RLSplat]] —— **预算的成本侧（新）**：把“给定预算”从“事后裁剪”改为“前馈生成时按配额分配”——GSPO 策略网络学高斯配额 $k\sim\mathrm{Mult}(B,p)$（$\sum k_n=B$），资源线性解码器只用 $O(BK_{gs})$ 局部 cross-attn 取出；三个正则（Voronoi / offset / projection）分别撑住“不重叠 / 不漂移 / 可微”；2K 预算下 +0.9 dB、显存 **9.6×** 少、速度 **4.1×**；**关键诚实点：策略 24.83 dB vs Sobel 边缘启发式 24.76 dB，仅差 0.07 dB——“学到的是分配这个动作，不是更聪明的先验”** ★ 2026-10-22
+- [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting|KoalaGS]] —— **连续 LoD 的排序键（新）**：用**优化前**的图像复杂度（delentropy，2D ρ≈−0.60 / 3D −0.64）做空间先验，训练时按 $p=\alpha e^{\tilde C}$ 迁移偏置 + complexity dropout（$\delta=0.2$），渲染时排序键 $S=\alpha+\lambda s/e^{\tilde C}$ + 残差方差正则；100%→0.1% 连续全谱评测（不是几个离散档）；**如实边界：对 MGS 排序只 +0.12/+1.23 dB，主要增益来自与“不排序”的 MCMC 对比——先验有用，但别夸大** ★ 2026-10-22
 
 ## LOD / 预算线（2026-10-05 开线）
 

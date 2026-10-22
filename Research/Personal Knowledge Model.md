@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-10-21
+updated: 2026-10-22
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 40
@@ -24,6 +24,14 @@ read_paper_count: 40
 > **2026-10-14 更新（读者侧 + 资料侧）**：**读者在另一设备产出专题报告《现代实时光照的共同设计框架：MegaLights、Lumen、ReSTIR 与 RTXDI》**（`Learning/Modern Real-Time Lighting Framework.md`，417 行 + 3 张自制 SVG；含版本证据表与固定代码提交）——报告自述"**本次没有运行 UE benchmark，也不改变知识库中的已读／掌握状态**"：**已读账本维持 31 篇**；报告把"**采样 → 时空复用 → 重建／去噪 → 更新／失效**"确立为阅读框架，并列出 **5 项最小实践路线**（两盏灯采样 / 门开关历史 / 离屏遮挡 / Lumen 缓存 / 透明分层——均为教学建议，未执行）。**资料侧（"采样与重建双端开域日"）**：经典双纳入库——[[Talbot — Importance Resampling for Global Illumination (2005)]]（**RIS 源头**：三步重采样 + 校正因子 + 方差劈分 + 等时间准则 M=TY/TX；**"ReSTIR 的理论前置"——读者报告自己指认的库内缺口，当日结清**）+ [[Schied — Spatiotemporal Variance-Guided Filtering (2017)]]（**实时重建开端**：时域累积 + 方差引导 à-trous + 三条边缘停止；1 spp / 10 ms / ≈10× 稳定性）；新概念 [[Resampled Importance Sampling]] + [[Reservoir Sampling]]（"一个槽位代表整条候选流"；RTXDI 固定提交可直读）。**前沿 3 篇**：[[2026-10-09-MeshRepair — Autoregressive Topology Repair for Generated Artisan Meshes|MeshRepair]]（**就地修复**：编辑序列而非新网格；quad F1 = 下游硬约束）/ [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]]（**拓扑感知动捕**：可观测性分析 + 可靠性门控；捕捉 ⇄ 重定向边界合并）/ [[2026-10-10-TETRIS-4DGS — Efficient Post-Training Compression of 4D Gaussian Splatting|TETRIS-4DGS]]（4DGS 秒级 40× 压缩；"翻译给旧工具"）。**已读账本维持 31 篇**；动作清单不变（**furnace test / 动态灯光复审为两大首件**；新增候选：光照框架线——两篇结论层各 ≈20 分钟 + 读者报告"两盏灯采样实验"）。
 
 > **2026-10-21 更新（资料侧；阅读状态无变化）**：**烘焙线第二节点落位——"烘算子 vs 烘答案"**。经典 [[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]]（**A 经典·历史重要性 5**）入库：Radiosity 烘**答案**（换灯重解），PRT 烘**算子**（换灯一次点积，成本与灯数/灯尺寸无关）；三档价目 `DU` 9 系数 / `DS` 25 系数 / 光泽 25×25——**"阴影 = +2 阶、光泽 = 平方"**，与你的 SABC 档位语言同构（≈30 分钟结论层）。**GI 谱系表第 4 行落位**，第 3/4/6 行自此连成一条轴：**视角 → 光照 → 几何，每代换一个被冻结的变量**。**新概念 [[Spherical Harmonics]]** 建立——此前 SH 在库内"到处被引用、没有自己的页"，现在它把 RH 2001 的 9 系数、PRT 的 25 系数、探针/DDGI、3DGS 的视角相关颜色串成一条线。**前沿（周三空批，改做 10-19 批次补扫）**：[[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]]（A-："不要让 VLM 写程序化代码，要让它改"——AST 深度 2 的可编辑表面 + 三种编辑策略 + 确定性视锥网格五道闸门；**放置五道闸门可直接搬进 UE PCG Graph**）+ [[2026-10-19-Wan-Alpha++ — Animating a Single RGBA Asset into Controllable Transparent Video Effects|Wan-Alpha++]]（B+：alpha 一等公民的透明视频生成；**"换时间原点让旧机制可用"**；素材侧工具，不进运行时预算表）。**已读账本维持 40 篇**；动作清单不变——**"动作月"第 9 日，六件零执行**；今日新增 5 分钟零成本动作：把项目画质档位翻译成 9/16/25 个 SH 系数。
+
+> **2026-10-22 更新（资料侧；阅读状态无变化）**：**水的第二条路落位——“不解方程，采统计”**。经典 [[Tessendorf 2001 — Simulating Ocean Water|Tessendorf 2001]]（**A 经典·历史重要性 5**）入库，与库内 [[Stam — Stable Fluids (1999)|Stam 1999]] 并列为水的两条合法路径：Stam **解 NS 方程**（逐步推进、按元素计费），Tessendorf **不解方程**——按 Phillips 谱采隨机波的统计分布，一次 IFFT 出整张海面（固定成本、与海面大小无关）。**关键不在“哪个更对”**：FFT 路线的强制条件是**可分解、可周期、不可剔除**（量化色散导致循环周期，图 8），因此不能做“一道浪打到岩石上”；它的价值在“**无边海面 + 一直循环**”这一类需求上。配套三件工具直接可用：$\omega=\sqrt{gk}$ 色散定相速、Creamer 尖锐位移定尖峰、**Jacobian $J<0$ 作泡沫遮罩**（图 16，“拿已算出来的量免费再用一次”的最干净范例）。**阅读建议**：结论层 ≈25 分钟，只看 §2 四步配方 + 图 8/12/16；推导层（谱推导、iWave 显式波动方程）留 Hard。
+
+> **前沿三篇（均为 10-21 批次）**：① [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]]（**A**）——世界模型“层次 2”的完成形态；其新意在于**“规则可执行 ⇒ 标注零模型推断”**（114,334 段字幕全由规则模板渲染，不用 VLM），与库内 [[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]] 的“不要让 VLM 写代码”共同指向同一条经验：**让模型做判断，不让它做记账**；② [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting|RLSplat]]（**A**）——GS 预算的“成本侧”，以“分配”代“裁剪”，显存 9.6× 少；③ [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting|KoalaGS]]（**B+**，NeurIPS Spotlight）——连续 LoD 的排序键，用**优化前**的图像复杂度做空间先验。两篇都在同一个问题上加了一个度量：预算不只有“多少”，还有“花在哪、什么时候花”。
+
+> **今日新判断：“预算”在库内已分成四种计价对象，而它们对“降档”的定义不同**。① **容量计价**（Budgeted-GS / Zador 律：误差 ∝ N⁻¹ᐟ²）——降档 = 减少 primitive 数；② **成本计价**（今日 RLSplat：资源线性 O(B·K)）——降档 = 降低每个元素的处理代价，数量不变；③ **精度计价**（CurveCodec 误差界 0.01–1 cm）——降档 = 放宽误差承诺；④ **时间计价**（今日 MG4.0：每帧必须重算什么）——降档 = 把某些计算从帧内挪到帧外。**实用价值**：你的 SABC 预算表目前分配的是“容量”（发射器数 / 粒子数 / 贴图尺寸）；而 C 档技能真正的痛点往往在“时间”（帧内重算什么）与“成本”（增加一个敌人同屏时每个元素的代价）——这两份账值得单独建一页。
+
+> **已读账本维持 40 篇**（今日无读者新 `read`，`git pull --ff-only` 无新提交）；动作清单不变——**“动作月”第 10 日，六件零执行**；今日新增一个 5 分钟零成本动作：**把你手上一个 C 档技能的抽象层分成“造形”与“流动”两块，看哪一块能用固定成本的 IFFT 替换逐粒子模拟**（水面经典的钱花在哪，这就是答案）。
 
 ## 如何理解和更新这个模型
 
