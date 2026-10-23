@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-22]]（昨日：[[2026-10-21]]）
+- **今日**：[[2026-10-23]]（昨日：[[2026-10-22]]）
 - **本周综合**：[[2026-W42]]（覆盖 **10-12 ~ 10-18**，✅ 2026-10-18 收官——主线：采样理论四连发 DI/GI/GRIS/MIS + 视觉政策定型 + 资产四工位 + 产业双事件；**本周 W43 = 10-19 ~ 10-25**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
 - **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-22（资料侧：已读账本维持 40 篇——今日无读者新动作；新增判断："预算"一词在库内已分成四种计价对象（容量 / 成本 / 精度 / 时间），见 PKM 2026-10-22 块）**——推送按校正结果组织
 
-## Papers（139）
+## Papers（142）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -159,8 +159,11 @@ created: 2026-09-07
 | [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds\|Matrix-Game 4.0]] | A | **Normal（系统侧 ≈20 分钟）** | **最高（★ 世界模型"层次 2"最强样本：可执行 harness 三角色（agent 写规则 / 引擎管状态 / 视频模型管画面）——**规则可执行因此标注可零模型推断**（114,334 段 / 1,712 小时字幕全由模板渲染，不用 VLM）；三阶段因果蒸馏 + 九项推理优化；**4.5→83.4 FPS / 1110→112 ms @5090** ——"实时是系统账，不是模型账"；5090/5080/5070Ti 三档硬件）** ★ 2026-10-22 |
 | [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting\|RLSplat]] | A | **Normal（结论层 ≈15 分钟）** | **高（★ GS 预算的"成本侧"：用"分配"替代"裁剪"——GSPO 策略学高斯配额 k~Mult(B,p)（Σk=B）+ 资源线性解码（局部 cross-attn + 层次邻居搜索 O(BK)）；2K 预算 +0.9 dB / 显存 9.6× 少 / 速度 4.1×；**关键诚实点：策略 24.83 vs Sobel 启发式 24.76 dB（仅 +0.07）——学到的是"分配"这个动作**；Voronoi/offset/projection 三正则消融分别 −2.51 / −0.53 / 训崩）** ★ 2026-10-22 |
 | [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting\|KoalaGS]] | B+ | **Normal（结论层 ≈15 分钟）** | 中高（★ 连续 LoD 的排序键：用**优化前**的图像复杂度（delentropy 最强，2D ρ≈−0.60 / 3D −0.64）做空间先验 —— "先验在训练前就可得"；p=αe^C̃ 迁移偏置 + complexity dropout δ=0.2；排序键 S=α+λs/e^C̃ + 残差方差正则；100%→0.1% 连续全谱评测；**如实边界：对 MGS 只 +0.12/+1.23 dB，主要增益来自与不排序 MCMC 的对比**；NeurIPS 2026 Spotlight） ★ 2026-10-22 |
+| [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning\|RLMuscle]] | A | **Normal（结论层 ≈25 分钟）** | **最高（★ 角色形变的"肌肉层"首个全身样本：1D Hill 解控制（284 肌腱/50 DOF，PPO 共训）+ 3D 体积仿真（194 肌肉/468K 四面体），**共用同一条本构律 → 形变不是拟合，是"产生运动的那股力"**；EMG 先验把冗余解拉回生理（in-band 20%→91%，相关 −0.04→0.97）；四面体 GMG（重心坐标延拓 + Petrov–Galerkin 限制 $RP=I$）把全身压到 **18 ms/帧 @4090**，对照 Houdini Otis 20.8 s/帧；**诚实边界：3D 不在 RL 环内、细长肌肉退出多重网格、游泳用椭球阻力代理**；18 ms = 60 fps 预算的 108% → **它是"真值工厂"不是运行时**；5 图原图）** ★ 2026-10-23 |
+| [[2026-10-21-Wang — LiveAct Real-Time Multi-Agent World Models with Heterogeneous Action Interfaces\|LiveAct]] | A- | **Normal（结论层 ≈20 分钟）** | 高（★ **世界模型的"第二个玩家"**：动作 = schema 词（语义）+ 数值（仿射调制）→ 一套接口吃二进制按钮与连续机械臂指令；归因 = **学出来的空间门**，推理时不需要 mask/box/pose/参考图（WanToFight 0.886 但要用 identity crop）；三阶段因果 + DMD：**512×448 @ 17.70 FPS**（Stage 2 仅 1.66 FPS，10.7×）；自建 17,951 轨迹 / 119.54 小时；**如实边界：Act-F1 0.594（四成离散事件没执行对）**）★ 2026-10-23 |
+| [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)\|Kavan 2008 — DQS]] | A（经典·历史重要性 4） | **Normal（结论层 ≈25 分钟）** | **最高（★ 角色形变支线的第一个经典锚点 / 糖果纸的标准答案：LBS 病根 = 正交矩阵对加法不封闭，混出缩放剪切；DLB = 对偶四元数线性混合 + 归一化 → 必然刚体；成本 **36 → 43 条顶点着色器指令**（CPU 3.67→5.07 ms，GPU 197.4 vs 122 / 84.9 FPS）；两处边界：表示不了缩放（两阶段绕）、最短路径会翻面（179°→181°）；新建 [[Skinning]] 四代谱系；4 图原图）** ★ 2026-10-23 |
 
-## Concepts（41）
+## Concepts（42）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -197,6 +200,7 @@ created: 2026-09-07
 - [[Fluid Simulation]] ★ 2026-10-13 入库（**物理/仿真域开域（流体）**：四步分解（外力→对流→扩散→投影）+ 三路线（网格/粒子/混合 FLIP）+ 时间线 1965→2026；"水的两条路"（模拟 vs 感知）与"预算轴 = 网格 × 步数"；首节点 [[Stam — Stable Fluids (1999)]]）
 - [[Motion Retargeting]] ★ 2026-10-13 入库（**动画数据管线第三环**（检索/压缩/转换）："要保清单"五级 + 三路线（IK 优化 / 数据驱动 / 优先级优化）；节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]] / [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement|Skinned Retargeting]] / [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]；★ 10-14 新增捕捉侧节点 [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]]）
 - [[Resampled Importance Sampling]] ★ 2026-10-14 入库（**采样端理论**：三步重采样 + 校正因子 + 方差劈分 + 等时间准则 M=TY/TX；ReSTIR 谱系的底座；与 [[Reservoir Sampling]] 互链）
+- [[Skinning]] ★ 2026-10-23 入库（**角色形变域的骨架层**：四代谱系（LBS 1988 → DQS 2008 → PSD/corrective → 神经蒙皮 → 肌肉层）+ 一张"混法对照表"（混什么 / 是否保刚体 / 代价 / 代表）+ 三条失败模式（糖果纸 / 塌肩 / 翻面）；**"混的对象必须同类"** 是它的中心判据；与 [[Motion Retargeting]]（上游）、[[Physics-based Character Animation]]（下游）接链）
 - [[Reservoir Sampling]] ★ 2026-10-14 入库（**流式加权抽样容器**："一个槽位代表整条候选流"；RTXDI 固定提交可直读；"一个表示代表全部"家族成员）
 - [[ReSTIR]] ★ 2026-10-15 入库（**采样线合流点**：流式 RIS + 时空复用 + MIS 无偏化；DI/GI/GRIS/RTXDI/MegaLights 方法族底座；与读者框架"采样+复用+失效"逐项咬合）
 
@@ -262,4 +266,4 @@ Research/
 
 ---
 
-最后更新：2026-10-22（Run #44：**世界模型层次 2 收口 / 水体经典开线日**。读者侧：**无新动静**（`git pull --ff-only` 返回 Already up to date，已读账本维持 40 篇）；前沿：美东周三 20:00 批 = **10-21（周三）全新批次**，cs.GR 14 条 + cs.CV 关键词筛选——**3 篇入库**：[[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]] **A：“规则可执行 → 标注零模型推断”——harness 三角色 + 模板字幕 + 三阶段因果蒸馏，83.4 FPS** / [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting|RLSplat]] **A：预算的成本侧，以分配代裁剪；并诚实模型告知“策略仅 +0.07 dB 于 Sobel”** / [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting|KoalaGS]] **B+：连续 LoD 排序键用优化前复杂度做先验（NeurIPS Spotlight）**）+ 3 记名；经典头条：[[Tessendorf 2001 — Simulating Ocean Water|Tessendorf 2001]]（**A 经典·历史重要性 5**：水面“谱合成”开篇 —— Phillips 谱 + 一次 IFFT；“**不解方程，采统计**”与 Stam 1999 的“解 NS”并列为水的两条路；**不可剔除是 FFT 路线的结构性代价**；Jacobian J<0 作泡沫遮罩；3 图原图）+ 新建 [[World Models for Games]] 第四维度（状态可读性）；“动作月”催办第 10 日；Papers 136→**139**，Concepts 维持 41（今日无新页，三条新线全部落在既有概念页内））
+最后更新：2026-10-23（Run #45：**"一致性由构造保证"日**。读者侧：**无新动静**（远程 0 新提交，已读账本维持 40 篇，连续 3 日无新 `read`）；前沿：**美东周四批极薄**——cs.GR 新增仅 5 条（10-21 三条 / 10-22 两条），渲染线零高价值，按 no-filler 不凑数——**2 篇入库**：[[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]] **A：1D 解控制 + 3D 出形变，共用一条 Hill 本构律（形变不是拟合）——194 肌肉 18 ms/帧，但 18 ms = 60 fps 预算的 108% → 它是"真值工厂"不是运行时** / [[2026-10-21-Wang — LiveAct Real-Time Multi-Agent World Models with Heterogeneous Action Interfaces|LiveAct]] **A-：世界模型的"第二个玩家"——schema+数值的异构接口 + 学出来的空间门（不用 mask/crop），512×448 @ 17.7 FPS**）+ 4 记名；经典头条：[[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|Kavan 2008 DQS]]（**A 经典·历史重要性 4**：糖果纸的标准答案 —— 正交矩阵对加法不封闭；**+7 条着色器指令**换正确性；4 图原图）+ **新建概念 [[Skinning]]**（第 42 个：LBS → DQS → PSD → 神经 → 肌肉，四代谱系）；产业：**RTX Remix 1.6 今日落地并带 DLSS 5**（ComfyUI v2 内置 AI 材质面板 + 批处理）；"动作月"催办第 11 日；Papers 139→**142**，Concepts 41→**42**）

@@ -45,6 +45,7 @@ user_level: Hard
 - [[Motion Generation]]
 - [[Neural Physics Simulation]]（更一般的学习式物理，反向问题）
 - [[Motion Matching]]（**对偶**：MM 的候选集是"录制的片段"，DSD 零样本控制的候选集是"策略生成的轨迹池"，**两者的查询都是"用代价函数挑"**——见 [[2026-09-17-DSD — Diffusion Skill Discovery]] 的对照表）
+- [[Skinning]]（**分层关系**：蒙皮把**骨骼运动**传给表面，物理/肌肉层把**力**传给表面——它们不是替代，是"传运动"与"传力"两件事；RLMuscle 说明后者可以作为前一层的下一级）
 
 ## Game Applications
 
@@ -57,6 +58,7 @@ user_level: Hard
 - [[InstantMimic — A High Performance System for Learning Physics-based Skills in Seconds]]
 - [[2026-09-14-Learning Realistic Athletic Sprinting Without Demonstrations]]（零示范路线：肌肉驱动 + 任务奖励，同周与 InstantMimic 双双跨过训练成本门槛）
 - [[2026-09-17-DSD — Diffusion Skill Discovery]]（技能库宽度：扩散 score 估熵梯度）
+- [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]]（**肌肉层**：1D Hill 在 RL 环内解激活 + 3D 体积仿真一次前向，两段共用本构律；194 肌肉 18 ms/帧 → 离线真值而非运行时）
 
 ## Personal Knowledge
 

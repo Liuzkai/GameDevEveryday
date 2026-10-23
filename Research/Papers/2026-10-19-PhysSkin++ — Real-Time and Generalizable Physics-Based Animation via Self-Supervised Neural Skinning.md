@@ -131,6 +131,7 @@ LBS（1988 前后，游戏默认）→ 美术权重手调
 - **[[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation]]**：GS 蒙皮两条路——本篇"前馈场查询" vs GradRig"可微优化权重"；
 - **[[Gaussian Splatting]]**：图 15 的绑定结果是 GS 资产动画化的又一节点（库内 GS 线：表示→压缩→编辑→动画）；
 - **[[Motion Retargeting]]**：跨形状泛化的蒙皮场 = 另一种"把动作/物理搬到新资产"的机制（无骨骼重定向 vs 有骨骼重定向）。
+- **[[Skinning]]**（2026-10-23 新建）：本篇是该概念页"第四代（学习型）"的节点；同页另有 [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|Kavan 2008 DQS]]（第二代）与 [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]]（第五代·肌肉层）——**本篇与 RLMuscle 是同一目标的两端：一个用学习换速度，一个用求解换正确**。
 
 ## Personal Knowledge State
 
