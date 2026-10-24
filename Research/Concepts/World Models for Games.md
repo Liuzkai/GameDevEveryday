@@ -72,6 +72,7 @@ user_level: Hard
 - [[DLSS 5 — Generative Neural Rendering]]
 - [[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory]]（★ 2026-09-23 入库：记忆维度样本）
 - [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]]（★ 2026-10-22 入库：**层次 2 最强样本**——可执行 harness / 规则模板字幕 / 三阶段因果蒸馏 / 九项推理优化；A 级）
+- [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games|AnyGameRenderer]]（★ 2026-10-24 入库：**同一条轴的相反取舍**——把"状态"喂成纯视频 + 字幕（弱表示、通用、慢），对照 MG 4.0 的 low-poly 代理（强表示、快、窄）。**并用实体级指标第一次给"渲染半边"立了验收尺**：temporal match / position match / unrendered / hallucination）
 - Code World Model（arXiv 2608.25927，Watchlist）
 
 ## Personal Knowledge

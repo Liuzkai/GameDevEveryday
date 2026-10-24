@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-23]]（昨日：[[2026-10-22]]）
+- **今日**：[[2026-10-24]]（昨日：[[2026-10-23]]）
 - **本周综合**：[[2026-W42]]（覆盖 **10-12 ~ 10-18**，✅ 2026-10-18 收官——主线：采样理论四连发 DI/GI/GRIS/MIS + 视觉政策定型 + 资产四工位 + 产业双事件；**本周 W43 = 10-19 ~ 10-25**，下周日附近产出）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
 - **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-22（资料侧：已读账本维持 40 篇——今日无读者新动作；新增判断："预算"一词在库内已分成四种计价对象（容量 / 成本 / 精度 / 时间），见 PKM 2026-10-22 块）**——推送按校正结果组织
 
-## Papers（142）
+## Papers（147）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -162,8 +162,12 @@ created: 2026-09-07
 | [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning\|RLMuscle]] | A | **Normal（结论层 ≈25 分钟）** | **最高（★ 角色形变的"肌肉层"首个全身样本：1D Hill 解控制（284 肌腱/50 DOF，PPO 共训）+ 3D 体积仿真（194 肌肉/468K 四面体），**共用同一条本构律 → 形变不是拟合，是"产生运动的那股力"**；EMG 先验把冗余解拉回生理（in-band 20%→91%，相关 −0.04→0.97）；四面体 GMG（重心坐标延拓 + Petrov–Galerkin 限制 $RP=I$）把全身压到 **18 ms/帧 @4090**，对照 Houdini Otis 20.8 s/帧；**诚实边界：3D 不在 RL 环内、细长肌肉退出多重网格、游泳用椭球阻力代理**；18 ms = 60 fps 预算的 108% → **它是"真值工厂"不是运行时**；5 图原图）** ★ 2026-10-23 |
 | [[2026-10-21-Wang — LiveAct Real-Time Multi-Agent World Models with Heterogeneous Action Interfaces\|LiveAct]] | A- | **Normal（结论层 ≈20 分钟）** | 高（★ **世界模型的"第二个玩家"**：动作 = schema 词（语义）+ 数值（仿射调制）→ 一套接口吃二进制按钮与连续机械臂指令；归因 = **学出来的空间门**，推理时不需要 mask/box/pose/参考图（WanToFight 0.886 但要用 identity crop）；三阶段因果 + DMD：**512×448 @ 17.70 FPS**（Stage 2 仅 1.66 FPS，10.7×）；自建 17,951 轨迹 / 119.54 小时；**如实边界：Act-F1 0.594（四成离散事件没执行对）**）★ 2026-10-23 |
 | [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)\|Kavan 2008 — DQS]] | A（经典·历史重要性 4） | **Normal（结论层 ≈25 分钟）** | **最高（★ 角色形变支线的第一个经典锚点 / 糖果纸的标准答案：LBS 病根 = 正交矩阵对加法不封闭，混出缩放剪切；DLB = 对偶四元数线性混合 + 归一化 → 必然刚体；成本 **36 → 43 条顶点着色器指令**（CPU 3.67→5.07 ms，GPU 197.4 vs 122 / 84.9 FPS）；两处边界：表示不了缩放（两阶段绕）、最短路径会翻面（179°→181°）；新建 [[Skinning]] 四代谱系；4 图原图）** ★ 2026-10-23 |
+| [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games\|AnyGameRenderer]] | A | **Normal（结论层 ≈20 分钟）** | **最高（★ 生成式渲染第一次给自己立**实体级验收**：纯 gameplay 视频输入（灰盒/图元/语义图/线框均可，**不要 G-buffer/类别标签/low-poly 代理**）+ 六段式**字幕契约**（哪个色块 = 哪个实体；位置/尺寸/时序/**人数**严格保留；**故意保留"列出但未出现"的角色**以逼模型从视频判断存在）；三源配对 10,330 段 / 14.8 h（GEAR 38 款 agent 游戏多流 / UE 双流按失败模式脚本化 / 真实录像 3D 框）；temporal **50.9→62.9**、漏人数变化 34.7→**21.3**、幻觉 52.1→46.0；**公布 GT 天花板：真值视频的幻觉率亦 34.1%，故 62.9 = 可测区间 50.9→80.9 的 38%**；**离线工具**（33B / 20 步 / 16×H200×48h，1344×768）——与 MG4.0 构成"通用 ↔ 实时"轴的两端；3 图原图）** ★ 2026-10-24 |
+| [[2026-10-22-Kaushik — A Tutte-Like Theorem for Injective Flows on Meshes\|Kaushik 2026 — Tutte-Like 单射流]] | A- | **Hard（结论层 Normal ≈20 分钟）** | 中（★ **Tutte 定理的第三个对象：从"映射"到"流"**——球面拓扑 + 单源 $z{=}1$/单汇 $z{=}{-}1$ 解离散 Laplace（**任意正权 Laplacian**），梯度转 90° 作向量场，**证明诱导的流单射**（轨迹永不相交）；几何图像 = 轨迹锁死在等值线上；证明支点 = **Campen 组合通量条件 ≡ Gortler 离散 Poincaré–Hopf 指标**（图 6 三行对照）；工程钩子 = 对 Laplacian 边权**可微** ⇒ 可在不离开可行域的前提下优化流向（逼近非单射场 / 满足 10 个稀疏方向约束）；边界：只球面+单源单汇（图 3 反例）、不覆盖全部单射场、优化框架自述"不足以做下游任务"；3 图原图）** ★ 2026-10-24 |
+| [[Levy — Least Squares Conformal Maps for Automatic Texture Atlas Generation (2002)\|Lévy 2002 — LSCM]] | A（经典·历史重要性 4） | **Normal（结论层 ≈30 分钟）** | **最高（★ 参数化/UV 整条支线的**工业起点**：三步流水线定型（分割–参数化–装箱）；共形写成复方程 ⇒ u、v 耦合 ⇒ **边界自由**（只需钉 2 点）+ 一次稀疏求解；四条可证性质（唯一解 / 相似不变 / **分辨率无关** / **无翻转**）；**关键边界：局部单射 ≠ 全局单射**——重叠靠 stencil 检测 + 切 chart 补救；装箱率 0.37–0.48 → **0.55–0.60**（轮廓地平线装箱）；质量反转：优化前 3.5 劣于调和 3.2，优化后 1.52 优于 1.65；新建 [[Mesh Parameterization]]；4 图原图）** ★ 2026-10-24 |
+| [[Tutte — How to Draw a Graph (1963)\|Tutte 1963 — How to Draw a Graph]] | A（经典·历史重要性 5） | **Hard（原文不可得，二手重建）** | 高（★ **"调和 ⇒ 单射"的第一条定理 / 全书源节点**：三连通平面图 + 凸边界 + 重心 ⇒ 直线无交叉、面为凸、解唯一；图形学版本 = 边界钉圆 + 解 Δu=Δv=0；**凸边界是保证也是枷锁**——LSCM 为自由边界放弃全局单射，Campen 2016 再把它找回来；⚠️ **原文 OUP/Wiley 均 403，本页由 Gortler 2006 + LSCM 引言 + zbMATH 三源重建，附核证清单与"未核实"标记**；同时纠正 LSCM 参考文献 [30] 的年份/标题错误）** ★ 2026-10-24 |
 
-## Concepts（42）
+## Concepts（43）
 
 **基础锚点**
 - [[Real-Time Rendering]] ★ 2026-09-30 补齐（首日起引用悬空，月结日修复——**域地图 / 索引**：管线骨架 / 着色 / 光照 / 重建 / 神经五块 + 你的活跃收口点）
@@ -197,6 +201,7 @@ created: 2026-09-07
 - [[Animation Compression]] ★ 2026-10-06 入库（**动画线"数据侧"第一节点**：三本账（内存/解码/导入）+ 误差界即档位 + "运行时代码器 vs 装载时代码器"分工；源头 CurveCodec 2 / ACL）
 - [[Facial Animation]] ★ 2026-10-08 入库（**面部域开线（库内最后的大品类空白）**：重定向 = "身份 × 表情"分解 + 三种失败模式（表面噪声/全局耦合/身份泄漏）；首节点 [[2026-10-06-PDB — Point-Based Deformation Blending for Facial Animation Retargeting|PDB]]（点基双因子，"四个不需要"）；挂载位：GALA（化身表示）/ emg2face（非光学捕捉，记名））
 - [[Subdivision Surfaces]] ★ 2026-10-10 入库、**10-12 三角分支补齐**（**几何建模域第一个概念锚点**：规则 + 四结构性质 + 双轨 48 年弧线——四边形轨（1974 双源头 → 1978 正问题 → 1998 求值/生产 → 2005 奥斯卡 → 2026 逆问题）+ **三角轨（1987 Loop 规则 → 1998 Stam 三角版求值 → 共享逆问题时代）**；源头 [[Catmull-Clark — Recursively Generated B-Spline Surfaces (1978)]] / [[Loop — Smooth Subdivision Surfaces Based on Triangles (1987)]] + 逆问题 [[2026-10-08-SubDGuide — A Modeler-Inspired Agentic Workflow for Mesh-to-SubD Reconstruction|SubDGuide]]）
+- [[Mesh Parameterization]] ★ 2026-10-24 入库（**几何处理域开线（UV 展开）**：三步流水线（分割–参数化–装箱）+ **三目标不可兼得表**（保角 / 保面积 / 单射）+ **"局部单射 ≠ 全局单射"** 这张最容易踩的坑；谱系 1963 Tutte → 2001 stretch → 2002 LSCM → 2004 ABF → 2016 Campen 全局单射 → 2026 Tutte-Like 单射流；**Game 侧最实用的一句：无翻转是求解器给的，无重叠要你自己查**）
 - [[Fluid Simulation]] ★ 2026-10-13 入库（**物理/仿真域开域（流体）**：四步分解（外力→对流→扩散→投影）+ 三路线（网格/粒子/混合 FLIP）+ 时间线 1965→2026；"水的两条路"（模拟 vs 感知）与"预算轴 = 网格 × 步数"；首节点 [[Stam — Stable Fluids (1999)]]）
 - [[Motion Retargeting]] ★ 2026-10-13 入库（**动画数据管线第三环**（检索/压缩/转换）："要保清单"五级 + 三路线（IK 优化 / 数据驱动 / 优先级优化）；节点：[[2026-10-08-PriMoRetarget — Humanoid Motion Transfer Through Prioritized Motion Retargeting|PriMoRetarget]] / [[Skinned Motion Retargeting via Artifact-driven Kinematic Prior Refinement|Skinned Retargeting]] / [[2026-09-25-ReFM — Semantic-Aware Refinement Flow Model for Motion Retargeting|ReFM]]；★ 10-14 新增捕捉侧节点 [[2026-10-10-CAST — Real-Time Motion Capture for Any Skeleton Topology|CAST]]）
 - [[Resampled Importance Sampling]] ★ 2026-10-14 入库（**采样端理论**：三步重采样 + 校正因子 + 方差劈分 + 等时间准则 M=TY/TX；ReSTIR 谱系的底座；与 [[Reservoir Sampling]] 互链）

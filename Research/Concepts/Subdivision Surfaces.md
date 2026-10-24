@@ -93,6 +93,7 @@ first_introduced: "1978（Catmull & Clark；前身：Catmull 1974 递归细分 /
 - [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)|Clark 1976]]（LOD）——**"层级细节"的同源思想**：LOD 的"top-down splitting（Catmull 式曲面片细分）"与本概念的"细分层级"同根；两者合读 = "由粗到细、按需生成"家族的两种产业形态；
 - [[Scalability and Quality Tiers]]——**分档语言的历史层**："细分级别"（cage 密度 / 细分次数）正是"档位 = 表示深度"的建模域原型（对照 PCG 的"细节层次=迭代深度"）；
 - [[Procedural Content Generation]]——生成侧对照（"规则生成结构"的两种传统：语法 vs 细分）。
+- [[Mesh Parameterization]]——**同一族几何处理、同一叙事结构**：细分是"曲面怎么表示与求值"，参数化是"曲面怎么摊平且不叠"；两条线都是"一个 1960/70 年代的数学结果被工程需求反复重写"（Catmull-Clark 1978 → Stam 1998 → DeRose 1998 ‖ Tutte 1963 → LSCM 2002 → 2026 流）。**2026-10-24 建立**。
 
 ## Technologies
 

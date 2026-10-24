@@ -64,6 +64,20 @@ DLSS 4（多帧生成 + 光线重建）
 
 - [[DLSS 5 — Generative Neural Rendering]]
 - [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] —— **反方向**：把物理渲染器改写为潜空间渲染器（"物理进入生成"而非"生成替代物理"；其 SDS 应用模式可先于实时侧落地）
+- [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games|AnyGameRenderer]]（★ 2026-10-24 入库）——**"实体账"成为一等验收项**：输入纯 gameplay 视频（灰盒/图元/语义图/线框均可，不需要 G-buffer 与类别标签），输出同镜头、同实体位置与时序的成品画面；提出**实体级 benchmark**（59 例 / 753 实体、四个指标）与**字幕契约**（"哪个色块 = 哪个实体 + 位置/尺寸/时序/人数严格保留"）。**它给这一族技术补上了此前缺的那把尺子**：不问"像不像"，问"该出现的都出现了吗、在对的帧吗、在对的位置吗、有没有多出来的"。
+
+## 验收标准（2026-10-24 追加）
+
+生成式渲染一旦**生成内容而不只是补细节**，验收就必须从"帧级"下沉到"实体级"。AnyGameRenderer 的四项可以直接借用：
+
+| 指标 | 问题 | 对 VFX/技能的平移 |
+|---|---|---|
+| Unrendered rate | 该渲染的没渲染？ | 该有的粒子/拖尾漏了吗 |
+| Temporal match | 出现/消失的帧对吗？ | 第 12 帧亮、第 40 帧灭，对上了吗 |
+| Position match | 位置对吗？ | 挂点/偏移对吗 |
+| Hallucination rate | 有没有凭空多出来的？ | 多出来的残影/鬼影 |
+
+**注意它同时公布的"GT 天花板"**：把真值视频喂进同一套度量管线，幻觉率仍有 34.1%——**度量本身有噪声，读数时要把这层扣掉**。
 
 ## Personal Knowledge
 
