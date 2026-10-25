@@ -162,7 +162,7 @@ $$MeanParts_f = InitialMeanParts + DeltaMeanParts \times (f - f_0)$$
 | 颜色加法会溢出 → **钳制而非回绕** | "clamps the individual RGB intensities at the maximum... instead of letting them wrap around" | HDR 缓冲出现前的做法；今天用浮点缓冲绕开了 |
 | 全部抗锯齿绘制 | "All particle shapes are drawn antialiased" | 防止时间走样与频闪 |
 
-> **⚠️ 一处历史的关键分岔点，值得记下来**：Reeves 的"不用排序"是**因为用了加法混合**。**一旦改成 Alpha 混合（半透明叠加），排序立刻变成必须** —— 这正是本库 [[GS 半透明顺序依赖]] 与 [[GS 排序成本三乘数_TileGS]] 两个图解在解决的问题。**同一个约束（顺序无关性）在 1983 与 2026 两次成为管线设计的核心，第一次靠"加法"，第二次靠"排序"。**
+> **⚠️ 一处历史的关键分岔点，值得记下来**：Reeves 的"不用排序"是**因为用了加法混合**。**一旦改成 Alpha 混合（半透明叠加），排序立刻变成必须** —— 这正是本库 [[GS_半透明顺序依赖.html]] 与 [[GS_排序成本三乘数_TileGS.html]] 两个图解在解决的问题。**同一个约束（顺序无关性）在 1983 与 2026 两次成为管线设计的核心，第一次靠"加法"，第二次靠"排序"。**
 
 ### §2.6 粒子层级 —— **"发射器数"这个预算维度的原始出处**
 
@@ -276,7 +276,7 @@ $$MeanParts_f = InitialMeanParts + DeltaMeanParts \times (f - f_0)$$
 | "强度低于阈值即杀" | Kill Particles + 透明度阈值 |
 | **无排序（因加法混合）** | Renderer 的 Sort Mode = **None**（仅 Additive 安全）|
 
-**⚠️ 一处必须澄清的映射边界**：Reeves 的"无排序"是**加法混合的专属结论**，**不能推广到 Alpha Blend**。Niagara 里 Renderer 的 Sort Mode 与 Facing Mode 选择，直接决定这句话成立与否 —— 这也是本库 [[GS 半透明顺序依赖]] 的同一问题。
+**⚠️ 一处必须澄清的映射边界**：Reeves 的"无排序"是**加法混合的专属结论**，**不能推广到 Alpha Blend**。Niagara 里 Renderer 的 Sort Mode 与 Facing Mode 选择，直接决定这句话成立与否 —— 这也是本库 [[GS_半透明顺序依赖.html]] 的同一问题。
 
 ## Technology Evolution
 

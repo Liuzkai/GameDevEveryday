@@ -22,7 +22,7 @@ Tile-Based (Mobile):  几何分桶到 tile → tile 内全在片上 SRAM 完成 
 
 推论（对 VFX 尤其重要）：
 
-- **Overdraw 在 TBDR 上不像 PC 那样直接烧带宽**（片上混合便宜），但**会烧 tile 内存与着色算力**
+- **Overdraw 在 TBDR 上不像 PC 那样直接烧带宽**（片上混合便宜），但**会烧 tile 内存与着色算力**（PC 侧的"8 B/片元"换算见 [[Overdraw]]）
 - 一旦 tile 内存放不下（大量 render target、MSAA、半透明层），会 tile flush 到内存，性能断崖
 - 透明/半透明 pass 会强制打断 HSR（Hidden Surface Removal）→ 半透明粒子多是移动端大忌
 

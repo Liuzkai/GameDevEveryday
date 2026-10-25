@@ -46,7 +46,7 @@ tags: [vfx, particles, simulation, rendering]
 | **② 单位成本极低** | 一个粒子比一个多边形简单得多 → **同等算力能处理更多图元** | Reeves 1983 §1 |
 | **③ 顺序无关（有条件）** | 点光源假设 + 加法混合 → **无需排序、无隐藏面、无阴影** | Reeves 1983 §2.5 |
 
-> **⚠️ 法则 ③ 的边界必须记住**：它的成立**完全依赖加法混合**。一旦改用 Alpha 混合（半透明叠加），**排序立刻成为必须**，成本与管线复杂度都变 —— 本库 [[GS 半透明顺序依赖]]、[[GS 排序成本三乘数_TileGS]] 讨论的就是这个问题在另一种图元上的复现。
+> **⚠️ 法则 ③ 的边界必须记住**：它的成立**完全依赖加法混合**。一旦改用 Alpha 混合（半透明叠加），**排序立刻成为必须**，成本与管线复杂度都变 —— 本库 [[GS_半透明顺序依赖.html]]、[[GS_排序成本三乘数_TileGS.html]] 讨论的就是这个问题在另一种图元上的复现。
 
 ## Prerequisites
 
@@ -87,6 +87,7 @@ tags: [vfx, particles, simulation, rendering]
 | **Sims 1990** | 1990 | 数据并行粒子动画（GPU 粒子的概念前身；**未入库**）|
 | [[2026-09-09-WorldParticle — Unified World Simulation of Lagrangian Particle Dynamics via Transformer]] | 2026 | **前沿对照**：用单个 Transformer 统一六类粒子动力学 —— **"显式 Predictor 管外力 + 学习 Corrector 管相互作用"** |
 | [[LightOpt — Lights Optimization for Real-Time Rendering]] | 2026 | 不直接相关，但同属"把经验上限变成可推导值"这一诉求 |
+| [[Everitt — Interactive Order-Independent Transparency (2001)]] | 2001 | **法则 ③ 的反面**：不用加法混合时，"顺序"要花多少钱 —— depth peeling 的账单是 `层数 × 一遍场景` |
 
 ## Related Concepts
 
@@ -94,6 +95,7 @@ tags: [vfx, particles, simulation, rendering]
 - [[Niagara]] —— 今天的引擎实现
 - [[Participating Media]] —— **本概念的"下一步"**：Reeves 1983 §5 明确列出两个做不到的点（**粒子被打亮**、**云的自阴影**），正是体积渲染要解决的
 - [[Gaussian Splatting]] —— **另一种"云状图元"**：高斯椭球同样是无序、半透明、按屏占比膨胀的图元。**两者的排序/密度/分档问题同构**，可互相对照
+- [[Overdraw]] —— **本概念的成本侧口径**：法则 ① 的"屏占比"换算成像素账（"同屏 100 个粒子"在 64² 与 256² 之间差 16 倍填充）
 - [[Scalability and Quality Tiers]] —— 粒子数是五档画质最敏感的一个维度
 - [[Hair Rendering]] —— 结构化粒子（1985）的现代形态
 - [[Neural Physics Simulation]] —— 学习型粒子动力学（对照 WorldParticle）

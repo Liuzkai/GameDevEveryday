@@ -22,7 +22,7 @@ tags: [rendering, 3d-representation, radiance-fields]
 - [[Neural Rendering]]
 - 协方差与椭球（线性代数）
 - [[Differentiable Rendering]]
-- Alpha blending / 半透明排序
+- Alpha blending / 半透明排序 → [[Overdraw]]（**每像素几十~几百层 ⇒ 它是 GS 的第一成本项**）
 
 ## Evolution
 
@@ -105,7 +105,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 |---|---|---|---|
 | ① | 优化排序混合 | FlashGS / Speedy-Splat / [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization\|TileGS]] | 保持结构，做剔除与调度 |
 | ② | 顺序无关透明 | weighted-sum / hybrid transparency | 去全局排序（仍混合） |
-| ③ | 重设计基元 | surfel / depth peeling | 换几何锚定方式 |
+| ③ | 重设计基元 | surfel / [[Everitt — Interactive Order-Independent Transparency (2001)\|depth peeling]] | 换几何锚定方式 |
 | ④ | 随机光栅化（全删） | StochasticSplats / [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising\|Stochastic GS Denoising]] | 排序与混合全删，噪声靠神经偿还 |
 | ⑤ | 随机透明混合路由 | [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering\|Gaussian Stippling]]（2026-09-29） | 双流按成本分拣 + 跨场景重建 + 移动端落地 |
 | **⑥** | **随机性驯服（表示 + 重采样）** | **[[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering\|SteadySplats]]（2026-10-04）** | **训练方差正则 + 时空重采样：1 spp +13.1 dB、收敛 L1 < 1e-4——噪声税基本取消** |

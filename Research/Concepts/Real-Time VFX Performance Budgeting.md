@@ -52,6 +52,11 @@ tags: [vfx, performance]
 
 `Particles` / `DrawCalls` / `Primitives` / `OverDraw` / `CPUTime` / `GPUTime`
 
+> **2026-10-25 补：`OverDraw` 这一项终于有自己的口径页了** → [[Overdraw]]。三条关键结论：
+> ① **它有三种口径**（Coverage / Shaded / Blended），混用会得出矛盾结论；
+> ② **它的成本 = 层数 × 屏占比 × 单价**，而"同屏粒子数"只是层数的一个上界；
+> ③ **"同屏粒子数 ≤ 3000"单独存在时没有性能含义**——按平均屏占比换算，同样的 3000 可以是 **5.9× 全屏**（64²）也可以是 **94.8× 全屏**（256²）。**建议补一行"像素预算"（$\sum A_i / A_{\text{screen}} \le k$，S/A/B/C 各一个 $k$）。**
+
 ## Related Concepts
 
 - [[Scalability and Quality Tiers]]
@@ -74,6 +79,8 @@ tags: [vfx, performance]
 5. **[[Motion Style Slider — Continuous Style Control for Human Motion Diffusion]]** → "端点监督换连续控制"的思路可迁移：S/A/B/C 是 4 个离散端点，还是 1 个强度滑杆？
 6. **[[MotionBricks — Scalable Real-Time Motions]]** → 若技能动作变成运行时生成，VFX 时序锚点必须从"固定帧"改为"语义事件"（**2026-09-21 由 [[2026-09-18-GestureFAR — Streaming Co-Speech Gesture Generation with Flow Autoregression]] 独立佐证第二次**）
 7. **🔴 一条硬约束（2026-09-21，二手待核实）** → 二手来源称 **UE 5.8 MegaLights 不支持半透明物体 / 流体 / 云 / 发丝，也不支持前向渲染** → **特效打光不在 MegaLights 覆盖范围内**，仍走 [[Shadow Mapping]] 的成本法则。**"动态灯光变便宜"不能直接推到 VFX 侧。**
+8. **[[Everitt — Interactive Order-Independent Transparency (2001)]]**（2026-10-25）→ **"顺序"这一项的成本边界**：不想用加法混合、又要正确的半透明，账单就是 `层数 × 一遍场景`（depth peeling）。**对你的意义**：加法混合买的是"无限层免排序"，卖的是"不能吸收/遮挡"——**每一次"这个特效要不要更真实的烟/水"，都是在给层数付钱**。
+9. **[[Overdraw]] 的换算表**（2026-10-25）→ 把"粒子数"翻译成"像素预算"的那张表（64²/128²/256²/512² 各占全屏多少、多少粒子铺满 1×），是**唯一一条不改分级、只改度量**的修订建议。
 
 ## Personal Knowledge
 
