@@ -3,6 +3,7 @@ type: concept
 title: "Temporal Stability and Artistic Intent"
 user_level: Normal
 tags: [neural, quality]
+aliases: [Temporal Stability, Artistic Intent Preservation, 时域稳定性, 艺术意图保留]
 ---
 
 # Temporal Stability and Artistic Intent

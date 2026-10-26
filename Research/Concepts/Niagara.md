@@ -30,6 +30,7 @@ Unreal Engine 的 VFX 系统。以 Emitter / System / Module 为组织单位，�
 ## Related Concepts
 
 - [[Particle Systems]] —— **本系统的理论源头（1983）**：一帧五步循环 = Emitter 生命周期；"粒子本身是粒子系统" = Emitter Stage 内 Spawn；属性"均值 + 方差" = Random Range / Curve
+- [[GPGPU]] —— **执行模型侧**：Simulation Stage 的每一次迭代 = 一个 pass，Grid2D/3D = 纹理场；"迭代次数 × 网格"就是这条模拟的成本式（见该页公式）
 - [[Real-Time VFX Performance Budgeting]]
 - [[Scalability and Quality Tiers]]
 - [[Overdraw]]

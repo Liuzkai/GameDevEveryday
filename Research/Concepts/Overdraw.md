@@ -153,7 +153,8 @@ $$
 - [[Gaussian Splatting]] —— 每像素层数的极端案例（几十~几百层）；
 - [[Scalability and Quality Tiers]] —— 降档时"先动哪个乘数"；
 - [[Real-Time VFX Performance Budgeting]] —— 本页服务的预算体系；
-- [[Shadow Mapping]] —— 阴影贴图写入也是一种 overdraw（但口径不同：光源视角）。
+- [[Shadow Mapping]] —— 阴影贴图写入也是一种 overdraw（但口径不同：光源视角）；
+- [[GPGPU]] —— **结构性 overdraw**：GPU 模拟每个 pass 都是一次全屏写入（`分辨率 × pass 数`），**没有一层是美术叠出来的，全部由算法产生**。这是"层数"的另一类来源，也无法靠美术缩尺寸解决。
 
 ## Technologies
 

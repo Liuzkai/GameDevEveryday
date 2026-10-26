@@ -117,6 +117,7 @@ GPU 是**为吞吐量设计的、以延迟隐藏换面积的并行处理器**：
 
 - [[Tile-Based Rendering]] —— 移动端架构分支；
 - [[GPU-Driven Rendering]] —— 把调度也搬到 GPU；
+- [[GPGPU]] —— 编程模型侧：三条锁（写位置固定 / 不可读写 / 精度打包）与"一遍 pass 一遍全屏"的成本形状；
 - [[Overdraw]] —— ROP 侧的账单；
 - [[Particle Systems]] / [[Niagara]] —— compute 侧的典型负载；
 - [[Shadow Mapping]] —— 一次额外的"以光源为视角的渲染"，成本单位是"一遍场景"。

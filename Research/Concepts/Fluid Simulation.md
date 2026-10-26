@@ -38,6 +38,18 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 
 **核心权衡（本域第一账）**：**精度 ↔ 稳定性/速度**——Stam 1999 的名言是"CG 要的是形状与行为，物理精度次要甚至无关"；降档语言 = 降网格分辨率、降步数、换更省的表示。
 
+### GPU 化：成本从"单元数"变成"pass 数"（2026-10-26 落位）
+
+[[Harris — Fast Fluid Dynamics Simulation on the GPU (2004)|Harris 2004]] 把上面这套四步**整体搬进像素管线**，成本语言随之改口：
+
+$$\text{成本} \approx W\times H \times (5 + N_{\text{jacobi}}) \times B_{\text{每像素}}$$
+
+- **一次时间步 = 一串全屏 pass**（对流/扩散/外力/散度/40~80 次 Jacobi/减梯度），**压力求解吃掉 90% 以上的 pass**；
+- **它是带宽账**：fp16 RGBA、每 pass 读 5 邻居写 1 ≈ 48 B/像素；$256^2\times65$ 即约 204 MB/帧，60 fps ≈ 12 GB/s——**先撞带宽，不是先撞算力**；
+- **降档三个旋钮的价格不同**：降迭代省得**线性**（60→30 省一半）、损失**渐进**；降分辨率省得**平方**（256→128 省 3/4）、但结构直接变；降精度省一半带宽、却可能把长迭代推向不稳定。**顺序：先砍迭代，再砍分辨率，精度最后动**。
+
+> **判据**：问一条模拟"贵不贵"，只答分辨率是没答；**要答"分辨率 × pass 数"**。说不出 pass 数，等于没算过成本。
+
 ### 水的第二条路：不求解，采样统计（2026-10-22 落位）
 
 流体的三条路线都在**解方程**；水面还有一条**不解方程**的路——**谱合成**（[[Tessendorf 2001 — Simulating Ocean Water|Tessendorf 2001]]）：
@@ -74,6 +86,9 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
        尖锐位移 + Jacobian 折叠判据→泡沫；"全有或全无"的固定成本模型）★ 2026-10-22 入库
 2001  Fedkiw 等《Visual Simulation of Smoke》：+ 涡量约束（找回被耗散的小涡）
 2003  Stam《Real-Time Fluid Dynamics for Games》（GDC 版）
+2004  ★ [[Harris — Fast Fluid Dynamics Simulation on the GPU (2004)|Harris, GPU Gems 38]]：**求解器整体搬上 GPU**
+      （数组=纹理 / 循环=片元程序 / 反馈=双缓冲 / 边界=图元；每帧 5+40~80 个全屏 pass；
+       "分辨率 × pass 数"从此成为模拟的预算语言）★ 2026-10-26 入库
 2005±  FLIP 引入图形学（Zhu & Bridson 等）→ 影视管线主流
 2008  Maya Fluid Effects 获奥斯卡技术成就奖（Stam 为获奖人之一；Stam 1999 的产业化身）
 2010s  Houdini FLIP 成为影视/游戏过场标准；EmberGen 等实时烟雾工具兴起
@@ -85,6 +100,7 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 ## Important Papers
 
 - [[Stam — Stable Fluids (1999)]] —— **CG 流体域枢纽**（无条件稳定：拉格朗日对流 + 隐式扩散 + 投影；"感知优先"哲学出处；Maya Fluid Effects 的理论来源）★ 2026-10-13 入库
+- [[Harris — Fast Fluid Dynamics Simulation on the GPU (2004)]] —— **GPU 化的翻译手册**（数组=纹理、循环=片元程序、反馈=双缓冲、边界=图元；pass 数成为成本第一乘数；6× 快于 CPU / 128² 云模拟 >80 迭代/秒 @FX 5950）★ 2026-10-26 入库
 - [[Tessendorf 2001 — Simulating Ocean Water]] —— **水面谱合成源头**（"不解方程、采统计"：Phillips 谱 + 一次 IFFT + 色散只管相位；尖锐位移与 Jacobian 泡沫判据；**固定成本、不可剔除**的成本模型；游戏/影视水面二十年事实模板）★ 2026-10-22 入库
 - 记名（未单独入库）：Foster-Metaxas 1996/1997（完整 NS 进 CG）；Fedkiw 等 2001（Vorticity Confinement）；Zhu & Bridson 2005（FLIP 进图形学）；Stam 2003 GDC（游戏向实时版）
 - 对照样本：[[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（2026，感知路线——"不模拟的水"）
@@ -95,6 +111,7 @@ first_introduced: "1965（CFD 差分法进入 CG 前史 / Harlow-Welch）；1999
 - [[Neural Physics Simulation]]——神经侧：用学习替代求解器（"镜像 I/O"家族）
 - [[Participating Media]]——渲染侧接口：流体模拟产出密度场 → 体渲染/自阴影（Stam 1999 的演示即体渲染）
 - [[Physics-based Character Animation]]——同为"物理求解进 CG"的支线（布料/肌肉/角色）
+- [[GPGPU]]——执行环境侧：同一套四步搬到 GPU 后变成 pass 序列，成本形状从"单元数 × 步数"变成"分辨率 × pass 数"
 
 ## Technologies
 
