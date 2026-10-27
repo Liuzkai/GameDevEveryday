@@ -10,13 +10,13 @@ created: 2026-09-07
 
 ## 入口
 
-- **今日**：[[2026-10-26]]（昨日：[[2026-10-25]]）
+- **今日**：[[2026-10-27]]（昨日：[[2026-10-26]]）
 - **本周综合**：[[2026-W43]]（覆盖 **10-19 ~ 10-25**，✅ 2026-10-25 收官——主线：**把三样东西变成"可数"**（正确的性质 / 画面的语义 / 成本的对象）；20 Papers 含 8 经典 + 5 新概念 + 64 图；上一周 [[2026-W42]]）
 - **首月月报**：[[2026-09-Monthly|Monthly 2026-09]]（覆盖 9-7 ~ 9-30，✅ 2026-09-30 产出）
 - **本月雷达**：[[2026-09]]（✅ 2026-09-30 月结刷新）
-- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-22（资料侧：已读账本维持 40 篇——今日无读者新动作；新增判断："预算"一词在库内已分成四种计价对象（容量 / 成本 / 精度 / 时间），见 PKM 2026-10-22 块）**——推送按校正结果组织
+- **认知模型**：[[Personal Knowledge Model]] ✅ 校正于 2026-10-05 / **更新于 2026-10-27（资料侧：已读账本维持 40 篇——连续第 7 日无读者新动作；新增判断：库内"预算"语言从四种计价对象扩为**六种**（容量 / 成本 / 精度 / 时间 / 状态-记忆 / 像素覆盖），并得出"**换单位比调额度高两个数量级**"这条量化判据，见 PKM 2026-10-27 块 / [[Budget Units]]）**——推送按校正结果组织
 
-## Papers（149）
+## Papers（153）
 
 | 论文                                                                            | 分级  | 用户水平        | 与你相关度        |
 | ----------------------------------------------------------------------------- | --- | ----------- | ------------ |
@@ -168,8 +168,12 @@ created: 2026-09-07
 | [[Tutte — How to Draw a Graph (1963)\|Tutte 1963 — How to Draw a Graph]] | A（经典·历史重要性 5） | **Hard（原文不可得，二手重建）** | 高（★ **"调和 ⇒ 单射"的第一条定理 / 全书源节点**：三连通平面图 + 凸边界 + 重心 ⇒ 直线无交叉、面为凸、解唯一；图形学版本 = 边界钉圆 + 解 Δu=Δv=0；**凸边界是保证也是枷锁**——LSCM 为自由边界放弃全局单射，Campen 2016 再把它找回来；⚠️ **原文 OUP/Wiley 均 403，本页由 Gortler 2006 + LSCM 引言 + zbMATH 三源重建，附核证清单与"未核实"标记**；同时纠正 LSCM 参考文献 [30] 的年份/标题错误）** ★ 2026-10-24 |
 | [[Everitt — Interactive Order-Independent Transparency (2001)\|Everitt 2001 — Depth Peeling]] | A（经典·历史重要性 4，**技术演示文稿·无基准数据**） | **Normal（结论层 ≈20 分钟）** | **中高（★ OIT 的基准解 / 你的 Overdraw 线的历史锚点**：正确半透明的传统解是「让应用排序」，depth peeling 改成**每像素用层号排序**——双深度缓冲 ping-pong，深度测试反向（GREATER）让「比上一层更远的最近片元」成为这一层的可见面；成本 **层数 × 一遍场景**（片元逐层下降、几何不降）；借 shadow map 当只读深度 + `DEPTH_REPLACE` 解精度不变性；**唯一定量结论是「n = 4 通常够用」（无计时、无误差度量）**；四代演进 = 顺序外包给谁（应用 / 像素 / 随机 / 权重）；4 图原图）** ★ 2026-10-25
 | [[Harris — Fast Fluid Dynamics Simulation on the GPU (2004)\|Harris 2004 — GPU Gems 38]] | A（经典·历史重要性 4，**书章·非同行评审**） | **Normal（结论层 ≈20 分钟）** | **最高（★ GPU 化的翻译手册 / 你的 Niagara GPU 模拟的历史锚点**：四个翻译（数组=纹理 / 下标=纹理坐标 / for 循环=片元程序 / 迭代反馈=双缓冲）＋ 一次时间步 = 一串**全屏 pass**（5 + 40~80 次 Jacobi，**压力求解吃掉 90% pass**）；**关键判据：半拉格朗日对流天然是 gather 不是 scatter**——"我这个格子取谁的值"是读问题，正好落在 2004 年硬件的能力里；RTT（双纹理、交换近乎免费）vs CTT（单纹理、拷贝 ∝ 尺寸）；边界 = 内部 quad + 四条线段 = 每步两个 draw call；**6× 快于 CPU / 128² 云模拟 >80 迭代/秒 @FX 5950**（均无基线细节，当量级读）；成本式 $\text{成本}\approx W H (5+N_{jac}) B$ → 256²×65×48 B ≈ 204 MB/帧；5 图原图）** ★ 2026-10-26
+| [[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination\|RADIANT]] | A | **Normal（结论层 ≈25 分钟）** | **最高（★ 前馈 GI 的完成形态 / "换单位"的第一号证据**：每物体 2048 点 → PointNet++ → **32 个 surface-patch token**，传输序列从三角形 $T$ 压到 $32N$（中位 **3,205 → 320**，$O(T^2)\to O(N^2)$）；**不变形式因子注意力**把 4 维几何不变量 $G_{ij}=(-\|Δ\|^2, m_i^\top Δ, -m_j^\top Δ, m_i^\top m_j)$ 因子化成 query-key 内积（不物化 $O(N^2)$ bias）；point-splat 7×7 免网格 G-buffer + 物体 id routing；**32.22 dB per-image / 27.65 pooled，比 RenderFormer-V2 高 3.3 dB**；500 物体 512² **0.83 s**（8.5× FlashAttention 版 / 22.2× SDPA）；**消融铁证：换单位值 3.3 dB，调 token 预算（8→64）只值 ≤0.04 dB**；诚实边界 = 0.83 s 非实时、只评估到 50 实体、全合成数据；3 图取 2）** ★ 2026-10-27
+| [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation\|UniWorld]] | A- | **Normal（系统侧 ≈20 分钟）** | **高（★ 世界模型的"薄接口"路线：**异构世界源（引擎 / 真实视频 / 合成）→ **图像对齐深度** → 共享 DiT，于是"引擎深度"与"单目估计深度"在接口上等价；**noise-aligned overlapping continuation**（$P_{i,t}(z)=M_i\odot[tH_i+(1-t)\varepsilon_i]+(1-M_i)\odot z$——幂等、$t=1$ 精确还原、不需额外模型评估）+ **rolling depth latent state**（深度只在窗口接缝读一次，窗口内 8 次评估复用）；**深度活跃上界 `4·L_max·S·96` B = 19.05 MiB @960×544，与时长无关**；14.472 FPS @960×544 / **8×H100**；PSNR 13.40；VBench 80.54；**必须说清：消融几乎全跨零（boundary-only +0.006 dB），架构成立但机制归因不成立**）** ★ 2026-10-27
+| [[2026-10-26-Liu — PASPA Past as State Present as Attention\|PASPA]] | A- | **Normal（结论层 ≈25 分钟）** | **高（★ 长时程动作生成的当前最优解 / "用错单位"的第一个可量化反例**：NeurIPS 2026，同济 × 东大 × 阿里；BGDN（块级 Gated DeltaNet，块首读保因果 + 可吃 Tensor Core）+ BMHSA（块对角 mask，$O((NK)^2d)\to O(NK^2d)$）；**自相关实测论证**：风格特征 >100 帧仍相关、局部运动 <20 帧衰减——**一条序列两个时间尺度差 5 倍**；BEAT2 FGD **3.71** / SHOW **0.00111**（−43.9%）；**消融铁证：State+State 7.652 比完全不给历史 7.065 还差**——历史给错方式是负收益；600 s 输入 56.0 s 推理、峰值显存 0.36–0.48 GB（**成本回到线性**）；3 图原图）** ★ 2026-10-27
+| [[Reyes — The Reyes Image Rendering Architecture (1987)\|Reyes 1987 — 渲染架构]] | A（经典·历史重要性 5，**⚠️ 二手重建**） | **Normal（结论层 ≈30 分钟）** | **最高（★ 架构层第一篇 / 你的 Overdraw 线的史前史**：Cook / Carpenter / Catmull，SIGGRAPH 1987；**八条设计原则**（自然坐标 / 向量化 / 统一表示 / 局部性 / **线性** / 大模型无上限 / 后门 / 纹理）+ **八阶段管线**（bound→cull→split→dice→shade→break→sample-visibility→filter）；**微多边形 = 平面着色四边形、边长约半像素（Nyquist 极限）** ⇒ **着色率第一次与几何复杂度解耦**（Nanite 判据的 1987 版本）；16 子像素 jitter 一套采样点同时解决抗锯齿 / 运动模糊 / 景深；ε 平面免 hither 裁剪与逆透视；**代价：先着色后判可见 ⇒ 结构性 overdraw**（6.8 M 微多边形 / 63 万像素 ≈ 10.8 个/像素 ⇒ **约 2.7×**，⚠️ 本库反推非原文）；定量：1986 圣诞卡 8 小时 CPU、Luxo Jr 724×434 1.5 h/帧、目标 3 分钟/帧；**⚠️ 原文六条路全断，由 ResearchGate 作者 OCR 稿重建，核证清单见笔记，本页不出图**）** ★ 2026-10-27
 
-## Concepts（46）
+## Concepts（48）
 
 **基础锚点**
 - [[GPU Architecture]] ★ 2026-10-25 补齐（**成本地图**：执行模型（SIMT/发散/occupancy）× 存储层级（4 级带宽差一个数量级）× 固定功能单元（ROP 绑分辨率）三类资源；**六个实测指标各落哪个单元**的表 + 五条常见误区（"算力有余量" / "occupancy 越高越好" / "draw call 少就快"）；此前被 Tile-Based / GPU-Driven / Niagara / 粒子 / 分档 / 预算六页引用而缺页）
@@ -213,6 +217,7 @@ created: 2026-09-07
 - [[Skinning]] ★ 2026-10-23 入库（**角色形变域的骨架层**：四代谱系（LBS 1988 → DQS 2008 → PSD/corrective → 神经蒙皮 → 肌肉层）+ 一张"混法对照表"（混什么 / 是否保刚体 / 代价 / 代表）+ 三条失败模式（糖果纸 / 塌肩 / 翻面）；**"混的对象必须同类"** 是它的中心判据；与 [[Motion Retargeting]]（上游）、[[Physics-based Character Animation]]（下游）接链）
 - [[Reservoir Sampling]] ★ 2026-10-14 入库（**流式加权抽样容器**："一个槽位代表整条候选流"；RTXDI 固定提交可直读；"一个表示代表全部"家族成员）
 - [[ReSTIR]] ★ 2026-10-15 入库（**采样线合流点**：流式 RIS + 时空复用 + MIS 无偏化；DI/GI/GRIS/RTXDI/MegaLights 方法族底座；与读者框架"采样+复用+失效"逐项咬合）
+- [[Budget Units]] ★ 2026-10-27 入库（**第 47 个 / 你整张 SABC 五维表的元层审计**：**六种计价对象**（容量 / 成本 / 精度 / 时间 / **状态-记忆** / 像素覆盖）+ **三组"换单位 vs 调额度"量化对照**（RADIANT 换单位 +3.3 dB vs 调 token 预算 ≤0.04 dB；PASPA 用错记忆单位 7.652 **比不给历史 7.065 还差**；UniWorld 把单位从"帧"换成"窗口"后显存上界与时长解耦）+ **三判据**（"内容翻十倍会翻十倍吗" / "额度锁在哪个时间尺度上" / "会不会随时长增长"）；**落到你的表只有一个动作：给"同屏粒子数"补一行像素预算**）
 
 **Hard 待建桥**
 - [[Neural Rendering]]
@@ -221,6 +226,7 @@ created: 2026-09-07
 - [[Neural Global Illumination]]
 - [[Neural Animation]]
 - [[Motion Generation]]
+- [[Motion Tokenization]] ★ 2026-10-27 入库（**第 48 个 / 此前被引用 4 处却一直缺页**：四种切法（逐帧连续 / 逐帧离散 VQ / 片段级 clip token / **块级 block**）+ 三条设计轴；**核心判据：token 化的单位必须匹配你要记住的那个时间尺度**——由 PASPA 的自相关实测（风格 >100 帧仍相关、局部运动 <20 帧衰减）给出实证）
 - [[Inverse Rendering]]
 - [[Neural Physics Simulation]]（★ 全库桥最短的 Hard）
 - [[Physics-based Character Animation]]（桥：排在 Motion Matching 之后）
@@ -276,4 +282,4 @@ Research/
 
 ---
 
-最后更新：2026-10-25（Run #47：**「给 overdraw 立账」日**。读者侧：**远程 0 新提交**，已读账本维持 **40 篇**（连续 5 日无新 `read`）；前沿：**周日无新批次**（cs.GR 最新仍为 10-22 提交件，listing + API 双通道核对一致）→ 按 no-filler 不凑数，**转做图谱欠账**；产出：补两个「被引用 11 次却没有页」的概念——[[Overdraw]]（**第 44 个**：三种口径 / 成本恒等式**层数 × 屏占比 × 单价** / 屏占比换算表 / 五档单价表 / **对 SABC 表提出「像素预算」修订**——同屏 3000 粒子在 64² 与 256² 之间差 16 倍填充）与 [[GPU Architecture]]（**第 45 个**：三类资源 × 存储层级 × 固定功能，附六个实测指标的归属表）；经典：[[Everitt — Interactive Order-Independent Transparency (2001)|Everitt 2001 — Depth Peeling]]（A·历史重要性 4：把顺序从「应用排序」下推到「像素层号」，成本 = **层数 × 一遍场景**；**唯一定量结论「n=4 通常够用」是经验值不是基准**；4 图原图）；顺手清掉两条 HTML 图解引用的改名债（7 处悬空 → 0）；产业：**RTX Remix 1.6 于 10-23 落地**（GitHub 1.6.1，DLSS 5 3D 引导神经渲染 + 5×/6× MFG + Sparse Rendering + WoA 原生）；Papers 147→**148**，Concepts 43→**45**）
+最后更新：2026-10-27（Run #49：**「换单位」日**。读者侧：**远程 0 新提交**，已读账本维持 **40 篇**（连续 7 日无新 `read`）；前沿：周二班**如 10-26 的时钟分析所预测——确实吞下周末积压**，但体积不大（cs.GR 新条目仅 2 条：RADIANT / PASPA，均为周五提交、周一 20:00 ET 才公告），cs.CV 补扫抓到 UniWorld；主线：**四篇论文（3 前沿 + 1 经典）各自把"记账单位"换了一次**，指向同一命题——**换单位比调额度高两个数量级**（RADIANT：换单位 +3.3 dB vs 调 token 预算 ≤0.04 dB）。产出：[[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination|RADIANT]]（A，前馈 GI：物体 token 把传输序列 3,205→320）、[[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation|UniWorld]]（A-，薄接口世界模型：显存上界与时长解耦，**但消融几乎全跨零**）、[[2026-10-26-Liu — PASPA Past as State Present as Attention|PASPA]]（A-，NeurIPS：**State+State 7.652 比不给历史 7.065 还差**——历史给错方式是负收益）、[[Reyes — The Reyes Image Rendering Architecture (1987)|Reyes 1987]]（A 经典·历史重要性 5：微多边形半像素 = 着色率与几何解耦的 1987 版本，**先着色后可见 ⇒ 结构性 overdraw ≈2.7×**；⚠️ 二手重建、本页不出图）；新概念 **[[Budget Units]]（第 47）** 与 **[[Motion Tokenization]]（第 48）**；概念回填 8 处（GI 谱系第 8 行拆出"拟合派 vs 前馈派"、World Models 新增**第五维度「接口的厚度」**、Overdraw 时间线补 1987 节点等）；6 张论文原图逐张核验；Papers 149→**153**，Concepts 46→**48**）

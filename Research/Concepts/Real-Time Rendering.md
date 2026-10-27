@@ -58,6 +58,9 @@ first_introduced: 1960s–1970s（光栅显示与可见面算法）;实时作为
 1970s-80s  着色模型（Gouraud / Phong）→ 物理模型（[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]）
 1983       粒子与程序化特效进管线（[[Reeves — Particle Systems (1983)]]）
 1986       渲染方程的完整表述（[[Kajiya — The Rendering Equation (1986)]]）——此后一切光照的容器
+1987       **渲染架构第一次被整体设计**：[[Reyes — The Reyes Image Rendering Architecture (1987)]]——
+           八阶段管线 / 微多边形约半像素边长（Nyquist）/ ε 平面 / 16 子像素 jitter 统一抗锯齿·运动模糊·景深
+           **代价：先着色后判可见 ⇒ 结构性 overdraw**（这条权衡 30 年后被 visibility buffer 反向解掉）
 1990s      纹理映射普及 / 多分辨率（细分、LOD 工程化）
 2000s      可编程着色器 → 延迟渲染；PBR 标准化前夜
 2013       PBR 进引擎（[[Karis — Real Shading in Unreal Engine 4 (2013)]]）——实时渲染与物理渲染合流
@@ -71,13 +74,15 @@ first_introduced: 1960s–1970s（光栅显示与可见面算法）;实时作为
 - 本库"预算起源三件套"：[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] · [[Williams — Casting Curved Shadows on Curved Surfaces (1978)]] · [[Reeves — Particle Systems (1983)]]
 - PBR 四源头：[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] · [[Kajiya — The Rendering Equation (1986)]] · [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] · [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]
 - 工程化：[[Karis — Real Shading in Unreal Engine 4 (2013)]]
-- 完整清单见 [[Index]]（Papers 68 篇）
+- **架构层第一篇**：[[Reyes — The Reyes Image Rendering Architecture (1987)]] —— 不是某个效果的论文，而是**整条管线怎么排**的论文（八阶段 / 自然坐标 / 线性 / 局部性 / 无上限模型）；**今天所有"先可见后着色"的设计都是在给它做反面**（2026-10-27 入库，二手重建）
+- 完整清单见 [[Index]]
 
 ## Related Concepts
 
 - [[Global Illumination]] —— 本域"最贵的一半"（间接光）；实时化路线见其条目
 - [[Scalability and Quality Tiers]] —— 实时渲染的"社会契约"：**同一份内容在不同预算下都得成立**
 - [[Linear Transport Theory]] —— 所有光照的数学母语（表面 ↔ 体积）
+- [[Budget Units]] —— **本域的每一个时代都在换计价单位**（三角形 → 像素 → 微多边形 → 探针 → token）
 
 ## Technologies
 

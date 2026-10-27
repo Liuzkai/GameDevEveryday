@@ -126,6 +126,11 @@ $$
 ## Historical Evolution
 
 ```text
+1987  ★ 结构性 overdraw 的最早自觉样本：[[Reyes — The Reyes Image Rendering Architecture (1987)]]
+        —— 管线是"先细分 → 先着色 → 后判可见"，**着色对隐藏面也照付**
+        —— 折算：6.8 M 微多边形 / 63 万像素 ≈ 10.8 个/像素；半像素边长的微多边形只需 ~4 个/像素铺满
+           ⇒ **约 2.7× 的结构性 overdraw**（本库反推，非原文结论）
+        —— 关键：这 2.7× 不是美术叠出来的，是**管线顺序决定的**——与 GPGPU pass 同属一类
 1990s   fill rate 是显卡规格表的第一行（"多少 Mpx/s"）
           ↓ 可编程着色后，overdraw 从"像素吞吐"变成"每片元的算法复杂度"
 2000s中后期  deferred shading 普及：着色改成每像素一次（G-buffer）
@@ -137,6 +142,8 @@ $$
 2023+   3D Gaussian Splatting：每像素几十~几百层 ⇒ overdraw 回到舞台中心
 ```
 
+**注意 1987 那一行与 2010s 那一行是同一场战争的两端**：Reyes 把"先着色后可见"当架构（因为它要的是**统一**：一套采样点同时解决抗锯齿/运动模糊/景深，见 [[Reyes — The Reyes Image Rendering Architecture (1987)|Reyes 笔记]]）；visibility buffer 把"先可见后着色"当架构（因为它要的是**便宜**）。**同一个决定——着色与可见性的先后——在 1987 年是"买了统一性"，在 2010s 是"卖掉了灵活性"。**
+
 **这条线不是"overdraw 越来越贵"，而是"overdraw 的计价单位一直在换"**：像素吞吐 → 每片元算法 → 写入次数 → tile 容量 → **层数**。
 
 ## Important Papers
@@ -144,6 +151,7 @@ $$
 - [[Everitt — Interactive Order-Independent Transparency (2001)]] —— **"层数即成本"的最早清晰表述**：depth peeling 的成本 = `层数 × 一遍场景`；也是"正确顺序必须为最坏层数付费"的证明；
 - [[Reeves — Particle Systems (1983)]] —— 法则 ①（数量随屏占比）与法则 ③（加法混合免排序）的源头，本页两条主线的共同祖先；
 - [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization]] —— 页内分桶：把 overdraw 从"全屏随机"变成"tile 内有序"。
+- [[Reyes — The Reyes Image Rendering Architecture (1987)]] —— **"结构性 overdraw"的历史源头**：先着色后判可见，隐藏面照付着色钱（折算 ≈2.7×，本库反推）；**也是"把成本单位从几何换成屏幕采样格"的第一次**——微多边形约半像素边长，即 Nyquist 极限（2026-10-27 入库）。
 
 ## Related Concepts
 
@@ -154,6 +162,7 @@ $$
 - [[Scalability and Quality Tiers]] —— 降档时"先动哪个乘数"；
 - [[Real-Time VFX Performance Budgeting]] —— 本页服务的预算体系；
 - [[Shadow Mapping]] —— 阴影贴图写入也是一种 overdraw（但口径不同：光源视角）；
+- [[Budget Units]] —— **本页最后一句"计价单位一直在换"的展开**：像素吞吐 → 每片元算法 → 写入次数 → tile 容量 → 层数，这五个单位对应五种完全不同的预算表写法；2026-10-27 建页。
 - [[GPGPU]] —— **结构性 overdraw**：GPU 模拟每个 pass 都是一次全屏写入（`分辨率 × pass 数`），**没有一层是美术叠出来的，全部由算法产生**。这是"层数"的另一类来源，也无法靠美术缩尺寸解决。
 
 ## Technologies

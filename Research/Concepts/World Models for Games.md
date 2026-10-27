@@ -37,6 +37,18 @@ user_level: Hard
 
 于是判据再加一问：**"这套 harness 除了出画面，还能不能出标签、出评测、出反事实？"** 只能出画面的属于渲染器；能出标签的是数据工厂；能出反事实（改一条规则、重跑一遍）的才是**实验平台**——MG4.0 是库内第一个三项齐备的样本。附带的工程结论是：它在 5090 上 83.4 FPS / 111 ms，靠的不是更小的模型，而是把"哪些东西每帧必须重算"逐项砍掉（三层 KV、30 个 causal DiT、TAEHV 编码复用）。**"实时"在这里是系统账，不是模型账。**
 
+**第五个设计维度：接口的厚度（2026-10-27 新增）。** 前四个维度都在问"什么东西跨过边界"，这一维问的是**跨过去的东西有多重**——同一个"层次 2"，接口可以从极厚做到极薄：
+
+| 系统 | 跨过引擎/模型边界的东西 | 接口厚度 | 直接后果 |
+|---|---|---|---|
+| [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds\|Matrix-Game 4.0]] | low-poly 白模帧 + 相机位姿 + 动作 + 规则模板字幕 | **厚**（强表示） | 快、可控、但只吃自家引擎 |
+| [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation\|UniWorld]] | **引擎渲染帧 或 真实视频** + 图像对齐深度 | **薄**（弱表示，仅有深度这一条几何通道） | 通用、可吃异构世界源，代价是必须自己从图像里"读出"几何 |
+| [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games\|AnyGameRenderer]] | 纯视频 + 字幕 | **最薄** | 最通用，但实体一致性要靠后处理硬纠 |
+
+UniWorld 的关键手法值得单独记：它不要求世界源提供深度，而是**把任意源先对齐到图像空间深度**（`image-aligned depth`），于是"引擎渲染的深度图"和"单目估计出来的深度"在同一个接口上等价——**这就是"薄接口"能同时吞下合成数据与真实视频的原因**。工程上它靠两件事把分钟级交互做下来：① **noise-aligned overlapping continuation**（把新窗口投影回上一条噪声轨迹，幂等、`t=1` 时精确还原历史、不需额外模型评估）；② **rolling depth latent state**（深度只在窗口边界更新一次，窗口内 8 次评估复用——活跃显存占用 19.05 MiB @960×544，**且与时长无关**）。14.47 FPS @960×544 / 8×H100——**注意这个"实时"也是系统账，而且是数据中心级的系统账**。
+
+于是判据再加一问：**"这个接口能吞下别人的世界吗？"** 只能吞自家引擎的，是流水线；能吞任意视频的，是通用渲染器——**而"接口厚度"就是这两者之间的旋钮**。
+
 ## Prerequisites
 
 - [[Neural Rendering]]
@@ -51,6 +63,7 @@ user_level: Hard
 - 2026-09：[[DLSS 5 — Generative Neural Rendering]]（产品化的层次 3）
 - 2026-09：[[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory]]（**可交互探索 + 记忆预算**：隐式 3D-aware 记忆 / 视角条件压缩 / 蒸馏拿实时——"连世界状态都不物化"的路线；**北大 × 腾讯 ARC Lab**）
 - 2026-10：[[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]]（**层次 2 的完成形态**：可执行 harness + 规则模板字幕 + 三阶段因果蒸馏，83.4 FPS；把"实时"拆成九项系统优化）
+- 2026-10：[[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation|UniWorld]]（**"薄接口"路线的完成形态**：异构世界源 → 图像对齐深度 → 共享 DiT；noise-aligned 重叠续写 + 滚动深度状态，分钟级交互；14.47 FPS @960×544 / 8×H100）
 - 背景信号：NVIDIA Cosmos 3 全线开源（世界模型作为生成式世界的基础设施工具化）；SIGGRAPH 2026 Workshop 宣称 3DGS 已成为生成式世界模型的原生输出格式
 
 ## Related Concepts
@@ -73,6 +86,7 @@ user_level: Hard
 - [[2026-09-21-WorldCrafter — Consistent Video World Model with Implicit 3D-aware Memory]]（★ 2026-09-23 入库：记忆维度样本）
 - [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]]（★ 2026-10-22 入库：**层次 2 最强样本**——可执行 harness / 规则模板字幕 / 三阶段因果蒸馏 / 九项推理优化；A 级）
 - [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games|AnyGameRenderer]]（★ 2026-10-24 入库：**同一条轴的相反取舍**——把"状态"喂成纯视频 + 字幕（弱表示、通用、慢），对照 MG 4.0 的 low-poly 代理（强表示、快、窄）。**并用实体级指标第一次给"渲染半边"立了验收尺**：temporal match / position match / unrendered / hallucination）
+- [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation|UniWorld]]（★ 2026-10-27 入库：**接口厚度轴的中间点**——只跨深度这一条几何通道，因此能同时吃引擎帧与真实视频；工程贡献在"长时程状态"：noise-aligned 重叠续写 + 滚动深度状态，显存占用与时长解耦。A- 级，**但消融几乎全是零效应**，长时程证据弱于其声明）
 - Code World Model（arXiv 2608.25927，Watchlist）
 
 ## Personal Knowledge

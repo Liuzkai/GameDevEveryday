@@ -1,0 +1,152 @@
+---
+type: concept
+title: "Budget Units"
+user_level: Normal
+aliases: ["Unit of Account", "计价单位", "记账单位", "成本计数单位", "预算单位"]
+prerequisites: []
+first_introduced: "2026-10-27"
+tags: [budget, performance, cost-model, rendering, memory]
+---
+
+# Budget Units
+
+## Definition
+
+**预算的"单位"，指的是你把什么东西当作计数的对象。** 不是数值单位（MB、ms、个），而是**"数的是什么"**：三角形、物体、像素、帧、窗口、探针、字节。
+
+任何一份成本模型都能写成三件事的乘积：
+
+$$\text{成本}=\underbrace{\text{单位数}}_{\text{数什么}}\times\underbrace{\text{单价}}_{\text{每个多贵}}\times\underbrace{\text{次数}}_{\text{算几遍}}$$
+
+**绝大多数预算争论发生在"单价"和"额度"上，而真正的数量级变化发生在"单位"上。**
+
+## Core Principle
+
+> **如果单位数随内容增长，这份预算就没有上界；只有单位数随"输出"（屏幕、帧数、可见物体数）增长，预算才是可封顶的。**
+
+一句可操作的检验：
+
+> **"把内容翻十倍，这个数会翻十倍吗？"** ——会，说明你在用"内容单位"记账；不会，才是"输出单位"。
+
+第二句（今天新增，来自 [[2026-10-26-Liu — PASPA Past as State Present as Attention|PASPA]] 的消融）：
+
+> **单位必须与被计量对象的时间尺度/物理粒度匹配。用错单位，比不用更糟。**
+
+## 六种计价对象（库内已齐的六个样本）
+
+| 计价对象 | 单位 | 谁在付 | 降档时"少"的是什么 | 库内样本 |
+|---|---|---|---|---|
+| **容量** | 元素个数（点/高斯/系数） | 显存 + 带宽 | 少画一点 | [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD\|Budgeted-GS]]（误差 $\propto N^{-1/2}$，Zador 定律） |
+| **成本** | 分配次数 / token 对 | 算力（一次前向） | 每件便宜一点 | [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting\|RLSplat]]（$O(BK)$） |
+| **精度** | 误差界（cm / dB / 角度） | 存储 + 训练 | 承诺放宽一点 | [[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model\|CurveCodec 2]]（误差界即档位：0.01–1 cm） |
+| **时间** | 每帧必须重算的量 | 帧预算 | 把计算挪到帧外 | [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds\|Matrix-Game 4.0]]（三层 KV + 因果蒸馏：83.4 FPS） |
+| **状态/记忆** | 活跃状态的字节数 | 显存（**与时长无关**） | 压成一个定长状态 | [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation\|UniWorld]]（19.05 MiB 恒定）/ [[2026-10-26-Liu — PASPA Past as State Present as Attention\|PASPA]]（$O(1)$ 查询） |
+| **像素覆盖** | 屏占比 × 层数 | 填充率 / 带宽 | 少叠几层 | [[Overdraw]]（3000 粒子：64² = 5.9× 全屏，256² = 94.8× 全屏） |
+
+**这张表的用法不是选一个，而是识别"你现在这张表数的是哪一种"**。你的 [[Real-Time VFX Performance Budgeting|SABC 五维表]] 目前**五种都有**：发射器数/粒子数（容量）、贴图尺寸（容量）、动态灯光（成本，按"一遍场景"计）、VFX 时长（时间）、OverDraw（像素覆盖）——**混着五种计价对象，所以它们之间不能直接换算**，这正是"改一个维度、另外四个不动"会出事的根本原因。
+
+## 换单位 vs 调额度：三组可引用的数字
+
+### ① RADIANT：换单位值 3.3 dB，调额度值 0.04 dB
+
+| 动作 | 变化 | 收益 |
+|---|---|---|
+| **换单位**：三角形 → 物体（每物体 32 token） | 中位 token 3,205 → 320（$T^2$ → $N^2$） | **+3.3 dB**（32.22 vs 28.95），1/5 步数到 25 dB |
+| **调额度**：每物体 token 数 $M\in\{8,16,32,64\}$（±8×） | 16 token ≈ 32 token | **≤0.04 dB**；16 token 还省 17% 训练步时 |
+
+**结论**：**在正确的单位里，预算松紧几乎不敏感；单位错了，再怎么调都补不回来。** 这条对预算表的直接含义是：**先把"数什么"定对，再谈"给多少"**。
+
+配套的硬约束（同篇）：换单位**不是免费的**——小场景反而更慢（RADIANT 解码 16,384 个光线 token，交叉点在 25 物体）。**单位换对了，要规模足够大才回本。**
+
+### ② PASPA：用错单位，比不用更糟
+
+| 过去建模 | 现在建模 | FGD（越低越好） |
+|---|---|---|
+| 无 | 注意力 | 7.065 |
+| 状态 | **状态** | **7.652** ← 比"完全不给历史"还差 |
+| 状态 | 注意力 | **5.216** |
+
+论文先量了时间尺度（风格特征自相关 > 100 帧，局部运动 < 20 帧衰减），再决定谁用状态、谁用全分辨率。**把快变量也压成状态，等于主动丢掉唯一有用的信息。**
+
+### ③ UniWorld：把单位从"帧数"换成"窗口长度"
+
+| 量 | 直接法 | 滚动状态法 |
+|---|---|---|
+| 深度读取位置（30 / 60 / 120 s） | 241 / 475 / 960 | **217 / 427 / 852**（≈ −10%） |
+| 活跃状态上界 | 随时长增长 | **19.05 MiB 恒定**（$4L_{max}S\times96$ 字节） |
+
+省下的读取量只有一成，**真正值钱的是"上界与时长无关"这条性质**——它把"内存会不会随游玩时间涨"这个问题**从经验判断变成了证明**。
+
+## 三个判据（可直接搬进评审）
+
+1. **单位审计**："这个预算是按什么数的？把内容翻十倍，它会翻十倍吗？"——会，就不是真预算。
+2. **尺度匹配**："这个量是慢变量还是快变量？"——慢的可以压成状态/缓存/滞后更新，**快的必须全分辨率**（见上表第三行）。
+3. **单位内额度**：确定单位后**不要过度优化额度**——RADIANT 的 ±8× 只值 0.04 dB。**把精力花在单位上。**
+
+## 与你五维表的对接（建议的改法，不动分级）
+
+| 维度 | 现在数的是 | 属于 | 可考虑换成的"输出单位" |
+|---|---|---|---|
+| Niagara 发射器数 | 发射器个数 | 容量 | **材质/混合模式类别数**（真正决定 shader 变体与批次） |
+| 同屏粒子数 | 粒子个数 | 容量 | **像素覆盖 $\sum A_i/A_{screen}$**（已在 [[Overdraw]] 提过，S/A/B/C 各一个 $k$） |
+| 贴图尺寸 | 边长 | 容量 | 保持（它本身就是"输出无关"的常量，且与带宽直接挂钩） |
+| 动态灯光 | 灯数 | 成本（× 一遍场景） | 保持（[[Williams — Casting Curved Shadows on Curved Surfaces (1978)|Williams 1978]] 已给出"每灯 +1× 场景"的单价） |
+| VFX 时长 | 秒 | 时间 | 保持，但**峰值段要单列**——时长是慢变量，峰值是快变量 |
+
+> **唯一建议现在动的**：给"同屏粒子数"补一行像素预算。其余四个维度**先别改**——它们已经是"输出单位"或"与输出无关的常量"，改了只会增加混乱。
+
+## 一个反直觉的推论
+
+**"降档"在六种计价对象下的含义完全不同**：
+
+| 计价对象 | "降一档"意味着 |
+|---|---|
+| 容量 | 少画一点（可逆） |
+| 成本 | 每件便宜一点（换算法） |
+| 精度 | 承诺放宽一点（换契约） |
+| 时间 | 把计算挪到帧外（换延迟） |
+| 状态 | 压成一个定长状态（换可逆性） |
+| 像素覆盖 | 少叠几层（换观感） |
+
+所以"统一降 30%"这种指令**在六种对象上根本不是同一个动作**——这是分档评审里最常见的沟通失败。
+
+## Related Concepts
+
+- [[Overdraw]] —— 像素覆盖这一种的最完整口径页；
+- [[Scalability and Quality Tiers]] —— 分档体系，本质是"在六种计价对象上各设一档"；
+- [[Real-Time VFX Performance Budgeting]] —— 你的实践页，本页是它的理论侧；
+- [[GPU Architecture]] —— 单位数最终都要落到带宽/算力两类资源上；
+- [[Reyes — The Reyes Image Rendering Architecture (1987)]] —— **最早一次明确的"换单位"**：着色成本从"几何"搬到"屏幕采样格"（半像素 = Nyquist）。
+
+## Important Papers
+
+| 论文 | 它贡献了哪种计价对象 |
+|---|---|
+| [[Reyes — The Reyes Image Rendering Architecture (1987)]] | 像素覆盖（半像素网格；且"先着色后可见" ⇒ 结构性 overdraw） |
+| [[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination\|RADIANT 2026]] | 物体（$32N$ token）+ "换单位 vs 调额度"的量化对照 |
+| [[2026-10-26-Liu — PASPA Past as State Present as Attention\|PASPA 2026]] | 状态（$O(1)$ 查询）+ "用错单位更糟"的反例 |
+| [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation\|UniWorld 2026]] | 状态（上界与时长无关的证明） |
+| [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD\|Budgeted-GS]] | 容量（误差 ∝ $N^{-1/2}$） |
+| [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting\|RLSplat]] | 成本（$O(BK)$ 分配） |
+| [[2026-10-03-CurveCodec 2 — Skeleton-agnostic Animation Compression with a Learned Entropy Model\|CurveCodec 2]] | 精度（误差界即档位） |
+| [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds\|Matrix-Game 4.0]] | 时间（每帧必须重算什么） |
+
+## Personal Knowledge
+
+**Normal**。你在"额度"这一侧是 Easy（五维表就是额度表），缺的是"单位"这一侧的判断——而这恰好是工作量级差 3–10 倍的那一侧。
+
+## Learning Gap
+
+- 缺一个**自己的算例**：拿一个 S 档技能，把"同屏 3000 粒子"折算成"像素覆盖"，看差多少倍（[[Overdraw]] 的换算表已给公式，属于 5 分钟动作）；
+- 缺一次**"内容翻十倍"的压力测试**：对五维表逐项问"内容翻十倍会怎样"，标出哪些维度会爆。
+
+## Next Step
+
+1. **5 分钟**：在 [[Overdraw]] 的换算表里查一个 S 档技能的实际覆盖倍数（选最典型的那个特效）；
+2. **15 分钟**：把"同屏粒子数"这一行的判据从"个数"改成"$\sum A_i/A_{screen}\le k$"，并给出 S/A/B/C 的 $k$ 值；
+3. **按需**：其余四维不动（它们已经是输出单位或常量）。
+
+## Notes
+
+- 本页的"六种计价对象"来自 2026-10 一整月的积累：容量（Budgeted-GS）→ 成本（RLSplat）→ 精度（CurveCodec）→ 时间（MG4.0）→ **状态（PASPA / UniWorld，2026-10-27 补）** → 像素覆盖（Overdraw，2026-10-25 补）。**六种齐全之后，"预算"这个词在本库才有确定含义。**
+- 一个尚未回答的问题：**六种对象之间能不能换算？** 目前只知道两条：容量 ↔ 精度（Zador 定律给出 $N^{-1/2}$ 的换算），时间 ↔ 延迟（可挪到帧外）。**其余四条之间没有通用的汇率**——这可能是下一阶段真正值得做的理论工作。

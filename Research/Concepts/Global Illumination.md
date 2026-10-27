@@ -40,7 +40,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | 5 | **屏幕空间族（SSAO → SSGI / SSR）** | 只在已有像素里找反弹 | 便宜；**屏幕外一律丢失**（"屏幕空间 vs 引擎感知"） |
 | 6 | **缓存/Direct 祖先族：Irradiance Caching / VPL / RSM / DDGI** | 把间接光"记在小本子上"复用 | ✅ **四节点齐（2026-10-03 / 10-04 / 10-06）**：[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（**接收侧缓存**：缓存"表面收到的答案"，误差容限 a 决定点密度）+ [[Keller — Instant Radiosity (1997)]]（VPL = 把光路顶点变成"很多小灯"）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（RSM = 第一个 bounce 存进阴影贴图，每像素固定样本 gather）+ **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（DDGI = 动态辐照度场：探针网格 × 光追增量更新 × 滞后摊销——缓存族与光追时代的合流）**——**[[Neural Global Illumination]] 桥的经典侧自此完整** |
 | 7 | **光追 GI（硬件）** | 真反弹，降噪器补噪声 | **DDGI（2019，探针场路线——见第 6 行）/ Lumen（UE 默认，表面缓存路线）/ MegaLights（直接光侧）**；贵，PC 高端 |
-| 8 | **神经 GI** | 让网络学"间接光长什么样" | 离实时有数量级差距；见 [[Neural Global Illumination]]（Hard） |
+| 8 | **神经 GI** | 让网络学"间接光长什么样" | 离实时有数量级差距；见 [[Neural Global Illumination]]（Hard）——✅ **前馈分支 2026 样本入库（2026-10-27）**：[[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination\|RADIANT]]（**把 token 单位从三角形换成物体**：$O(T^2)\to32N$ 即 $O(N^2)$，3.3 dB 领先 RenderFormer；0.83 s/帧 @500 物体——研究级，非实时） |
 
 ## Historical Evolution
 
@@ -76,6 +76,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] | **辐照度缓存（IC）**（缓存族**接收侧**源头：答案视图无关 + 误差容限 a + 八叉树 + 跨渲染复用；**NRC 2021 的直接祖先**——缓存对象就是本篇定义的辐照度） | ✅ **2026-10-04 入库** |
 | [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] | **DDGI**（缓存族**现代形态/合流点**：探针网格 + 8×8/16×16 八面体编码 + 每帧 m×n 射线 + 滞后 α∈[0.85,0.98] + Chebyshev 矩可见性；"每帧 m×n 射线"= 固定样本预算家族 2019 节点；RTXGI 产品线起点） | ✅ **2026-10-06 入库** |
 | [[LightOpt — Lights Optimization for Real-Time Rendering]] | 用可微优化反推"光照布局怎么配" | ✅ 入库（DR 桥目标） |
+| [[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination\|RADIANT (2026)]] | **前馈分支（第 8 行的第二个样本）**：不是"缓存介质换成网络"，而是**整个 GI 求解换成一次前向**——每物体 32 个 surface-patch token 走 `invariant form-factor attention`，传输序列从三角形数 T 压到 32N（中位 3,205 → 320）；3.3 dB 领先 RenderFormer，0.83 s/帧 @500 物体（研究级，非实时） | ✅ **2026-10-27 入库**（A 前沿） |
 | 神经 GI 侧：| 见 [[Neural Global Illumination]] 的桥 | 观察 |
 
 ## Related Concepts
@@ -83,6 +84,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 - [[Rendering Equation]] —— GI = 它的完整解（**本概念的直接前置**）
 - [[Real-Time Global Illumination]]（Technology）—— 实时化工程侧（Lumen / DDGI / MegaLights）
 - [[Neural Global Illumination]]（Hard）—— 学习侧目标；**本条目第 6 行（RSM/VPL/缓存）就是它的桥材料**
+- [[Budget Units]] —— **本表的隐藏横轴**：八代近似的真正差别不是"用了什么数学"，而是"用哪个量计价"（面片 / 转移算子 / 样本 / 探针 / 三角形 token / 物体 token）——2026-10-27 由 RADIANT 触发建立
 - [[Shadow Mapping]] —— 直接光侧的影子账（"每灯 +1×"）；GI 侧的成本法则在反弹次数
 - [[Participating Media]] / [[Linear Transport Theory]] —— 体积 GI（雾中光柱、云的自阴影）
 - [[Scalability and Quality Tiers]] —— GI 的档位化（烘焙 vs 实时、SH vs 光追）
@@ -124,4 +126,5 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 - **2026-10-06 更新**：**缓存族第四节点（现代形态）入库**——[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（DDGI）；第 6 行四节点齐 + 第 7 行路线边界更新（**DDGI 探针场 / Lumen 表面缓存 / MegaLights 直接光**三条路线并存）；"固定样本预算"家族补 2019 节点（**每帧 m×n 射线**）+ 新语言"**收敛可从空间维度挪到时间维度**"（摊销）。配 [[探针辐照度场_DDGI 2019 图解|DDGI 图解]]。
 - **2026-10-20 更新**：**第 3 行（Radiosity）落位**——[[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]] 入库（A 经典·历史重要性 5），全谱系表自此**每一行都有论文节点**；触发点 = 读者 [[Lightmass in the Rendering Knowledge Map|Lightmass 专题]]（同日建立）点名"漫反射互反射特解"却无笔记——经典线补位，烘焙线（第 3/4 行）与缓存线（第 6 行）两侧都有源头可考。
 - **2026-10-21 更新**：**第 4 行（PRT）落位**——[[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]] 入库（A 经典·历史重要性 5）。这条补的是**"上一行与下一行之间的必由之路"**：Radiosity 把**答案**烘死（换灯重解），PRT 把**算子**烘活（换灯一次点积），缓存族（第 6 行）再把答案做成可增量更新——三者是同一权衡轴（**哪个变量被冻结**：视角 → 光照 → 几何）上的三个点。同时新建概念 [[Spherical Harmonics]]（第 2 行与第 4 行共用的坐标系）。
+- **2026-10-27 更新**：**第 8 行（神经 GI）的前馈分支落位**——[[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination|RADIANT]] 入库。此前第 8 行只有"缓存介质换成网络"这一条路（NRC / 神经辐照度缓存，本质仍是**逐场景拟合 + 运行时查询**）；RADIANT 是**另一条路：训练一个跨场景的传输求解器，运行时一次前向**。两者的分界线不在"神不神经"，在**"要不要在目标场景上训练"**——这也是本库第一次能把"神经 GI"拆成两个成本结构完全不同的阵营（拟合派：显存 + 每场景训练；前馈派：固定权重 + 每帧前向，但需要用 token 单位把复杂度压下来）。同日的 [[Budget Units]] 正是这次拆分的副产品。
 - 本概念**不是** [[Neural Global Illumination]] 的重复：前者是"问题与近似谱系"，后者是"神经方法目标"——关系为 Prerequisite（本概念 → 神经 GI）。
