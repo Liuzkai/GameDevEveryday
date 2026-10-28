@@ -43,6 +43,18 @@ NeRF（隐式 MLP + volume rendering，慢）
 成为生成式世界模型的原生输出格式
 ```
 
+**4DGS 的三条表示路线（2026-10-28 补，随 GaussianSpline 入库）**——动态场景里"每帧一组参数"是默认值，但有三种方式绕开它：
+
+| 路线 | 时间分辨率由什么决定 | 代表 | 代价 |
+|---|---|---|---|
+| 每帧独立状态 | **帧率** | Dynamic 3D Gaussians（per-timestep 优化 + 局部刚性） | 存储 ∝ 帧数 |
+| 神经变形场 | MLP 的隐式光滑性 | Deformable 3DGS / SC-GS / GauFRe | 渲染时每高斯过一次 MLP |
+| 结构化时空分解 | 体素/平面的**预设**分辨率 | 4DGS / 4K4D / K-Planes | 分辨率是全局超参 |
+| **显式轨迹** | 多项式阶数 / 分段数 / **段宽** | STG / Gaussian-Flow / SplineGS → **[[2026-10-26-Yachil — GaussianSpline Adaptive Bezier Splines for 4D Gaussian Splatting\|GaussianSpline]]** | 局部控制强，但无空间耦合（每高斯独立轨迹） |
+
+第四行内部的演化才是重点：**多项式（全局）→ 均匀分段（全局段数）→ 可学段宽（每高斯每段）**。而 [[2026-10-26-Yachil — GaussianSpline Adaptive Bezier Splines for 4D Gaussian Splatting|GaussianSpline]] 的消融给出一句可以直接搬走的判据：**段数从 2 加到 4 没有收益（31.61 ≤ 32.08 dB），把段放对位置值 +0.37~+0.91 dB**——**时间轴的分配方式比分配额度重要**。这与库内"分配四端"（生成/生长/保留/执行）是同一条规律换了一条轴。
+
+
 **2026 年的关键信号**：SIGGRAPH 2026 Workshop 直接宣布 3DGS 已经成熟为**生成式世界模型的原生输出格式**。"世界模型生成 → 3DGS 表示 → 可交互世界"被行业默认为一条已成立的流水线。
 
 ## Related Concepts

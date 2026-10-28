@@ -72,6 +72,11 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
            （**不写新库、改既有库**：AST 深度 2 依赖闭包圈出"可编辑表面"，三类策略
             Tweak/Create/Promote；放置改为确定性视锥网格 + 五道闸门，拒绝让 VLM 猜坐标）
            —— "规则编写费力"的第三种解法：不是替你写，是替你**改**）★ 2026-10-21 入库
+2026-10    ★ 调度线（新分支）：[[2026-10-20-Ma — WorldStream Streaming Interactive 3D Worlds with Hierarchical Planning and Persistent State|WorldStream]]
+           （**PCG 第一次被当成"运行时"而不是"开局前"**：Macro 定结构 / Micro 定语义 →
+           有界联合求解（独立 argmax 有 63% 不可执行）→ 确定性本地编译；
+           两个前沿（语义跑在前面、几何只做眼前）+ 一份 tile record 撑住"卸载—重访—带编辑复原"）
+           —— "边界承诺"首次成为 PCG 的一等对象：独立生成的瓦片之间必须共享一条权威记录）
 ```
 
 ## Important Papers
@@ -84,10 +89,15 @@ first_introduced: "1970s（分形/噪声线）/ 1975（形状文法线）"
 - [[2026-09-27-Plate-Local River Generation]] —— **自然地形 / 水系侧首个样本（2026）**（"确定性 + 地形感知 + 下坡保证 + 无限域"四者同时成立；板块双表示 + 懒加载逐板块缓存 + 构造性下坡保证——**"有界域"从空间/布局问题延伸到"生成算法自身的域划分"**；开放世界水系）★ 2026-10-03 入库
 - [[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]] —— **"改规则"侧样本（2026）**（SCE：AST 深度 2 的依赖闭包 = 可编辑表面；Tweak/Create/Promote 三策略；确定性视锥网格放置 + 五道闸门；池化 N→K）。**"规则编写费力"的第三种解法——不替你写，替你改** ★ 2026-10-21 入库
 - 记名（未单独入库）：Stiny 1975《Shape Grammars》；Prusinkiewicz & Lindenmayer 1991（L-system 植物）；Perlin 1985《An Image Synthesizer》
+- [[2026-10-20-Ma — WorldStream Streaming Interactive 3D Worlds with Hierarchical Planning and Persistent State|WorldStream]] —— **"运行时 PCG"侧样本（2026）**（Macro/Micro 分层决策 + 有界联合求解 + 确定性本地编译 + 两个前沿 + tile record 持久化；**"边界承诺"首次成为一等对象**）★ 2026-10-28 入库
 
 > **"结构锚定"母题三例**（9-21 ~ 9-23 连续入库）：Müller 2006 锚在"二维 scope" → ProxyBuild 锚在"面-边拓扑" → Mira-Scene 锚在"像素 ↔ 规范坐标"。**锚什么可以变，但"生成必须作用在可对齐、可查询、可修正的中间表示上"不变。** Mira-Scene 还给出本母题目前最干净的量化判据：**稠密化不够，"有界"才是关键**（场景空间稠密预测 3D-IoU 0.379 vs 有界规范空间 0.727）。
 
 > **"拆出去"三步曲（2026-10-02 随 Wonka 2003 入库沉淀）**：2001 把**参数**移出规则（ideal successor）→ 2003 把**设计想法 + 选择策略**移出规则（control grammar + attribute matching）→ 2006 把**表面**移出规则（两阶段中间表示）。**每次都是把"不属于规则职责的东西"移出去、给它独立的表示**——"规则只管结构"被三次推到极致。
+
+> **"拆出去"第四步：把"衔接"移出规则（2026-10-28 随 WorldStream 入库）**。PCG 生成一块地很容易，生成**相邻的两块**很难——两块各自"合理"的规则会在接缝处给出对不上的路、断掉的水系。传统做法是让人手工拼（或干脆生成一整张大地图）。WorldStream 的解法是**把边界本身变成一份记录**：相邻瓦片读**同一条** boundary record（规范道路端口、边缘高程、生态过渡），各自把几何路由到它。于是"独立生成"与"接得上"第一次不矛盾。
+>
+> 附带一个反直觉的量化：**没有邻接上下文时，局部规划会把每块地都建满**——2,686 栋 vs 250 栋（10.7×），并出现城市/非城市的硬切边（边界跳变 0.361 vs 0.089）。**"局部最优"在 PCG 里表现为"过度建造"**：每一块都在最大化自己的内容量，因为没有"邻居已经承诺了什么"这个约束。这条对关卡设计同样成立——**没有全局配额的生成，一定会在每个局部都填满**。
 
 > **"决策 / 构造分离"的三种资产形态（2026-10-21 随 InfiniDream 入库沉淀）**：[[2026-10-13-Co-DSL — Human-LLM Co-design of Reusable Spatial Concepts for Layout Generation|Co-DSL]] 让 LLM 养成**概念库**（资产化）；[[2026-10-19-InfiniDream — Open-Ended Photorealistic 3D Worlds Through Procedural Generation|InfiniDream]] 让 LLM 编辑**程序化代码库**（模型化）；[[2026-10-16-Scene-Designer — Learning Design Intelligence for Agentic 3D Scene Generation|Scene-Designer]] 把判断力**训进模型**。三条路的共同前提完全一致：**VLM 只做离散、可验证的决策，连续几何交给确定性算法**——差别只在"被编辑的那个资产"长什么样。
 
