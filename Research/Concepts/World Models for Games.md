@@ -44,6 +44,7 @@ user_level: Hard
 | [[2026-10-20-Ma — WorldStream Streaming Interactive 3D Worlds with Hierarchical Planning and Persistent State\|WorldStream]] | **带分布的决策（tile plan）+ 边界承诺 + 修订号** | **最厚**（语义级，模型不碰顶点） | 可无界延伸、可复现、可编辑；代价是视觉保真度低（低模程序化） |
 | [[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds\|Matrix-Game 4.0]] | low-poly 白模帧 + 相机位姿 + 动作 + 规则模板字幕 | **厚**（强表示） | 快、可控、但只吃自家引擎 |
 | [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation\|UniWorld]] | **引擎渲染帧 或 真实视频** + 图像对齐深度 | **薄**（弱表示，仅有深度这一条几何通道） | 通用、可吃异构世界源，代价是必须自己从图像里"读出"几何 |
+| [[2026-10-26-Wu — BoxWorld Let World Engines Control and Video Generators Render\|BoxWorld]] | **对象级三字段**：布局框 + 持久属性 + 动态状态位（+ 一份**可执行的规则代码**） | **薄而可控**（离散、稀疏、有对象身份） | 规则可写、可查、可改；代价是**只在"有对象身份"的现象上成立**（烟、水、破碎进不来） |
 | [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games\|AnyGameRenderer]] | 纯视频 + 字幕 | **最薄** | 最通用，但实体一致性要靠后处理硬纠 |
 
 UniWorld 的关键手法值得单独记：它不要求世界源提供深度，而是**把任意源先对齐到图像空间深度**（`image-aligned depth`），于是"引擎渲染的深度图"和"单目估计出来的深度"在同一个接口上等价——**这就是"薄接口"能同时吞下合成数据与真实视频的原因**。工程上它靠两件事把分钟级交互做下来：① **noise-aligned overlapping continuation**（把新窗口投影回上一条噪声轨迹，幂等、`t=1` 时精确还原历史、不需额外模型评估）；② **rolling depth latent state**（深度只在窗口边界更新一次，窗口内 8 次评估复用——活跃显存占用 19.05 MiB @960×544，**且与时长无关**）。14.47 FPS @960×544 / 8×H100——**注意这个"实时"也是系统账，而且是数据中心级的系统账**。
@@ -53,6 +54,16 @@ UniWorld 的关键手法值得单独记：它不要求世界源提供深度，�
 **2026-10-28 补：这一维其实是四档，而不是三档；最厚的那一档换了问题。** WorldStream 把跨边界的东西压到**语义级**（tile plan + 边界承诺 + 修订号），模型一个顶点都不碰，几何全由确定性代码编译。它换来的是另外两件此前所有世界模型都做不到的事：**① 无界延伸时每帧成本不随已探索面积增长**（两个前沿、两个预算 $K_p\ge K_c$、$H_p\ge H_c$）；**② 卸载后回来，连"你砍掉的那棵树"都还在**（$R_i$ 记录 + 修订戳 + 重编译）。代价也很直白：画质是低模程序化，跟 MG4.0 / UniWorld 完全不在一条轴上。
 
 所以"接口厚度"不是一个单向的好坏轴，而是**三个诉求的配比**：想通用 → 往薄走（吞任意视频）；想实时 → 往厚走（少给模型干活）；想**可复现、可编辑、可延伸** → 走到最厚（让模型只做决策）。三档各自放弃了另外两档的一部分——这不是工程妥协，是**"模型输出什么"这个选择本身的代价**。
+
+**2026-10-29 补：BoxWorld 把这一维的答案换掉了——不是"接口多厚"，而是"规则写在哪"。** 四档的差别其实一直是**"哪一部分计算从网络里搬出来了"**：MG4.0 搬出的是 harness，WorldStream 搬出的是规划，UniWorld 什么都没搬（只给深度），BoxWorld 搬出的是**规则本身——写成 if/else 的代码**。所以判据再加一问：**"规则写在哪？提示词里、训练数据里、还是代码里？"** 三者是三件完全不同的事，只有第三种能改、能查、能复现。
+
+而 BoxWorld 给了一个本库目前最锋利的对照实验：把**正确后果当文本**喂给端到端模型（oracle 变体），成对分支成功率仍是 **16.2%**（和不用 oracle 一模一样），而接引擎的版本是 **97.3%**。**这说明缺的不是信息，是"条件分支"这个计算原语**——端到端模型只有"下一个 token 的分布"，没有 if。
+
+**第六个设计维度：记忆的容量（2026-10-29 新增）。** 前五维都在问"边界上传什么"，这一维问"**历史存在哪、能存多久**"。此前这一维被"层次 2"的性能数字掩盖着，直到 [[2026-10-26-Liu — WorldPager Zero-Stall Tiered Memory for Long-Horizon World Models|WorldPager]] 把它单独测出来：MG2 一个 chunk 的 KV 是 **486.6 MB（bf16）/ 129.4 MB（int4）**，于是**同一台机器**（4090 + 32 GiB）能连续生成 21 chunk（显存）→ 60（主机 bf16）→ 226（主机 int4）→ **3000**（三层加 NVMe）。
+
+> **"能玩多久"在 2026 年是一个内存系统指标，不是一个模型能力指标。** 三层存储 + 位姿预取把 45 秒推到 **37.5 分钟**，模型一行没改。
+
+这条与第三维（记忆）的关系要说清：第三维问"**记忆的表示**"（KV / latent / 定长状态 / 记录），这一维问"**记忆的驻留**"（显存 / 内存 / 盘 / 重算）。**两条轴可以任意组合**——UniWorld 是把状态做成定长（表示层解决），WorldPager 是把状态搬到盘上（驻留层解决），PASPA 是两条都用（定长状态 + 定长历史）。判据：**先问表示能不能定长，定长不了再问驻留能不能分层**——顺序反了会白花很多工程。
 
 ## Prerequisites
 
@@ -70,6 +81,8 @@ UniWorld 的关键手法值得单独记：它不要求世界源提供深度，�
 - 2026-10：[[2026-10-21-Zhang — Matrix-Game 4.0 Harnessing Video Models for Real-Time Playable Game Worlds|Matrix-Game 4.0]]（**层次 2 的完成形态**：可执行 harness + 规则模板字幕 + 三阶段因果蒸馏，83.4 FPS；把"实时"拆成九项系统优化）
 - 2026-10：[[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation|UniWorld]]（**"薄接口"路线的完成形态**：异构世界源 → 图像对齐深度 → 共享 DiT；noise-aligned 重叠续写 + 滚动深度状态，分钟级交互；14.47 FPS @960×544 / 8×H100）
 - 2026-10：[[2026-10-20-Ma — WorldStream Streaming Interactive 3D Worlds with Hierarchical Planning and Persistent State|WorldStream]]（**"最厚接口 + 状态持久"的完成形态**：Macro/Micro 分层决策 → 联合求解 → 确定性编译；$R_i$ 记录跨卸载存活，编辑随重访复原；4 km 路线总等待 3.52 s）
+- 2026-10：[[2026-10-26-Wu — BoxWorld Let World Engines Control and Video Generators Render|BoxWorld]]（**"规则是代码"**：对象级三字段接口 + 生成式渲染器；三段训练（掩码布局接地 / 状态动态适配 / rollout 蒸馏）；Paired-CF 97.3%，**oracle 也救不了端到端模型**）
+- 2026-10：[[2026-10-26-Liu — WorldPager Zero-Stall Tiered Memory for Long-Horizon World Models|WorldPager]]（**长时程从"能力问题"变成"内存系统问题"**：int4 KV 三层 + 位姿预取 + stale-set fallback；37.5 分钟 / 3000 chunk 零停顿）
 - 背景信号：NVIDIA Cosmos 3 全线开源（世界模型作为生成式世界的基础设施工具化）；SIGGRAPH 2026 Workshop 宣称 3DGS 已成为生成式世界模型的原生输出格式
 
 ## Related Concepts
@@ -94,6 +107,8 @@ UniWorld 的关键手法值得单独记：它不要求世界源提供深度，�
 - [[2026-10-22-Liu — AnyGameRenderer Entity-Consistent Generative Rendering Across Games|AnyGameRenderer]]（★ 2026-10-24 入库：**同一条轴的相反取舍**——把"状态"喂成纯视频 + 字幕（弱表示、通用、慢），对照 MG 4.0 的 low-poly 代理（强表示、快、窄）。**并用实体级指标第一次给"渲染半边"立了验收尺**：temporal match / position match / unrendered / hallucination）
 - [[2026-10-26-Zhang — UniWorld A Unified World Model for Real-Time Visual World Simulation|UniWorld]]（★ 2026-10-27 入库：**接口厚度轴的中间点**——只跨深度这一条几何通道，因此能同时吃引擎帧与真实视频；工程贡献在"长时程状态"：noise-aligned 重叠续写 + 滚动深度状态，显存占用与时长解耦。A- 级，**但消融几乎全是零效应**，长时程证据弱于其声明）
 - Code World Model（arXiv 2608.25927，Watchlist）
+- [[2026-10-26-Wu — BoxWorld Let World Engines Control and Video Generators Render|BoxWorld]]（★ 2026-10-29 入库：**"规则写成代码"的第一个样本**——对象级三字段接口（框 / 属性 / 状态位）+ coding agent 生成的 Box World Engine；20.7 FPS；Paired-CF **97.3% vs 基线 ≤16.2%**，且 **oracle（把后果当文本喂）仍是 16.2%** ⇒ 缺的不是信息，是条件分支原语）
+- [[2026-10-26-Liu — WorldPager Zero-Stall Tiered Memory for Long-Horizon World Models|WorldPager]]（★ 2026-10-29 入库：**"能玩多久"变成内存系统问题的第一个严格样本**——int4 KV 三层（GPU/DRAM/NVMe）+ 位姿预取 + 不等待；45 秒 → **37.5 分钟**、零停顿、主机内存恒定；**并把"预取的 P99 可能比按需更差"写进正文**）
 
 ## Personal Knowledge
 

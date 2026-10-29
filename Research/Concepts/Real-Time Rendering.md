@@ -62,6 +62,8 @@ first_introduced: 1960s–1970s（光栅显示与可见面算法）;实时作为
            八阶段管线 / 微多边形约半像素边长（Nyquist）/ ε 平面 / 16 子像素 jitter 统一抗锯齿·运动模糊·景深
            **代价：先着色后判可见 ⇒ 结构性 overdraw**（这条权衡 30 年后被 visibility buffer 反向解掉）
 1990s      纹理映射普及 / 多分辨率（细分、LOD 工程化）
+1998-2002  **点/面元这条支线自成一路**：QSplat（层次点）→ [[Zwicker — Surface Splatting (2001)]]（屏幕空间 EWA，带限进核）
+           —— 它不实时（42.9 万点 @512² 仅 0.7 fps），但把"splat 的核"这件事一次做对了；20 年后由 3DGS 兑现
 2000s      可编程着色器 → 延迟渲染；PBR 标准化前夜
 2013       PBR 进引擎（[[Karis — Real Shading in Unreal Engine 4 (2013)]]）——实时渲染与物理渲染合流
 2010s-20s  虚拟几何（Nanite）/ 光追普及（DDGI、Lumen）/ 虚拟阴影贴图
@@ -75,6 +77,7 @@ first_introduced: 1960s–1970s（光栅显示与可见面算法）;实时作为
 - PBR 四源头：[[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] · [[Kajiya — The Rendering Equation (1986)]] · [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]] · [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]
 - 工程化：[[Karis — Real Shading in Unreal Engine 4 (2013)]]
 - **架构层第一篇**：[[Reyes — The Reyes Image Rendering Architecture (1987)]] —— 不是某个效果的论文，而是**整条管线怎么排**的论文（八阶段 / 自然坐标 / 线性 / 局部性 / 无上限模型）；**今天所有"先可见后着色"的设计都是在给它做反面**（2026-10-27 入库，二手重建）
+- **splat 的数学源头**：[[Zwicker — Surface Splatting (2001)]] —— 屏幕空间 EWA 的闭式核 $\rho_k(x)=\frac{1}{|J|}G_{JV_kJ^\top+I}(x-m(u_k))$；**那个 $+I$ 就是"像素有面积"这条事实，抗锯齿因此是核的性质而不是后处理**。2023 年 3DGS 的 $\Sigma'=JW\Sigma W^\top J^\top$ 与它是同一个式子（低通退化为 $+0.3I$ 的膨胀）；2026 年 [[2026-10-27-Kaushik — Hexels Compact Hexagonal Primitives for Scene Rendering|Hexels]] 把支撑域从"推导出的椭圆"换成"设计出的六边形"（2026-10-29 入库）
 - 完整清单见 [[Index]]
 
 ## Related Concepts
