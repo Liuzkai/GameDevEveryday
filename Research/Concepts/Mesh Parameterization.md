@@ -67,6 +67,31 @@ LSCM 的处置方式很有代表性（图 6）：**用 stencil 把参数域画�
 - **面积扭曲**：纹理面积 / 模型面积的比值分布（图 9 右）；
 - **stretch metric**（Sander 2001）：把两者合成为一个"拉伸"标量，是工业界最常用的单一指标——**LSCM 论文里那行 "3.5 → 1.52" 就是它**。
 
+### ⑤ 接缝：DC 误差能被数学消掉，梯度误差不能（2026-10-30 补）
+
+③ 里说"接缝数量是一个真实的预算项"——那句话的默认前提是**接缝必须靠美术藏起来**（切在高曲率处、切在遮挡后、加 padding、手工擦）。[[2026-10-30-Liu — Texture Consolidation of Generated Multi-View Renderings|Liu 2026]] 给了一个不同的答案：**接缝上的颜色差，可以不靠手擦，靠解一次方程消掉。**
+
+它要解决的问题是：N 个视角各自生成了一张贴图，怎么合成一张？朴素做法是**在纹理域按置信度加权平均**——直接糊。它输了。正确做法分两步：
+
+| 步 | 在哪个域做 | 做什么 | 为什么不能省 |
+|---|---|---|---|
+| **① 对齐** | **曲面域**（切平面上的向量场） | 估计一个逐 texel 的切向量场，把各视角的特征"推"到同一位置（最小化 Dirichlet 能量） | **纹理域的平移 ≠ 曲面上的平移**。UV 展开本身带扭曲（①的三个目标只能取两个），所以在 atlas 上把一张图挪 3 个 texel，在曲面上对应的是一个**随位置变化**的位移 |
+| **② 融合** | **梯度域**（解 Poisson） | 只融合**梯度**，不融合颜色值；DC 分量由边界条件定 | 这样接缝两侧的**常数色差会被自动吸收**——因为常数项的梯度是零，它根本不进入方程 |
+
+**这是本篇最值钱的一条工程结论**：
+
+> **接缝处的误差有两种，只有一种是真的。**
+> **DC 差**（两边整体亮一点/暗一点）→ 梯度域融合后**数学上不存在**。
+> **梯度差**（一边有纹理走向，另一边没有/走向不同）→ 融合后**保留**，而且会在视觉上变成一条"折线"。
+
+所以"接缝藏得好不好"，在数学上等价于问："**这条接缝两侧的梯度场一致吗？**"——而不是"颜色接近吗"。颜色接近但梯度不一致的接缝，平均之后反而更明显（把两套纹理走向糊成一片模糊）。
+
+**代价与限制**（照抄论文的边界，不美化）：
+
+- 需要一个**逐 texel 的置信度**（哪里可信、哪里是外推出来的），并且这个置信度要一路贯穿对齐与融合两步——**置信度不是后处理滤镜，是资产的一等元数据**；
+- 梯度域要解一次**覆盖整张 atlas 的稀疏系统**，成本随 atlas 分辨率涨（这是"分辨率桥接"问题的来源：mesh 分辨率与 texel 分辨率不是一回事，见 [[2026-10-30-Liu — Texture Consolidation of Generated Multi-View Renderings|该篇]] 的求积阶数讨论）；
+- 感知指标会打架：它的 LPIPS 与 ECD 全部第一，但 **SSIM 输给朴素混合（0.615 vs 0.684）**——SSIM 奖励"局部均值/方差接近原图"，而梯度域融合恰恰会改掉局部均值。**指标选错，会把正确方法判成错的。**
+
 ## Prerequisites
 
 - **稀疏线性系统**：整套方法的成本几乎全在"解一次 $Ax=b$"上。共轭梯度 + 预条件就够了；今天的实现会再加多重网格；
@@ -118,6 +143,7 @@ Campen/SLIM/TutteNet  用"组合条件 / 约束优化 / 复合构造"把保证�
 | **[[Levy — Least Squares Conformal Maps for Automatic Texture Atlas Generation (2002)]]** | 2002 | **工业转折点** | **无翻转 + 唯一解 + 自由边界** | **Normal（已读结论层）** |
 | Sheffer & de Sturler — ABF | 2001 | 角度最优路线 | 角度最优（需后处理保单射） | 未入库 |
 | Sander et al. — Texture Mapping Progressive Meshes | 2001 | **度量**（stretch） | —（是尺子，不是方法） | 未入库 |
+| [[2026-10-30-Liu — Texture Consolidation of Generated Multi-View Renderings\|Liu et al. — Texture Consolidation]] | 2026 | **消费者**（atlas 的下游：多份贴图怎么合成一张） | —（不产生 UV，但**暴露了接缝误差的结构**） | Normal（已读） |
 | Campen, Silva & Zorin — Bijective Maps from Simplicial Foliations | 2016 | **全局单射的回归** | 组合条件下的全局单射 | Hard |
 | [[2026-10-22-Kaushik — A Tutte-Like Theorem for Injective Flows on Meshes\|Kaushik & Aigerman — A Tutte-Like Theorem for Injective Flows]] | 2026 | **换对象（映射→流）** | 流的单射（球面拓扑） | Hard（结论层 Normal） |
 
@@ -140,6 +166,7 @@ Campen/SLIM/TutteNet  用"组合条件 / 约束优化 / 复合构造"把保证�
 - **[[Skinning]]**：另一个"把一个空间的东西搬到另一个空间"的问题。**结构上同源**（都是"用一组权重把若干变换/位置混合起来"），**但保证完全不同**：蒙皮要的是"混合后仍是刚体"（[[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|DQS]] 解决），参数化要的是"映射后仍是单射"。**两篇经典可以并读**：都在问"混合/求解之后，那个好性质还在不在"；
 - **[[Physically Based Rendering]]**：UV 的下游消费者。**参数化的失真会以"贴图看起来被拉长"的形式出现在 PBR 材质里**——而美术往往归因于贴图本身；
 - **[[2026-10-22-Kaushik — A Tutte-Like Theorem for Injective Flows on Meshes|Kaushik & Aigerman 2026]]**：把"参数化"的数学搬到"流"上。**参数化是"每点去哪"，流是"每点沿什么路径走"**——同一套调和理论的两个用途。
+- **[[2026-10-30-Liu — Texture Consolidation of Generated Multi-View Renderings|Liu 2026]]**：atlas 的**下游消费者**，也是把"接缝"从美术问题变成数学问题的第一篇。它的两步（曲面域对齐 → 梯度域融合）正好对应本页的两条老约束：曲面域对齐是在**绕开"UV 展开的扭曲"**，梯度域融合是在**绕开"多片 chart 的 DC 不一致"**。**如果一个任务要给同一张曲面拼 N 份证据（多视角生成、扫描重建、贴花叠加、Lightmap 修补），先问"这 N 份在哪个域对齐"。**
 
 ## Technologies
 
@@ -191,4 +218,4 @@ Campen/SLIM/TutteNet  用"组合条件 / 约束优化 / 复合构造"把保证�
 
 ---
 
-**相关每日记录**：[[2026-10-24]]
+**相关每日记录**：[[2026-10-24]]、[[2026-10-30]]

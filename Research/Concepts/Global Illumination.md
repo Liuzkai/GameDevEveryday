@@ -47,6 +47,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 ```text
 1984  ★ Goral/Torrance/Greenberg/Battaile：**Radiosity 源头**（热工程 form factor + 能量矩阵；"视角无关⇒可预计算"= 烘焙法理起点；红蓝盒 color bleeding + 实体模型实拍验证）★ 2026-10-20 入库
 1986  Kajiya：渲染方程（"全部反弹"第一次有完整表述）+ 路径追踪解
+1997  ★ Veach & Guibas：**Metropolis Light Transport**——**"解算器即状态"的起点**：一条路径成为 Markov 链的当前状态，样本等权、画面明暗由**采样密度**体现（不是权重）；同时间下 $l_2$ 误差比双向路径追踪低 4.9×（门缝场景）。**它确立了"复用 + 重要性比修正 + 上界"这套语法，29 年后被 [[ReSTIR]] 在 GPU 上兑现** ★ 2026-10-30 入库
 1984-90s  辐射度方法（面片间传能）——工程界第一次尝到"间接光"的甜头（离线）
 1988  Ward / Rubinstein / Clear：**辐照度缓存（IC）——缓存族接收侧源头**（答案视图无关 + 误差容限 a + 八叉树 + 跨渲染复用；"Caching"一词进入 GI）★ 2026-10-04 入库
 1997  Keller：Instant Radiosity——**VPL 起源**（缓存族随机侧）★ 2026-10-03 入库
