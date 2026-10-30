@@ -93,6 +93,7 @@ Inverse Rendering（从图像反推几何/材质/光照）
 - [[Vicini — Path Replay Backpropagation (2021)]] ★ 2026-09-30 入库（**记忆轴起点**：相机侧"常数内存 + 线性时间"；重放三要素）
 - [[2026-09-26-Constant-Memory Differentiable Light Tracing]] ★ 2026-09-30 入库（**光源侧补全**：ResLRB / LRB-3-pass；1:1 vs 1:k 边界）——**2026-10-10 会议版到货**（SIGGRAPH Asia 2026 TC："Stochastic Graph Compression"，聚焦 ResLRB）
 - [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]] ★ 2026-10-10 入库（**输出/检查层开线**："**导数是一等渲染输出**"——sensitivity AOV + deferred shading 式"算一次看多处" + 固定/自由双相机分离；同作者 SIGGRAPH Asia 双篇之二）
+- [[Lipp 2024 — View-Independent Adjoint Light Tracing for Lighting Design Optimization|Lipp 2024 — View-Independent Adjoint Light Tracing]] ★ 2026-10-30 入库（**目标轴开线：优化对象不必是图像**。此前这一族全部"目标住在像素里"，于是相机成了必须承担的变量；Lipp 把目标搬到 **3D 曲面上的辐射场**（顶点 × 半球谐波 HSH），相机整个消失，目标可以直接画在几何上或**直接拿烘焙 lightmap 当目标**。**两条硬结论**：① **AD 在光照追踪上系统性失效**——每条 ray 携带**恒定辐射通量**，与方向/距离无关，所以位置/朝向参数在 AD 里得不到正确导数（这不是精度问题，是方向错）；② 解析伴随的"一次求导 ≈ 一次 primal"在这条路上成立，**内存与时间都与参数个数无关**。**与 [[2026-09-26-Constant-Memory Differentiable Light Tracing]] 是同一条线（光照追踪侧的可微化），但关注点不同：那篇解"常数内存"，这篇解"无相机目标"**）
 
 ## Personal Knowledge
 

@@ -82,6 +82,7 @@ tags: [real-time-rendering, lighting, optimization, differentiable, mobile]
 
 - [[DLSS 5 — Generative Neural Rendering]]
 - [[Lightweight Attention-based Indirect Illumination]]
+- [[Lipp 2024 — View-Independent Adjoint Light Tracing for Lighting Design Optimization|Lipp 2024 — View-Independent Adjoint Light Tracing]] ★ 2026-10-30 入库（**同一问题的离线侧答案，约束正好相反**：LightOpt 受实时预算约束、必须在帧内跑完，所以只能优化**位置与朝向**且基本只做直接光；Lipp 2024 受精度约束、可以离线几十秒，于是把**强度/色度/IES/软边锥**一起优化，并且**真的把间接光算进梯度**。**两页并读能定位一件事的上下界：实时能到什么程度，精度上限在哪**。Lipp 的另一处差别值得记——它把**目标从图像搬到 3D 曲面辐射场**，于是不需要相机；这在"从旧 lightmap 迁移"的场景里是决定性的）
 
 ## Personal Knowledge State
 
