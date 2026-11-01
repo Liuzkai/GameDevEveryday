@@ -1,20 +1,29 @@
 ---
 type: paper
 title: "From Walks to Skeletons: A Reusable Transport Architecture for Interactive Monte Carlo PDE Solvers"
-authors: ["Yunfeng Liao", "Yucheng Wu", "Xiucheng Li"]
+authors:
+  - Yunfeng Liao
+  - Yucheng Wu
+  - Xiucheng Li
 year: 2026
 published: 2026-10-27
-venue: "arXiv preprint（cs.GR; math.NA），19 页 15 图，哈尔滨工业大学（深圳）"
-url: "https://arxiv.org/abs/2610.36931"
-code: "论文未给（Preprint）"
+venue: arXiv preprint（cs.GR; math.NA），19 页 15 图，哈尔滨工业大学（深圳）
+url: https://arxiv.org/abs/2610.36931
+code: 论文未给（Preprint）
 project_page: ""
-category: ["monte-carlo", "pde", "grid-free", "reuse", "interactive", "walk-on-spheres"]
+category:
+  - monte-carlo
+  - pde
+  - grid-free
+  - reuse
+  - interactive
+  - walk-on-spheres
 importance: A
 historical_importance: 0
 game_relevance: 3
-production_readiness: "Research（CPU 串行实现；交互式编辑与运行时几何改动已有原型，但离引擎集成还差一层）"
+production_readiness: Research（CPU 串行实现；交互式编辑与运行时几何改动已有原型，但离引擎集成还差一层）
 user_level: Hard
-status: unread
+status: read
 ---
 
 # From Walks to Skeletons: A Reusable Transport Architecture for Interactive Monte Carlo PDE Solvers

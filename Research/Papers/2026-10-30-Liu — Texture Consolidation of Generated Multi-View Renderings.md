@@ -1,20 +1,29 @@
 ---
 type: paper
-title: "Texture Consolidation of Generated Multi-View Renderings"
-authors: ["Hongyi Liu", "Yifan Wang", "Vladimir G. Kim", "Misha Kazhdan"]
+title: Texture Consolidation of Generated Multi-View Renderings
+authors:
+  - Hongyi Liu
+  - Yifan Wang
+  - Vladimir G. Kim
+  - Misha Kazhdan
 year: 2026
 published: 2026-10-26
-venue: "arXiv preprint（cs.GR），18 页（Eurographics 会议论文格式），JHU + Adobe Research + Adobe Firefly Foundry"
-url: "https://arxiv.org/abs/2610.36098"
-code: "https://github.com/hliuw/TextureConsolidation"
+venue: arXiv preprint（cs.GR），18 页（Eurographics 会议论文格式），JHU + Adobe Research + Adobe Firefly Foundry
+url: https://arxiv.org/abs/2610.36098
+code: https://github.com/hliuw/TextureConsolidation
 project_page: ""
-category: ["texture", "asset-pipeline", "generative-3d", "gradient-domain", "optical-flow"]
+category:
+  - texture
+  - asset-pipeline
+  - generative-3d
+  - gradient-domain
+  - optical-flow
 importance: B+
 historical_importance: 0
 game_relevance: 4
-production_readiness: "Prototype（代码已开；纯 CPU/离线，输入规模敏感）"
+production_readiness: Prototype（代码已开；纯 CPU/离线，输入规模敏感）
 user_level: Normal
-status: unread
+status: read
 ---
 
 # Texture Consolidation of Generated Multi-View Renderings

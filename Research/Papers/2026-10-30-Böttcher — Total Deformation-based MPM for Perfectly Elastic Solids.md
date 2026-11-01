@@ -1,20 +1,28 @@
 ---
 type: paper
-title: "Total Deformation-based MPM for Perfectly Elastic Solid Simulation with Strong Deformations"
-authors: ["Timna Böttcher", "Rick Ridder", "Jan Bender"]
+title: Total Deformation-based MPM for Perfectly Elastic Solid Simulation with Strong Deformations
+authors:
+  - Timna Böttcher
+  - Rick Ridder
+  - Jan Bender
 year: 2026
 published: 2026-10-27
-venue: "arXiv preprint（cs.GR），11 页，RWTH Aachen University（Visual Computing Institute）"
-url: "https://arxiv.org/abs/2610.36945"
-code: "论文未给（Preprint）"
+venue: arXiv preprint（cs.GR），11 页，RWTH Aachen University（Visual Computing Institute）
+url: https://arxiv.org/abs/2610.36945
+code: 论文未给（Preprint）
 project_page: ""
-category: ["physics", "mpm", "elasticity", "deformable-solid", "numerical-fracture"]
+category:
+  - physics
+  - mpm
+  - elasticity
+  - deformable-solid
+  - numerical-fracture
 importance: A-
 historical_importance: 0
 game_relevance: 4
-production_readiness: "Research（显式积分 + CPU 实现；成本是 MPM 的 2.8×，进引擎需要先做隐式化）"
+production_readiness: Research（显式积分 + CPU 实现；成本是 MPM 的 2.8×，进引擎需要先做隐式化）
 user_level: Normal
-status: unread
+status: read
 ---
 
 # Total Deformation-based MPM for Perfectly Elastic Solid Simulation with Strong Deformations
