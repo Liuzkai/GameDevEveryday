@@ -36,6 +36,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | 1 | **IBL / 环境贴图** | 把"远处环境"作为光源；镜面用反射捕获 | 无局部遮挡（漏光） |
 | 2 | **SH 表示（9 阶）** | 环境光的解析低频表示 | [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]；移动端 GI 的根源 |
 | 3 | **辐射度（Radiosity）** | 把间接光变成"面片之间传能量"的矩阵问题 | 静态、漫反射专用（1990s 离线/烘焙）——✅ **源头论文入库（2026-10-20）**：[[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]]（结论层 ≈25 分钟；"视角无关⇒可预计算"= 烘焙法理起点） |
+| 3.5 | **光子图（Photon Mapping）** | **两趟**：光源侧先撒光子存成图（含方向），eye 侧再查表做密度估计 | **存"证据"而非"答案"**：换 BRDF 不用重走光路，但密度估计有偏 + 边界渗漏——✅ **源头论文入库（2026-11-01）**：[[Jensen — Global Illumination using Photon Maps (1996)]]（$w_p=\max(0,1-d/(kr))$ 锥形滤波归一化 $1-\frac{2}{3k}$；**216 颗 shadow photon ≈5 KB 砍掉 >70% shadow ray**；原话"所需的 photons 数不与物体数直接相关，而与**光通量的复杂度**相关"——**本库"预算 ∝ 变化复杂度"这条判据的最早出处**） |
 | 4 | **PRT / 预计算转移** | 预烘"表面如何接收环境"的转移算子 | 静态几何；材质自由度受限——✅ **源头论文入库（2026-10-21）**：[[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]]（**"烘算子而非烘答案"**：换灯只需一次点积，成本与灯数/灯尺寸无关；9 / 25 / 25×25 三档价目；结论层 ≈30 分钟） |
 | 5 | **屏幕空间族（SSAO → SSGI / SSR）** | 只在已有像素里找反弹 | 便宜；**屏幕外一律丢失**（"屏幕空间 vs 引擎感知"） |
 | 6 | **缓存/Direct 祖先族：Irradiance Caching / VPL / RSM / DDGI** | 把间接光"记在小本子上"复用 | ✅ **四节点齐（2026-10-03 / 10-04 / 10-06）**：[[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]]（**接收侧缓存**：缓存"表面收到的答案"，误差容限 a 决定点密度）+ [[Keller — Instant Radiosity (1997)]]（VPL = 把光路顶点变成"很多小灯"）+ [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]]（RSM = 第一个 bounce 存进阴影贴图，每像素固定样本 gather）+ **[[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]]（DDGI = 动态辐照度场：探针网格 × 光追增量更新 × 滞后摊销——缓存族与光追时代的合流）**——**[[Neural Global Illumination]] 桥的经典侧自此完整** |
@@ -48,6 +49,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 1984  ★ Goral/Torrance/Greenberg/Battaile：**Radiosity 源头**（热工程 form factor + 能量矩阵；"视角无关⇒可预计算"= 烘焙法理起点；红蓝盒 color bleeding + 实体模型实拍验证）★ 2026-10-20 入库
 1986  Kajiya：渲染方程（"全部反弹"第一次有完整表述）+ 路径追踪解
 1997  ★ Veach & Guibas：**Metropolis Light Transport**——**"解算器即状态"的起点**：一条路径成为 Markov 链的当前状态，样本等权、画面明暗由**采样密度**体现（不是权重）；同时间下 $l_2$ 误差比双向路径追踪低 4.9×（门缝场景）。**它确立了"复用 + 重要性比修正 + 上界"这套语法，29 年后被 [[ReSTIR]] 在 GPU 上兑现** ★ 2026-10-30 入库
+1996  ★ Jensen：**光子映射**——**"存证据"路线的起点**：两趟结构（light pass 存光子图 / eye pass 做密度估计）；拆"全局图 + 焦散图"两张；shadow photon（216 颗 ≈5 KB 砍 >70% shadow ray）；锥形滤波 $w_p=\max(0,1-d/(kr))$ 把估计从有偏推向可容忍。**"所需 photons 数不与物体数相关，而与光通量复杂度相关"是"预算 ∝ 变化复杂度"的最早表述** ★ 2026-11-01 入库
 1984-90s  辐射度方法（面片间传能）——工程界第一次尝到"间接光"的甜头（离线）
 1988  Ward / Rubinstein / Clear：**辐照度缓存（IC）——缓存族接收侧源头**（答案视图无关 + 误差容限 a + 八叉树 + 跨渲染复用；"Caching"一词进入 GI）★ 2026-10-04 入库
 1997  Keller：Instant Radiosity——**VPL 起源**（缓存族随机侧）★ 2026-10-03 入库
@@ -73,6 +75,7 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 | [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]] | 环境光的 9 阶 SH（移动端 GI 根源） | ✅ 入库 |
 | [[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]] | **PRT / 预计算转移**（谱系第 4 行源头：把可见性与互反射纳入 SH 基；"烘算子"⇒ 换灯免费、几何锁死；三档价目 9 / 25 / 25×25） | ✅ **2026-10-21 入库** |
 | [[Keller — Instant Radiosity (1997)]] | **VPL 起源**（缓存族随机侧源头："光照场 = 一组点光源"；每盏 VPL 一遍渲染） | ✅ **2026-10-03 入库** |
+| [[Jensen — Global Illumination using Photon Maps (1996)]] | **光子映射 / "存证据"路线起点**（两趟结构 + 两张图分离 + shadow photon + 锥形滤波；**"预算 ∝ 光通量复杂度，不 ∝ 物体数"的最早出处**） | ✅ **2026-11-01 入库**（A 经典·历史重要性 5） |
 | [[Dachsbacher-Stamminger — Reflective Shadow Maps (2005)]] | **RSM**（缓存族结构化侧源头：pixel light + 每像素固定样本；"成本 ∝ 像素 × 常数"的 2005 原型） | ✅ **2026-10-03 入库** |
 | [[Ward — A Ray Tracing Solution for Diffuse Interreflection (1988)]] | **辐照度缓存（IC）**（缓存族**接收侧**源头：答案视图无关 + 误差容限 a + 八叉树 + 跨渲染复用；**NRC 2021 的直接祖先**——缓存对象就是本篇定义的辐照度） | ✅ **2026-10-04 入库** |
 | [[Majercik — Dynamic Diffuse Global Illumination with Ray-Traced Irradiance Fields (2019)]] | **DDGI**（缓存族**现代形态/合流点**：探针网格 + 8×8/16×16 八面体编码 + 每帧 m×n 射线 + 滞后 α∈[0.85,0.98] + Chebyshev 矩可见性；"每帧 m×n 射线"= 固定样本预算家族 2019 节点；RTXGI 产品线起点） | ✅ **2026-10-06 入库** |
@@ -128,4 +131,5 @@ first_introduced: "1986（Kajiya 渲染方程给出完整表述）；工程近�
 - **2026-10-20 更新**：**第 3 行（Radiosity）落位**——[[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)]] 入库（A 经典·历史重要性 5），全谱系表自此**每一行都有论文节点**；触发点 = 读者 [[Lightmass in the Rendering Knowledge Map|Lightmass 专题]]（同日建立）点名"漫反射互反射特解"却无笔记——经典线补位，烘焙线（第 3/4 行）与缓存线（第 6 行）两侧都有源头可考。
 - **2026-10-21 更新**：**第 4 行（PRT）落位**——[[Sloan — Precomputed Radiance Transfer for Real-Time Rendering (2002)]] 入库（A 经典·历史重要性 5）。这条补的是**"上一行与下一行之间的必由之路"**：Radiosity 把**答案**烘死（换灯重解），PRT 把**算子**烘活（换灯一次点积），缓存族（第 6 行）再把答案做成可增量更新——三者是同一权衡轴（**哪个变量被冻结**：视角 → 光照 → 几何）上的三个点。同时新建概念 [[Spherical Harmonics]]（第 2 行与第 4 行共用的坐标系）。
 - **2026-10-27 更新**：**第 8 行（神经 GI）的前馈分支落位**——[[2026-10-26-Zhang — RADIANT Object-Centric Feed-Forward Global Illumination|RADIANT]] 入库。此前第 8 行只有"缓存介质换成网络"这一条路（NRC / 神经辐照度缓存，本质仍是**逐场景拟合 + 运行时查询**）；RADIANT 是**另一条路：训练一个跨场景的传输求解器，运行时一次前向**。两者的分界线不在"神不神经"，在**"要不要在目标场景上训练"**——这也是本库第一次能把"神经 GI"拆成两个成本结构完全不同的阵营（拟合派：显存 + 每场景训练；前馈派：固定权重 + 每帧前向，但需要用 token 单位把复杂度压下来）。同日的 [[Budget Units]] 正是这次拆分的副产品。
+- **2026-11-01 更新**：**"存证据"这条以前没有名字的旁支落位**——[[Jensen — Global Illumination using Photon Maps (1996)]] 入库（A 经典·历史重要性 5），谱系表新增 **3.5 行**。这次补的不是"某一代"的源头，而是**一整条被谱系表漏掉的路线**：表里 0–8 的每一行都在回答"把无限反弹换成什么**有限结构**"，而光子图回答的是另一个问题——"**要不要现在就把它算成一个数**"。它存的是光子（事件），换 BRDF 不用重走光路；这与 [[Budget Units]] 里"计价对象"那条横轴合流，也在 [[Walk on Spheres]] 新增的「**轴三：存什么**」里成为"证据 vs 答案 vs 算子"三分法的第一个实例。**顺带确认本库一条判据的出生年份**：Jensen 原文"所需的 photons 数不与物体数直接相关，而与光通量的复杂度相关"——这是"预算 ∝ 变化复杂度"最早的书面表述，比本库之前的引用源早了 20 余年。
 - 本概念**不是** [[Neural Global Illumination]] 的重复：前者是"问题与近似谱系"，后者是"神经方法目标"——关系为 Prerequisite（本概念 → 神经 GI）。

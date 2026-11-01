@@ -105,16 +105,34 @@ $$K_B(p,z)=\frac{1}{|\partial B|}\cdot\frac{R^2-\|p-c\|^2}{R\,\|p-z\|^3}\quad(\t
 2026  Saeed et al.：cage cutting，保留未被切割影响的路径
 2026  ★ Liao et al.《From Walks to Skeletons》—— 把轨迹存成可查询/细化/压缩/修复的 DAG
 2026  Zhou / d'Eon / Sawhney / Jarosz：**时间依赖**（每步带时间预算，见 2026-09-15 那篇）
+2026  ★★ Liao & Li《WoMM：Walk on Multiscale Media》—— 把**介质本身**编译成带端口的预制件；
+        MsFEM 基函数 = 首达概率 ⇒ Schur 补 = 次随机转移矩阵
 ```
+
+> WoMM 见 [[2026-10-30-Liao — Walk on Multiscale Media Compiling Editable and Composable Transport Medium Prefabs|Walk on Multiscale Media]]（2026-11-01 入库）。
 
 **两条演化轴，值得分开记**：
 
 ```text
 轴一：能解什么      Laplace → 变系数 → Neumann（WoSt）→ 时间依赖（热方程）→ 可微
-轴二：怎么变便宜    纯采样 → 缓存值（2023）→ 缓存展开（2025）→ 缓存轨迹图（2026）
+轴二：怎么变便宜    纯采样 → 缓存值（2023）→ 缓存展开（2025）→ 缓存轨迹图（2026）→ 缓存介质（2026）
 ```
 
-**轴二的方向极其清楚：粒度一路上移（值 → 函数 → 邻域 → 图）。而每一次上移都在做同一个交易——用"构建成本前置"换"后续查询变便宜"。**
+**轴二的方向极其清楚：粒度一路上移（值 → 函数 → 邻域 → 图 → 被查询的对象本身）。而每一次上移都在做同一个交易——用"构建成本前置"换"后续查询变便宜"。**
+
+### 轴三：存什么 —— 答案、证据、算子
+
+轴二只说"越存越多"，没说"存的东西是什么形态"。**2026 年这批工作真正的分水岭在形态上，而不在粒度上**：
+
+| 存什么 | 代表 | 一个样本能回答几个问题 | 代价 |
+|---|---|---|---|
+| **答案** | 直接跑一次 WoS 求解 / 一次烘焙 | **一个** | 零存储；换任何输入全部重算 |
+| **证据**（事件记录） | [[2026-10-30-Liao — Walk on Multiscale Media Compiling Editable and Composable Transport Medium Prefabs\|WoMM]] 的 Poisson 标记库；[[Jensen — Global Illumination using Photon Maps (1996)\|1996 光子图]] | **无穷多个**（任意 $\kappa\le\mu$ 的屏蔽场 / 任意 BRDF） | 存储膨大、噪声高、每次使用都要再加工（重加权 / 滤波） |
+| **算子** | MsFEM 的 $S_K$、PRT 的传输矩阵、Boundary Value Caching | **只有算子定义域内的那些** | 构建最贵，查询最便宜，但**改输入就要重装配** |
+
+**判据只有一句话：下游要问几个问题。** 只问一个 → 存答案；问一族参数化的问题、且参数能写成重加权 → 存证据；问固定的一组线性泛函 → 存算子。**搞错这一层，加速比再漂亮也是白算。**
+
+**第二个判据（决定证据路线会不会死）：证据的价值 = 覆盖的分布 × 可重加权的自由度。** WoMM 的事件库只覆盖"路径经过哪些节点"，所以它只能对**乘性屏蔽** $\kappa$ 重加权；一旦要改电导 $c_{xy}$（路径本身会变），证据立刻失效，只能重走。**这正是它把 $\mathcal A^0_K$ 标成"不参与编辑"的原因——不是不想，是证据形态不支持。**
 
 ## Important Papers
 
@@ -123,6 +141,7 @@ $$K_B(p,z)=\frac{1}{|\partial B|}\cdot\frac{R^2-\|p-c\|^2}{R\,\|p-z\|^3}\quad(\t
 | Muller 1956（库外） | 起点 | "在球面上跳"这个方法本身 |
 | [[2026-09-15-Grid-Free Monte Carlo for Time-Dependent Diffusion]] | 轴一：加时间 | **给每条游走一个时间预算**，把 WoS 推到瞬态热方程；一次估计多个时刻 |
 | [[2026-10-30-Liao — From Walks to Skeletons A Reusable Transport Architecture\|Walks to Skeletons]] | 轴二：加记忆 | **轨迹 → DAG**；改边界值只换叶子（$O(V+E)$），几何编辑局部修复；累计 8.1×（8 次求解） |
+| [[2026-10-30-Liao — Walk on Multiscale Media Compiling Editable and Composable Transport Medium Prefabs\|WoMM]] | 轴二/轴三：存介质 | **异质介质 → 带端口预制件**；MsFEM 基函数 = 首达概率 ⇒ **Schur 补 = 次随机转移矩阵**；在线 22.4–28.2×，编辑面积 <5% 时局部更新快 25.9–42.9× |
 | Sawhney & Crane 2020（库外） | 轴一：奠基 | 把这套方法带进几何处理，建立"无网格 MC 几何处理"这个方向 |
 | Sawhney et al. 2023《Walk on Stars》（库外） | 轴一：边界条件 | Neumann 边界（星形域） |
 | Qi et al. 2022（库外） | 轴一：方向 | 双向形式（反向 Green 输运） |
