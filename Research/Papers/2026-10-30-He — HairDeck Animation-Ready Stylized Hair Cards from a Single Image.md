@@ -1,20 +1,30 @@
 ---
 type: paper
 title: "HairDeck: Animation-Ready Stylized Hair Cards from a Single Image"
-authors: [Yuze He, Yixiang Wei, Wang Zhao, Chuhao Chen, Yanning Zhou, Yong-Jin Liu]
+authors:
+  - Yuze He
+  - Yixiang Wei
+  - Wang Zhao
+  - Chuhao Chen
+  - Yanning Zhou
+  - Yong-Jin Liu
 year: 2026
 published: 2026-10-29
-venue: "arXiv preprint (cs.CV; cs.GR)"
-url: "https://arxiv.org/abs/2610.40599"
+venue: arXiv preprint (cs.CV; cs.GR)
+url: https://arxiv.org/abs/2610.40599
 code: ""
-project_page: "https://hyzcluster.github.io/HairDeck"
-category: [rendering, hair, generative, asset-pipeline]
+project_page: https://hyzcluster.github.io/HairDeck
+category:
+  - rendering
+  - hair
+  - generative
+  - asset-pipeline
 importance: A-
 historical_importance: 0
 game_relevance: 5
 production_readiness: Prototype
 user_level: Normal
-status: unread
+status: read
 ---
 
 # HairDeck —— 发型没有顺序
@@ -28,7 +38,7 @@ status: unread
 - **33× 是这么来的**：CHARM 33.7 s → HairDeck **1.01 s**（CD 同时 −44%，朝向误差 40.0°→16.8°）。而"检索训练集里最像的一个发型"CD = 0.0119——**CHARM 的精度大约等于"回忆"**；
 - **它还顺手把"能动的部分"也生成出来**：第二条 Chain DiT 生成**弹簧骨链**（48 槽 × 27 维），再用固定几何蒙皮绑上。朝向美术的骨链：recall **0.625** vs 检索 0.289，运动相关性 **0.702** vs 程序化规则 0.538；
 - **最诚实的一处**：card VAE 的收益**在 CD 上几乎看不见**（0.0066 vs 0.0068），**真正的差别是"卡片是不是光滑"**——折角中位数 **14.2° vs 21.9°**（美术原版 14.1°）。**指标看不见的差别，恰好是唯一肉眼看得见的差别**。
-
+![[2026-10-30-He — HairDeck Animation-Ready Stylized Hair Cards from a Single Image.png]]
 ## Problem
 
 游戏/虚拟形象里的**风格化**头发不是发丝，是**发片（hair cards）**：几十到上百条由美术摆放的带状几何，**几何本身就是可见的头发**（不是现实毛发那种"用 alpha 贴图假装很多根"的扁片，而是菱形/三角形截面、宽度厚度沿长度变化的实体带）。它们靠**弹簧骨（spring bones）**驱动——从头骨挂下来的短骨链，末端每帧模拟，于是头发会晃、会落定（Unity 的 Dynamic Bone、VRChat 的 PhysBones、UE 的 Kawaii Physics、Godot 的同名节点都是这个东西）。

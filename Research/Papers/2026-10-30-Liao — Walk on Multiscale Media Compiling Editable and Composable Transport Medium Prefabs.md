@@ -1,20 +1,25 @@
 ---
 type: paper
 title: "Walk on Multiscale Media: Compiling Editable and Composable Transport Medium Prefabs for Monte Carlo PDE Solvers"
-authors: [Yunfeng Liao, Xiucheng Li]
+authors:
+  - Yunfeng Liao
+  - Xiucheng Li
 year: 2026
 published: 2026-10-24
-venue: "arXiv preprint (physics.comp-ph; cs.GR)"
-url: "https://arxiv.org/abs/2610.35952"
+venue: arXiv preprint (physics.comp-ph; cs.GR)
+url: https://arxiv.org/abs/2610.35952
 code: ""
 project_page: ""
-category: [rendering, physics-simulation, geometry-processing]
+category:
+  - rendering
+  - physics-simulation
+  - geometry-processing
 importance: A
 historical_importance: 0
 game_relevance: 3
 production_readiness: Research
 user_level: Hard
-status: unread
+status: read
 ---
 
 # Walk on Multiscale Media —— 把"介质"编译成带端口的资产

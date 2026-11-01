@@ -1,20 +1,24 @@
 ---
 type: paper
-title: "Global Illumination using Photon Maps"
-authors: [Henrik Wann Jensen]
+title: Global Illumination using Photon Maps
+authors:
+  - Henrik Wann Jensen
 year: 1996
 published: 1996-06-17
-venue: "Rendering Techniques '96 (7th Eurographics Workshop on Rendering), Springer, pp. 21–30"
-url: "http://graphics.ucsd.edu/~henrik/papers/photon_map/global_illumination_using_photon_maps_egwr96.pdf"
+venue: Rendering Techniques '96 (7th Eurographics Workshop on Rendering), Springer, pp. 21–30
+url: http://graphics.ucsd.edu/~henrik/papers/photon_map/global_illumination_using_photon_maps_egwr96.pdf
 code: ""
-project_page: "https://cseweb.ucsd.edu/~henrik/papers/ewr7"
-category: [rendering, global-illumination, monte-carlo]
+project_page: https://cseweb.ucsd.edu/~henrik/papers/ewr7
+category:
+  - rendering
+  - global-illumination
+  - monte-carlo
 importance: A
 historical_importance: 5
 game_relevance: 4
 production_readiness: Industry Adopted
 user_level: Normal
-status: unread
+status: read
 ---
 
 # Global Illumination using Photon Maps —— 存证据，不存答案
@@ -29,6 +33,7 @@ status: unread
 - **两条硬数字**：每颗光子 **20 字节**（平衡 kd-tree 的直接结果），$N$ 颗里找 $M$ 最近是 $O(M\log_2N)$；**216 颗 shadow photon ≈ 5 KB，把 shadow ray 数量砍掉 70% 以上**——**这是全文最漂亮的"小预算买大效果"**；
 - **一句话点破预算的本质**（原文）："the necessary number of photons **is not directly related to the number of objects in the scene**. It is instead related to **the complexity of the flux** within the scene." **预算量取决于"亮度的变化有多复杂"，不取决于"场景里有多少东西"**；
 - **它的立场是"证据优于答案"**：与同期 Ward 的辐照度缓存相比，光子图存的是**入射通量 + 方向**（"simpler and less accurate"），代价是更噪，收益是**任意 BRDF 都能积分、可以做重要性采样、可以把光子当虚拟光源再走一遍**（后者就是 [[Keller — Instant Radiosity (1997)|Keller 1997]]）。
+![[Global Illumination using Photon Maps.png]]
 
 ## Problem
 
@@ -66,6 +71,8 @@ status: unread
 2011  Hachisuka    SPPM（随机渐进 + 每像素半径）
 2013  Hachisuka    VCM（把光子与路径的权重统一起来）
 ```
+
+![[Research/Files/Pictures/Jensen 1996 — 光子映射技术发展路线.svg]]
 
 **这条轴上有一个反复出现的分岔，值得单独记：**
 
