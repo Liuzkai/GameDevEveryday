@@ -28,8 +28,8 @@ tags: [lighting, inverse-rendering, relighting, calibration, tooling]
 | **② 参数化** | 允许调哪些量、各自的定义域 | 位置 / 朝向 / 强度 / 色温 / 色度 / 锥角 / IES / 面光尺寸。**每一项有没有"物理或工程上的硬约束"**（不能悬空、亮度有档位、型号库有限） | 已有：Lipp 2024（位置、Rodrigues 朝向、$p^2$ 保非负强度、归一化色度、IES/软边锥） |
 | **③ 梯度** | 怎么拿到"往哪调"的方向 | 有限差分 / 自动微分 / 解析伴随 / 无梯度搜索。**关键坑：AD 在某些形式化下系统性失效**（Lipp 证明光照追踪就是这样） | 已有：Lipp 2024（解析伴随；FD 验证；AD 失效的机制解释） |
 | **④ 优化器** | 用谁来走这一步 | GD / Adam / L-BFGS / CMA-ES / 混合整数（选灯个数）。**参数数量级与耦合结构（如"高度 ↔ 强度"）决定选型** | 已有：Lipp 2024（L-BFGS 42–45 次评估；CMA-ES 需 5–10 倍） |
-| **⑤ 评估** | 怎么判断"迁移成功" | 参数空间距离？图像空间 $L_2$ / SSIM？感知指标？**以及最容易被忽略的一条：优化目标与验收指标不是同一个东西时会发生什么** | **缺口** |
-| **⑥ 落地约束** | 优化结果怎么变成"能用的灯" | 贴天花板 / 吸附网格 / 量化到型号库 / 数量上限 / 与美术工作流对接 | **缺口（这恰是工具化最关键的一格）** |
+| **⑤ 评估** | 怎么判断"迁移成功" | 参数空间距离？图像空间 $L_2$ / SSIM？感知指标？**以及最容易被忽略的一条：优化目标与验收指标不是同一个东西时会发生什么** | 已有：[[Giroux 2023 — Towards a Perceptual Evaluation Framework for Lighting Estimation\|Giroux 2023]]（49 人 2AFC 实验：标准 IQA 指标在高光/无参照任务上≈随机；SVR 学习组合到 0.889；accuracy 与 plausibility 要分开验收） |
+| **⑥ 落地约束** | 优化结果怎么变成"能用的灯" | 贴天花板 / 吸附网格 / 量化到型号库 / 数量上限 / 与美术工作流对接 | 已有（部分）：[[Schwengerer 2022 — Inverse Method for Baked Lighting\|Schwengerer 2022]]（均匀网格初始灯阵 + "方案=初始配置×阶段序列"建模 + 方案排期实测）；记名：DIALux 自动布灯（型号库+规范约束）、Sony Spherelight、ILM LightCraft、TrueHDRI（见清单） |
 
 **一个先验判断**：①③④ 三格已经有相当成熟的文献（可微渲染 + 逆问题），**真正难的是 ⑤ 和 ⑥**——因为这两格不是学术问题，是工程与审美问题，论文通常不写。**收集时要专门留意那些"把结果真的用起来了"的工业界/产品侧材料。**
 
@@ -40,7 +40,15 @@ tags: [lighting, inverse-rendering, relighting, calibration, tooling]
 | 日期 | 论文 / 材料 | 落在哪个槽位 | 一句话价值 | 与本页的关系 |
 |---|---|---|---|---|
 | 2026-10-30 | [[Lipp 2024 — View-Independent Adjoint Light Tracing for Lighting Design Optimization\|Lipp et al. 2024, View-Independent Adjoint Light Tracing]] | ①②③④ | 目标搬到 3D 辐射场（无相机）、解析伴随、§6.3.4 直接就是"从 lightmap 反推灯"（OpenArena，≤972 参数，42 s） | **起点**。它证明了这件事可行，也暴露了 ⑤⑥ 两格没做 |
+| 2026-11-02 | [[Schwengerer 2022 — Inverse Method for Baked Lighting\|Schwengerer 2022, Inverse Method for Baked Lighting（TU Wien 学士论文）]] | ①②③④⑥ | Lipp 框架的前传+工程版：Q3A `.bsp` 解析 → lightmap→顶点辐射场投影公式 → 均匀网格初始灯阵 → 5 种优化排期实测（**先 L-BFGS 后 Adam 最优；分子集调反而最差**） | 补上了 Lipp 没写的"真做一遍"细节：初始灯阵策略与方案排期；明确"初始配置与优化器共同决定质量" |
+| 2026-11-02 | [[Giroux 2023 — Towards a Perceptual Evaluation Framework for Lighting Estimation\|Giroux et al. 2023, Perceptual Evaluation Framework for Lighting Estimation]] | ⑤ | 49 人受控 2AFC 实验审计 15 个 IQA 指标：**高光材质/无参照任务上≈随机水平**；SVR 学习组合达 0.889 且可泛化；数据与代码开源 | **补上 ⑤ 号缺口**。直接回答"怎么判断像不像"：accuracy/plausibility 分开验收，指标可训练 |
+| 2026-11-02 | Shlyaev 2025, Machine Learning Meets Lighting: Using Depth Estimation To Build The Light Rigs（SIGGRAPH Talks '25，Sony Imageworks）（记名未建页） | ②⑥ | 影视工业界 HDRI→灯阵管线：OpenCV 检测光源 + PatchFusion 单目深度定灯距 + Kabsch-Umeyama 对齐 Lidar；灯阵搭建"几小时 → 约一分钟" | ⑥ 的工业样本：HDRI 是影视侧的"旧数据"，面光 rig 是"新表示"；与游戏 lightmap 路线互补 |
+| 2026-11-02 | Suter et al. 2016, LightCraft（ILM，SIGGRAPH 2016 Talk）（记名未建页） | ②⑥ | 双高度拍摄的 HDRI 对 + 人工标记灯角点 → Mars 摄影测量解算灯位 → 自动抽 emission map | 同上线索的更早形态（半自动）；说明"HDRI→显式灯"在影视管线已成熟十年 |
+| 2026-11-02 | DIALux evo 官方功能文档：Automatic Luminaire Placement / 灯具目录 / 照度校核（记名未建页） | ⑥ | 建筑照明工业工具的落地约束全集：真实型号库（IES/LDT 配光文件）、阵列/线性布置、规范照度目标、红绿信号灯式达标显示 | ⑥ 的"产品侧答案"：优化结果必须量化到型号库 + 满足规范指标才算"能用的灯" |
+| 2026-11-02 | TrueHDRI Panel（UE 插件，Bandai Namco × 东京工科大学，Fab 商店）（记名未建页） | ⑥ | UE 内一键 HDRI→IBL 环境蓝图；可把最亮区域分离成 Directional Light 供 Lumen/常规实时渲染用 | 证明"环境光→显式灯"在游戏引擎侧已有产品化先例，可直接试用参考其参数拆分策略 |
 | （待填） | | | | |
+
+**本日检索备注（2026-11-02）**：检索通道（WebSearch）正常，无失败记录。Schwengerer 论文 PDF 无 ToUnicode 文本层（提取为乱码），已改用逐页渲染+图像识读核读，方法/评估/结论章数字均已亲见；Ch.4 BSP 实现细节未逐字核。Giroux 论文 venue 是否正式收录未核（arXiv v3 为止）。另见 2026-09 的一篇 Ad-Relight（arXiv 2609.37951，广告图重打光）用到 GPT-4o 做光照一致性评审 + ILL-SIM 亮度场余弦相似度——图像到图像路线、不产出灯参数，按选文标准**记名不收**，仅其"感知评审"思路与 Giroux 呼应。
 
 ---
 
