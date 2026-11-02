@@ -69,6 +69,7 @@ Motion Diffusion（文本到动作）
 - [[Motion Style Slider — Continuous Style Control for Human Motion Diffusion]]
 - [[2026-09-29-Length-varying Neural Motion Stitching via Cluster Transition Graph]] —— **检索 × 生成混合形态**：聚类图最短路定"结构 + 长度"，Transformer 生成过渡姿势（2026-10-01 入库）
 - [[2026-10-26-Liu — PASPA Past as State Present as Attention|PASPA]] —— **长时程问题的当前最优解**（NeurIPS 2026）：BGDN（块级 Gated DeltaNet）+ BMHSA（块对角注意力），过去进状态、当下用注意力；BEAT2 FGD 3.71 / SHOW 0.00111（−43.9%）；**消融里最有价值的一行：State+State 7.652 比完全不给历史 7.065 还差**——历史给错方式，负收益（2026-10-27 入库）
+- [[2026-10-25-Sun — TopX Text-to-Motion for Unseen Skeletons from the Skeleton File Alone|TopX]] —— **"跨骨架"这一维的基准重做**：不再问"能不能迁移到新骨架"，而是问"骨架文件本身够不够当接口"——树 + rest pose + 关节名，不看网格、不看动作数据；17 通道 rest 相对表示 + **HK-RoPE**（热核签名定频率，与基/符号/重根无关，30 万+ 骨骼里约 63% 带重根，SignNet 类方法在这里会失效）；SkelShift 五轴把"难"拆开打分；**两把尺子（MPJPE 与物理脚滑）最优点落在同一超参上＝表示选对了**（2026-11-02 入库）
 
 ## Personal Knowledge
 

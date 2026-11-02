@@ -102,6 +102,8 @@ NeRF（隐式 MLP + volume rendering，慢）
 - [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]] —— **场景动态化（"注入派"）**：静态 3DGS 的流体动效注入（光流 → 3D 欧拉运动场 → cinemagraph 式对称变形）；"三不"（无捕获/无重训/无模拟）+ 2 MB 可携带运动场 + 实时循环 ★ 2026-10-13
 - [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting|RLSplat]] —— **预算的成本侧（新）**：把“给定预算”从“事后裁剪”改为“前馈生成时按配额分配”——GSPO 策略网络学高斯配额 $k\sim\mathrm{Mult}(B,p)$（$\sum k_n=B$），资源线性解码器只用 $O(BK_{gs})$ 局部 cross-attn 取出；三个正则（Voronoi / offset / projection）分别撑住“不重叠 / 不漂移 / 可微”；2K 预算下 +0.9 dB、显存 **9.6×** 少、速度 **4.1×**；**关键诚实点：策略 24.83 dB vs Sobel 边缘启发式 24.76 dB，仅差 0.07 dB——“学到的是分配这个动作，不是更聪明的先验”** ★ 2026-10-22
 - [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting|KoalaGS]] —— **连续 LoD 的排序键（新）**：用**优化前**的图像复杂度（delentropy，2D ρ≈−0.60 / 3D −0.64）做空间先验，训练时按 $p=\alpha e^{\tilde C}$ 迁移偏置 + complexity dropout（$\delta=0.2$），渲染时排序键 $S=\alpha+\lambda s/e^{\tilde C}$ + 残差方差正则；100%→0.1% 连续全谱评测（不是几个离散档）；**如实边界：对 MGS 排序只 +0.12/+1.23 dB，主要增益来自与“不排序”的 MCMC 对比——先验有用，但别夸大** ★ 2026-10-22
+- [[Mildenhall 2020 — NeRF Representing Scenes as Neural Radiance Fields|NeRF 2020]] —— **祖先页（补齐）**：本页 30+ 篇变体长期缺一条回溯线——GS 的每个设计选择（可微光栅化、逐基元深度排序、显式存储）几乎都是对 NeRF 某个成本项的回应（1.5–2 亿次网络查询/帧 ≈ 30 s/帧）。读这一页时建议对照"四种存储形态"表：NeRF 把场景存成**场**，3DGS 存成**证据**（2026-11-02 入库）
+- [[2026-10-29-Choi — L3G-World Real-Time Infinite World Generation with Latent 3D Gaussian Memory|L3G-World]] —— **高斯作为"记忆单元"（新用法）**：高斯不再只是场景的表示，而是世界模型的**潜变量记忆**——按需 spawn（先渲旧记忆 → 用 opacity/误差出 spawn mask → 只在 mask 内 K-means），记忆量 $O(S)$ 而非 $O(TR)$；每个高斯内含 VAE latent，直接解码到 DiT 的 latent 空间（"按通道拼接"而不是解码回像素）。**这条线提示：高斯的第二身份是"可微、可裁剪、可增量的缓存"**（2026-11-02 入库）
 
 ## LOD / 预算线（2026-10-05 开线）
 
