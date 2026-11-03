@@ -1,0 +1,27 @@
+{
+  // ───────────────────────────────────────────────────────────────────────────
+  // Obsidian "Things" theme (v2.2.4) for VS Code markdown previews
+  //
+  // The theme itself: .crossnote/things-markdown.css  (single source of truth)
+  //
+  //   • built-in preview  → "markdown.styles" below
+  //   • Markdown Preview Enhanced → .crossnote/style.less imports the same file
+  // ───────────────────────────────────────────────────────────────────────────
+
+  // Built-in markdown preview (Ctrl+Shift+V / Ctrl+K V, or the *.md editor
+  // association "vscode.markdown.preview.editor" set in your user settings).
+  // Paths are resolved from the workspace root.
+  "markdown.styles": [".crossnote/things-markdown.css"],
+
+  // Make the preview read like Obsidian: same body font stack and line height
+  // used by the Things theme. Font size follows the extension default; adjust
+  // "markdown.preview.fontSize" if you want it larger/smaller.
+  "markdown.preview.fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, Ubuntu, sans-serif",
+  "markdown.preview.lineHeight": 1.5,
+
+  // Markdown Preview Enhanced: keep the base theme minimal so the imported
+  // Things stylesheet is what you actually see (github-light would otherwise
+  // still tint headings, quotes and code blocks).
+  "markdown-preview-enhanced.previewTheme": "none.css",
+  "markdown-preview-enhanced.codeBlockTheme": "default.css"
+}

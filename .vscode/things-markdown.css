@@ -1,0 +1,15 @@
+/* ---------------------------------------------------------------------------
+   This file is intentionally empty of rules — it is a pointer only.
+
+   The Things theme lives in  ../.crossnote/things-markdown.css
+   (one file shared by both preview engines).
+
+   VS Code built-in preview — .vscode/settings.json:
+       "markdown.styles": [".crossnote/things-markdown.css"]
+
+   Markdown Preview Enhanced — .crossnote/style.less:
+       @import (inline) "./things-markdown.css";
+
+   Nothing references this path any more, so nothing here is loaded. It is kept
+   only so a stale link to the old location still explains where the theme went.
+   --------------------------------------------------------------------------- */

@@ -1,0 +1,18 @@
+// Markdown Preview Enhanced — workspace stylesheet
+// Docs: https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css
+//
+// Applies the Obsidian "Things" theme (v2.2.4) to every MPE preview in this
+// workspace. The actual theme lives in ./things-markdown.css so that the same
+// file can also be used by VS Code's built-in markdown preview
+// (see .vscode/settings.json -> "markdown.styles").
+//
+// `(inline)` makes Less paste the file in untouched — plain CSS is valid Less,
+// but inlining keeps the vendored theme byte-for-byte intact and dodges any
+// Less-specific rewriting of selectors such as :is()/:not().
+
+@import (inline) "./things-markdown.css";
+
+// Anything below this line is workspace-specific tweaking on top of the theme.
+.markdown-preview.markdown-preview {
+  // eg: background-color: blue;
+}

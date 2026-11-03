@@ -25,11 +25,11 @@ tags: [lighting, inverse-rendering, relighting, calibration, tooling]
 | # | 槽位 | 要回答的问题 | 现状 |
 |---|---|---|---|
 | **① 目标** | 拿什么当"正确答案" | 旧管线的 baked lightmap？旧版引擎渲的一组图？美术的一张参考？HDR 探针？**这些目标的"可信频段"完全不同**（lightmap 只有低频漫反射，参考图带材质与色调映射） | 已有：[[Lipp 2024 — View-Independent Adjoint Light Tracing for Lighting Design Optimization\|Lipp 2024]]（曲面辐射场 + HSH 投影） |
-| **② 参数化** | 允许调哪些量、各自的定义域 | 位置 / 朝向 / 强度 / 色温 / 色度 / 锥角 / IES / 面光尺寸。**每一项有没有"物理或工程上的硬约束"**（不能悬空、亮度有档位、型号库有限） | 已有：Lipp 2024（位置、Rodrigues 朝向、$p^2$ 保非负强度、归一化色度、IES/软边锥） |
+| **② 参数化** | 允许调哪些量、各自的定义域 | 位置 / 朝向 / 强度 / 色温 / 色度 / 锥角 / IES / 面光尺寸。**每一项有没有"物理或工程上的硬约束"**（不能悬空、亮度有档位、型号库有限） | 已有：Lipp 2024（位置、Rodrigues 朝向、$p^2$ 保非负强度、归一化色度、IES/软边锥）；[[Sloan 2008 — Stupid Spherical Harmonics Tricks\|Sloan 2008]]（SH→方向光+环境光的闭式参数化，误差定义在 irradiance 空间）；[[Gkaravelis 2016 — Inverse Lighting Design using a Coverage Optimization Strategy\|Gkaravelis 2016]]（全向点光：位置 + RGB flux，方向分布固定） |
 | **③ 梯度** | 怎么拿到"往哪调"的方向 | 有限差分 / 自动微分 / 解析伴随 / 无梯度搜索。**关键坑：AD 在某些形式化下系统性失效**（Lipp 证明光照追踪就是这样） | 已有：Lipp 2024（解析伴随；FD 验证；AD 失效的机制解释） |
-| **④ 优化器** | 用谁来走这一步 | GD / Adam / L-BFGS / CMA-ES / 混合整数（选灯个数）。**参数数量级与耦合结构（如"高度 ↔ 强度"）决定选型** | 已有：Lipp 2024（L-BFGS 42–45 次评估；CMA-ES 需 5–10 倍） |
+| **④ 优化器** | 用谁来走这一步 | GD / Adam / L-BFGS / CMA-ES / 混合整数（选灯个数）。**参数数量级与耦合结构（如"高度 ↔ 强度"）决定选型** | 已有：Lipp 2024（L-BFGS 42–45 次评估；CMA-ES 需 5–10 倍）；[[Gkaravelis 2016 — Inverse Lighting Design using a Coverage Optimization Strategy\|Gkaravelis 2016]]（**离散选数的组合路线**：NNLS 初始化 + 互补性层级聚类 + 树上 optimize cut；灯数是 cut 出来的）；记名：MDPI IPSO（建筑侧混合整数 PSO，UDPR 取整） |
 | **⑤ 评估** | 怎么判断"迁移成功" | 参数空间距离？图像空间 $L_2$ / SSIM？感知指标？**以及最容易被忽略的一条：优化目标与验收指标不是同一个东西时会发生什么** | 已有：[[Giroux 2023 — Towards a Perceptual Evaluation Framework for Lighting Estimation\|Giroux 2023]]（49 人 2AFC 实验：标准 IQA 指标在高光/无参照任务上≈随机；SVR 学习组合到 0.889；accuracy 与 plausibility 要分开验收） |
-| **⑥ 落地约束** | 优化结果怎么变成"能用的灯" | 贴天花板 / 吸附网格 / 量化到型号库 / 数量上限 / 与美术工作流对接 | 已有（部分）：[[Schwengerer 2022 — Inverse Method for Baked Lighting\|Schwengerer 2022]]（均匀网格初始灯阵 + "方案=初始配置×阶段序列"建模 + 方案排期实测）；记名：DIALux 自动布灯（型号库+规范约束）、Sony Spherelight、ILM LightCraft、TrueHDRI（见清单） |
+| **⑥ 落地约束** | 优化结果怎么变成"能用的灯" | 贴天花板 / 吸附网格 / 量化到型号库 / 数量上限 / 与美术工作流对接 | 已有（部分）：[[Schwengerer 2022 — Inverse Method for Baked Lighting\|Schwengerer 2022]]（均匀网格初始灯阵 + "方案=初始配置×阶段序列"建模 + 方案排期实测）；[[Gkaravelis 2016 — Inverse Lighting Design using a Coverage Optimization Strategy\|Gkaravelis 2016]]（**灯贴表面约束的实现样本**：体素化+膨胀候选域，图 11）；记名：DIALux 自动布灯（型号库+规范约束）、Sony Spherelight、ILM LightCraft、TrueHDRI（见清单） |
 
 **一个先验判断**：①③④ 三格已经有相当成熟的文献（可微渲染 + 逆问题），**真正难的是 ⑤ 和 ⑥**——因为这两格不是学术问题，是工程与审美问题，论文通常不写。**收集时要专门留意那些"把结果真的用起来了"的工业界/产品侧材料。**
 
@@ -46,9 +46,14 @@ tags: [lighting, inverse-rendering, relighting, calibration, tooling]
 | 2026-11-02 | Suter et al. 2016, LightCraft（ILM，SIGGRAPH 2016 Talk）（记名未建页） | ②⑥ | 双高度拍摄的 HDRI 对 + 人工标记灯角点 → Mars 摄影测量解算灯位 → 自动抽 emission map | 同上线索的更早形态（半自动）；说明"HDRI→显式灯"在影视管线已成熟十年 |
 | 2026-11-02 | DIALux evo 官方功能文档：Automatic Luminaire Placement / 灯具目录 / 照度校核（记名未建页） | ⑥ | 建筑照明工业工具的落地约束全集：真实型号库（IES/LDT 配光文件）、阵列/线性布置、规范照度目标、红绿信号灯式达标显示 | ⑥ 的"产品侧答案"：优化结果必须量化到型号库 + 满足规范指标才算"能用的灯" |
 | 2026-11-02 | TrueHDRI Panel（UE 插件，Bandai Namco × 东京工科大学，Fab 商店）（记名未建页） | ⑥ | UE 内一键 HDRI→IBL 环境蓝图；可把最亮区域分离成 Directional Light 供 Lumen/常规实时渲染用 | 证明"环境光→显式灯"在游戏引擎侧已有产品化先例，可直接试用参考其参数拆分策略 |
+| 2026-11-03 | [[Gkaravelis 2016 — Inverse Lighting Design using a Coverage Optimization Strategy\|Gkaravelis & Papaioannou 2016, Inverse Lighting Design using a Coverage Optimization Strategy（CGI 2016）]] | ①②④⑥ | **灯的数量、位置、flux 三者一起解**：细网格候选 + NNLS 初始化 + 贡献互补性层级聚类建树 + 树上找最优 cut 定灯数；8 场景全部以更少灯拿更低误差（Office 直接光 9 盏 1.36% vs 对手 11 盏 38.3%）；自带"灯贴表面"约束（体素化+膨胀） | **补上 Lipp 明言留给未来的"离散选灯"缺口**（收集页"三个决定"之第 2 条目前最具体的算法答案）；与 Lipp 拼成"先离散后连续"两段式管线 |
+| 2026-11-03 | [[Sloan 2008 — Stupid Spherical Harmonics Tricks\|Sloan 2008, Stupid Spherical Harmonics Tricks（GDC 2008 伴生文档，节选抽灯节）]] | ①② | **探针/SH → 显式灯的解析路线**：单方向光+环境光有闭式最优解（在 irradiance 空间最小二乘），多灯用球面覆盖点集 + BFGS 找峰（1–6 阶起点数 {1,3,6,10,15,22}）；抽灯本身治 ringing | "隐式表示→显式灯"的工业原始文献；与 Gkaravelis 各占一头（方向域解析 vs 空间域组合）；旧探针数据迁移的零成本初值方案 |
+| 2026-11-03 | Liu et al. 2022, Optimization of Indoor Luminaire Layout Using Improved PSO（Energies 15(4):1482, MDPI）（记名未建页） | ④⑥ | 建筑侧混合整数样本：4 个混合变量（间距×2 + 行列灯数）同时定灯数与布局，UDPR 概率取整解整数部分；与 DIALux 仿真对比平均照度差 0.4% | ④ 的"混合整数"建筑样本：用参数化把"灯数"变成连续可解的整数变量，思路与 Gkaravelis 的聚类剪枝互补；目标仍是规范照度不是观感迁移 |
 | （待填） | | | | |
 
 **本日检索备注（2026-11-02）**：检索通道（WebSearch）正常，无失败记录。Schwengerer 论文 PDF 无 ToUnicode 文本层（提取为乱码），已改用逐页渲染+图像识读核读，方法/评估/结论章数字均已亲见；Ch.4 BSP 实现细节未逐字核。Giroux 论文 venue 是否正式收录未核（arXiv v3 为止）。另见 2026-09 的一篇 Ad-Relight（arXiv 2609.37951，广告图重打光）用到 GPT-4o 做光照一致性评审 + ILL-SIM 亮度场余弦相似度——图像到图像路线、不产出灯参数，按选文标准**记名不收**，仅其"感知评审"思路与 Giroux 呼应。
+
+**本日检索备注（2026-11-03）**：检索通道（WebSearch）正常，无失败记录。两轮四组查询：① mixed-integer 选灯（中 MDPI IPSO，记名）② SH/探针→显式灯（中 Sloan 2008 抽灯节，建页；附带命中 Ambient Dice 2017——二十面体基替换 SH 的**表示层**工作，不涉及"抽成显式灯"，按标准**不收**，仅备注其存在）③ 感知损失作可微目标（命中均为通用 LPIPS 材料综述，无"场景空间光照拟合用感知目标"的具体样本，**今日 ⑤ 槽无新增**，此方向留待后续）④ Gkaravelis 2016 由查询①的引用链发现（AUEB 官网 PDF，文本层完整）。Gkaravelis 期刊版卷期未核；Sloan 文档 SH35/SH36 版本间环境光归一化因子表述有差异，笔记内已标"未核"。
 
 ---
 
