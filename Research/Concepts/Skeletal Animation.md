@@ -103,6 +103,7 @@ $$M_j = M_{\text{parent}(j)}\cdot T_j^{\text{rest}}\cdot R_j$$
 - [[Motion Generation]] / [[Neural Animation]]：**从条件生成姿态**，取代检索；
 - [[Animation Compression]]：数据的存储形态；
 - [[Facial Animation]]：同一套骨架思想在面部（blendshape + 骨）上的变体；
+- [[Secondary Motion]]：**骨架之上的一层算子**——骨架给"主体运动"，二次运动给"骨架停了之后的那点残余"。**2026-11-03 补**：[[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning]] 证明它可以完全由骨架量（$\Omega_j$、$q_j$、层级）驱动，**不需要额外的自由度**——这是本页与仿真路线的分界；
 - [[Physics-based Character Animation]]：把"关节怎么动"从关键帧换成物理。
 
 ## Technologies

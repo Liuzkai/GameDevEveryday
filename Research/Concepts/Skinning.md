@@ -59,9 +59,31 @@ PSD      承认"线性权重表达不了真实形变"        → 数据修，要
 2020s 学习路线：ML Deformer / 神经蒙皮（PhysSkin++ 2026：12–14 ms，与网格规模解耦）
 2026  RLMuscle：把"肌肉收缩"从手写激活改成 RL 反解 + 体积仿真（18 ms/帧，194 肌肉）
 2026  3DGS 时代：[[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation|GradRig]] 把蒙皮搬到高斯基元上（可微权重）
+2026  [[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning]]：**分出一条新轴**——不换混法，在混完之后加一个"有时间维"的位移项（VS 2021 → AS 2022 → DS 2026 三级）
 ```
 
 **这四十年没有"取代"，只有"分层"**：LBS 仍是默认，DQS 是质量开关，PSD 是修形，神经蒙皮是快而像，肌肉层是慢而真。**它们各自守住一个成本档位**。
+
+### 第二条轴：不改混法，只加一项（2026-11-03 补）
+
+上面四代回答的都是同一个问题：**"$T_i$ 该怎么混"**——混得对不对（DQS）、混得够不够（PSD/神经）、还是干脆别混（仿真）。2026 年的 [[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning]] 把它拆开了：
+
+$$p_i^{DS}=p_i^{LBS}+\sum_j\beta_{ij}\,\psi\big(\mathcal F(\Omega_j,t),q_j,p_i^{LBS}\big)$$
+
+**混法一个字没改，只是在混完之后加了一个位移项。** 这不是"第五代蒙皮"，是**另一条轴**：
+
+| | 混法轴（LBS→DQS→PSD→神经） | 加项轴（VS 2021 → AS 2022 → DS 2026） |
+|---|---|---|
+| 问的问题 | "这个顶点该被哪几根骨、按什么比例带动" | "带完之后，它还要不要多走一点" |
+| 数学性质 | **插值**：要保证结果仍在 SE(3) 里（或至少别长剪切） | **信号处理**：输入是运动的导数，输出是位移 |
+| 有没有时间维 | ❌ 没有（只看当前姿态） | ✅ 有（DS 的 $\mathcal F$ 看过去 $W$ 秒） |
+| 能不能叠 | 只能选一种混法 | **可以叠在任何混法上**（LBS/DQS 都行） |
+| 典型失效 | 糖纸、塌肩、翻面 | 穿模（没有碰撞）、脚离地（dLBS 延迟了整条变换链） |
+
+**这条轴的存在解释了一件旧事**：本页"Game Applications"里那句"二次元/卡通角色常用缩放关节做挤压拉伸——这正是 DQS 表示不了的那一类"。**它之所以表示不了，是因为它属于加项轴，不属于混法轴。** 用混法去实现挤压拉伸，等于用插值器做滤波。
+
+代价也要写清楚：**加项永远不产生"真正的"形变**——没有体积守恒、没有碰撞、没有动量。它是"看起来有质量"，不是"有质量"。**判据：要不要和世界交互**（要，就回 [[Cloth Simulation]] 或弹簧骨；不要，加项最便宜）。
+
 
 ## Important Papers
 
@@ -69,6 +91,7 @@ PSD      承认"线性权重表达不了真实形变"        → 数据修，要
 - [[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning|PhysSkin++]] — 神经蒙皮：前馈蒙皮场，免逐对象训练
 - [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]] — 肌肉层：蒙皮之上再解一层"力"
 - [[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation|GradRig]] — 蒙皮权重的可微化（GS 表示）
+- [[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning 2026]] — **第二条轴的开端**：不改混法，在 LBS 之上加一个由关节速度驱动的 FIR 滤波位移项（0.00003 ms/面片，1.5 M 面片模型；见本页"第二条轴"）
 - （库外必读）Lewis et al. 2000《Pose Space Deformation》；Magnenat-Thalmann et al. 1988（LBS 源头，PDF 已不可得，本条依二手文献核证）
 
 ## Related Concepts
@@ -79,6 +102,7 @@ PSD      承认"线性权重表达不了真实形变"        → 数据修，要
 - [[Subdivision Surfaces]]（**相邻问题**：一个是"网格怎么变细"，一个是"网格怎么跟着骨动"；两者都要在"规则"与"数据"之间选）
 - [[Mesh Parameterization]]（**同构问题**：蒙皮把"运动"映射到皮肤，参数化把"曲面"映射到平面；两者都要在"混/解之后，那个好性质还在不在"——蒙皮要"仍是刚体"，参数化要"仍是单射"。**2026-10-24 交叉点**：两者都在 10 月中被"换表示让性质自动成立"这条思路各推了一步）
 - [[Cloth Simulation]]（**必须分清的一对**：蒙皮是"网格按骨骼权重变形"——零自由度、纯几何、每帧算完就结束；布料是"每个顶点独立自由度 + 碰撞约束"——要解一个系统、要迭代、帧间有状态。**工程上最实用的一条判据：衣服穿模看起来像蒙皮问题，八成是碰撞体问题**（披风穿进大腿是胶囊体和布料解算的接触失效，不是权重没收好）；反过来，关节处的"糖纸"和插值塌陷才是真蒙皮问题。**2026-10-28 开域**：两页在同一天入库，正好把"哪些形变不需要解算"这件事划清）
+- [[Secondary Motion]]（**相邻但不同层**：蒙皮是"骨动 → 皮动"的映射（零时间维），二次运动是"骨的导数 → 皮的附加位移"（有时间维）。**DS 式实现里两者是相加的两项，不是替代关系**；"骨停了皮还在动"这件事归二次运动管，不归蒙皮管）
 
 ## Technologies
 
