@@ -39,7 +39,7 @@ first_introduced: "Baran & Popović, SIGGRAPH 2007（Pinocchio）"
 1. **骨架从哪来？** 三种立场——
    - **模板**（人给一棵树，方法负责塞进去）：[[Baran 2007 — Automatic Rigging and Animation of 3D Characters|Baran 2007]]；
    - **提取**（从形状算中轴）：Teichmann & Teller 1998 / Liu 2003 / Katz & Tal 2003；
-   - **生成**（从数据学一个先验）：RigNet 2020 之后的主流，[[2026-11-02-Guo — FlowRig Unified Skeleton Generation for 3D and 4D Meshes via Flow Matching|FlowRig 2026]]。
+   - **生成**（从数据学一个先验）：[[Xu 2020 — RigNet Neural Rigging for Articulated Characters|RigNet 2020]] 之后的主流，[[2026-11-02-Guo — FlowRig Unified Skeleton Generation for 3D and 4D Meshes via Flow Matching|FlowRig 2026]]。
 2. **关节放哪？** 本质是**子图同构**：在"体内图"上找一棵与骨架同构的子树，使某个罚项最小。
 3. **权重怎么给？** 热平衡（Baran）/ 测地距离（Maya 的 geodesic voxel bind）/ 学习（SkinningTransformer 一类）。
 4. **多少根骨、谁连谁？** ——**这一条直到 2026 年才变成"可指定的输入"**，在此之前它是方法的副产品。
@@ -99,7 +99,10 @@ Baran 2007 立下的这条，是理解整条线的钥匙：
         Maya 走另一条路（geodesic voxel bind：体素化 + 测地距离）
         ⇒ 工序定型为"自动打底 + 手工修关节"
   ↓
-2020  RigNet：神经网络从点云直接回归骨架 + 权重（库外，本库缺口）
+2020  ★ RigNet：GNN + 加权 mean-shift + MST + 测地蒙皮（**无模板**）
+        · 关节点 IoU 36.5% → 61.6%；蒙皮 L1 0.65（Maya）→ 0.39
+        · 带宽滑杆 = 骨骼 LOD 的第一个旋钮（几何参数，不是模型条件）
+        · 离散结构交给算法（模态个数定关节数、MST 定拓扑），连续量交给网络
   ↓
 2023-25  MagicArticulate / UniRig / RigAnything / Puppeteer
         · 大模型化、自回归、逐子部件
@@ -121,7 +124,7 @@ Baran 2007 立下的这条，是理解整条线的钥匙：
 
 - [[Baran 2007 — Automatic Rigging and Animation of 3D Characters|Baran & Popović 2007（Pinocchio）]] — **本页主节点**：问题定义、"接口"立场、热平衡权重、max-margin 罚项学习，四件事一次做完
 - [[2026-11-02-Guo — FlowRig Unified Skeleton Generation for 3D and 4D Meshes via Flow Matching|FlowRig 2026]] — **把"骨骼数"变成输入**，并把 3D/4D 统一成一个任务
-- （库外必读）RigNet 2020（arXiv 2005.00559，学习路线的起点）；bounded biharmonic weights 2011（同组，权重的"局部性"版本）
+- [[Xu 2020 — RigNet Neural Rigging for Articulated Characters|RigNet 2020]] — **学习路线的起点，本页时间线的中段**：无模板（对比 2007 的四套模板）、"离散结构交给算法"（mean-shift 取模态 + MST 保合法）、**第一个把权重质量单独列表并赢过 DCC 默认算法的工作**（L1 0.39 vs Maya GeoVoxel 0.65）；带宽滑杆 = 骨骼 LOD 的第一个旋钮
 - （库外对照）MagicArticulate / UniRig / RigAnything / Puppeteer —— 精度与速度的横向快照见 FlowRig 表 1
 
 ## Related Concepts
@@ -159,7 +162,7 @@ Current Level: **Normal**
 
 **缺的不是"知道有自动绑骨"，是三样具体的量：**
 
-1. **中间那段是空的**：RigNet 2020 → MagicArticulate / UniRig / RigAnything / Puppeteer 这一段本库零覆盖。**结果是"2007 的几何方法"与"2026 的生成方法"之间没有桥**，看不出精度是什么时候、靠什么跳上去的；
+1. **中段仍然只有一半**：2020 的 [[Xu 2020 — RigNet Neural Rigging for Articulated Characters|RigNet]] 已入库（2026-11-06），但 **2020 → 2026 之间的 2023–2025 那一批（MagicArticulate / UniRig / RigAnything / Puppeteer）仍是库内零覆盖**。**结果是"2020 的中等形态"与"2026 的整体形态"之间还缺一次"大模型化"的过渡**——看不出精度是什么时候、靠什么跳上去的；
 2. **"骨骼数—精度"曲线没有实测**：FlowRig 给了 $n=27/20/12$ 的定性图，但**没有给"少到几根开始崩"的定量拐点**。这个数对 LOD 骨架的决策是直接可用的，现在只能靠试；
 3. **权重质量的评估缺失**：所有方法都在比"骨架对不对"（J2J/J2B/B2B），**几乎没有人比"权重刷得好不好"**——而美术每天在修的恰恰是后者。
 
