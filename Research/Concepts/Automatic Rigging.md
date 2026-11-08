@@ -38,7 +38,7 @@ first_introduced: "Baran & Popović, SIGGRAPH 2007（Pinocchio）"
 
 1. **骨架从哪来？** 三种立场——
    - **模板**（人给一棵树，方法负责塞进去）：[[Baran 2007 — Automatic Rigging and Animation of 3D Characters|Baran 2007]]；
-   - **提取**（从形状算中轴）：Teichmann & Teller 1998 / Liu 2003 / Katz & Tal 2003；
+   - **提取**（从形状算中轴）：Teichmann & Teller 1998 / Liu 2003 / Katz & Tal 2003；**2026 年的新工具是 [[2026-11-05-Li — DC-SQEM Medial Mesh Extraction by Dual Contouring with Spherical Quadric Error Metric|DC-SQEM]]——只要定向点云就能出完整的中轴面片，但要自己再退化成树**（见下"中轴那一支"）；
    - **生成**（从数据学一个先验）：[[Xu 2020 — RigNet Neural Rigging for Articulated Characters|RigNet 2020]] 之后的主流，[[2026-11-02-Guo — FlowRig Unified Skeleton Generation for 3D and 4D Meshes via Flow Matching|FlowRig 2026]]。
 2. **关节放哪？** 本质是**子图同构**：在"体内图"上找一棵与骨架同构的子树，使某个罚项最小。
 3. **权重怎么给？** 热平衡（Baran）/ 测地距离（Maya 的 geodesic voxel bind）/ 学习（SkinningTransformer 一类）。
@@ -73,6 +73,20 @@ Baran 2007 立下的这条，是理解整条线的钥匙：
 | 结构怪但形变"对" | **拓扑**（父链错） | 改骨架树 |
 
 **第三行是 2026 年才被明确的一类**——它不能靠"权重刷得好"解决，因为病不在权重。
+
+### 中轴那一支，2026 年的新工具与它没解决的那一步（2026-11-08 补）
+
+Pinocchio 2007 是**用中轴取骨架**的（在体内逼近可见性/距离，取"中轴的一部分"当骨骼）。2026 年的 [[2026-11-05-Li — DC-SQEM Medial Mesh Extraction by Dual Contouring with Spherical Quadric Error Metric|DC-SQEM]] 把这一步的**输入门槛**降到了定向点云（93/93 出结果，而"先重建再提取"的两条管线只出 86/93 与 67/93），代价是没有拓扑保证、自交率 4.07%。
+
+但**它输出的是中轴的完整二维面片（sheets），不是骨架**。从 sheet 到 skeleton 中间还差一步**降维**，而这一步有三个坑，方法本身不解决：
+
+| 坑 | 为什么难 | 谁能用 |
+|---|---|---|
+| **sheet 的边界 ≠ 骨骼位置** | 规则形体（圆柱、盒子）的中轴是一片"中间面"，骨骼只该落在它的**缝（seam）**上 | 只有缝 / 分支（$T_3$/$T_4$）才是骨骼候选 |
+| **中轴对噪声天生敏感** | 表面抖一点，中轴就长毛；骨架会"闪" | 需要尺度过滤（SAT 那一族的动机）——而 DC-SQEM 本身不做 |
+| **中轴的拓扑天然非流形** | 三片 sheet 交于一条缝、四条缝交于一点 | 骨架要的是树；非流形结构要先选一条主链 |
+
+> **一句话：中轴给的是"形状的骨架结构"，骨架要的是"能接住动作的树"。** 从前者到后者是一次**带语义的剪枝**，二十年来一直靠启发式或人工——**这也是为什么 2020 年之后这条线被"直接生成骨架"（RigNet / FlowRig）抢走了主流位置**：与其先算出完整的结构再剪，不如直接学"该留哪几条"。
 
 ## Prerequisites
 

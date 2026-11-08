@@ -47,12 +47,22 @@ tags: [lod, scalability, rendering, budget, performance, geometry]
 
 三条路线不是替代关系，**今天同一个引擎里三条并存**：几何走虚拟几何、纹理走 mip、角色走离散 LOD 链。
 
+> ⚠️ **这张表的第一列（"表示"）在本页是被预设的，不是被解释的。** "K 份烘焙好的网格"从哪来、由谁保证"这 K 份都保住了轮廓和 UV"——那是 [[Mesh Simplification]] 的问题（2026-11-08 建页）。**本页只管"每一帧挑哪份"，那一页管"这些份怎么造出来"。**
+
 ## 分配依据的四十年演化（本页主线）
 
 ```text
 1976  Clark：按【屏幕占比】——物体在屏幕上占多少面积，就给多少细节
         · 判据是"几何代理量"（面积），与最终误差无直接关系
         · 附带两条今天仍在用的：中心加权（foveation 先声）、运动自适应
+  ↓
+1996  Hoppe：Progressive Meshes —— 一个网格 = 一串 vsplit（【表示】成形）
+  ↓
+1997  ★ 分岔成两半（同年、同问题、互补）
+        · Garland–Heckbert：误差 = Σ(点到平面)² = vᵀQv，Q 可加
+          ⇒ 决定【先塌哪一条边】（排序 / 造表示）
+        · Hoppe：误差 = 屏幕上会错多少像素
+          ⇒ 决定【停在哪一档】（判据 / 每帧分配）
   ↓
 1997  Hoppe：按【屏幕空间几何误差 τ】——偏差空间投影到屏幕，超过 τ 才细分
         · 判据从"它多大"变成"这一像素会错多少"
@@ -97,12 +107,27 @@ $$\tau_t=\tau_{t-1}\cdot\frac{|F_{t-1}|}{m}$$
 
 **"能不能相加"是分水岭。** 只有误差可以跨物体求和，所以只有误差能拿来做"总预算"；面积和距离只能逐物体设阈值。
 
+> **2026-11-08 修正（重要）："可加"与"可比"是两件事，本页此前把它们混成了一句。**
+>
+> 读 [[Garland 1997 — Surface Simplification Using Quadric Error Metrics|Garland–Heckbert 1997]] 之后必须补这一刀：QEM 的 $v^\top Qv$ 是**世界空间平方距离和**，它**可加**（同一物体的历史平面能一路累加进一个 4×4 矩阵），但**跨物体不可比**——一栋楼允许 2 cm 误差与一把刀允许 2 cm 误差，在画面上差了两个数量级。
+>
+> 所以严格的分层是：
+>
+> | 层 | 量 | 可加 | 可比 |
+> |---|---|---|---|
+> | 造表示（离线） | 世界空间平方距离（QEM） | ✅ 同一物体内 | ❌ 跨物体 / 跨距离 |
+> | 发配额（每帧） | 屏幕空间像素误差（τ） | ✅ | ✅ |
+> | 粗分配（Clark 式） | 屏幕占比 / 距离 | ❌ | ⚠️ 只按经验 |
+>
+> **"可加"是能塞进堆里、能在任意时刻停下来的条件；"可比"是能做总预算的条件。** 前者 1997 年就有了，后者要等到把误差投影到屏幕。**这也解释了为什么自动 LOD 的 QEM 误差不能直接抄进预算表——它缺的是"投影"这一步，不是"加法"。**
+
 ## Important Papers
 
 | 论文 | 角色 |
 |---|---|
 | [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)\|Clark 1976]] | 起源：层级 + 按屏幕占比变细节 + working set |
 | Hoppe 1996 *Progressive Meshes* | 表示：一个网格 = 一串 vsplit，连续分辨率 |
+| [[Garland 1997 — Surface Simplification Using Quadric Error Metrics\|Garland 1997]] | **造表示**：二次误差（世界空间平方距离）+ 塌陷序列；**"误差可加"的最早一版** |
 | [[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes\|Hoppe 1997]] | **判据**：屏幕空间几何误差 + 增量细化 + 控制器 |
 | [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD\|Budgeted-GS 2026]] | GS 线：误差 ∝ N^(−1/2)，把 LOD 写成预算曲线 |
 | [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting\|KoalaGS 2026]] | GS 线：复杂度感知的连续 LOD |
@@ -110,6 +135,7 @@ $$\tau_t=\tau_{t-1}\cdot\frac{|F_{t-1}|}{m}$$
 
 ## Related Concepts
 
+- **[[Mesh Simplification]]** —— **上游**：本页的"表示"那一栏由它供给（K 份怎么造、属性与边界怎么保）
 - **[[Scalability and Quality Tiers]]** —— 全局档位；与本页是"粗/细两个时间尺度"的分工
 - **[[Budget Units]]** —— LOD 是"把配额单位从资产换到消费点"的最大一支
 - **[[Streaming]]** —— working set 的另一半：LOD 决定"画多少"，streaming 决定"驻留多少"
