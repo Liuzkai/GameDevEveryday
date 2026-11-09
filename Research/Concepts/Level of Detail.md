@@ -121,6 +121,32 @@ $$\tau_t=\tau_{t-1}\cdot\frac{|F_{t-1}|}{m}$$
 >
 > **"可加"是能塞进堆里、能在任意时刻停下来的条件；"可比"是能做总预算的条件。** 前者 1997 年就有了，后者要等到把误差投影到屏幕。**这也解释了为什么自动 LOD 的 QEM 误差不能直接抄进预算表——它缺的是"投影"这一步，不是"加法"。**
 
+## 可合并性：LOD 链的第三个前提（2026-11-09 补）
+
+本节标题里的"表示从哪来"这一栏，一直隐含一个假设：**更粗的那一级能造出来**。今天才看清这是个**可检验的条件**，不是天经地义。
+
+LOD 链实际上要三个前提，前两个已被反复讨论，第三个此前从未被单独拎出来：
+
+| 前提 | 问什么 | 谁给的 | 缺了会怎样 |
+|---|---|---|---|
+| **① 误差可加** | 能不能排优先级、能不能随时停 | [[Garland 1997 — Surface Simplification Using Quadric Error Metrics\|Garland–Heckbert 1997]]（二次型系数） | 只能"跑完为止"，不能按预算截断 |
+| **② 误差可比** | 能不能做跨物体的总预算 | [[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes\|Hoppe 1997]]（投到屏幕像素） | 只能逐物体设阈值 |
+| **③ 合并可逆** | **能不能从合并前的统计量反解出合并后的参数** | [[2026-11-09-Franke — Hierarchical Incremental Beta Splatting for Online Reconstruction\|HIBS 2026]]（$\kappa\leftrightarrow\beta$ 双射） | 只能"平均"，而平均会把形状糊掉 |
+
+**③ 的判据很干脆：合并时能算的是"矩"（质量、协方差、峰度），能要的是"参数"（位置、形状、不透明度）。如果"矩 → 参数"存在且唯一，合并就是"算矩 → 反解"，无损；如果不存在（多对一、或不可解），就只能近似，误差无处安放。**
+
+三个例子，正好覆盖三种情况：
+
+| 表示 | 合并时能算什么 | 参数能反解吗 | 结果 |
+|---|---|---|---|
+| 网格（QEM） | 二次型系数（可加） | 位置 ✅（解 3×3）／**属性 ❌**（平均不可逆） | 几何保得住、**属性只能拍权重** |
+| 高斯 | 质量 / 协方差 | ✅ 全可解（且 KL 与矩匹配等价） | 合并干净 |
+| **beta 核** | 质量 / 协方差 / **峰度** | ✅ **$\beta=\frac{15}{15-\kappa}-3.5$** | 合并保形（图 5 右列） |
+
+> **反例最值钱**：[[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals|T2-Splat]] 的属性合并不满足 ③（式 10 是不透明度加权平均），所以它加**色差罚项**去调小汇率——但那是"价格"，不是"能力"。它真正绕开 ③ 的办法是**让属性不住在要被合并的元素上**（每面纹理，拓扑塌了纹理重新长）。**这不是解决不可逆，是取消合并。**
+>
+> **所以"解耦"与"可合并"是同一个问题的两条出口**：要么别合并（把属性搬走），要么让合并可逆（给表示配一个可逆签名）。**两条都不走，就只剩平均 + 罚项。**
+
 ## Important Papers
 
 | 论文 | 角色 |
@@ -132,6 +158,8 @@ $$\tau_t=\tau_{t-1}\cdot\frac{|F_{t-1}|}{m}$$
 | [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD\|Budgeted-GS 2026]] | GS 线：误差 ∝ N^(−1/2)，把 LOD 写成预算曲线 |
 | [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting\|KoalaGS 2026]] | GS 线：复杂度感知的连续 LOD |
 | [[2026-11-05-Fujieda — Patch-Based Generalized Neural Texture Upscaling\|Fujieda 2026]] | 纹理线：把"层级存不存在"也交给采样时刻 |
+| [[2026-11-09-Franke — Hierarchical Incremental Beta Splatting for Online Reconstruction\|HIBS 2026]] | **合并能力**：闭式矩匹配 + 峰度反解 ⇒ 父级保形；紧支撑核上 KL 不适用 |
+| [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **合并的绕道**：属性搬出顶点，拓扑自由塌陷 |
 
 ## Related Concepts
 

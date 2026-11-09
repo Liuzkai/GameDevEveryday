@@ -67,9 +67,19 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 1997  Hoppe：把同一串塌陷记录当"选择性细化"的素材，判据换成【屏幕空间像素误差】
         · 这一步把"世界距离"换成"像素"，于是可以跨物体相加（见 [[Level of Detail]]）
   ↓
+1998  Garland–Heckbert：把属性抬进 R^{3+m} 超平面 ⇒ 属性也能进代价
+        · 【分岔】投影点不再是几何最近点，跑到"几何更远、属性更近"处 ⇒ 误差低估
+  ↓
+1999  Hoppe：打回 R³ 投影 + wedge ⇒ 属性第一次被【正确】地放进 QEM
+        · 存储从 (4+m)(5+m)/2 降到 11+4m；不连续处成为数据结构问题
+  ↓
 2013  Thiery：SQEM —— 未知量加一维（球的半径）
   ↓
 2026  DC-SQEM：4D 二次型 + 对偶轮廓 ⇒ 从点云直接提中轴（同一套机器的换维用法）
+  ↓
+2026  T2-Splat：把属性【拿出】顶点，搬到每面残差纹理
+        · 拓扑按几何复杂度自由改，外观按纹理分辨率独立保证
+        · 面数降到 1/3 而质量更高 —— 见 [[Decoupling Geometry and Appearance]]
 ```
 
 > **这条线的方向：误差的单位从"世界距离"走向"像素"，从"几何"走向"几何 + 属性"，而"可加性"始终是那条暗线。**
@@ -80,12 +90,24 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 
 **① 边界。** 开放边界（地形、布片、破损扫描、薄片零件）在纯几何误差下会被"吃掉"——因为边界处的平面集本来就少，塌陷代价低。1997 年的补丁（给边界边加**垂直约束平面**并大罚因子加权）今天还在被抄。**症状：简化后地形边缘往里缩一圈。**
 
-**② 属性（UV / 法线 / 顶点色 / 蒙皮权重）。** 几何保住了、UV 撕了，是自动 LOD 最常见的翻车方式。两条处理思路：
+**② 属性（UV / 法线 / 顶点色 / 蒙皮权重）。** 几何保住了、UV 撕了，是自动 LOD 最常见的翻车方式。
 
-- **把属性塞进误差**：7×7 二次型（位置 + RGB），或把 UV 的拉伸度量加进代价；
-- **把属性当约束**：UV 缝（seam）与材质边界视为不可塌的"硬边"，只允许在岛内塌陷。**
+**问题出在哪，1999 年就说清了**（[[Hoppe 1999 — New Quadric Metric for Simplifying Meshes with Appearance Attributes|Hoppe 1999]]）：
 
-**QEM 原文明确没做这一层**（作者提过 7×7 的想法但嫌复杂），**这是所有工业实现必须自己补的部分，也是"论文复现"和"能上项目"之间最宽的沟。**
+| 做法 | 后果 |
+|---|---|
+| 把位置和属性捆成一个 $(3+m)$ 维向量，量**联合空间里的距离** | **度量坏**：投影点跑到"几何更远、属性更近"处，误差被**低估** |
+| 分项求和（几何误差 + 属性误差） | **几何坏**：属性梯度高处，顶点被推向曲率中心——**用几何换属性**（原文 Fig 7 的 1D 例证） |
+| 几何投影在 $\mathbb R^3$，属性在投影点上插值 | ✅ 度量正确（**顶点属性的标准答案**） |
+| 纹理坐标 | ❌ 该量**参数误差**（Cohen 1998），本框架没覆盖 |
+
+**而"不连续处"（折痕 / UV 缝 / 材质边界）有三种处理方式，性质完全不同：**
+
+- **声明式**（wedge / 硬边表 / 材质槽）：把汇率设成 0 或 ∞——**禁止**平均。Hoppe 的 wedge、UE / Simplygon 的 seam 保护都是这一类。**最可靠。**
+- **罚项式**（色差罚项、TV loss）：**不鼓励**平均。[[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals|T2-Splat]] 的式 (8) 就是这一类。**罚项有限，就一定有汇率。**
+- **搬走**：让属性根本不住在要被合并的元素上（每面独立纹理）。**汇率消失，但缝换了个地方。**
+
+> **"QEM 原文明确没做这一层"是 Garland 1997 的自陈**（作者提过 7×7 的想法但嫌复杂）。**这是"论文复现"和"能上项目"之间最宽的沟**——而 1999 年 Hoppe 就把这条沟填上了，工业界却大多选了更保守的"禁止跨边界塌陷"。**可靠性赢了最优性。**
 
 **③ 拓扑该不该保。** 这是一个**产品决定，不是技术决定**：
 
@@ -105,12 +127,15 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 | Ronfard & Rossignac 1996 | 代价模型的直接前身：到一组平面的距离，取 **max**（库外） |
 | [[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes\|Hoppe 1997]] | 把塌陷序列变成"运行时逐顶点判据 + 控制器"（预算侧） |
 | [[Garland 1997 — Surface Simplification Using Quadric Error Metrics\|Garland & Heckbert 1997]] | **代价侧**：max→sum，二次型，10 个数 + 一次加法 |
+| [[Hoppe 1999 — New Quadric Metric for Simplifying Meshes with Appearance Attributes\|Hoppe 1999]] | **属性侧**：回到 $\mathbb R^3$ 投影 + wedge；存储 $11+4m$ |
 | [[2026-11-05-Li — DC-SQEM Medial Mesh Extraction by Dual Contouring with Spherical Quadric Error Metric\|DC-SQEM 2026]] | 同一套机器的 4 维用法：未知量加一个半径 ⇒ 从点云提中轴 |
 | [[2026-11-05-Wang — Perception Over Geometry Rethinking Gaussian Allocation in Mesh-based Splatting\|P-MGS 2026]] | 同一句话换了对象："误差可加 ⇒ 配额可解"，分的是高斯不是面 |
+| [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **不补属性，改搬走**：属性住到每面纹理上，拓扑只按几何走 |
 
 ## Related Concepts
 
 - **[[Level of Detail]]** —— 上下游关系。本页造表示，那页每帧选表示。**共用"误差可加"这一判据。**
+- **[[Decoupling Geometry and Appearance]]** —— 同一个坎的另一面。本页问"代价怎么算"，那页问"**这个属性到底该不该出现在代价里**"——如果属性被搬走，本页第 ② 栏就不存在了。
 - **[[Budget Units]]** —— 简化的输出（面数 / 顶点数）是最古老的一种预算单位，也是**最坏的一种**（与屏幕无关）。
 - **[[Streaming]]** —— 简化决定"每份多大"，streaming 决定"哪份驻留"。
 - **[[Gaussian Splatting]]** —— 2024 年以后出现的新"简化"对象：不是减面，是**减少高斯数**（Budgeted-GS 的"误差 ∝ $N^{-1/2}$"就是 GS 版的率失真曲线）。
@@ -141,7 +166,12 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 
 ## Learning Gap
 
-- **"属性误差"没有统一语言。** 几何误差是"点到平面距离"，UV 误差是"纹理空间拉伸"，法线误差是"角度"，蒙皮权重误差是"姿态相关"——**这四者能不能合成一个标量？库内没有任何一篇给出答案，工业实现也都是拍权重。**
+- **"属性误差"还是没有统一语言——但 2026-11-09 有了"为什么不能统一"的答案。** [[Hoppe 1999 — New Quadric Metric for Simplifying Meshes with Appearance Attributes|Hoppe 1999]] 给出的不是一个大一统公式，而是一条**分类判据**：**属性是否定义了曲面上的参数化**——
+  - **定义了**（纹理坐标）⇒ 误差该在**参数域**量（Cohen 1998），因为"UV 挪了一点但视觉没变"不该被罚，"UV 没动但纹理被拉伸"必须被罚；
+  - **没定义**（颜色 / 法线 / 辐射度 / 蒙皮权重）⇒ 误差该在**几何对应点**上量。
+
+  **所以"四者合成一个标量"这个目标本身可能就是错的**——它们住在不同的空间里。工业实现"拍权重"，是因为**拍权重是唯一能在不同空间之间硬接的办法**。**这条从"缺答案"降级为"目标可疑"。**
+- **"解耦的代价"没有被量化。** 顶点属性 vs 每面纹理，在什么面数下显存开始反转？[[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals|T2-Splat]] 报的 62 MB **对不上**按 8×8×3 逐面估算的 ~518 MB。**没有换算公式，就没有"该不该解耦"的算术答案。**
 - **"简化到什么程度"与"看的时候有多远"之间的映射**（即 $E_i \leftrightarrow$ 像素误差）在 QEM 一侧从未建立；Hoppe 1997 建立了另一侧（偏差空间 → 屏幕）。**两套语言至今没有正式翻译。**
 - **GS 的"简化"与网格的"简化"是不是同一件事**：Budgeted-GS 的 $N^{-1/2}$ 与 QEM 的"平方距离和"形状不同，**两者的误差是否可以互相换算，没人做过。**
 
@@ -150,9 +180,11 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 1. 拿一个自己的资产，**用自动 LOD 生成第 2 级，然后只查三件事**：边界缩了多少、UV 缝有没有裂、剪影还认不认得出。**这三个数比"面数降了多少"有用。**
 2. 读 [[Garland 1997 — Surface Simplification Using Quadric Error Metrics|Garland 1997]] 的 §5（误差二次型的推导）与 §8（作者自陈的三条弱点）——**八页，一小时，是这条线的全部地基。**
 3. 对照读 [[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes|Hoppe 1997]] 的 §5：**同一个"塌陷序列"，一边用来离线排顺序，一边用来每帧筛子序列。** 看懂这一层，LOD 与简化的边界就彻底清楚了。
+4. **读 [[Hoppe 1999 — New Quadric Metric for Simplifying Meshes with Appearance Attributes|Hoppe 1999]] 的 Fig 7（一维折线那张）**——它是"加权求和 = 一个汇率"的最小可复现实验，五条线段、两个候选、两个误差分量，**规模小到可以手算**。看完之后再看 [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals|T2-Splat]] 的式 (8)/(10)：**同一件事，一个用约束按住汇率，一个用罚项把汇率调小。**
 
 ## Notes
 
 - **建页依据**：全库 373 处提到 LOD / Level of Detail，**0 处提到 quadric**，只有 1 处顺带提到 decimation（Kavan 2008 的对比里）。[[Level of Detail]] 的三行"表示"栏（离散 LOD 链 / 连续细化 / 虚拟几何）**全都预设了"表示已经存在"**——本页补的就是这个预设。
 - **与 [[Level of Detail]] 的边界**：那一页的判据是"**这一帧它会错多少像素**"；本页的判据是"**这份表示比原来差多少**"。**合并会让"决定频率"这个关键区分消失**，故不合并。
 - 2026-11-08 建页，同日由 [[Garland 1997 — Surface Simplification Using Quadric Error Metrics|Garland & Heckbert 1997]]（代价模型）与 [[2026-11-05-Li — DC-SQEM Medial Mesh Extraction by Dual Contouring with Spherical Quadric Error Metric|DC-SQEM]]（同一机器的换维用法）两个方向支撑。
+- **2026-11-09 修订**：属性那一节重写。原版只有一句"两条处理思路"（塞进误差 / 当约束）——**这两条其实是"罚"与"声明"的分类，而 1999 年 Hoppe 已经把三种失败方式逐条说清了**（联合空间错、求和导致用几何换属性、不连续处必须多值）。同日补上第三条路（搬走，T2-Splat）与时间线两个节点。**Learning Gap 第 1 条从"缺答案"降级为"目标可疑"——四类属性住在不同空间，合成一个标量可能本来就是错的。**
