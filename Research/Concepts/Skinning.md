@@ -92,6 +92,7 @@ $$-\Delta w^i+Hw^i=Hp^i$$
 2026  RLMuscle：把"肌肉收缩"从手写激活改成 RL 反解 + 体积仿真（18 ms/帧，194 肌肉）
 2026  3DGS 时代：[[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation|GradRig]] 把蒙皮搬到高斯基元上（可微权重）
 2026  [[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning]]：**分出一条新轴**——不换混法，在混完之后加一个"有时间维"的位移项（VS 2021 → AS 2022 → DS 2026 三级）
+2026  [[2026-11-10-Zhu — Real-Time Self-Penetration Repair for Skinned Characters|Zhu 2026]]：**承认"蒙皮不管碰撞"**——修复放到蒙皮之外：改姿态（<1.11 ms）+ 压皮肤（1.18 ms），中间一条静态汇率
 ```
 
 **这四十年没有"取代"，只有"分层"**：LBS 仍是默认，DQS 是质量开关，PSD 是修形，神经蒙皮是快而像，肌肉层是慢而真。**它们各自守住一个成本档位**。
@@ -116,6 +117,39 @@ $$p_i^{DS}=p_i^{LBS}+\sum_j\beta_{ij}\,\psi\big(\mathcal F(\Omega_j,t),q_j,p_i^{
 
 代价也要写清楚：**加项永远不产生"真正的"形变**——没有体积守恒、没有碰撞、没有动量。它是"看起来有质量"，不是"有质量"。**判据：要不要和世界交互**（要，就回 [[Cloth Simulation]] 或弹簧骨；不要，加项最便宜）。
 
+### 第三个失效：穿模不是形变问题，是约束缺失（2026-11-10 补）
+
+上面讲的四条混法 + 一条加项轴，全部只回答"顶点该被带到哪里"。**没有一条回答"两个部位能不能相交"。** 这不是某一代的缺陷，是分工的结果：
+
+$$v'=\sum_i w_iT_iv\ \ \text{是姿态的纯函数}$$
+
+纯函数的好处是它便宜、可并行、能进 GPU skin cache、能每帧跑；**坏处是它没有"世界状态"这个概念**——手掌在哪、躯干在哪，两者是否重叠，蒙皮根本不知道。
+
+于是穿模在工程上一直是**三件手工活**：美术刷权重避开、动画师避开角度、TA 摆碰撞体。这三件事的共同前提是"动作是有限的、可枚举的"——**生成式动画（motion matching 变体、motion diffusion、LLM 驱动 NPC）把这个前提拆掉了：你没法为每一个生成出来的姿态提前摆好碰撞体。**
+
+**判据（把三种"看起来像蒙皮问题"的东西分开）**：
+
+| 现象 | 真正的层 | 去哪修 |
+|---|---|---|
+| 关节处"糖纸"、塌肩、关节处体积塌陷 | **混法**（LBS 混矩阵） | DQS / corrective / 神经蒙皮 |
+| 弯折发生在错误的肢体位置 | **骨架** | [[Automatic Rigging]] |
+| **两个部位互相插进去** | **约束**（蒙皮里根本没有这一层） | **蒙皮之外的后处理或求解** |
+| 披风穿进大腿 | **碰撞体**（不是蒙皮） | [[Cloth Simulation]] |
+
+**为什么不能"在蒙皮里加碰撞"**：一旦混法里出现"看别的顶点在哪"的项，蒙皮就变成了**有状态的求解**——不能再按顶点并行、不能再假设"输入姿态 → 输出顶点"是无记忆的，GPU skin cache 的整个前提消失。**蒙皮之所以能每帧跑，正是因为它什么都不管。**
+
+**所以修法只能加在旁边**，而且必须回答一个接口问题：**改姿态，还是改顶点？**
+
+[[2026-11-10-Zhu — Real-Time Self-Penetration Repair for Skinned Characters|Zhu 2026]] 给的答案是**两个都改，按深度分工**：
+
+- **深冲突（>20 mm）改姿态**——几何真的错了，只能用关节自由度去躲；21 个非根关节、每帧一个盒约束 QP，单核 **1.11 ms**。
+- **浅重叠（<20 mm）改顶点**——几何是对的，只是被压了；无状态接触形变 + 折叠控制，**1.18 ms**，6890 顶点。
+- 两层之间**不传余额，只共享一个常数** $\rho$（软厚度比例，全局 0.5 / 手查询 0.1）。
+
+**最值得记住的一条**：这套东西能在 2.29 ms 里跑完，靠的不是算法快，是**它保住了蒙皮的无状态性**——Layer 2 明确"没有上一帧"，所以可重跑、可并行、不漂移；所有需要历史的东西（release、刹车、urgency）都被关进 Layer 1 的残差里。
+
+**代价也在这里**：上臂-躯干这一区姿态层几乎不动（39.79% → 37.95%），全靠皮肤压缩（→ 0.11%），最终仍有 10.24% 的帧 >10 mm。**"用形状换接触"是这套分工的固定账单，不是实现不好。**
+
 
 ## Important Papers
 
@@ -125,6 +159,7 @@ $$p_i^{DS}=p_i^{LBS}+\sum_j\beta_{ij}\,\psi\big(\mathcal F(\Omega_j,t),q_j,p_i^{
 - [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]] — 肌肉层：蒙皮之上再解一层"力"
 - [[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation|GradRig]] — 蒙皮权重的可微化（GS 表示）
 - [[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning 2026]] — **第二条轴的开端**：不改混法，在 LBS 之上加一个由关节速度驱动的 FIR 滤波位移项（0.00003 ms/面片，1.5 M 面片模型；见本页"第二条轴"）
+- [[2026-11-10-Zhu — Real-Time Self-Penetration Repair for Skinned Characters|Zhu 2026]] — **蒙皮之外的那一层**：穿模不是形变错，是约束缺；两层（改姿态 1.11 ms + 压皮肤 1.18 ms）+ 一条静态汇率 $\rho$；见本页"第三个失效"
 - （库外必读）Lewis et al. 2000《Pose Space Deformation》；Magnenat-Thalmann et al. 1988（LBS 源头，PDF 已不可得，本条依二手文献核证）
 
 ## Related Concepts
