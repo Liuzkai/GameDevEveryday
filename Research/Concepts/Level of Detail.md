@@ -56,6 +56,10 @@ tags: [lod, scalability, rendering, budget, performance, geometry]
         · 判据是"几何代理量"（面积），与最终误差无直接关系
         · 附带两条今天仍在用的：中心加权（foveation 先声）、运动自适应
   ↓
+1983  Williams：纹理侧的另一条源头——金字塔 + 一个标量 D
+        · 判据不是"它多大"，是"这个像素盖住多少 texel"（UV 雅可比，【解析可算】）
+        · 同一套金字塔也用在顶点坐标上（§5）⇒ 与 Clark 平行、互不引用
+  ↓
 1996  Hoppe：Progressive Meshes —— 一个网格 = 一串 vsplit（【表示】成形）
   ↓
 1997  ★ 分岔成两半（同年、同问题、互补）
@@ -77,6 +81,8 @@ tags: [lod, scalability, rendering, budget, performance, geometry]
 ```
 
 > **这条线的方向是单向的：判据的单位越来越小、越来越贴近消费点。** 从"物体"（1976）到"顶点"（1997）到"簇"（2000s）到"单次采样"（2026）。每一次缩小都换来更准的分配，也换来更高的决策频率与更重的控制问题。
+
+> **2026-11-11 补一句**：纹理侧**在 1983 年就已经走到"单次采样"了**（一个像素的脚印），比几何侧早十四年。差别不在进化速度，在**判据能不能被算出来**——见下节。
 
 ## τ 不是常量，是控制变量（1997 的工程核心，最容易被漏掉的一节）
 
@@ -147,11 +153,32 @@ LOD 链实际上要三个前提，前两个已被反复讨论，第三个此前�
 >
 > **所以"解耦"与"可合并"是同一个问题的两条出口**：要么别合并（把属性搬走），要么让合并可逆（给表示配一个可逆签名）。**两条都不走，就只剩平均 + 罚项。**
 
+## 纹理侧：判据是算出来的，不是估出来的（2026-11-11 补）
+
+本页前面所有"判据"都在几何侧，而几何侧的判据**永远带一个估计**：Hoppe 要把偏差空间投影到屏幕（估）、虚拟几何要每簇给误差界（保守估）、GS 要把协方差投影到像素（估）。**纹理侧从 1983 年起就没有这个问题**——因为脚印的尺寸直接由 screen→UV 的雅可比算出来：
+
+$$\sigma_{\min}=\sqrt{\lambda_{\min}(JJ^\top)},\qquad \sigma_{\max}=\sqrt{\lambda_{\max}(JJ^\top)},\qquad \text{方向}=\text{主特征向量}$$
+
+**一个可以解析算出来的判据，改变的不是精度，是这一门技术史的重心。** 一旦"该多细"不用猜，剩下的进步就只能来自**表示与采样**——所以纹理侧四十年全在改"怎么把这一块积成一个值"，而几何侧四十年全在改"怎么把误差估准"。
+
+| | 判据从哪来 | 四十年在改什么 | 代表节点 |
+|---|---|---|---|
+| **几何侧** | **估计**（投影、包围、误差界） | **判据**：面积 → 屏幕像素 → 每簇误差界 | Clark 1976 / Hoppe 1997 / 虚拟几何 |
+| **纹理侧** | **解析**（UV 雅可比） | **表示与采样**：方形层 → 椭圆脚印 → 解码器条件 | [[Williams 1983 — Pyramidal Parametrics\|Williams 1983]] / EWA 1989 / 硬件 AF / [[2026-11-11-Fujieda — Explicit LOD-Conditioned Anisotropic Filtering for Neural Texture Compression\|AF-NTC 2026]] |
+
+**这条对照能解释一个此前看着奇怪的现象**：[[2026-11-11-Fujieda — Explicit LOD-Conditioned Anisotropic Filtering for Neural Texture Compression|AF-NTC]] 从头到尾没有"LOD 选择"这个动作——脚印的三个量是**输入**，不是**决策**。**当判据可以被算出来时，"选哪一层"就退化成"代入公式"。**
+
+> **一个可搬走的推论**：**越是能被算准的判据，越不该被当成"决策"来做**。凡是系统里出现"我们要不要细化这一块"这种启发式，先问一句：**这个量是估的，还是算的？** 能算的就去算，省下的复杂度可以全部投到表示上。
+
+另有一处历史事实要在这里记下来：Williams 1983 的 §5 把**同一套金字塔**用在**顶点坐标**上（64×64 → 8×8 的人脸网格），标题就叫 *Levels of Detail in Surface Representation*。**所以本页的源头不是一条（Clark 1976），是两条平行的（Clark 1976 / Williams 1983），两篇互不引用。** 见 [[Williams 1983 — Pyramidal Parametrics|Williams 1983]] 图 3。
+
+
 ## Important Papers
 
 | 论文 | 角色 |
 |---|---|
 | [[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)\|Clark 1976]] | 起源：层级 + 按屏幕占比变细节 + working set |
+| [[Williams 1983 — Pyramidal Parametrics\|Williams 1983]] | **平行的第二个起源（纹理侧）**：金字塔 + $(U,V,D)$ + 层间插值；判据是**解析可算**的脚印；§5 说明同一套机器也能装顶点坐标 |
 | Hoppe 1996 *Progressive Meshes* | 表示：一个网格 = 一串 vsplit，连续分辨率 |
 | [[Garland 1997 — Surface Simplification Using Quadric Error Metrics\|Garland 1997]] | **造表示**：二次误差（世界空间平方距离）+ 塌陷序列；**"误差可加"的最早一版** |
 | [[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes\|Hoppe 1997]] | **判据**：屏幕空间几何误差 + 增量细化 + 控制器 |
@@ -163,6 +190,7 @@ LOD 链实际上要三个前提，前两个已被反复讨论，第三个此前�
 
 ## Related Concepts
 
+- **[[Texture Filtering]]** —— **纹理侧的下一层**：本页管"挑哪一层"，那一页管"这一层里怎么积"（脚印 / 核 / 支付方式）。两页共用 Williams 1983 作源头，但**决定频率差三个数量级**（每帧每物体 vs 每像素），不能合并。
 - **[[Mesh Simplification]]** —— **上游**：本页的"表示"那一栏由它供给（K 份怎么造、属性与边界怎么保）
 - **[[Scalability and Quality Tiers]]** —— 全局档位；与本页是"粗/细两个时间尺度"的分工
 - **[[Budget Units]]** —— LOD 是"把配额单位从资产换到消费点"的最大一支
@@ -174,7 +202,7 @@ LOD 链实际上要三个前提，前两个已被反复讨论，第三个此前�
 ## Technologies
 
 - **虚拟几何（Nanite 类）**：簇层级 + 每簇误差界 + GPU 剔除；把 1997 的逐顶点决策换成逐簇，换来的是"纯 GPU 路径"与"簇大小"这个新旋钮。
-- **虚拟纹理 / mip**：纹理侧的经典 LOD；判据是屏幕空间 texel 密度。
+- **虚拟纹理 / mip**：纹理侧的经典 LOD；判据是屏幕空间 texel 密度。**层内怎么积、脚印为什么是椭圆、各向异性倍数买的是什么——见 [[Texture Filtering]]。**
 - **纹理上采样（2026）**：把 mip 的"预存层级"也去掉，改为采样时前向一次小 MLP。
 
 ## Game Applications
@@ -192,6 +220,7 @@ LOD 链实际上要三个前提，前两个已被反复讨论，第三个此前�
 
 - **"误差可加"这条在 GS 与虚拟几何里怎么落地**：Hoppe 的偏差空间是逐顶点的标量，GS 的误差是逐 splat 的协方差投影，两者如何合成一个场景级预算，库内三篇 GS-LOD 论文各给了一部分，但没有一篇给完整的可加性证明。
 - **控制器设计**：除了 Hoppe 的乘法式比例控制，还有别的形态吗？（REACT 的迟滞缓冲是一种；纹理上采样那篇没有。）
+- **纹理侧的判据虽可解析算，但"脚印分布"从未被统计过**（2026-11-11 新增）：$\text{stretch}=\sigma_{\max}/\sigma_{\min}$ 的 P95 落在 2 还是 12，直接决定各向异性倍数该给几倍。库内 0 条实测，所有"16× 有必要吗"的讨论都是经验。
 
 ## Next Step
 
@@ -203,3 +232,4 @@ LOD 链实际上要三个前提，前两个已被反复讨论，第三个此前�
 - 建页依据：全库 99 个文件、363 处提到 LOD/Level of Detail，**零个概念页**；三篇 GS-LOD 论文与 Clark 1976 各自只覆盖一段。
 - 与 [[Scalability and Quality Tiers]] 的边界：那一页讲"档位怎么划"，本页讲"档内怎么分配"。两者共用 Clark 1976 作为上游依据，但不合并——**合并会让"决定频率"这个关键区分消失**。
 - 2026-11-07 建页，同日由 [[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes|Hoppe 1997]] 补齐 1976→2020s 的中段。
+- **2026-11-11 补纹理侧一线**：[[Williams 1983 — Pyramidal Parametrics|Williams 1983]] 进时间线与 Important Papers，并新增「纹理侧：判据是算出来的」一节。**这次补的不是"又一篇经典"，是本页此前隐含的一个错误**——原页把 Clark 1976 当唯一起源、把 mip 当"纹理侧的经典 LOD"一句带过；实际上 Williams 1983 §5 就在做几何 LOD，两篇互不引用。同时把"层内怎么积"外链到新建的 [[Texture Filtering]]。

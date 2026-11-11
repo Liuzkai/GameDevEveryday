@@ -1,0 +1,170 @@
+---
+type: concept
+title: "Texture Filtering"
+user_level: "Easy（机制层）/ Normal（脚印参数化与成本层）"
+aliases: [纹理过滤, 纹理采样, Texture Sampling, Anisotropic Filtering, 各向异性过滤, Mipmap, 三线性过滤]
+prerequisites: ["[[Real-Time Rendering]]", "[[Level of Detail]]", "[[Mesh Parameterization]]"]
+first_introduced: "1983（Williams，SIGGRAPH '83）"
+tags: [texture, filtering, sampling, lod, anisotropic, compression, rendering]
+---
+
+# Texture Filtering
+
+## Definition
+
+**一次纹理采样要回答两件事：这个像素在源图上盖住了哪一块（footprint），以及这一块里的信息该用哪个核平均成一个值。**
+
+答案不是"取一个 texel"，也不是"在两个 mip 层之间插值"——那些都是**实现**。问题本身只有一句：**一个像素对应源图上的一个区域，区域里的信息必须被折叠成一个数。**
+
+三个部件必须分开看：
+
+| 部件 | 回答的问题 | 出错时的症状 |
+|---|---|---|
+| **脚印**（footprint） | 覆盖了多大、什么形状、朝哪个方向 | 远处闪（采太少）/ 近处糊（采太多） |
+| **核**（kernel） | 用什么权重把这块积起来 | 边缘发灰、能量不守恒、出现 ringing |
+| **支付方式** | 这笔积分谁来付：预过滤 / 多点采样 / 随机 / 解码器 | 成本随视角爆炸，或质量随视角跳变 |
+
+> 本库此前 **18 个文件提到 mip、45 个文件提到"各向异性"（绝大多数是散射的各向异性，不是纹理）、0 页讲"纹理怎么被采样"**。这是[[Level of Detail]] 页明确留下的一个缺口：那一页把 mip 写成"纹理侧的经典 LOD"就结束了，**没有一页回答"那这一层里到底怎么积"。** 2026-11-11 由 [[2026-11-11-Fujieda — Explicit LOD-Conditioned Anisotropic Filtering for Neural Texture Compression|AF-NTC 2026]] 与 [[Williams 1983 — Pyramidal Parametrics|Williams 1983]] 两篇建页。
+
+## Core Principle
+
+### 脚印是一个椭圆，它有三个自由度
+
+从屏幕到 UV 的雅可比 $J=\partial(u,v)/\partial(x,y)$，度量 $A=JJ^\top$ 的特征值给长短轴 $\sigma_{\max}\ge\sigma_{\min}$，特征向量给方向。**所以一个脚印由三个数完全确定**：
+
+$$\text{尺寸}=\sigma_{\min},\qquad \text{形状}=\sigma_{\max}/\sigma_{\min},\qquad \text{方向}=\angle(\text{主轴})$$
+
+**这是一句纯几何的话，但它是整个纹理过滤领域的全部矛盾来源**——因为历史上前两代方案都只用了其中一个数。
+
+### 一个标量装不下一个椭圆
+
+| 输入 | 能表达 | 结构性做不到 |
+|---|---|---|
+| 无（点采样） | 一个 texel | 任何缩小（⇒ 混叠） |
+| $D$ 一个标量（mip） | 一个**尺寸** | 形状与方向（⇒ 掠射角糊） |
+| stretch 一个标量 | 一个**形状** | 尺寸（⇒ 近处恒糊，与距离无关） |
+| $(\text{LOD},\text{stretch})$ | 尺寸 + 形状（轴对齐） | 方向 |
+| $(\text{LOD},\text{stretch},\text{rot})$ | 全部 | — |
+
+**这张表要横着读**：第二行（mip）与第三行（ratio-only）**犯的是同一个错的两个方向**——都用一个数去描述一个需要两个数的东西。Williams 1983 选了"尺寸"（于是掠射角糊），AF-NTC 的 naive 基线选了"形状"（于是近处恒糊）。**两条错法隔了 43 年，根因是同一个。**
+
+> **判据（可搬到任何"把几何量喂给系统"的场合）**：先数清这个几何对象有几个自由度，再决定喂几个数。**喂少了不是"学得慢"，是结构上不可能。**
+
+### 成本的三种支付方式
+
+$$ \text{每像素成本} = \underbrace{\text{预过滤（一次性）}}_{\text{mip / 金字塔}} + \underbrace{\text{每次采样的 tap 数}}_{\text{硬件 AF / EWA}} \quad\text{或}\quad \underbrace{\text{解码器前向一次}}_{\text{NTC}} $$
+
+三条路的交易完全不同：
+
+| 路线 | 谁付钱 | 什么时候划算 | 失效方式 |
+|---|---|---|---|
+| **预过滤 + 单点采样**（mip、三线性） | 建层时一次付清 | 任何被采样多次的纹理 | 各向同性 ⇒ 掠射角糊 |
+| **多点采样**（硬件 AF、EWA、超采样） | 每像素付 $N$ 次 | 掠射角主导的场景 | 成本随 stretch 线性涨，且**有上限**（16× 就是 16 tap） |
+| **随机采样 + 时域收敛**（STF） | 每像素付 1 次 + 时域后处理 | 有 TAA、能容忍噪声 | 噪声；静态帧不收敛；运动处拖影 |
+| **解码器前向**（NTC） | 每像素一次网络推理 | 纹理要压缩到 BC 以下 | 没有硬件过滤 ⇒ 必须自己实现 AF |
+
+### 过滤与压缩共用同一个预算
+
+这是 2023 年之后才成立的一条：**一旦纹理是"解码"出来的，过滤就不再是采样器的一个开关，而是压缩格式的一部分。**
+
+| NTC 族 | 过滤从哪来 | 代价 |
+|---|---|---|
+| **latent-in-BC**（Cooperative Vectors 2025 / Weinreich 2024） | 隐特征住在 BC 里，**硬件采样器免费过滤** | 隐特征必须服从 BC 的块结构 ⇒ 体积有下限 |
+| **feature-pyramid**（NTC 2023 / NTBC 2024 / AF-NTC 2026） | **没有**，必须显式实现（或靠 STF 换噪声） | 自由度大，但要自己付 tap 与推理成本 |
+
+**"免费"从来不是真的免费，它只是把代价换到了另一个约束上**（BC 的块结构）。这条判据在 [[Decoupling Geometry and Appearance]] 与 [[Budget Units]] 里都出现过同构版本。
+
+## Prerequisites
+
+- [[Real-Time Rendering]] —— 采样、走样、屏幕空间的坐标变换。
+- [[Level of Detail]] —— 本页的上游：**那一页决定"用哪一层"，本页决定"这一层里怎么积"**。
+- [[Mesh Parameterization]] —— 脚印的雅可比定义在 UV 参数化之上；参数化的拉伸直接决定脚印的形状分布。
+
+## Historical Evolution
+
+```text
+1976  Blinn & Newell：纹理 + 反射映射（脚印问题首次出现在实践里）
+1978  Catmull：多张预过滤图用于双三次面片（未写细节）
+  ↓
+1983 ★ Williams：金字塔 + $(U,V,D)$ + 层间插值
+        · 成本与滤波面积无关（每采样 8 读 7 乘）
+        · 自陈："最严重的妥协是它是对称的"
+  ↓
+1989  Heckbert：脚印 = 椭圆（EWA 的几何）
+1999  Feline（McCormack）：沿主轴排一串 tap ⇒ 硬件 AF 的形状
+  ↓
+2000s  GPU 固化：mip 链 + 三线性 + 2×/4×/8×/16× AF 成为 API 的一个整数
+        · 行业为"各向同性"这张账单，付了 16× 的采样与带宽
+  ↓
+2010s  虚拟纹理：把"层"变成"页"，过滤与驻留耦合（mip tail 问题）
+  ↓
+2023  NTC：把层级压进网络，过滤被移出硬件 ⇒ STF 顶
+2024  STF（Pharr）：一次解码 + 随机 tap，用噪声换抗锯齿
+2025  Cooperative Vectors：隐特征放回 BC，AF 重新"免费"
+  ↓
+2026 ★ AF-NTC：在无硬件过滤的解码器里把三元组显式化
+        · 与 1983 同一句话的两种说法，隔 43 年
+```
+
+**这条线有一个反复出现的形状**：每换一次"支付方式"（预过滤 → 硬件 tap → 随机 → 解码器），**脚印的三个自由度就要被重新数一遍**——而每次都有人只数了一个或两个。
+
+## Important Papers
+
+| 论文 | 角色 |
+|---|---|
+| [[Williams 1983 — Pyramidal Parametrics\|Williams 1983]] | **起源**：金字塔 + 一个标量 $D$ + 层间插值；成本与滤波面积解耦；自陈各向同性是最大妥协 |
+| Heckbert 1989（*Fundamentals of Texture Mapping and Image Warping*） | **几何**：脚印 = 雅可比的椭圆，EWA 的积分形式 |
+| McCormack et al. 1999（Feline） | **硬件形状**：沿主轴的多 tap 串，用近似换固定成本 |
+| Vaidyanathan et al. 2023（NTC） | **压缩侧**：特征金字塔 + MLP，过滤被移出硬件 |
+| Pharr et al. 2024（STF） | **随机化**：一次解码 + 随机 tap，噪声换抗锯齿 |
+| Belcour & Benyoub 2025（Cooperative Vectors） | **"免费 AF"**：隐特征住进 BC，硬件过滤回来了 |
+| [[2026-11-11-Fujieda — Explicit LOD-Conditioned Anisotropic Filtering for Neural Texture Compression\|AF-NTC 2026]] | **当代形态**：$(\text{LOD},\text{stretch},\text{rot})$ 三元组 + 双轴滤波 |
+
+## Related Concepts
+
+- **[[Level of Detail]]** —— **边界很清楚**：那一页讲"多份表示怎么造、每帧挑哪份"（**层**），本页讲"挑中的那份怎么被积"（**层内**）。mip 在那一页是"离散 LOD 链"的一个例子，在本页是"预过滤"这一支付方式的全部。
+- **[[Decoupling Geometry and Appearance]]** —— 纹理一旦被压进解码器，"分辨率"不再是资产属性而是解码器属性；那边讲的是"外观能不能离开几何"，这边讲的是"外观能不能离开 texel 网格"。
+- **[[Gaussian Splatting]]** —— 同一件事在**另一维度**的重演：3DGS 的"协方差"就是它的脚印，Mip-Splatting 的 2D/3D 滤波就是它的 mip。**区别是本页的脚印是"像素盖住多少 texel"，那边是"splat 盖住多少像素"**——方向相反，数学同构。
+- **[[Mesh Parameterization]]** —— 上游：UV 展开的拉伸直接决定脚印的 $J$。
+- **[[Overdraw]]** —— 同构的"按覆盖分配"思路，只是发生在像素着色阶段而不是纹理采样阶段。
+
+## Technologies
+
+- **mip 链 + 三线性**：每层 2 的幂、层间线性；内存 = 原图 × **4/3**（这个 33% 是数据结构的直接结果，不是经验值）。
+- **各向异性过滤（2×–16×）**：沿主轴排 $N$ 个三线性 tap。**本质是把 $D$ 那个 max 丢掉的方向找回来**，但只找回到 16 为止。
+- **虚拟纹理 / 稀疏 mip**：把"层"变成"页"，按需驻留；过滤与 streaming 在页粒度上耦合（mip tail 是这一耦合的账单）。
+- **NTC（神经纹理压缩）**：两层解码（层级特征 + MLP），过滤要么靠 BC 免费带、要么靠解码器实现。
+
+## Game Applications
+
+1. **"远处糊"和"近处闪"是两个不同的问题，调参前先分清。** 远处糊 = 各向同性（$D$ 取了 max）⇒ 调 `MaxAnisotropy` 有用；近处闪 = 采样率不足 / UV 拉伸过大 ⇒ 调 AF 没用，要么加 texel 密度，要么改 UV。
+2. **各向异性倍数应该按"最坏掠射角"选，不是按平均值。** 16× 的价值只在那 5% 的掠射像素上；如果整个游戏没有大面积掠射面（俯视 / 正交 / 卡通），16× 是纯浪费。
+3. **纹理内存的第一笔账是 mip 链的 33%**，第二笔才是压缩格式（BC7 是 8:1，ASTC 类似）。**先决定要不要 mip 尾，再决定用哪个格式**——顺序反了会做出"压缩率很高但驻留爆炸"的方案。
+4. **NTC 类方案的验收问题不是"压缩率"，是"脚印分布"**：AF-NTC 自己承认等字节比较只在**大脚印**（LOD≈1.4–2.4）时成立。**先量自己项目的脚印分布，再看这类论文的数字对不适用。**
+
+## Personal Knowledge
+
+- **机制层 Easy**：mip、双线性/三线性、各向异性过滤是什么，日常在用，不复述。
+- **判据层 Normal（本页要真正带走的三条）**：
+  1. **脚印有三个自由度；一个标量必然丢掉两个中的一个。** 这条能直接用来判断"某个新方案是不是又在用一个数装一个椭圆"。
+  2. **成本与滤波面积解耦，是 mip 的全部价值**（Williams 原话："fixed overhead, independent of the area filtered"）。理解这一点，就理解为什么 33% 内存从来不是问题、而 16× AF 是。
+  3. **过滤与压缩共用预算**：一旦纹理是解码出来的，AF 就从"采样器开关"变成"格式能力"。
+
+## Learning Gap
+
+- **库内没有任何"过滤器成本"的实测账**：每像素 tap 数 × 带宽 × 缓存命中率，没有一个数字。而这是游戏里最容易超预算的一项（16× AF 在 4K 下是真实的带宽杀手）。
+- **虚拟纹理的"页粒度 vs 过滤"关系没人写**：mip tail、页边界的双线性跨页、以及"AF 在虚拟纹理上退化成几倍"这三件事，工程上人人踩坑，文档上没有一条判据。
+- **移动端的 ASTC + AF**：ASTC 的块结构对脚印的约束（与 BC 的 4×4 不同）没有任何材料。
+- **各向异性对**"各向异性过滤 vs 各向异性材质（anisotropic BRDF）"**这两个同名词的混淆**，库内 45 个文件提到"各向异性"，绝大多数指的是后者。**这是一个真实的检索陷阱。**
+
+## Next Step
+
+1. **量一次自己项目的脚印分布**：在一个代表性场景里统计 $\text{stretch}=\sigma_{\max}/\sigma_{\min}$ 的直方图，看 P95 落在哪。**如果 P95 < 4，16× AF 是纯浪费；如果 P95 > 12，那说明材质 UV 有系统性问题，调 AF 只是止疼。**
+2. 读 [[Williams 1983 — Pyramidal Parametrics|Williams 1983]] 的 §3 结尾三段（各向同性妥协 + Heckbert 的 $D$ 估计）——**那是整个领域的"原始 bug 报告"，只有一页半。**
+3. 对 [[2026-11-11-Fujieda — Explicit LOD-Conditioned Anisotropic Filtering for Neural Texture Compression|AF-NTC]] 的 30 tap 做一次纸面成本估算：30 次网格采样 + $49\to192\to192\to9$ 的 MLP，在一个 4K 像素着色器里能不能塞进 16 ms 的预算。**论文没做这一步，这正是它最需要被补的地方。**
+
+## Notes
+
+- **建页依据**：库内 18 个文件提 mip / 三线性、45 个提"各向异性"（**其中绝大多数是散射各向异性，不是纹理**）、4 个提"纹理过滤"，**0 个概念页**。[[Level of Detail]] 把 mip 当成"纹理侧的经典 LOD"一笔带过，[[Decoupling Geometry and Appearance]] 只讲"纹理图集"这一种解耦方式，两者之间缺一层"采样本身怎么发生"。
+- **与 [[Level of Detail]] 的分工**（避免与那一页合并）：那一页的三个部件是**表示 / 判据 / 调节**（跨帧、跨物体）；本页的三个部件是**脚印 / 核 / 支付方式**（单次采样内）。**合并会让"决定频率"这个关键区分消失**——LOD 是每帧每物体的决定，过滤是每像素的决定。
+- **第 62 个概念**，2026-11-11 建页（同日由 Williams 1983 + AF-NTC 2026 一古一今两篇支撑）。

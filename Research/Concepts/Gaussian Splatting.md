@@ -69,6 +69,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 | 2024 | 2DGS | 面元（仍是椭圆） | 同上 | 同上 |
 | 2025 | Triangle / Mesh Splatting | 三角形 | **选**（多边形铺砌） | 顶点插值 |
 | **2026** | **[[2026-10-27-Kaushik — Hexels Compact Hexagonal Primitives for Scene Rendering\|Hexels]]** | **六边形（软边）** | **选**（等周长下面积最大） | **一阶线性色场** |
+| **2026** | **[[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution\|Spaghetti Splatting]]** | **线段 / 折线（1 维）** | **学**（端点 + 长度） | 一个色 + **连通性（端点、拓扑）** |
 
 **三件事必须分清**（混了就会得出错的结论）：
 
@@ -78,11 +79,38 @@ NeRF（隐式 MLP + volume rendering，慢）
 
 **对预算的直接意义**：GS 的预算表通常只有"高斯个数"一列。补上这两列后，"同预算"才有定义——**同原语数、同模型内存、同训练显存、同渲染 FPS 是四个不同的预算**，Hexels 那篇里 2DGS 对 3DGS 的差距就从 −2.64 dB 变到 −1.73 dB，**只因为分母换了**。
 
+### 支撑与核：两个正交轴（2026-11-11 补，随 Spaghetti Splatting 入库）
+
+上面那张表列的是"形状"，但没回答一个问题：**到底在变的是哪一维？**
+
+[[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution|Spaghetti Splatting]] 把整族方法压成一行目标函数，答案就浮出来了：
+
+$$\mathcal L_2=\sum_c\Big\|I_c-R_c\big(\textstyle\sum_i \delta_i\circledast k_i\big)\Big\|^2$$
+
+$\delta_i$ 是基元的**狄拉克测度**（支撑），$k_i$ 是**核**。**两个下标 = 两条正交的推广轴**：
+
+- **核轴**：高斯 → Beta（紧支撑）→ 各向异性 Beta → 学生 t（重尾）
+- **支撑轴**：点（0 维）→ 线段/折线（1 维）→ 三角形/凸体/六边形（2 维）→ 体（3 维）
+
+**支撑的维数决定三件事**，而这三件事此前在本页是混着讲的：
+
+| 支撑维数 | 例子 | 沿光线积分要什么 | "连通性"是免费的吗 |
+|---|---|---|---|
+| **0 维（点）** | 3DGS / DBS / Hexels | 一维正态的 CDF | ❌ 点云没有拓扑，要额外重建才能解算 |
+| **1 维（线/曲线）** | Spaghetti 2026 | **`erf`（一维）** | ✅ 天生有端点，合并只是让它更长 |
+| **2 维（面）** | Triangle / Mesh Splatting | **Owen's T（二维）** | 有边界，但边界要单独处理 |
+
+1. **维数决定"哪个基元能被实时可微地渲染"。** 曲线比三角形**便宜**——多边形的高斯卷积要 Owen's T（二维正态在凸多边形上的积分），线段只要 `erf`。**这是维数带来的便宜，不是实现技巧。** 选基元时该先问"它沿光线的积分要几维特殊函数"。
+2. **维数决定连通性。** 点没有拓扑，所以点云必须做连通重建（聚类 / 骨架化）才能进物理解算；线段天生连通。**这就是为什么"毛发"这一类几何用点表示永远别扭**——它需要的不是更多点，是"一条线就是一个东西"。
+3. **过计数不是几何问题，是合成方式问题。** 密度是测度、可加 ⇒ 相邻段在接头处不会算两遍；alpha 叠加不可加 ⇒ 必然过计数。Spaghetti 的"细分一段线段，图像完全不变"就是这条的直接推论。**做粒子系统的同一笔账：重叠处发亮的根因是 alpha 叠加，不是粒子太密。**
+
+
 ## Related Concepts
 
 - [[Neural Rendering]]
 - [[Differentiable Rendering]]
 - [[Radiance Fields]]
+- [[Texture Filtering]] —— **同一个数学在反方向上的实例**：纹理的"脚印"是"像素盖住多少 texel"，GS 的"协方差"是"splat 盖住多少像素"；Mip-Splatting 的 2D/3D 滤波就是 GS 的 mip。
 
 ## Game Applications
 
@@ -96,6 +124,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 - [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] —— **"排序瓶颈"的第四条路线（取消式）**：随机光栅化 + 时域神经去噪；全管线 2.1×、去噪 +1 ms 常数（与 TileGS 构成同题两端）★ 2026-09-24
 - [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]] —— **随机透明家族第二代（⑤）**：fragment / primitive 双流按成本路由 + 跨场景时空重建 + 移动端 NPU 全管线（92.6 FPS 裸渲染 / 73.2 FPS 含重建 @540p）；直接吃**未修改** 3DGS 资产；1080p 达 2.3–2.7× 标准 3DGS 吞吐 ★ 2026-10-01
 - [[Inverse Rendering for Modeling with Line Primitives]]（对比：显式线段 vs 体积基元）
+- [[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution|Spaghetti Splatting]] —— **基元轴的"1 维支撑"（新维度）**：把整族写成 $\sum_i\delta_i\circledast k_i$（核 × 支撑），把点换成长度可学的线段再连成折线；高斯卷积线段的射线积分有**闭式 `erf`**（三角形要 Owen's T）；点 = 零长曲线 ⇒ **严格超集**；毛发 +2.7 dB / F1@2mm +14.3，泛化场景只 +0.03~0.16 dB（= 打平），且**"结构"在 PSNR 上是负收益**（去掉合并 33.59 > 完整 33.54，收益在连通分量 1.00→3.50）★ 2026-11-11
 - [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD]] —— **LOD/预算线开线**：容量下限（误差 ∝ N⁻¹ᐟ²）+ 因子树（矩匹配聚合 119×）+ 单参数 c 扫连续内存-质量曲线；官方城市数据 71 fps @1080p 全 SH（vs Octree-GS 11.5 fps）；**"LOD 分层是比压缩率更本质的资产属性"（同内存 -2.12 vs 随机 -7.08 dB）** ★ 2026-10-05
 - [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]] —— **几何质量线（新）**：可微局部 PCA 正则（作用在中心邻域、**视角无关**）修复 floaters——"看不见的高斯也有监督"；特征值谱正则（表面化 + 各向同性切向）+ 法线对齐；DTU/T&T 上表面质量提升、**下游（点云分割 / Poisson 重建）免修直用** ★ 2026-10-10
 - [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Efficient Confidence-Aware Densification for 3DGS]] —— **分配四端之"生长端"（密度控制）**：3DGS-MCMC 的"不透明度驱动"→"误差驱动"（梯度排名 × 低置信度加权采样 + 贡献度重定位）；24 场景 100k–2M 全预算超 MCMC；**"预算跟着缺口走，不跟着现状走"** ★ 2026-10-13
