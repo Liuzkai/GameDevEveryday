@@ -94,6 +94,24 @@ tags: [lod, geometry, texture, attribute, pipeline, classical]
 > GS 基元：零对应成本，分辨率自由——**但每个基元只有一份属性，几何一变就得重算**。
 > 每面纹理：不需要全局 UV（每面自带），但需要"面"这个结构稳定。
 
+### 第三种解耦：把几何本身搬进外观层（2026-11-12 补）
+
+上面那条时间线讲的全是"**属性**住在哪"。2026 年出现了另一种解耦，对象不是属性，**是几何**：
+
+[[2026-11-12-Silaghi — Deformable Texture Maps Compiling Dynamic Microgeometry into Neural Textures|DTM 2026]] 把布料的纱线微观几何**编译成四张内在量贴图**（$\alpha,n,h,c$），运行时在粗网格上求值。**几何没有被"换成更低模的几何"，它被换成了外观侧的数据。**
+
+这打破了本页前面所有案例共有的一个假设：**外观层只描述"看起来怎样"，不描述"形状怎样"。** 一旦外观层开始携带 $\alpha$（覆盖率）和 $h$（高度），它就在**代替几何承担遮挡与轮廓的一部分职责**——虽然只是一部分（不透明、不视差的那部分仍然不行）。
+
+| | 解耦的是什么 | 外观层携带 | 剩下的耦合 |
+|---|---|---|---|
+| 顶点属性 → 纹理图集 | 属性的**分辨率** | 颜色、法线、粗糙度 | 几何密度仍跟曲率走 |
+| 网格 → 每面纹理（T2-Splat） | 属性的**存储位置** | 每面独立的残差 | "面"这个结构必须稳定 |
+| **微观几何 → 内在量贴图（DTM）** | **几何的"可见效果"** | $\alpha,n,h,c$（**含覆盖率与高度**） | **轮廓、透射、多次散射仍必须靠真几何/体积** |
+
+**判据**：能不能把几何搬进外观层，取决于**这个几何效果是不是局部的**。明暗（完全局部）能搬；视差与自遮挡（半局部，要沿视线/光线走）要额外采样；**轮廓与透射（非局部）搬不动**。详见 [[Microgeometry]] §Core Principle ③。
+
+> 这条也解释了为什么 DTM 的 Limitations 里那句"过滤未解"格外刺眼：**一旦外观层里混进了三种不同种类的量（连续 $\alpha,h$ / 方向 $n$ / 类别 $c$），本页 §③ 那套"不连续处必须显式声明"的规则，就要从"几何简化"搬到"纹理过滤"上重写一遍**——而后者没有任何工程先例。
+
 ## Important Papers
 
 | 论文 | 在这条线上的位置 |
@@ -103,6 +121,7 @@ tags: [lod, geometry, texture, attribute, pipeline, classical]
 | Cohen / Olano / Manocha 1998 | **另一条正确路线**：纹理坐标该用**参数误差**而非几何误差（库外） |
 | [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **存储解耦**：几何用经典 PM 算子自由改，外观用每面残差纹理独立保证 |
 | [[2026-11-09-Franke — Hierarchical Incremental Beta Splatting for Online Reconstruction\|HIBS 2026]] | **不完全是这条线，但给出对照**：合并保形靠"矩可加且可逆"，而不是靠更聪明的平均 |
+| [[2026-11-12-Silaghi — Deformable Texture Maps Compiling Dynamic Microgeometry into Neural Textures\|DTM 2026]] | **第三种解耦**：不解耦属性，**把微观几何本身编译成外观侧的 $\alpha,n,h,c$**。外观层第一次携带覆盖率与高度 |
 
 ## Related Concepts
 
@@ -111,6 +130,8 @@ tags: [lod, geometry, texture, attribute, pipeline, classical]
 - **[[Mesh Parameterization]]** —— 解耦的**过路费**。想解耦到纹理，就得付 UV。
 - **属性侧的"生成"路线**（Texture Synthesis / Neural Textures 一类）：不存纹理，运行时算。**对应关系仍然要付**，只是从"存下来"变成"每次重建"。
 - **[[Gaussian Splatting]]** —— 2023 年的再耦合，以及 2024 年后的部分解耦。
+- **[[Microgeometry]]** —— 2026-11-12 新增：外观层开始装几何之后，本页的"解耦"从"属性住哪"扩展到"**几何的哪一部分能住进外观**"；边界由局部性划（明暗能搬，轮廓/透射搬不动）。
+- **[[Texture Filtering]]** —— 解耦的隐藏账单在这里结算：一旦外观层里混了不同种类的量（连续/方向/类别），mip 就没有统一定义。
 - **[[Overdraw]]** —— 解耦的一个隐藏收益：不透明三角形 + 每面纹理 ⇒ 一次求值、overdraw 归零。
 
 ## Technologies
