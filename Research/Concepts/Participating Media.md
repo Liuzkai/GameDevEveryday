@@ -63,6 +63,20 @@ $$(\omega\cdot\nabla)L(x,\omega) = -\sigma_t L + \sigma_s\int_{S^2} f_p(\omega'\
 
 **别急着信**：HaloRT 自己承认 (A2) 是被实测验证的、(A1) 只是"可测"而非"已证"，而它相对降噪器仍有 1.44 dB 的缺口——**那 1.44 dB 很可能就是 (A1) 不成立的证据**。另外它的适用范围只有单一云数据集、HG 相位、非发光、单一介质、无表面——**真实的 UE 体积雾场景（多光源 + 高度雾 + 粒子）还没被试过**。
 
+### 第五条路：换一个方程（2026-11-14 补）
+
+前四条路都在同一个方程里省钱：**减步数 / 减每步 / 算完再修 / 不算**。还有第五种，也是唯一一种能拿到数量级的：**换掉方程本身**。
+
+判据是"这个方程里有哪些自变量"。以 [[Jensen 2001 — A Practical Model for Subsurface Light Transport|Jensen 2001]] 为例：当散射次数足够多时，辐射度分布趋于各向同性，于是**方向这个自变量被抹掉了**——只需保留两个矩（通量 $\phi$ 与通量向量 $\mathbf E$），RTE 就退化成扩散方程 $D\nabla^2\phi=\sigma_a\phi$。**扩散方程里没有"散射次数"这个变量，这就是 250× 的全部来源**：不是把每一步算得更快，是**那个要算很多步的东西不存在了**。
+
+代价随之而来，而且可以精确地说：**扩散只对"多次散射主导 + 半无限均匀"成立**。于是——
+
+$$\text{单次散射自由程}=\frac{1}{\sigma_t}\quad(\text{短})\qquad\text{扩散长度}=\frac{1}{\sigma_{tr}}=\frac{1}{\sqrt{3\sigma_a\sigma'_t}}\quad(\text{长，}\sim10\times)$$
+
+**两个长度差一个量级，这是本页与 [[Subsurface Scattering]] 的分界点**：体积渲染里没有"出去"这件事（光在介质里一直走到被吸收或逃逸到无穷远），而次表面散射里**光必须从一个有界的表面出去**——**边界条件是这两个域的全部差别**。同一条方程，一个有边界、一个没有。
+
+**顺手一条工程判据**：$\sigma'_s=\sigma_s(1-g)$ 里的 $(1-g)$ 说的是"**前向散射不算散射**"。所以调体积雾时把 $g$ 从 0 拉到 0.8，有效散射掉到 1/5、雾"变透"，**但消光一点没变**。**"变透"与"变亮"是两件事，混淆它们的人多半栽在这个因子上。**
+
 ## Prerequisites
 
 - [[Rendering Equation]]（表面版；RTE 是它的体积推广）
@@ -78,7 +92,15 @@ Blinn 1982 —— 把参与介质引入计算机图形学（"Light Reflection Fu
         ↓
 Kajiya & Von Herzen 1984 —— 体积光线步进（Ray Marching）
         ↓
-Jensen / Premože 1990s —— 光子图、扩散近似（diffusion / dipole）
+1992  Farrell et al.（医学物理）—— 偶极子模型测组织光学参数（图形学之外）
+        ↓
+1995  Stam —— 扩散近似做云的多次散射（★ 扩散第一次进图形学，是云不是皮肤）
+        ↓
+1999  Dorsey et al. —— 光子图做完整次表面（风化石头）
+        ↓
+2001  Jensen et al. —— ★ 偶极子进图形学（属 [[Subsurface Scattering]]，**不是本页**）
+        · 2026-11-14 修正：此前这一行笼统写作 "Jensen / Premože 1990s —— 光子图、扩散近似"，
+          把三件不同的事（1992 医学偶极子 / 1995 云扩散 / 2001 图形学 BSSRDF）压成了一个十年
         ↓
 2000s —— 实时近似：fog volumes、light shafts、解析雾（Exp/Exp2）
         ↓
@@ -108,6 +130,7 @@ Wronski / Siggraph 2014-2019 —— UE4 体积雾、寒霜的 froxel volumetric�
 ## Related Concepts
 
 - [[Rendering Equation]]（表面版 ↔ RTE 体积版）
+- [[Subsurface Scattering]]（★ **同一条方程，一个有边界一个没有**——那是本页与它的全部差别；2026-11-14 建页）
 - [[Microfacet Theory]]（**对偶关系**：微面 = 随机表面的统计；参与介质 = 随机体积的统计；2026 的工作证明它们是同一套随机几何的两端）
 - [[Neural Rendering]]（神经体积表示是当下主流路线）
 - [[Gaussian Splatting]]（同属体积/半透明渲染，同样受排序与 OverDraw 支配）

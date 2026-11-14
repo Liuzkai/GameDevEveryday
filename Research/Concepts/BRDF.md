@@ -26,6 +26,30 @@ $$f_r(\omega_i, \omega_o) = \frac{dL_o(\omega_o)}{dE_i(\omega_i)}$$
 
 经验模型（Phong）经常违反 2 和 3——这正是 [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]] 要解决的问题。
 
+### 一个不写在三条约束里的前提：$x_o=x_i$（2026-11-14 补）
+
+上面三条是"函数要合法"。还有一条不是约束，是**定义域**——而它比那三条更容易被违反：
+
+$$f_r(\omega_i,\omega_o)=S\big|_{x_o=x_i}$$
+
+**BRDF 是 BSSRDF 在"出点 = 入点"处的切片**（Nicodemus 1977 就是这么定义的）。这不是近似得准不准的问题，是**模型里根本没有"从别处出来"这条路**。
+
+后果只有一句：**表面特征无法相互渗透**。所以用 BRDF 渲皮肤/蜡/大理石，得到的是"硬、假、像 CG"——Jensen 2001 的原话是 *"creates a hard, distinctly computer-generated appearance because it does not locally blend surface features such as color and geometry"*。具体到画面上就是三处：阴影边界不变软、颜色不跨特征渗、薄处逆光不透。
+
+**什么时候这条前提会破？判据是"平均自由程 vs 特征尺寸"，不是材质类别**：
+
+| 关系 | 结果 | 例子 |
+|---|---|---|
+| 自由程 $\ll$ 特征尺寸 | 光来不及跑出去 ⇒ **BRDF 正确** | 金属、大块塑料、清漆 |
+| 自由程 $\approx$ 特征尺寸 | 光从别处出来 ⇒ **必须 BSSRDF** | 皮肤、蜡、大理石、牛奶 |
+| 自由程 $\gg$ 特征尺寸 | 光直接穿过 ⇒ **既不是 BRDF 也不是 BSSRDF，是透射** | 叶片、薄纸、纱 |
+
+> **两个常见误判**：
+> ① **塑料不该做 SSS**——它 $\sigma'_s$ 高但 $\sigma_a$ 也高，光进去就没了，挂 SSS 只会让高光发闷、颜色发灰；
+> ② **玻璃不该做 SSS**——它 $\sigma_a$ 低但 $\sigma'_s$ 也低，光走直线，那是折射与吸收。
+>
+> **只有"高散射 + 低吸收"才是次表面散射。** 详见 [[Subsurface Scattering]]。
+
 ## 模型谱系（按"物理成分"递增）
 
 | 世代 | 模型 | 性质 |
@@ -50,6 +74,7 @@ $$f_r(\omega_i, \omega_o) = \frac{dL_o(\omega_o)}{dE_i(\omega_i)}$$
 ## Related Concepts
 
 - [[Microfacet Theory]]（★ 微面模型是本谱系「完整物理」之后的全部内容；D·G·F 逐项拆解见此）
+- [[Subsurface Scattering]]（★ **本页的"超集"：BRDF 是它在 $x_o=x_i$ 处的切片**；判据是"平均自由程 vs 特征尺寸"——2026-11-14 建页）
 - [[Split-Sum Approximation]]（★ 2026-09-18 入库：BRDF 的半球积分在实时里怎么变成查表——**F 用 Schlick 形式是它能被因式分解的前提**）
 - [[Participating Media]]（对偶：微面 = 随机表面，介质 = 随机体积；2026 工作已把两者打通）
 - [[Physically Based Rendering]]（BRDF 是 PBR 的数学核心）
