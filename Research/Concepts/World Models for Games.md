@@ -65,6 +65,25 @@ UniWorld 的关键手法值得单独记：它不要求世界源提供深度，�
 
 这条与第三维（记忆）的关系要说清：第三维问"**记忆的表示**"（KV / latent / 定长状态 / 记录），这一维问"**记忆的驻留**"（显存 / 内存 / 盘 / 重算）。**两条轴可以任意组合**——UniWorld 是把状态做成定长（表示层解决），WorldPager 是把状态搬到盘上（驻留层解决），PASPA 是两条都用（定长状态 + 定长历史）。判据：**先问表示能不能定长，定长不了再问驻留能不能分层**——顺序反了会白花很多工程。
 
+**2026-11-02 补：第六维还有第三种解法——改"写入律"，不改表示也不改驻留。** [[2026-10-29-Choi — L3G-World Real-Time Infinite World Generation with Latent 3D Gaussian Memory|L3G-World]] 既不把状态压成定长，也不把它搬上盘，而是**让记忆只在新观察到的区域里增长**：记忆量 $O(S)$（场景范围），而不是 $O(TR)$（帧数 × 分辨率）。三种解法摆在一起，判据就完整了：
+
+| 解法 | 改什么 | 代表 | 边界 |
+|---|---|---|---|
+| **压成定长** | 表示 | UniWorld（19.05 MiB，与时长无关） | 能表达的细节受限 |
+| **分层驻留** | 存哪 | WorldPager（显存→内存→盘→重算） | 预取带宽有下限（$r_{new}/BW \le T_c$） |
+| **只写缺口** | **写入律** | L3G（$O(S)$，7.4 GiB / 9.02 FPS） | 静态场景；大范围探索仍会涨 |
+
+**"只写缺口"这一条最容易被忽略，因为它看起来像工程优化，其实是表示层的决定**——**"这块要不要新建一个图元"的判断，本身就是一次渲染 + 一次误差比较**。也就是说：**它把"内存管理"变成了"渲染问题"**。
+
+**2026-11-02 补（二）：第五维的判据要加一问——"接口里有没有时间"。** [[2026-10-29-Li — Fight World Model Customizable Combat through Visual Interaction Proxies|Fight World Model]] 与 [[2026-10-26-Wu — BoxWorld Let World Engines Control and Video Generators Render|BoxWorld]] 是同一天的两次尝试，答案却差一个量级：
+
+- **BoxWorld**：接口 = 框 + 类别 + 存在位（**纯空间**）。它把 oracle 状态喂进去，生成器也只有 **16.2%** 完全对；
+- **FWM**：接口 = 框 + 朝向 + **动作窗（起止帧）+ 事件（谁何时被打）+ 血条（持久量）**。它把正确结果喂进去，反应率 **99.79%**、血量误差 **0.15**。
+
+**两者的差别不是"信息多少"，是"信息有没有时序结构"。** 一个空间框能说"这里有个人"，说不出"他在第 28 帧抬手、第 36 帧被打、第 40 帧掉血、第 56 帧还是这个血量"。
+
+> **所以第五维（接口厚度）下面应该再挂一个问题：这个接口能不能表达"发生了什么、什么时候发生、之后还留着什么"？** 三件事缺一件，规则就改不动——**这不是厚度问题，是表达力问题。**
+
 ## Prerequisites
 
 - [[Neural Rendering]]
@@ -109,6 +128,8 @@ UniWorld 的关键手法值得单独记：它不要求世界源提供深度，�
 - Code World Model（arXiv 2608.25927，Watchlist）
 - [[2026-10-26-Wu — BoxWorld Let World Engines Control and Video Generators Render|BoxWorld]]（★ 2026-10-29 入库：**"规则写成代码"的第一个样本**——对象级三字段接口（框 / 属性 / 状态位）+ coding agent 生成的 Box World Engine；20.7 FPS；Paired-CF **97.3% vs 基线 ≤16.2%**，且 **oracle（把后果当文本喂）仍是 16.2%** ⇒ 缺的不是信息，是条件分支原语）
 - [[2026-10-26-Liu — WorldPager Zero-Stall Tiered Memory for Long-Horizon World Models|WorldPager]]（★ 2026-10-29 入库：**"能玩多久"变成内存系统问题的第一个严格样本**——int4 KV 三层（GPU/DRAM/NVMe）+ 位姿预取 + 不等待；45 秒 → **37.5 分钟**、零停顿、主机内存恒定；**并把"预取的 P99 可能比按需更差"写进正文**）
+- [[2026-10-29-Choi — L3G-World Real-Time Infinite World Generation with Latent 3D Gaussian Memory|L3G-World]]（★ 2026-11-02 入库：**记忆的第三种解法"只写缺口"**——高斯当记忆单元，按需 spawn（先渲旧记忆 → 出 spawn mask → 只在 mask 内生长），记忆量 $O(S)$；单卡 H100 上 9.02 FPS @480×832。**诚实点：长时程下 PSNR/LPIPS 赢、SSIM 输——三类指标没同时赢，说明它换来的是"不崩"而不是"更像"**）
+- [[2026-10-29-Li — Fight World Model Customizable Combat through Visual Interaction Proxies|Fight World Model]]（★ 2026-11-02 入库：**"规则执行"与"渲染"分离的样本**——交互代理三分（动作/技能窗 + 受击事件 + 持久血量），规则干预（伤害缩放 / 限次免伤 / 吸血）**无需重训渲染器**；身份 slot 绑定把换边一致率从 53.68% 提到 98.27%。对照 BoxWorld：同样"规则写成代码"，但它把状态**做成可视的**，所以渲染器能"读"到规则）
 
 ## Personal Knowledge
 

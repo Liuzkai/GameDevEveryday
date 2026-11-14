@@ -65,6 +65,59 @@ $$\text{成本} \approx W\times H \times (5 + N_{\text{jacobi}}) \times B_{\text
 
 > **判据（放进预算工具箱）**：*这个水面项的成本，随"画面里有多少水"变、还是随"分辨率"变？* 前者可剔除、可降档；后者一旦开就全帧付账——**游戏最终普遍选 Gerstner 叠加（顶点可控、可剔除）而非 FFT，原因在此**。
 
+### 烟与火：求解之前先解决"存在性"（2026-11-10 补）
+
+上面所有成本模型都隐含一个前提：**网格是稠密的**。烟和火把这个前提直接推翻——它们不是"一个装满的盒子"，是**一层薄壳**（火焰面、烟的边界）加**大片空**。
+
+影视管线里的标准答案叫**窄带 level set**：只存零等值面 ±3 体素内的距离值 $\phi$。**代价是每步必须让"活跃体素集合"跟着界面移动**——于是烟火的每帧循环是四步，而不是两步：
+
+```text
+① dilate    把窄带向外扩一圈（下一帧的 advect 才有源可读）
+② advect    半拉格朗日回trace + 采样 φ
+③ reinit    WENO5 反复迭代，把 φ 拉回距离场（Eikonal）
+④ prune    丢掉 |φ| 超出带宽的体素（否则带宽会无限长）
+```
+
+**①②④ 都不是数值格式，是拓扑操作。** 所以在 GPU 上做烟火，第一个撞上的不是"WENO5 怎么写"，是"**怎么在 GPU 上改一个稀疏结构的拓扑**"。
+
+[[2026-11-10-Sifakis — Dynamic GPU Sparse Grids and Voxel-sequential Processing in NanoVDB|Sifakis et al. 2026]] 给的就是这一步的账（567 M 活跃体素）：
+
+| 操作 | 耗时 | 对照（最好的旧路线：从活跃坐标重建） |
+|---|---|---|
+| **dilate** | **2.0 ms** | 183× 慢、139× 显存（356 MiB vs 48.2 GiB） |
+| **prune** | **8.4 ms** | 12.1× 慢、7× 显存 |
+| WENO5 reinit | ~20 Gvoxel-updates/s（**恒定**） | accessor 模式随稀疏度掉到 9.8 |
+
+**dilate 那 2.0 ms 有一个硬下界证明**：32-bit 带场实现必须读写 $4(N_{in}+N_{out})\approx4.7$ GB，按 1792 GB/s 算光流量就要 **2.63 ms**——**已经比纯拓扑慢**。所以"改拓扑不碰场"不是优化，是把一项成本从路径上删掉。
+
+> **本域新增判据：问一条烟火模拟"每帧要不要重建窄带"，答案是"要"的时候，先算三笔账——活跃体素数、每步要碰几次场、拓扑操作能不能在不碰场的前提下完成。** 前两笔决定流量，第三笔决定你在 GPU 上到底做不做得成。
+
+**另一条工程含义**：窄带模拟的"分辨率"其实是两个数——**体素尺寸**（决定薄壳的厚度精度）与**叶节点尺寸**（决定稀疏结构的浪费率）。8³ 的叶在 1% 占用时浪费 99%，**这就是"提高模拟精度"有时不提反降的原因**。见 [[Sparse Volumetric Representation]]。
+
+### 反问题方向：从"给定力求形状"到"给定形状求力"（2026-11-13 补）
+
+本页此前全部内容是**正问题**：给外力与初值，求演化。动画师真正的需求常常是反的——**"我要这个形状，力该往哪加"**。
+
+[[McNamara 2004 — Fluid Control Using the Adjoint Method|McNamara 2004]] 是这个方向的图形学起点，也是"伴随法"进入 CG 的第一次（见 [[Adjoint Methods]]）。它的成本账值得记住，因为它解释了这条路二十年没进实时管线：
+
+| 算例 | 参数（外力自由度） | 显存 | 步数 / 耗时 |
+|---|---|---|---|
+| 黏土 | 30 万+ | 200 MB | — |
+| 兔子 | 10 万 | 600 MB | 约 2 小时 |
+| 出拳 | 60 万+ | 550 MB | — |
+| 水人 | **150 万** | 600 MB | 46 步 / **约 2 天** |
+
+150 万参数用有限差分就是 150 万次仿真。伴随把它压成 **1 次前向 + 1 次反向**——**这就是"反问题方向"能存在的前提**，不是优化技巧。
+
+**它教的两个手法，比结论更可迁移**：
+
+1. **冻结遍历顺序**：Fast Marching（重距离化）用 min-heap 决定"谁先被更新"，这个顺序离散、不可微。McNamara 的做法是**在反向时把它当已知常量**，只对二次方程系数求导。这是"把离散决定当成常数"的教科书案例，代价是**拓扑一变就失效**（见 [[Adjoint Methods]] 判据四）。
+2. **把逐点比较换成体积比较**：目标函数用 $\gamma(x)=\frac{2}{\pi}\arctan(x)$ 把 SDF 压成 $(-1,1)$ 的指示量，于是目标是"体积差"而不是"距离场逐点差"——**逐点差在形状整体平移时会给出误导性的梯度**。
+
+**一处必须转述的冷水**（原文原话）：水比烟难，因为"**水的离散集合在变**"（*"water often could only reach a certain level of detail"*）。
+
+**这和第 95 行那句是同一条**。2004 年 McNamara 说"水的粒子集合在变"，2026 年 Sifakis 说"烟火第一个撞上的不是 WENO5 是拓扑"——**同一个障碍，隔了二十二年，换了一套表示（SPH 的粒子集 vs VDB 的活跃体素集），还是它。** 这不是巧合：**流体的"存在性"每帧都在改，而梯度与并行都要求它别改。** 本域真正的难点在这里，不在数值格式。
+
 ## Prerequisites
 
 - **向量场直觉**：梯度、散度（"流体是否在源/汇"）、无散场的含义（不可压）；
@@ -89,6 +142,9 @@ $$\text{成本} \approx W\times H \times (5 + N_{\text{jacobi}}) \times B_{\text
 2004  ★ [[Harris — Fast Fluid Dynamics Simulation on the GPU (2004)|Harris, GPU Gems 38]]：**求解器整体搬上 GPU**
       （数组=纹理 / 循环=片元程序 / 反馈=双缓冲 / 边界=图元；每帧 5+40~80 个全屏 pass；
        "分辨率 × pass 数"从此成为模拟的预算语言）★ 2026-10-26 入库
+2004  ★ [[McNamara 2004 — Fluid Control Using the Adjoint Method|McNamara《Fluid Control Using the Adjoint Method》]]
+      —— **反问题方向的起点**：给定目标形状反解外力；伴随法第一次进 CG（150 万参数 /
+        600 MB / 46 步 / 约 2 天）；冻结 min-heap 遍历顺序 ★ 2026-11-13 入库
 2005±  FLIP 引入图形学（Zhu & Bridson 等）→ 影视管线主流
 2008  Maya Fluid Effects 获奥斯卡技术成就奖（Stam 为获奖人之一；Stam 1999 的产业化身）
 2010s  Houdini FLIP 成为影视/游戏过场标准；EmberGen 等实时烟雾工具兴起
@@ -103,6 +159,8 @@ $$\text{成本} \approx W\times H \times (5 + N_{\text{jacobi}}) \times B_{\text
 - [[Harris — Fast Fluid Dynamics Simulation on the GPU (2004)]] —— **GPU 化的翻译手册**（数组=纹理、循环=片元程序、反馈=双缓冲、边界=图元；pass 数成为成本第一乘数；6× 快于 CPU / 128² 云模拟 >80 迭代/秒 @FX 5950）★ 2026-10-26 入库
 - [[Tessendorf 2001 — Simulating Ocean Water]] —— **水面谱合成源头**（"不解方程、采统计"：Phillips 谱 + 一次 IFFT + 色散只管相位；尖锐位移与 Jacobian 泡沫判据；**固定成本、不可剔除**的成本模型；游戏/影视水面二十年事实模板）★ 2026-10-22 入库
 - 记名（未单独入库）：Foster-Metaxas 1996/1997（完整 NS 进 CG）；Fedkiw 等 2001（Vorticity Confinement）；Zhu & Bridson 2005（FLIP 进图形学）；Stam 2003 GDC（游戏向实时版）
+- [[McNamara 2004 — Fluid Control Using the Adjoint Method|McNamara 2004]] —— **反问题方向的起点**（给定形状反解外力；伴随法首次进 CG；"水比烟难因离散集合在变"这句冷水即"存在性"障碍的最早表述）★ 2026-11-13 入库
+- [[2026-11-13-Shu — Same Physics Different Gradients A State-of-the-Art Report on Differentiable Physics Simulation|Shu 2026 STAR]] —— **可微物理的当代地图**（参照物 × 实现方式两轴；接触三障碍；梯度质量四机制）——**读它的用途是判断"给流体加梯度"这件事今天做到哪一步**
 - 对照样本：[[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]]（2026，感知路线——"不模拟的水"）
 
 ## Related Concepts
@@ -112,6 +170,8 @@ $$\text{成本} \approx W\times H \times (5 + N_{\text{jacobi}}) \times B_{\text
 - [[Participating Media]]——渲染侧接口：流体模拟产出密度场 → 体渲染/自阴影（Stam 1999 的演示即体渲染）
 - [[Physics-based Character Animation]]——同为"物理求解进 CG"的支线（布料/肌肉/角色）
 - [[GPGPU]]——执行环境侧：同一套四步搬到 GPU 后变成 pass 序列，成本形状从"单元数 × 步数"变成"分辨率 × pass 数"
+- [[Adjoint Methods]]——**反问题方向的求解器**：给定形状反解外力需要梯度，而外力维度可达百万（McNamara 水人 150 万），只有伴随能让它可行
+- [[Sparse Volumetric Representation]]——**同一条"存在性"障碍的另一半**：本页讲怎么解方程，那页讲解之前先决定"哪些体素存在"
 
 ## Technologies
 

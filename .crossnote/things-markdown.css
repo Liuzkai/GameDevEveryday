@@ -1,0 +1,676 @@
+/* ===========================================================================
+   Things — Obsidian theme v2.2.4  (by @colineckert)
+   https://github.com/colineckert/obsidian-things
+
+   Ported so the same look is used by VS Code markdown previews:
+     • built-in preview   (vscode.markdown.preview.editor / markdown-language-features)
+       -> settings.json:  "markdown.styles": [".crossnote/things-markdown.css"]
+     • Markdown Preview Enhanced (shd101wyy.markdown-preview-enhanced)
+       -> <workspace>/.crossnote/style.less does  @import (inline) "things-markdown.css";
+
+   Colour model (same idea as the Obsidian theme):
+     light is the base palette; dark is applied through the body classes VS Code
+     and Obsidian put on the preview page (vscode-dark / vscode-high-contrast /
+     theme-dark), plus the data-vscode-theme-kind attribute.
+
+   Every rule uses the `html:root body` prefix on purpose:
+     - :root always matches <html>, so the prefix itself never fails;
+     - it lifts specificity above both VS Code's `body h1` rules and Markdown
+       Preview Enhanced's `html body h1` theme rules, so this file wins without
+       needing !important everywhere (the few !important uses below are there
+       because certain bundled prism themes ship their own !important).
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   1. Palette
+   --------------------------------------------------------------------------- */
+html:root body {
+  /* type */
+  --things-font:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Ubuntu,
+    sans-serif;
+  --things-font-mono:
+    "JetBrains Mono", "Fira Code", Menlo, SFMono-Regular, Consolas,
+    "Roboto Mono", monospace;
+  --things-line-height: 1.5;
+
+  /* surfaces */
+  --things-bg: #ffffff;
+  --things-text-normal: #222222;
+  --things-text-muted: #5a626b;
+  --things-text-faint: #a1aab3;
+  --things-border: #ebedf0;
+
+  /* headings — Things: h1/h2 normal, h3 blue, h4 yellow, h5 red, h6 muted */
+  --things-h1: #222222;
+  --things-h2: #222222;
+  --things-h3: #2e80f2; /* --blue   */
+  --things-h4: #e5b567; /* --yellow */
+  --things-h5: #e83e3e; /* --red    */
+  --things-h6: #5a626b;
+
+  /* inline accents */
+  --things-strong: #ff82b2; /* --strong-color */
+  --things-em: #ff82b2; /* --em-color     */
+  --things-quote: #3eb4bf; /* --quote-color  */
+  --things-link: #367ee2;
+  --things-link-hover: #2a6bc4;
+  --things-mark-bg: rgba(255, 208, 0, 0.4);
+  --things-selection: rgba(46, 128, 242, 0.25);
+
+  /* code */
+  --things-code-inline-bg: #eceef1;
+  --things-code-block-bg: #f0f2f5;
+  --things-code-text: #222222;
+  --things-radius-s: 4px;
+  --things-radius-m: 8px;
+
+  /* syntax — Things ships the One Dark token colours (light variant) */
+  --things-syn-comment: #9aa0aa;
+  --things-syn-punct: #383a42;
+  --things-syn-red: #e75545;
+  --things-syn-green: #4ea24c;
+  --things-syn-blue: #3d74f6;
+  --things-syn-purple: #a625a4;
+  --things-syn-aqua: #0084bc;
+  --things-syn-yellow: #b8860b;
+  --things-syn-orange: #986800;
+
+  /* base typography */
+  background-color: var(--things-bg);
+  color: var(--things-text-normal);
+  /* Honour the host preview settings when they exist (VS Code passes them as
+     --markdown-font-family / --markdown-line-height); otherwise use Things. */
+  font-family: var(--markdown-font-family, var(--things-font));
+  line-height: var(--markdown-line-height, var(--things-line-height));
+  -webkit-font-smoothing: antialiased;
+  scrollbar-color: var(--things-text-faint) transparent;
+}
+
+/* Dark mode — Things' theme-dark palette.
+   VS Code normally puts the theme class on <body>, but webviews have also
+   exposed it on <html>; both are covered so dark mode never silently falls
+   back to the light palette. */
+html:root body.vscode-dark,
+html:root body.vscode-high-contrast,
+html:root body[data-vscode-theme-kind="vscode-dark"],
+html:root body[data-vscode-theme-kind="vscode-high-contrast"],
+html:root body.theme-dark,
+html.vscode-dark body,
+html.vscode-high-contrast body,
+html[data-vscode-theme-kind="vscode-dark"] body,
+html[data-vscode-theme-kind="vscode-high-contrast"] body {
+  --things-bg: #1c2127; /* --color-base-00 */
+  --things-text-normal: #dadada; /* --color-base-100 */
+  --things-text-muted: #bfc8d2;
+  --things-text-faint: #6a7583;
+  --things-border: #35393e; /* --color-base-30 */
+
+  --things-h1: #dadada;
+  --things-h2: #dadada;
+  --things-h3: #2e80f2;
+  --things-h4: #e5b567;
+  --things-h5: #e83e3e;
+  --things-h6: #bfc8d2;
+
+  --things-strong: #ff82b2;
+  --things-em: #ff82b2;
+  --things-quote: #3eb4bf;
+  --things-link: #79a9ec;
+  --things-link-hover: #9dc0f2;
+  --things-mark-bg: rgba(255, 208, 0, 0.4);
+  --things-selection: rgba(46, 128, 242, 0.3);
+
+  --things-code-inline-bg: #303540;
+  --things-code-block-bg: #282c34; /* --code-block-background-d */
+  --things-code-text: #dadada;
+
+  --things-syn-comment: #5c6370;
+  --things-syn-punct: #abb2bf;
+  --things-syn-red: #e06c75;
+  --things-syn-green: #98c379;
+  --things-syn-blue: #61afef;
+  --things-syn-purple: #c678dd;
+  --things-syn-aqua: #56b6c2;
+  --things-syn-yellow: #e5c07b;
+  --things-syn-orange: #d19a66;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Text basics
+   --------------------------------------------------------------------------- */
+html:root body p,
+html:root body li,
+html:root body dd,
+html:root body dt,
+html:root body blockquote {
+  line-height: var(--things-line-height);
+}
+
+html:root body ::selection,
+html:root body ::-moz-selection {
+  background: var(--things-selection);
+}
+
+html:root body strong {
+  color: var(--things-strong);
+  font-weight: 600;
+}
+
+html:root body em,
+html:root body i {
+  color: var(--things-em);
+}
+
+html:root body del {
+  color: var(--things-text-faint);
+}
+
+html:root body mark {
+  background-color: var(--things-mark-bg);
+  color: inherit;
+  padding: 0 0.15em;
+  border-radius: 2px;
+}
+
+html:root body a {
+  color: var(--things-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+html:root body a:hover {
+  color: var(--things-link-hover);
+}
+
+/* VS Code inserts a heading-anchor <a> before every heading; keep it quiet. */
+html:root body a.anchor {
+  text-decoration: none;
+  border: 0;
+  color: inherit;
+}
+
+html:root body hr {
+  height: 0;
+  border: 0;
+  border-top: 2px solid var(--things-border);
+  margin: 2em 0;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Headings — Things sizes 1.7 / 1.5 / 1.2 / 1.1 / 1 / 0.9 and weights
+      700 / 700 / 600 / 500 / 500 / 400, h2 underlined, h3 blue, h4 yellow,
+      h5 red, h6 muted
+   --------------------------------------------------------------------------- */
+html:root body h1,
+html:root body h2,
+html:root body h3,
+html:root body h4,
+html:root body h5,
+html:root body h6 {
+  font-family: var(--things-font);
+  line-height: 1.3;
+  margin: 1.4em 0 0.5em;
+}
+
+html:root body > h1:first-child,
+html:root body > h2:first-child,
+html:root body > h3:first-child,
+html:root body > h4:first-child,
+html:root body .markdown-body > h1:first-child,
+html:root body .markdown-body > h2:first-child,
+html:root body .markdown-body > h3:first-child,
+html:root body .markdown-body > h4:first-child,
+html:root body .markdown-body > :first-child {
+  margin-top: 0;
+}
+
+html:root body h1 {
+  color: var(--things-h1);
+  font-size: 1.7em;
+  font-weight: 700;
+  border-bottom: 0; /* VS Code adds an underline to h1 by default */
+}
+
+html:root body h2 {
+  color: var(--things-h2);
+  font-size: 1.5em;
+  font-weight: 700;
+  width: 100%;
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--things-border);
+}
+
+html:root body h3 {
+  color: var(--things-h3);
+  font-size: 1.2em;
+  font-weight: 600;
+  border-bottom: 0;
+}
+
+html:root body h4 {
+  color: var(--things-h4);
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+html:root body h5 {
+  color: var(--things-h5);
+  font-size: 1em;
+  font-weight: 500;
+}
+
+html:root body h6 {
+  color: var(--things-h6);
+  font-size: 0.9em;
+  font-weight: 400;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Blockquotes — italic, green, transparent background
+   --------------------------------------------------------------------------- */
+html:root body blockquote {
+  margin: 1em 0;
+  padding: 0.25em 0 0.25em 1em;
+  font-size: inherit;
+  font-style: italic;
+  color: var(--things-quote);
+  background-color: transparent;
+  border: 0;
+  border-left: 2px solid var(--things-border);
+  border-radius: 0;
+}
+
+html:root body blockquote > :first-child {
+  margin-top: 0;
+}
+
+html:root body blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Lists & task lists
+   --------------------------------------------------------------------------- */
+html:root body ul,
+html:root body ol {
+  padding-left: 1.6em;
+}
+
+html:root body li {
+  margin: 0.15em 0;
+}
+
+html:root body li > p {
+  margin: 0.2em 0;
+}
+
+html:root body li.task-list-item {
+  list-style: none;
+}
+
+html:root body input[type="checkbox"],
+html:root body .task-list-item-checkbox {
+  accent-color: var(--things-h3);
+  width: 1em;
+  height: 1em;
+  margin: 0 0.4em 0.15em -1.35em;
+  vertical-align: middle;
+  border-radius: 30%;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Tables
+   --------------------------------------------------------------------------- */
+html:root body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 1em 0;
+  width: auto;
+  max-width: 100%;
+}
+
+html:root body table th,
+html:root body table td {
+  padding: 0.35em 0.8em;
+  border: 1px solid var(--things-border);
+  text-align: left;
+}
+
+html:root body table th {
+  font-weight: 600;
+  color: var(--things-text-normal);
+  background-color: transparent;
+  border-bottom: 2px solid var(--things-border);
+}
+
+html:root body table > tbody > tr + tr > td {
+  border-top: 1px solid var(--things-border);
+}
+
+html:root body table tbody tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   7. Images — rounded card with soft shadow (Things "Image card")
+   --------------------------------------------------------------------------- */
+html:root body img {
+  max-width: 100%;
+  border-radius: var(--things-radius-s);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+/* ---------------------------------------------------------------------------
+   8. Code — inline vs block background are distinct in Things
+   --------------------------------------------------------------------------- */
+html:root body code,
+html:root body kbd,
+html:root body pre,
+html:root body samp {
+  font-family: var(--things-font-mono);
+}
+
+html:root body code:not(pre code) {
+  padding: 0.12em 0.35em;
+  font-size: 0.88em;
+  color: var(--things-code-text);
+  background-color: var(--things-code-inline-bg);
+  border-radius: var(--things-radius-s);
+  box-shadow: none;
+}
+
+html:root body pre {
+  padding: 0.9em 1.1em;
+  margin: 1em 0;
+  overflow: auto;
+  font-size: 0.88em;
+  line-height: 1.4;
+  color: var(--things-code-text);
+  /* Some bundled prism themes (pen-paper-coffee, one-dark, …) ship an
+     !important background; ours is later and more specific, so keep !important
+     here to stay in control of the Things palette. */
+  background-color: var(--things-code-block-bg) !important;
+  border: 1px solid var(--things-border);
+  border-radius: var(--things-radius-m);
+  box-shadow: none;
+  /* prism's default.css adds a white text-shadow that is wrong in dark mode */
+  text-shadow: none;
+}
+
+/* prism's default.css paints a light background and a white text-shadow on the
+   code element, and colours it #000. Clear those; the colour is safe to set
+   here because every `.token.*` rule below is more specific, so token colours
+   are not flattened (plain, untokenised text inherits this one). */
+html:root body pre code[class*="language-"],
+html:root body code[class*="language-"] {
+  color: var(--things-code-text);
+  background: none;
+  text-shadow: none;
+}
+
+html:root body pre code {
+  display: inline-block;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  white-space: pre;
+}
+
+html:root body pre[class*="language-"]::selection,
+html:root body pre code::selection {
+  background: var(--things-selection);
+}
+
+html:root body kbd {
+  padding: 0.15em 0.4em;
+  font-size: 0.85em;
+  color: var(--things-code-text);
+  background-color: var(--things-code-inline-bg);
+  border: 1px solid var(--things-border);
+  border-bottom-width: 2px;
+  border-radius: var(--things-radius-s);
+}
+
+/* ---------------------------------------------------------------------------
+   9. Syntax highlighting — Things' One Dark colour set, for both token
+      libraries: Prism (.token.*, used by Markdown Preview Enhanced) and
+      highlight.js (.hljs-*, used by VS Code's built-in preview).
+   --------------------------------------------------------------------------- */
+html:root body .token.comment,
+html:root body .token.prolog,
+html:root body .token.doctype,
+html:root body .token.cdata,
+html:root body .hljs-comment,
+html:root body .hljs-quote,
+html:root body .hljs-meta {
+  color: var(--things-syn-comment);
+  font-style: italic;
+}
+
+html:root body .token.punctuation,
+html:root body .token.plain-text,
+html:root body .hljs-punctuation {
+  color: var(--things-syn-punct);
+}
+
+html:root body .token.tag,
+html:root body .token.selector,
+html:root body .token.deleted,
+html:root body .hljs-tag,
+html:root body .hljs-selector-tag,
+html:root body .hljs-name,
+html:root body .hljs-deletion {
+  color: var(--things-syn-red);
+}
+
+html:root body .token.class-name,
+html:root body .token.maybe-class-name,
+html:root body .token.constant,
+html:root body .token.builtin,
+html:root body .token.boolean,
+html:root body .hljs-title.class_,
+html:root body .hljs-built_in,
+html:root body .hljs-literal,
+html:root body .hljs-type,
+html:root body .hljs-variable.language_ {
+  color: var(--things-syn-yellow);
+}
+
+html:root body .token.number,
+html:root body .token.symbol,
+html:root body .token.attr-name,
+html:root body .token.property,
+html:root body .token.inserted,
+html:root body .hljs-number,
+html:root body .hljs-symbol,
+html:root body .hljs-attr,
+html:root body .hljs-attribute,
+html:root body .hljs-property,
+html:root body .hljs-addition {
+  color: var(--things-syn-orange);
+}
+
+html:root body .token.string,
+html:root body .token.char,
+html:root body .token.attr-value,
+html:root body .hljs-string,
+html:root body .hljs-regexp,
+html:root body .hljs-meta-string,
+html:root body .hljs-template-tag,
+html:root body .hljs-template-variable {
+  color: var(--things-syn-green);
+}
+
+html:root body .token.operator,
+html:root body .token.entity,
+html:root body .token.url,
+html:root body .hljs-operator,
+html:root body .hljs-params,
+html:root body .hljs-formula {
+  color: var(--things-syn-aqua);
+}
+
+html:root body .token.atrule,
+html:root body .token.keyword,
+html:root body .token.regex,
+html:root body .token.important,
+html:root body .token.variable,
+html:root body .hljs-keyword,
+html:root body .hljs-selector-class,
+html:root body .hljs-selector-id,
+html:root body .hljs-selector-pseudo,
+html:root body .hljs-doctag {
+  color: var(--things-syn-purple);
+}
+
+html:root body .token.function,
+html:root body .token.method,
+html:root body .token.macro.property,
+html:root body .hljs-title,
+html:root body .hljs-title.function_,
+html:root body .hljs-function .hljs-title,
+html:root body .hljs-section {
+  color: var(--things-syn-blue);
+}
+
+html:root body .token.bold,
+html:root body .token.important,
+html:root body .hljs-strong {
+  font-weight: 700;
+}
+
+html:root body .token.italic,
+html:root body .hljs-emphasis {
+  font-style: italic;
+}
+
+html:root body .token.entity {
+  cursor: help;
+}
+
+/* Inline code that highlight.js wraps inside a paragraph. */
+html:root body p code.hljs {
+  background-color: var(--things-code-inline-bg);
+  border-radius: var(--things-radius-s);
+}
+
+/* ---------------------------------------------------------------------------
+   10. Footnotes, details, callouts
+   --------------------------------------------------------------------------- */
+html:root body .footnotes {
+  font-size: 0.9em;
+  color: var(--things-text-muted);
+  border-top: 1px solid var(--things-border);
+  margin-top: 2em;
+  padding-top: 0.5em;
+}
+
+html:root body sup {
+  line-height: 0;
+}
+
+html:root body details {
+  padding: 0.4em 0.8em;
+  border: 1px solid var(--things-border);
+  border-radius: var(--things-radius-s);
+  margin: 0.8em 0;
+}
+
+html:root body summary {
+  cursor: pointer;
+  color: var(--things-text-muted);
+}
+
+/* Markdown Preview Enhanced callouts — keep the Things accent colours. */
+html:root body .callout {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-left: 2px solid var(--things-h3);
+  border-radius: var(--things-radius-s);
+  background-color: transparent;
+}
+
+html:root body .callout-title {
+  font-weight: 600;
+  color: var(--things-text-normal);
+}
+
+html:root body .callout[data-callout="warning"],
+html:root body .callout[data-callout="caution"],
+html:root body .callout[data-callout="danger"] {
+  border-left-color: var(--things-h5);
+}
+
+html:root body .callout[data-callout="tip"],
+html:root body .callout[data-callout="success"],
+html:root body .callout[data-callout="note"] {
+  border-left-color: var(--things-quote);
+}
+
+/* ---------------------------------------------------------------------------
+   11. Optional Things features — uncomment the block you want.
+       (In Obsidian these are class-toggles in Style Settings; VS Code has no
+       settings panel for the preview, so they are plain opt-in CSS here.)
+   --------------------------------------------------------------------------- */
+
+/* Fancy highlight: yellow underline instead of a flat background. */
+/*
+html:root body mark {
+  background-image: linear-gradient(
+    0deg,
+    rgba(255, 208, 0, 1) 0%,
+    rgba(255, 208, 0, 1) 2px,
+    rgba(255, 208, 0, 0.2) 2px,
+    rgba(255, 208, 0, 0.2) 100%
+  );
+  background-color: transparent;
+}
+*/
+
+/* Default font colours: turn off pink bold/italic and green quotes. */
+/*
+html:root body strong, html:root body em { color: inherit; }
+html:root body blockquote { color: var(--things-text-normal); }
+*/
+
+/* No H2 underline. */
+/*
+html:root body h2 { border-bottom: 0; padding-bottom: 0; }
+*/
+
+/* H4 uppercase (Things' h4-transform default is "uppercase"). */
+/*
+html:root body h4 {
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+*/
+
+/* Reading column width — Things uses a 40rem line width. Preview pages are
+   already padded by VS Code / MPE, so this is off by default. */
+/*
+html:root body {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+*/
+
+/* ---------------------------------------------------------------------------
+   12. Print / export
+   --------------------------------------------------------------------------- */
+@media print {
+  html:root body mark {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

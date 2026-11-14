@@ -69,6 +69,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 | 2024 | 2DGS | 面元（仍是椭圆） | 同上 | 同上 |
 | 2025 | Triangle / Mesh Splatting | 三角形 | **选**（多边形铺砌） | 顶点插值 |
 | **2026** | **[[2026-10-27-Kaushik — Hexels Compact Hexagonal Primitives for Scene Rendering\|Hexels]]** | **六边形（软边）** | **选**（等周长下面积最大） | **一阶线性色场** |
+| **2026** | **[[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution\|Spaghetti Splatting]]** | **线段 / 折线（1 维）** | **学**（端点 + 长度） | 一个色 + **连通性（端点、拓扑）** |
 
 **三件事必须分清**（混了就会得出错的结论）：
 
@@ -78,11 +79,38 @@ NeRF（隐式 MLP + volume rendering，慢）
 
 **对预算的直接意义**：GS 的预算表通常只有"高斯个数"一列。补上这两列后，"同预算"才有定义——**同原语数、同模型内存、同训练显存、同渲染 FPS 是四个不同的预算**，Hexels 那篇里 2DGS 对 3DGS 的差距就从 −2.64 dB 变到 −1.73 dB，**只因为分母换了**。
 
+### 支撑与核：两个正交轴（2026-11-11 补，随 Spaghetti Splatting 入库）
+
+上面那张表列的是"形状"，但没回答一个问题：**到底在变的是哪一维？**
+
+[[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution|Spaghetti Splatting]] 把整族方法压成一行目标函数，答案就浮出来了：
+
+$$\mathcal L_2=\sum_c\Big\|I_c-R_c\big(\textstyle\sum_i \delta_i\circledast k_i\big)\Big\|^2$$
+
+$\delta_i$ 是基元的**狄拉克测度**（支撑），$k_i$ 是**核**。**两个下标 = 两条正交的推广轴**：
+
+- **核轴**：高斯 → Beta（紧支撑）→ 各向异性 Beta → 学生 t（重尾）
+- **支撑轴**：点（0 维）→ 线段/折线（1 维）→ 三角形/凸体/六边形（2 维）→ 体（3 维）
+
+**支撑的维数决定三件事**，而这三件事此前在本页是混着讲的：
+
+| 支撑维数 | 例子 | 沿光线积分要什么 | "连通性"是免费的吗 |
+|---|---|---|---|
+| **0 维（点）** | 3DGS / DBS / Hexels | 一维正态的 CDF | ❌ 点云没有拓扑，要额外重建才能解算 |
+| **1 维（线/曲线）** | Spaghetti 2026 | **`erf`（一维）** | ✅ 天生有端点，合并只是让它更长 |
+| **2 维（面）** | Triangle / Mesh Splatting | **Owen's T（二维）** | 有边界，但边界要单独处理 |
+
+1. **维数决定"哪个基元能被实时可微地渲染"。** 曲线比三角形**便宜**——多边形的高斯卷积要 Owen's T（二维正态在凸多边形上的积分），线段只要 `erf`。**这是维数带来的便宜，不是实现技巧。** 选基元时该先问"它沿光线的积分要几维特殊函数"。
+2. **维数决定连通性。** 点没有拓扑，所以点云必须做连通重建（聚类 / 骨架化）才能进物理解算；线段天生连通。**这就是为什么"毛发"这一类几何用点表示永远别扭**——它需要的不是更多点，是"一条线就是一个东西"。
+3. **过计数不是几何问题，是合成方式问题。** 密度是测度、可加 ⇒ 相邻段在接头处不会算两遍；alpha 叠加不可加 ⇒ 必然过计数。Spaghetti 的"细分一段线段，图像完全不变"就是这条的直接推论。**做粒子系统的同一笔账：重叠处发亮的根因是 alpha 叠加，不是粒子太密。**
+
+
 ## Related Concepts
 
 - [[Neural Rendering]]
 - [[Differentiable Rendering]]
 - [[Radiance Fields]]
+- [[Texture Filtering]] —— **同一个数学在反方向上的实例**：纹理的"脚印"是"像素盖住多少 texel"，GS 的"协方差"是"splat 盖住多少像素"；Mip-Splatting 的 2D/3D 滤波就是 GS 的 mip。
 
 ## Game Applications
 
@@ -96,12 +124,15 @@ NeRF（隐式 MLP + volume rendering，慢）
 - [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising]] —— **"排序瓶颈"的第四条路线（取消式）**：随机光栅化 + 时域神经去噪；全管线 2.1×、去噪 +1 ms 常数（与 TileGS 构成同题两端）★ 2026-09-24
 - [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering]] —— **随机透明家族第二代（⑤）**：fragment / primitive 双流按成本路由 + 跨场景时空重建 + 移动端 NPU 全管线（92.6 FPS 裸渲染 / 73.2 FPS 含重建 @540p）；直接吃**未修改** 3DGS 资产；1080p 达 2.3–2.7× 标准 3DGS 吞吐 ★ 2026-10-01
 - [[Inverse Rendering for Modeling with Line Primitives]]（对比：显式线段 vs 体积基元）
+- [[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution|Spaghetti Splatting]] —— **基元轴的"1 维支撑"（新维度）**：把整族写成 $\sum_i\delta_i\circledast k_i$（核 × 支撑），把点换成长度可学的线段再连成折线；高斯卷积线段的射线积分有**闭式 `erf`**（三角形要 Owen's T）；点 = 零长曲线 ⇒ **严格超集**；毛发 +2.7 dB / F1@2mm +14.3，泛化场景只 +0.03~0.16 dB（= 打平），且**"结构"在 PSNR 上是负收益**（去掉合并 33.59 > 完整 33.54，收益在连通分量 1.00→3.50）★ 2026-11-11
 - [[2026-10-02-Budgeted-GS — Real-Time Large-Scale Gaussian Splatting via Factoring LOD]] —— **LOD/预算线开线**：容量下限（误差 ∝ N⁻¹ᐟ²）+ 因子树（矩匹配聚合 119×）+ 单参数 c 扫连续内存-质量曲线；官方城市数据 71 fps @1080p 全 SH（vs Octree-GS 11.5 fps）；**"LOD 分层是比压缩率更本质的资产属性"（同内存 -2.12 vs 随机 -7.08 dB）** ★ 2026-10-05
 - [[2026-10-08-PCAsplat — Gaussian Splatting with Local PCA Regularization|PCAsplat]] —— **几何质量线（新）**：可微局部 PCA 正则（作用在中心邻域、**视角无关**）修复 floaters——"看不见的高斯也有监督"；特征值谱正则（表面化 + 各向同性切向）+ 法线对齐；DTU/T&T 上表面质量提升、**下游（点云分割 / Poisson 重建）免修直用** ★ 2026-10-10
 - [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS|Efficient Confidence-Aware Densification for 3DGS]] —— **分配四端之"生长端"（密度控制）**：3DGS-MCMC 的"不透明度驱动"→"误差驱动"（梯度排名 × 低置信度加权采样 + 贡献度重定位）；24 场景 100k–2M 全预算超 MCMC；**"预算跟着缺口走，不跟着现状走"** ★ 2026-10-13
 - [[2026-10-09-Make It Flow — Animating Water in 3D Gaussian Splatting Scenes|Make It Flow]] —— **场景动态化（"注入派"）**：静态 3DGS 的流体动效注入（光流 → 3D 欧拉运动场 → cinemagraph 式对称变形）；"三不"（无捕获/无重训/无模拟）+ 2 MB 可携带运动场 + 实时循环 ★ 2026-10-13
 - [[2026-10-21-Kim — RLSplat Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting|RLSplat]] —— **预算的成本侧（新）**：把“给定预算”从“事后裁剪”改为“前馈生成时按配额分配”——GSPO 策略网络学高斯配额 $k\sim\mathrm{Mult}(B,p)$（$\sum k_n=B$），资源线性解码器只用 $O(BK_{gs})$ 局部 cross-attn 取出；三个正则（Voronoi / offset / projection）分别撑住“不重叠 / 不漂移 / 可微”；2K 预算下 +0.9 dB、显存 **9.6×** 少、速度 **4.1×**；**关键诚实点：策略 24.83 dB vs Sobel 边缘启发式 24.76 dB，仅差 0.07 dB——“学到的是分配这个动作，不是更聪明的先验”** ★ 2026-10-22
 - [[2026-10-21-Beche — KoalaGS Complexity-Aware Continuous Level of Detail for Gaussian Splatting|KoalaGS]] —— **连续 LoD 的排序键（新）**：用**优化前**的图像复杂度（delentropy，2D ρ≈−0.60 / 3D −0.64）做空间先验，训练时按 $p=\alpha e^{\tilde C}$ 迁移偏置 + complexity dropout（$\delta=0.2$），渲染时排序键 $S=\alpha+\lambda s/e^{\tilde C}$ + 残差方差正则；100%→0.1% 连续全谱评测（不是几个离散档）；**如实边界：对 MGS 排序只 +0.12/+1.23 dB，主要增益来自与“不排序”的 MCMC 对比——先验有用，但别夸大** ★ 2026-10-22
+- [[Mildenhall 2020 — NeRF Representing Scenes as Neural Radiance Fields|NeRF 2020]] —— **祖先页（补齐）**：本页 30+ 篇变体长期缺一条回溯线——GS 的每个设计选择（可微光栅化、逐基元深度排序、显式存储）几乎都是对 NeRF 某个成本项的回应（1.5–2 亿次网络查询/帧 ≈ 30 s/帧）。读这一页时建议对照"四种存储形态"表：NeRF 把场景存成**场**，3DGS 存成**证据**（2026-11-02 入库）
+- [[2026-10-29-Choi — L3G-World Real-Time Infinite World Generation with Latent 3D Gaussian Memory|L3G-World]] —— **高斯作为"记忆单元"（新用法）**：高斯不再只是场景的表示，而是世界模型的**潜变量记忆**——按需 spawn（先渲旧记忆 → 用 opacity/误差出 spawn mask → 只在 mask 内 K-means），记忆量 $O(S)$ 而非 $O(TR)$；每个高斯内含 VAE latent，直接解码到 DiT 的 latent 空间（"按通道拼接"而不是解码回像素）。**这条线提示：高斯的第二身份是"可微、可裁剪、可增量的缓存"**（2026-11-02 入库）
 
 ## LOD / 预算线（2026-10-05 开线）
 
@@ -117,9 +148,9 @@ NeRF（隐式 MLP + volume rendering，慢）
 - **与本库三条既有线索的接点**：① "降档 = 降表示层级"（原始高斯 → 等价 plank → 聚合 plank）——与 Parish 2001 / ToCo-Mesh 同一母题；② "档位 = 部署时选择"的最干净形态（单标量扫全档）；③ **[[Clark — Hierarchical Geometric Models for Visible Surface Algorithms (1976)]] 的 working set 与可见复杂度上限，在此获得 GS 实现**；
 - **与随机子采样的量化对照**（859 MB 档）：LOD **-2.12 dB** vs 随机 **-7.08 dB**——"接 GS 资产时先把 LOD 层级问清楚"。
 
-### 分配四端（2026-10-12 ~ 10-13 沉淀）
+### 分配五端（2026-10-12 ~ 10-13 沉淀；2026-11-08 补第五端）
 
-"固定预算"之下的第四个问题——**"给定总量，怎么分配？"**——库内已集齐四端（分配对象不同）：
+"固定预算"之下的第四个问题——**"给定总量，怎么分配？"**——库内已集齐五端（分配对象不同）：
 
 | 端 | 问题 | 节点 | 核心动作 |
 |---|---|---|---|
@@ -127,12 +158,36 @@ NeRF（隐式 MLP + volume rendering，慢）
 | **生成端** | 放哪里？ | [[2026-10-09-CompactSplat — Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction\|CompactSplat]]（2026-10-12） | 内容自适应（复杂区密小 / 平坦区"用尺度换数量"）+ 推理旋钮 |
 | **执行端** | 怎么跑得快？ | [[2026-10-09-H2-Ray — A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering\|H2-Ray]]（2026-10-12） | 负载均衡 + 遍历复用 + 混合求交 |
 | **生长端** | **预算给谁？（密度控制）** | [[2026-10-09-Efficient Confidence-Aware Densification for 3DGS\|Confidence-Aware Densification]]（2026-10-13） | **误差驱动采样 + 贡献度重定位**（"预算跟着缺口走"） |
+| **面级配额端**（新） | **每个面分几个？（带网格约束时）** | [[2026-11-05-Wang — Perception Over Geometry Rethinking Gaussian Allocation in Mesh-based Splatting\|P-MGS]]（2026-11-08） | **按多视图外观梯度能量 $Q_f=A^2\bar\rho$ 分配 + 拉格朗日"工作量定价"（$T_{fv}$ = 每高斯碰到的 tile 数）** |
 
-> **两条横向判据（四端共用）**：① **"分配依据测的是现状还是缺口？"**——按"现状"分配（不透明度/已建成度）会富者愈富（Confidence-Aware 的前景偏差）；按"缺口"（误差/欠重建）才是补短板；**倒挂分配（SABC）与"按缺口分配"是同一原则**。② **"防独占"**——SplatQ 的配额平滑与 Confidence-Aware 的误差采样是同一问题的两端实现。
+> **两条横向判据（五端共用）**：① **"分配依据测的是现状还是缺口？"**——按"现状"分配（不透明度/已建成度）会富者愈富（Confidence-Aware 的前景偏差）；按"缺口"（误差/欠重建）才是补短板；**倒挂分配（SABC）与"按缺口分配"是同一原则**。② **"防独占"**——SplatQ 的配额平滑与 Confidence-Aware 的误差采样是同一问题的两端实现。
 
-## 排序线全景（2026-10-01 沉淀；2026-10-07 补第 6 节点）
+> **第五端带来的第三条判据（2026-11-08）**：**"配额是一次性的还是运行期的？"** P-MGS 的预算与工作量约束**只作用于初始化**，之后完全放开 densify（与原版 3DGS 相同）。所以它"用更少高斯"是**结果侧**的结论，不是**受控侧**的——**在 mesh-GS 这条支线上，配额还没有变成运行时上限。**
+>
+> **两条可搬走的数字**：① P-MGS 的 2×2 消融里，"**解耦**（先自由优化再绑回网格）值 **+3.19 dB**，而标题主打的"感知分配"只值 **+1.26 dB**"——**标题卖概念，消融卖真相**；② 统一分配下把每面高斯数从 3 提到 5（**+67% 容量**）只换来 **+0.15 dB**——**统一配额早就饱和了，先量饱和点再换分配算法。**
 
-"取消排序"自成为库内固定线索以来已到第 6 个节点——**从"优化"到"置换"到"路由"到"驯服随机性"**：
+### 网格化支线：拓扑能不能动（2026-11-09 补）
+
+mesh splatting（不透明三角形）这条支线的价值不在画质，在**下游可用性**——三角形能进深度预pass、硬件遮挡剔除、GLB 管线。但它长期有一个硬约束：**拓扑冻死**。
+
+RDT（Restricted Delaunay Triangulation）建完连接就不能再动，于是"面该有多少"只能在**开始优化之前**猜一次。**猜多了是浪费，猜少了没法补。**
+
+这一年里出现了两种解法，**方向相反**：
+
+| | 改什么 | 判据 | 代价 |
+|---|---|---|---|
+| [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|**T2-Splat**]]（2026-11-09） | **改拓扑**：边塌陷 + 顶点分裂（[[Hoppe 1997 — View-Dependent Refinement of Progressive Meshes\|渐进网格]]的两个算子接回可微循环） | 塌陷用 QEM（**中位数归一化**后与外观罚项加权）；分裂用**透视补偿的梯度分数** | 属性合并靠不透明度加权平均（**不可逆**）⇒ 要用色差罚项把汇率调小 |
+| [[2026-11-09-Franke — Hierarchical Incremental Beta Splatting for Online Reconstruction\|**HIBS**]]（2026-11-09） | **不改拓扑，改形状**：$\beta$ 从软高斯滑到平顶实心片 | 四个投影都 **< 半像素** ⇒ 合成父级 | 合并必须保形 ⇒ 需要**矩可加且可逆**（$\kappa\leftrightarrow\beta$ 双射） |
+
+> **两条路的差别不在算法，在"元素是什么"**：三角形是**离散**的（必须保流形、必须过 link condition），所以只能做"合法的塌陷"，而塌陷后的属性只能平均；核是**连续**的（没有拓扑可破坏），所以可以做"矩匹配"，而矩匹配能反解。
+>
+> **"能不能无损合并"= 这个表示有没有一个可加且可逆的签名。** 这是继 [[Garland 1997 — Surface Simplification Using Quadric Error Metrics|QEM 的二次型系数可加]]（11-08）之后，同一条线上的第三个例子。**"可加 ≠ 可比"（11-08）→ "可加 + 可逆 = 可合并"（11-09）。**
+
+**两个可搬走的数字**：① T2-Splat 把面数从 7.3 M 降到 **2.7 M**（-63%）而 PSNR **+0.71 dB**、帧率 **126 → 236 FPS**——**"面少了质量反而高"只在"面本来不是瓶颈"时成立，这就是过度细分的定义**；② HIBS 的**矩匹配合并在 CityWalk 上值 −2.27 dB**（去掉它），比它所有在线机制加起来大一个量级——**LOD 层级怎么建是主项，在线怎么 spawn 是次项。**
+
+## 排序线全景（2026-10-01 沉淀；2026-10-07 补第 6 节点；2026-11-04 补第 7 节点——**换轴**；2026-11-06 补第 8 节点——**连光栅化器一起删**）
+
+"取消排序"自成为库内固定线索以来已到第 8 个节点——**从"优化"到"置换"到"路由"到"驯服随机性"，到"把顺序搬出帧"，再到"把整个光栅化器搬出去"**：
 
 | 节点 | 路线 | 代表 | 动作 |
 |---|---|---|---|
@@ -142,6 +197,18 @@ NeRF（隐式 MLP + volume rendering，慢）
 | ④ | 随机光栅化（全删） | StochasticSplats / [[2026-09-22-Stochastic GS Denoising — Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising\|Stochastic GS Denoising]] | 排序与混合全删，噪声靠神经偿还 |
 | ⑤ | 随机透明混合路由 | [[2026-09-29-Gaussian Stippling — Efficient Sorting-Free 3D Gaussian Rendering\|Gaussian Stippling]]（2026-09-29） | 双流按成本分拣 + 跨场景重建 + 移动端落地 |
 | **⑥** | **随机性驯服（表示 + 重采样）** | **[[2026-10-04-SteadySplats — Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering\|SteadySplats]]（2026-10-04）** | **训练方差正则 + 时空重采样：1 spp +13.1 dB、收敛 L1 < 1e-4——噪声税基本取消** |
+| **⑦** | **顺序搬进布局（换轴）** | **[[2026-11-01-Ding — AbacusGS Gaussian Splatting without Per-Splat Sorting\|AbacusGS]]（2026-11-01）** | **写一次（八叉树盒 ≤128 + 沿轴存序），每帧只排可见盒 + 每盒一个符号位：CPU 排序场景 26.8 → 6.0 ms（4.5×），排序条目 1,099k → 35k；−0.13 dB；17 B/splat** |
+| **⑧** | **不要光栅化器（换整个执行者）** | **[[2026-11-03-Levy — GaussianRenderFormer Transformer-based Rendering of 3D Gaussian Splats\|GaussianRenderFormer]]（2026-11-03）** | **Transformer 从高斯 + 相机直接出像素：38.08 dB vs 同输入光栅化 44.02 dB；275 ms vs 0.7 ms。**可行，但不可用**——它给出的是"删掉算法要付多少"的价目表** |
+
+> **第 8 节点的意义（2026-11-06）**：①–⑦ 全部**保留光栅化器**，只在"排序怎么办"上做文章；⑧ 把整个执行者换掉。**结果是一次干净的定价：删掉解析投影要付 6.6 dB 买回来**（2D 投影位置 5.2 + 投影 footprint 1.4），而逐像素混合那一层网络几乎免费学会了（−3.0 dB 只来自 patch 粒度）。
+>
+> **所以这条线的结论不是"神经网络不能渲染高斯"，是"光栅化器真正的产物不是像素，是那张'每个基元投影后是什么样'的表"。** 删掉算法，这张表必须作为输入喂回去——**而这张表本身，就是 ①–⑦ 一直在省着算的那个东西。**
+>
+> 顺带一条方向性警告：**它随输入变密而变差**（40k 高斯时光栅化 +4.6 dB、网络 −3.1 dB），**与所有 ①–⑦ 方案的方向相反**。
+
+> **第 7 节点的意义（2026-11-04）**：①–⑥ **全部在帧内做文章**——排得快（①）、不排（②④⑤⑥）、换基元（③）。⑦ 换了问题：**排序该不该发生在帧里**。答案是"不该"——盒内顺序在帧间几乎不变（只翻转一个符号），它属于**资产**，不属于运行时。**这是本表第一次出现"换轴"而不是"换算法"**；判据是：**当一条线上连续六个方案都在做同一件事时，下一个有效动作通常是换一个平面。**
+>
+> 代价也如实：**每个资产要 3k/10k 步顺序感知重拟合**（换序就要重训），且 4.5× 只在"CPU 排序"的查看器成立；GPU radix sort 下仅 1.46×，4K 下 13 个场景 4 个反而更慢。**"without Per-Splat Sorting" 的准确说法是 "without per-splat sorting, still with per-box sorting"。**
 
 > **第 6 节点的意义（2026-10-07）**：④ 时代的死穴是"压噪要数百 spp，抵消性能收益"；⑥ 把 **1 spp 变干净**（31.44 dB）且**高样本端收敛回排序质量**（L1 < 1e-4）——**"档位 = 采样数"（1 / 4–16 / 100+ spp）自此每一档都可交付**。与 ④ 的对照：**"测干净"（神经去噪）vs "生干净"（表示+重采样，无网络推理）**。
 
