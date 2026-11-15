@@ -83,6 +83,22 @@ first_introduced: 2020
 
 **而三站的失效方式各不相同，这更值得记**：MLT 卡在"到不了"（连通性），ReSTIR 卡在"太旧了"（时域失效），骨架卡在"看不见新东西"（覆盖率）。**同一套语法，三种死法——说明语法只保证合法性，不保证有用。**
 
+## 四族里的位置：③ 重采样（2026-11-15 补）
+
+多光源的解法只有四类（见 [[Many-Light Rendering]]）：剔除 / 层次近似 / **重采样** / 改写内容。本页属于第三类，**它的坐标值得写清楚**：
+
+| | 近似（[[Walter 2005 — Lightcuts A Scalable Approach to Illumination\|Lightcuts]]） | 重采样（本页） |
+|---|---|---|
+| 答案 | 确定性 | 随机 |
+| 误差 | **系统偏差**（稳定的错） | **方差**（正确地抖） |
+| 验收 | 误差图 / 误差上界 | P99 收敛时间 / 拖影 |
+| 失效 | 高遮挡时误差变大 | 时域失效、样本退化 |
+
+**两条判据（今天新增）**：
+
+1. **别用"误差"验收 ReSTIR，也别用"方差"验收 Lightcuts**——这两类方法的验收语言不通用，混用会得出"某某方法更好"的假结论。
+2. **ReSTIR 的代价是常数开销，不是渐进复杂度**。[[LightOpt — Lights Optimization for Real-Time Rendering|LightOpt 2026]] 的 related work 引 Wyman & Panteleev 2022 指出这一点：**它不减少灯集合，只改变"每帧抽哪几盏"**。所以当瓶颈是**灯架本身太大**（而不是采样太贵）时，ReSTIR 帮不上——那是第四类（改写内容）的活。
+
 ## Technologies
 
 - RTXDI（NVIDIA SDK）— `Reservoir.hlsli` 与首篇 Alg. 2 逐字段对应
