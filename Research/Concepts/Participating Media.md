@@ -77,6 +77,43 @@ $$\text{单次散射自由程}=\frac{1}{\sigma_t}\quad(\text{短})\qquad\text{�
 
 **顺手一条工程判据**：$\sigma'_s=\sigma_s(1-g)$ 里的 $(1-g)$ 说的是"**前向散射不算散射**"。所以调体积雾时把 $g$ 从 0 拉到 0.8，有效散射掉到 1/5、雾"变透"，**但消光一点没变**。**"变透"与"变亮"是两件事，混淆它们的人多半栽在这个因子上。**
 
+### 第六条路：把"无穷阶"折成一个公比（2026-11-16 补）
+
+前五条路都在同一个维度上省钱：**少采样**（步数）、**少查询**（每步）、**事后修**（降噪）、**不估**（推断）、**换方程**（扩散）。第六条不在采样维度上，它**换掉的是"要算多少阶散射"**。
+
+[[Hillaire 2020 — A Scalable and Production Ready Sky and Atmosphere Rendering Technique|Hillaire 2020]] 的做法可以一句话说完：
+
+$$\Psi_{ms} = L_{2nd}\cdot\frac{1}{1-f_{ms}}$$
+
+**二阶散射的答案 × 一个几何级数的和。** 前提是三条假设：二阶以上各向同性；**"邻域内所有点收到的照度与我相同"**（平均自由程 ≫ 邻域尺度）；忽略可见性。$f_{ms}\in[0,1]$ 是被积出来的无量纲转移因子，级数因此收敛。
+
+**它和前五条的分工很清楚**：
+
+| 路 | 动的是 | 典型收益 | 代价 |
+|---|---|---|---|
+| ①~④ | **采样**（spp / 步数 / 噪声） | 几倍到几十倍 | 噪声、偏差、鬼影 |
+| ⑤ 扩散 | **方程**（抹掉方向维度） | **250×**（Jensen） | 只对多次散射主导 + 均匀介质成立 |
+| **⑥ 级数** | **阶数**（$O(n)\to O(1)$） | **约 1,470× 的表重建**（250 ms → 0.17 ms） | 各向异性相函数失效（$g{=}0.8$ 时误差 6.7 倍） |
+
+**最容易忽略的一点：这条路的先例不在大气，在毛发。** Zinke 2008 的 dual scattering 用同一个"二阶 × 公比"顶掉毛发的无穷阶散射；Hillaire 2020 明写灵感来自它。**同一个数学结构，在毛发、皮肤（偶极子扩散）、大气三处被独立发现——说明它不是某个域的技巧，是"无穷阶近似"的通用形状。**
+
+### 边界形状：平板、有界体积、球壳（2026-11-16 补）
+
+同一个 RTE，三种边界，工程上是三套完全不同的东西：
+
+| 边界 | 典型场景 | 关键几何量 | 工程后果 |
+|---|---|---|---|
+| **平板/半空间** | 高度雾、贴地雾 | 视线与水平面的夹角 | 解析式（Exp/Exp2 雾）直接可用 |
+| **有界体积** | 云、烟、局部雾 | 进入/离开距离 | 需要稀疏表示 + 排序（见 [[Sparse Volumetric Representation]]） |
+| **球壳** | 行星大气 | **地平线方向的斜程** | 纹素必须非线性分配，且多一个"太阳天顶角"维度 |
+
+球壳这一格值得单独记两个数：
+
+1. **地平线方向的斜程约为天顶的 $\sqrt{\pi R/2H}$ 倍**——取 $R=6360$ km、标高 $H=8$ km 得**约 35 倍**。**这就是"日落变红"的定量来源，也是为什么天空的 LUT 必须把纹素往地平线压**（[[Hillaire 2020 — A Scalable and Production Ready Sky and Atmosphere Rendering Technique|Hillaire 2020]] 用 $v=0.5+0.5\,\mathrm{sign}(l)\sqrt{|l|/(\pi/2)}$）。
+2. **太阳可以落到地平线以下，大气仍被照亮**（地球投在大气上的阴影、晨昏线）。**这一条把 LUT 的维度从 3 抬到 4**——[[Bruneton 2008 — Precomputed Atmospheric Scattering|Bruneton 2008]] 的全部复杂度都来自这个决定。
+
+> **判据：如果介质是"无限大且只随高度变化"，它就是球壳问题，别用有界体积那套（froxel / 稀疏网格）；如果它有明确的进出面，它就是有界体积问题，别硬套大气公式。** 两者共用 RTE，但**预计算的结构、维度和更新代价完全不同**。
+
 ## Prerequisites
 
 - [[Rendering Equation]]（表面版；RTE 是它的体积推广）
@@ -126,6 +163,9 @@ Wronski / Siggraph 2014-2019 —— UE4 体积雾、寒霜的 froxel volumetric�
 | [[2026-11-13-Leonard — Real-Time Volumetric Light Transport Inference without a Path\|HaloRT 2026]] | **"取消估计量"路线**：1 spp 特征 → 直接回归积分值；把降噪的前提（噪声不变性）换成特征充分性 |
 | [[2026-09-15-Grid-Free Monte Carlo for Time-Dependent Diffusion]] | 求解器侧：把时间依赖热方程也纳入无网格 MC |
 | [[2026-09-14-Gaussian Light Transport]] | 同周"删掉一个求解器中间产物"的另一例 |
+| [[Hillaire 2020 — A Scalable and Production Ready Sky and Atmosphere Rendering Technique\|Hillaire 2020]] | **第六条路（级数）**的代表：$O(1)$ 多阶散射，让 LUT 每帧可重建；代价是各向异性相函数 |
+| [[Bruneton 2008 — Precomputed Atmospheric Scattering\|Bruneton 2008]] | 球壳边界的标准解：4D LUT，$O(1)$ 运行时，$O(n)$ 更新（250 ms） |
+| [[Bruneton 2017 — A Qualitative and Quantitative Evaluation of 8 Clear Sky Models\|Bruneton 2017]] | **量尺**：证明最准的 CG 模型已撞到"参数地板"，精度不再是积分问题 |
 
 ## Related Concepts
 

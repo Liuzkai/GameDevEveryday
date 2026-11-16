@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-11-15
+updated: 2026-11-16
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 46
@@ -265,6 +265,8 @@ read_paper_count: 46
 
 继续修改论文或概念笔记的 `status` / `user_level`，或直接告诉我掌握情况即可。**本次仅更新本模型；未批量改写论文或概念笔记的属性。** 下表中的分层推断不视为那些概念笔记已经完成升档。
 
+> **2026-11-16 更新（资料侧；阅读状态无变化）**：**天空域开域（库内 `atmosphere` 曾 0 命中）**——三篇连读构成"方法 → 量尺 → 换代"三角：[[Bruneton 2008 — Precomputed Atmospheric Scattering|Bruneton 2008]]（4D LUT 定义者；运行时 $O(1)$，但**重建一次 250 ms**；⚠️ 未取全文，数字均标出处）+ [[Bruneton 2017 — A Qualitative and Quantitative Evaluation of 8 Clear Sky Models|Bruneton 2017]]（**评估型占经典位**：八模型同参数横评，最准 11.3 已压到物理参考 11.45 之下 ⇒ **积分只占 1%、参数占 99%**；感知在"够好"处饱和，且一个错误太阳光谱因**意外白平衡**被评得更真实）+ [[Hillaire 2020 — A Scalable and Production Ready Sky and Atmosphere Rendering Technique|Hillaire 2020]]（把多阶散射折成几何级数 $\Psi_{ms}=L_{2nd}/(1-f_{ms})$，四张表重建 0.17 ms）。新概念 [[Atmospheric Scattering]]（第 67）。**方法侧新判断（本日最硬）**：**可编辑性 = 重建一次 ÷ 渲染一帧**——比值 <1 才叫"每帧可重建"（天空从 1,136 降到 0.55）；**表要存"响应"不要存"答案"**（$E_I$=1 的单位化技巧使 LUT 与光源解耦）。**已读账本维持 46 篇**；读者连续 15 日无新标记（11-14 的《LightOpt》全译之后仍无 `read`）。动作清单不变。
+
 ## 工作背景与已有基础
 
 沿用原有背景：资深游戏技术美术，工作涉及材质、Houdini 过场特效与 PCG；Houdini、Maya、Unreal Engine、Substance 为熟悉工具。PBR 材质制作是强项；渲染底层、角色/体积/水体渲染、游戏动画系统和 PCG 算法仍需按具体主题判断。
@@ -308,6 +310,7 @@ read_paper_count: 46
 | [[Neural Animation]]、[[Motion Generation]] 的方法概览与工程层 | **分层推断为 Normal 入口**：已有六篇动画方向阅读；不自动修改概念笔记的整体 Hard，也不确认扩散 / flow 训练推导已掌握 |
 | [[Neural Rendering]]、[[Generative Rendering]] 的系统层 | **分层推断为 Normal 入口**：DLSS 5 / Magpie / PBR-Latent 已读；可比较规则与画面边界、表示选择、吞吐与延迟 |
 | [[Participating Media]]、[[Linear Transport Theory]] 的概念层 | 沿用概念笔记 Normal，新增 GPIS / Dupuy / Grid-Free 阅读覆盖；随机几何与输运推导另列 Hard |
+| [[Atmospheric Scattering]]（★ 2026-11-16 新增） | 天空域开域：三个量 + 两种粒子 + 一个嵌套积分的**结构层 Normal**；三族成本（ray march / 解析 / LUT / 解析+级数）与三种边界（平板 / 有界 / 球壳）可读。**Hard 两处**：$f_{ms}$ 的解析积分与 $[0,1]$ 归一化、以及多阶散射的方向性（为何 $g$=0.8 时误差 6.7 倍）。**待补：Bruneton 2008 全文未取**，下一步走作者开源代码反读 |
 | [[Procedural Content Generation]] | 沿用 Normal，ESG 已读；不能据此认定城市 / 建筑形状文法经典已读 |
 | [[Tile-Based Rendering]]、[[GPU-Driven Rendering]] | 沿用 Normal；From Splats to Silicon 提供性能分析阅读依据，不等于全部管线知识已掌握 |
 | [[Neural Upscaling and Frame Generation]]、[[Temporal Stability and Artistic Intent]] | 沿用 Normal；DLSS 5 / Magpie 可作为已读对照，项目内效果与延迟尚未验证 |
