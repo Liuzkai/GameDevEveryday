@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-11-16
+updated: 2026-11-17
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 46
@@ -267,6 +267,8 @@ read_paper_count: 46
 
 > **2026-11-16 更新（资料侧；阅读状态无变化）**：**天空域开域（库内 `atmosphere` 曾 0 命中）**——三篇连读构成"方法 → 量尺 → 换代"三角：[[Bruneton 2008 — Precomputed Atmospheric Scattering|Bruneton 2008]]（4D LUT 定义者；运行时 $O(1)$，但**重建一次 250 ms**；⚠️ 未取全文，数字均标出处）+ [[Bruneton 2017 — A Qualitative and Quantitative Evaluation of 8 Clear Sky Models|Bruneton 2017]]（**评估型占经典位**：八模型同参数横评，最准 11.3 已压到物理参考 11.45 之下 ⇒ **积分只占 1%、参数占 99%**；感知在"够好"处饱和，且一个错误太阳光谱因**意外白平衡**被评得更真实）+ [[Hillaire 2020 — A Scalable and Production Ready Sky and Atmosphere Rendering Technique|Hillaire 2020]]（把多阶散射折成几何级数 $\Psi_{ms}=L_{2nd}/(1-f_{ms})$，四张表重建 0.17 ms）。新概念 [[Atmospheric Scattering]]（第 67）。**方法侧新判断（本日最硬）**：**可编辑性 = 重建一次 ÷ 渲染一帧**——比值 <1 才叫"每帧可重建"（天空从 1,136 降到 0.55）；**表要存"响应"不要存"答案"**（$E_I$=1 的单位化技巧使 LUT 与光源解耦）。**已读账本维持 46 篇**；读者连续 15 日无新标记（11-14 的《LightOpt》全译之后仍无 `read`）。动作清单不变。
 
+> **2026-11-17 更新（资料侧；阅读状态无变化）**：**等值面提取开域（全库 `Marching Cubes` 曾 0 命中——221 篇论文、67 个概念里最反常的一个空洞）**——四篇一条线：[[Lorensen 1987 — Marching Cubes A High Resolution 3D Surface Construction Algorithm|MC 1987]]（真正的发明是"**拓扑 / 位置 / 法线**"三件事的拆分；"三角形数 ∝ 表面积"是此后四十年的靶子；`ambigu*` 全文 2 次**都在批评别人的轮廓拼接**）+ [[2026-11-17-Ohrhallinger — FOMOS Feature-Oriented Meshing of SDFs|FOMOS 2026]]（密度换成 ∝ **1/lfs²**（到中轴距离，吃到非局部信息）；复杂度 $O(n^3)\to$ 输出敏感；缺陷三角形 **11.86% → 0.00%**；⚠️ 但几何误差仍略输 MC）+ [[2026-11-17-Della Pietra — TetraCoder Adaptive Tetrahedral Encoding for Neural Fields|TetraCoder 2026]]（**插值规则决定可提取性**：三线性不保仿射、重心保 ⇒ 解析提取；⚠️ "解析 ≠ 便宜"）+ [[2026-11-17-Heidenreich — Pose-based Neural Clothing for Animated Characters|Neural Clothing 2026]]（229 维潜码对 14,460 DOF；**课程比架构便宜**；法线分布损失赢了 Curv、输了其余四项）。新建第 68 概念 [[Isosurface Extraction]]（三个决定 + 三种误差 + 四代谱系 + 五条 gap）。**今日新增判断：「分辨率不是精度，是自由度」**——**"网格更好"与"离曲面更近"是两个轴**，MC 在后一个轴上四十年没输。**Hard 两处**：受限 Delaunay 的 $\kappa$ 折算（只需记结论）、解析提取的 ReLU 胞划分。**已读账本仍 46 篇。**
+>
 ## 工作背景与已有基础
 
 沿用原有背景：资深游戏技术美术，工作涉及材质、Houdini 过场特效与 PCG；Houdini、Maya、Unreal Engine、Substance 为熟悉工具。PBR 材质制作是强项；渲染底层、角色/体积/水体渲染、游戏动画系统和 PCG 算法仍需按具体主题判断。
@@ -310,6 +312,7 @@ read_paper_count: 46
 | [[Neural Animation]]、[[Motion Generation]] 的方法概览与工程层 | **分层推断为 Normal 入口**：已有六篇动画方向阅读；不自动修改概念笔记的整体 Hard，也不确认扩散 / flow 训练推导已掌握 |
 | [[Neural Rendering]]、[[Generative Rendering]] 的系统层 | **分层推断为 Normal 入口**：DLSS 5 / Magpie / PBR-Latent 已读；可比较规则与画面边界、表示选择、吞吐与延迟 |
 | [[Participating Media]]、[[Linear Transport Theory]] 的概念层 | 沿用概念笔记 Normal，新增 GPIS / Dupuy / Grid-Free 阅读覆盖；随机几何与输运推导另列 Hard |
+| [[Isosurface Extraction]]（★ 2026-11-17 新增） | 等值面提取开域：MC 的机制（8 位索引 / 14 模式 / 线性插值 / 中心差分）是 Easy（本科内容，也是写 shader 的常识）；**"三个决定"的拆法**（拓扑从哪来 / 位置从哪来 / 密度从哪来）与**"三角形 ∝ 表面积 vs ∝ $1/\mathrm{lfs}^2$"**这条判据是 Normal 的核心。**Hard 两处**：受限 Delaunay 的 ε-sampling 证明（只需记"ε 会被 $\kappa$ 打折、$\kappa\le1$ 无条件"）、解析提取的 ReLU 胞划分。**缺口：DC 的 QEF 与 MC33 的歧义判据都没有原文**——"顶点位置"与"拓扑不自洽"这两块在库里仍然是空的 |
 | [[Atmospheric Scattering]]（★ 2026-11-16 新增） | 天空域开域：三个量 + 两种粒子 + 一个嵌套积分的**结构层 Normal**；三族成本（ray march / 解析 / LUT / 解析+级数）与三种边界（平板 / 有界 / 球壳）可读。**Hard 两处**：$f_{ms}$ 的解析积分与 $[0,1]$ 归一化、以及多阶散射的方向性（为何 $g$=0.8 时误差 6.7 倍）。**待补：Bruneton 2008 全文未取**，下一步走作者开源代码反读 |
 | [[Procedural Content Generation]] | 沿用 Normal，ESG 已读；不能据此认定城市 / 建筑形状文法经典已读 |
 | [[Tile-Based Rendering]]、[[GPU-Driven Rendering]] | 沿用 Normal；From Splats to Silicon 提供性能分析阅读依据，不等于全部管线知识已掌握 |
