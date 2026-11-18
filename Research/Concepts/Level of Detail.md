@@ -144,6 +144,33 @@ $$\tau_t=\tau_{t-1}\cdot\frac{|F_{t-1}|}{m}$$
 
 另有一条工程细节值得记：FOMOS 的即时预览是**把中轴稀疏采样**（每 $k$ 个 cell 一个点）而网格仍用完整场——$k$ 从 1 到 32，$10240^3$ 的 TSDF 从 8.8 小时降到 **3.7 秒**。**估密度的量可以比被密化的对象便宜得多**，这与"LOD 的判据可以比被 LOD 的物体便宜得多"是同一个道理。
 
+## 最后一层有多低：LOD 链缺一个下界（2026-11-18 补）
+
+本页从头到尾在讲"**每帧挑哪一层**"与"**每层放什么**"。但有一条前提一直没写下来：**最后一层最低能做到多少。**
+
+这看起来是个工程问题（"你多给点预算不就行了"），其实不是。[[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation|RemeshingAgent 2026]] 把它写成了一条能算的式子：
+
+$$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\text{crease}}/\sqrt{\varepsilon_{\text{abs}}},\ 4n_{\text{sig}},\ c_4g\Big)$$
+
+**三个不同的 $\varepsilon$ 指数（$-1$、$-1/2$、$0$）让这个分解可辨识**——也就是说，你能从实测曲线里判断"现在哪一项在主导"。这在 LOD 语境里就是下面这张表：
+
+| 主导项 | 判据（怎么估） | "再降一档"会发生什么 |
+|---|---|---|
+| 曲率项 $\propto\varepsilon^{-1}$ | 曲面积分 $\int\sqrt{|K|}dA$ ÷ 目标边长 | 平滑地变糙，**正常降档** |
+| 折痕项 $\propto\varepsilon^{-1/2}$ | 硬边总长 ÷ $\sqrt\varepsilon$ | 硬边先圆掉，**可接受** |
+| **分量项 $4n_{\text{sig}}$** | **数连通分量**（30 秒） | **掉件**——不是变糙，是少了一个东西 |
+| 亏格项 $c_4g$ | 数洞 | 洞被填死 |
+
+**这就是"自动 LOD 把栏杆删了"的定量解释**，也是本页此前所有判据都漏掉的一类失效：**其他判据（屏幕误差、τ、像素覆盖）都在问"这一层够不够像"，没有一个在问"这一层还剩几件"。**
+
+> **给 LOD 链补的第三条判据（前两条是"换哪层"与"层里放什么"）**：
+> **"最低那一层的面数，够不够付它自己的件数？"** —— $4n_{\text{sig}}$ 是硬地板。
+> 不够时，**唯一的解法是把件数降下来**（生成时就要求连通 / 导入时清洗焊接），而不是给更多面。
+
+**这条判据与"可合并性"是同一族的两个前置条件**：那一节问"这一层能不能被造出来"，这一节问"造出来的这一层能不能成立"。**两者都不属于"挑选"，都属于"存在性"。**
+
+**顺带一个反向用途**：城市级 HLOD 把多栋楼合成一个代理时，$n_{\text{sig}}$ 会**先涨后降**（每栋楼各付各的 4 个面，合成之后才可能共享）。**所以"合并的收益"可以直接估成 $4\Delta n_{\text{sig}}$**——这比拿合并前后的面数比要准，因为面数里混着曲率项那部分。
+
 ## 可合并性：LOD 链的第三个前提（2026-11-09 补）
 
 本节标题里的"表示从哪来"这一栏，一直隐含一个假设：**更粗的那一级能造出来**。今天才看清这是个**可检验的条件**，不是天经地义。
@@ -204,6 +231,7 @@ $$\sigma_{\min}=\sqrt{\lambda_{\min}(JJ^\top)},\qquad \sigma_{\max}=\sqrt{\lambd
 | [[2026-11-05-Fujieda — Patch-Based Generalized Neural Texture Upscaling\|Fujieda 2026]] | 纹理线：把"层级存不存在"也交给采样时刻 |
 | [[2026-11-09-Franke — Hierarchical Incremental Beta Splatting for Online Reconstruction\|HIBS 2026]] | **合并能力**：闭式矩匹配 + 峰度反解 ⇒ 父级保形；紧支撑核上 KL 不适用 |
 | [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **合并的绕道**：属性搬出顶点，拓扑自由塌陷 |
+| [[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation\|RemeshingAgent 2026]] | **下界**：最后一层的面数下限 $F_{\min}$ 与分量项 $4n_{\text{sig}}$。**第一次给出"这一层能不能成立"的判据**（此前只有"够不够像"） |
 
 ## Related Concepts
 

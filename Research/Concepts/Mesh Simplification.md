@@ -66,6 +66,34 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 
 **为什么要放在一起看**：QEM 与 lfs 是两个几乎对称的判据——一个问"删掉这个顶点会错多少"，一个问"这个点周围需要多密的采样"。**它们都必须是光滑的**：QEM 要可加才能进堆，lfs 要 Lipschitz 才能让细化收敛（FOMOS 的 Lemma 1）。**判据不光滑，控制器就会在跳变处震荡**——这是两条线共用的同一条工程约束。
 
+## 下界：简化能做到多低（2026-11-18 补）
+
+本页此前只讲"怎么删"，**从没讲"最多能删到多少"**。而这两件事的难度完全不同：前者是算法，后者是理论。
+
+[[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation|RemeshingAgent 2026]] 给出了一个分解：
+
+$$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\text{crease}}/\sqrt{\varepsilon_{\text{abs}}},\ \mathbf{4n_{\text{sig}}},\ c_4g\Big)$$
+
+**前三项里最关键的是第三项。** 前两项是经典的逼近论（Fejes Tóth 1948 / Glasauer–Schneider 1996：光滑凸体的面数 $\Theta(\sqrt{\int|K|dA/\varepsilon})$），**指数分别是 $\varepsilon^{-1}$ 与 $\varepsilon^{-1/2}$——放松容差有用**。而 $4n_{\text{sig}}$ 的指数是 **$0$**：$n_{\text{sig}}$ 是"直径超过 $2\varepsilon\,\mathrm{diag}$ 的连通分量数"，**每个闭合壳至少要 4 个三角形才围得起来，这是拓扑，不是精度**。
+
+> **定理（分量悬崖）**：若预算 $F<\sum_k\max(4,\ c_1A_{\text{curv}}(S_k)/\varepsilon_{\text{abs}})$，则**不存在**任何 ≤ $F$ 面的网格同时满足 $\varepsilon$-逼近与同胚。
+
+证明是纯组合的：分量之间分离超过 $2\varepsilon\,\mathrm{diag}$ ⇒ 它们的 $\varepsilon$-邻域不相交 ⇒ **没有一个三角形能同时服务两个分量** ⇒ 每个壳自己付自己的地板。**与算法无关，与统计无关。**
+
+**这条定理对本页的意义**：它解释了那个所有人都见过、但没人说清的现象——**"简化到某个点之后，丢的不是精度，是零件"**。在引擎里的名字叫"自动 LOD 把栏杆删了"。
+
+| | 本页主线（怎么删） | 下界（能删到多少） |
+|---|---|---|
+| 判据 | 二次型误差 / 屏幕误差 | $F_{\min}$ 的四项分解 |
+| 主导变量 | 每一步删谁 | **分量数 $n_{\text{sig}}$** |
+| 失效时 | 翻面、改拓扑、UV 破裂 | **掉件**（熔毁） |
+| 补救 | 换算法 / 换代价度量 | **只能先减件数**（清洗 + 焊接），换算法无效 |
+
+**"先清洗再简化"因此不是经验，是理论强制的第一步**：清洗把 $n_{\text{sig}}$ 从 $n$ 降到 $n_{\text{sig}}\ll n$，$F_{\text{comp}}$ 跟着降。论文的实验把那一步的价值量化了——保守清洗 + QEM 只到 1/24，固定激进配方到 19/24，智能体到 24/24：**清洗承担了绝大部分效果，剩下的是"每个网格的差异"。**
+
+> **可立即用的动作**：任何"把这个模型压到 X%"的需求，先数一次连通分量。**如果 $4n_{\text{sig}}$ 已经超过预算，修不如重做。**
+
+
 ## 代价模型的演化（本页主线）
 
 ```text
@@ -146,6 +174,7 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 | [[2026-11-05-Li — DC-SQEM Medial Mesh Extraction by Dual Contouring with Spherical Quadric Error Metric\|DC-SQEM 2026]] | 同一套机器的 4 维用法：未知量加一个半径 ⇒ 从点云提中轴 |
 | [[2026-11-05-Wang — Perception Over Geometry Rethinking Gaussian Allocation in Mesh-based Splatting\|P-MGS 2026]] | 同一句话换了对象："误差可加 ⇒ 配额可解"，分的是高斯不是面 |
 | [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **不补属性，改搬走**：属性住到每面纹理上，拓扑只按几何走 |
+| [[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation\|RemeshingAgent 2026]] | **下界**：$F_{\min}$ 的四项分解 + 分量悬崖定理。**第一次回答"最多能删到多少"**，并证明低于 $4n_{\text{sig}}$ 无解 |
 
 ## Related Concepts
 
@@ -170,6 +199,7 @@ tags: [lod, geometry, mesh-simplification, budget, asset-pipeline, classical]
 2. **自动 LOD 的三个必查项**（验收用）：① **边界有没有缩**（地形/薄片）；② **UV 有没有撕**（花纹/法线贴图）；③ **轮廓有没有塌**（剪影是否还认得出）。**这三项都不在 QEM 的误差里。**
 3. **不要让 QEM 的世界空间误差直接进预算表**：不同尺度的物体不可比（一栋楼与一把刀差 3 个数量级）。要进预算，先换成屏幕空间误差（[[Level of Detail]] 的判据）。
 4. **"LOD 之间的过渡"是另一个问题**：本页只造货，不负责切换时的 pop（那是 geomorph / dither fade / 双面混合的活）。
+5. **（2026-11-18 新增）压不下去时，先数连通分量。** 一个 8,000 件的碎模型，预算里有 32,000 个面是"付给件数的"——**任何简化参数都动不了它**。数分量是 30 秒的动作，而它能提前告诉你"这个资产是修还是重做"。
 
 ## Personal Knowledge
 

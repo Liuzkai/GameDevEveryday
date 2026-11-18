@@ -112,6 +112,23 @@ tags: [lod, geometry, texture, attribute, pipeline, classical]
 
 > 这条也解释了为什么 DTM 的 Limitations 里那句"过滤未解"格外刺眼：**一旦外观层里混进了三种不同种类的量（连续 $\alpha,h$ / 方向 $n$ / 类别 $c$），本页 §③ 那套"不连续处必须显式声明"的规则，就要从"几何简化"搬到"纹理过滤"上重写一遍**——而后者没有任何工程先例。
 
+### 对照项：拒绝解耦的那一端（2026-11-18 补）
+
+上面三种解耦有一个共同前提：**几何的效果可以被拆出来、单独压缩**。1999 年的 [[Bidirectional Texture Function]] 选了相反的答案——**不拆，全测**。
+
+| | 解耦派（本页主线） | **不解耦（BTF）** |
+|---|---|---|
+| 几何的效果 | 编译成通道（$n,h,\alpha$）或换低模 | **连同结果一起存进 6 维表** |
+| 一个材质的账 | 几张 4 通道贴图 | **1.1 × 10¹⁰** 个数 |
+| 可编辑 | ✅ | ❌ 只能重测/重采样 |
+| 可平铺 | ✅ | ❌ 天生不能 |
+
+**它不是"更笨的做法"，是同一笔账的另一种付法**：解耦派把成本换成"编译规则 + 失效模式"（轮廓搬不动、透射搬不动、过滤没标准），BTF 把成本换成"存储 + 不可编辑"。
+
+**而 2026 年那条线（每材质压成一个 256 维码）证明了一件事**：**当存储便宜到某个点，"不解耦"重新变得可行**——代价从"存储"变成了"可编辑性"。这与本页 §③ 的判据是同一枚硬币：**解耦省的是运行时，付的是"哪些效果永远拿不回来"；不解耦省的是"哪些效果都不会丢"，付的是"什么都改不了"。**
+
+> **判据**：如果一项几何效果的**非局部半径只有一个 patch**（互反射的平均、大尺度图案），解耦就划不来——**那时候不解耦反而更省。** 这个阈值的名字是 [[Texture Filtering]] 的脚印尺寸。
+
 ## Important Papers
 
 | 论文 | 在这条线上的位置 |
@@ -122,6 +139,7 @@ tags: [lod, geometry, texture, attribute, pipeline, classical]
 | [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **存储解耦**：几何用经典 PM 算子自由改，外观用每面残差纹理独立保证 |
 | [[2026-11-09-Franke — Hierarchical Incremental Beta Splatting for Online Reconstruction\|HIBS 2026]] | **不完全是这条线，但给出对照**：合并保形靠"矩可加且可逆"，而不是靠更聪明的平均 |
 | [[2026-11-12-Silaghi — Deformable Texture Maps Compiling Dynamic Microgeometry into Neural Textures\|DTM 2026]] | **第三种解耦**：不解耦属性，**把微观几何本身编译成外观侧的 $\alpha,n,h,c$**。外观层第一次携带覆盖率与高度 |
+| [[Dana 1999 — Reflectance and Texture of Real-World Surfaces\|Dana 1999]] | **对照组（拒绝解耦）**：[[Bidirectional Texture Function\|BTF]] 把几何与外观一起测成一张 6 维表。**它给出了"解耦到底省了多少"的反向定价**（14 dB） |
 
 ## Related Concepts
 

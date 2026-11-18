@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-11-17
+updated: 2026-11-18
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 46
@@ -269,6 +269,9 @@ read_paper_count: 46
 
 > **2026-11-17 更新（资料侧；阅读状态无变化）**：**等值面提取开域（全库 `Marching Cubes` 曾 0 命中——221 篇论文、67 个概念里最反常的一个空洞）**——四篇一条线：[[Lorensen 1987 — Marching Cubes A High Resolution 3D Surface Construction Algorithm|MC 1987]]（真正的发明是"**拓扑 / 位置 / 法线**"三件事的拆分；"三角形数 ∝ 表面积"是此后四十年的靶子；`ambigu*` 全文 2 次**都在批评别人的轮廓拼接**）+ [[2026-11-17-Ohrhallinger — FOMOS Feature-Oriented Meshing of SDFs|FOMOS 2026]]（密度换成 ∝ **1/lfs²**（到中轴距离，吃到非局部信息）；复杂度 $O(n^3)\to$ 输出敏感；缺陷三角形 **11.86% → 0.00%**；⚠️ 但几何误差仍略输 MC）+ [[2026-11-17-Della Pietra — TetraCoder Adaptive Tetrahedral Encoding for Neural Fields|TetraCoder 2026]]（**插值规则决定可提取性**：三线性不保仿射、重心保 ⇒ 解析提取；⚠️ "解析 ≠ 便宜"）+ [[2026-11-17-Heidenreich — Pose-based Neural Clothing for Animated Characters|Neural Clothing 2026]]（229 维潜码对 14,460 DOF；**课程比架构便宜**；法线分布损失赢了 Curv、输了其余四项）。新建第 68 概念 [[Isosurface Extraction]]（三个决定 + 三种误差 + 四代谱系 + 五条 gap）。**今日新增判断：「分辨率不是精度，是自由度」**——**"网格更好"与"离曲面更近"是两个轴**，MC 在后一个轴上四十年没输。**Hard 两处**：受限 Delaunay 的 $\kappa$ 折算（只需记结论）、解析提取的 ReLU 胞划分。**已读账本仍 46 篇。**
 >
+
+> **2026-11-18 更新（资料侧；阅读状态无变化）**：**BTF 开域（全库 `grep "BTF\|Dana\|CUReT"` 曾 0 命中——227 篇论文、68 个概念里最后一个大空白；[[Microgeometry]] / [[Texture Filtering]] / [[Decoupling Geometry and Appearance]] 三页连续六天在描述一个没有名字、没有出处、没有终点的对象）**——三篇一条线：[[Dana 1999 — Reflectance and Texture of Real-World Surfaces|Dana 1999]]（**定义者**：2×2（尺度 × 方向）把 BTF 与 BRDF 分开；$\text{BRDF}=\frac1A\int_A\text{BTF}\,dx$ ⇒ **BRDF 是空间平均的产物，不是材料的本征属性**；61 样本 × 205 方向 ≈ **14,000 张 / 13 GB**（1999 年）；**13/205 ≈ 6.3% 的对照实验**是本库见到的最省钱的必要性证明）+ [[2026-11-18-Gokbudak — One Code per Material Neural Representation and Generation of Measured BTFs|Gokbudak 2026]]（**换记账单位而不是调压缩率**：每材质一个 **256 维码** + 全局共享解码器，32.56 dB、存储少 14×；⚠️ 但 **LPIPS 输给逐 texel**（0.183 vs 0.132），且采样出的材质要 **3.7 min/A100** 解码成 light–view 表；"重建"≠"泛化"）+ [[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation|Wang 2026]]（**给简化补了此前没人写的下界**：$F_{\min}\asymp\max(c_1A_{\text{curv}}/\varepsilon,\ c_2A_{\text{crease}}/\sqrt{\varepsilon},\ \mathbf{4n_{\text{sig}}},\ c_4g)$，**分量项对 ε 指数为 0** ⇒ "熔毁"是几何性质不是算法缺陷；**清洗承担绝大部分效果**：保守清洗+QEM 1/24 → 固定激进配方 19/24 → 智能体 24/24）。新建第 69 概念 [[Bidirectional Texture Function]]（三个非局部效应 / 五级表示阶梯 / 三条判据 / 五条 gap）。**今日新增判断：「零阶项住在哪」**——预算里**对容差指数为 0** 的那一项，才是决定"再降一档会不会掉件"的东西；网格侧它是连通分量数 $4n_\text{sig}$，材质侧它是 patch 尺寸（⇒ 不可平铺）。**Hard 两处**：Rusinkiewicz $(h,d)$ 半角/差角参数化（各向异性 BTF 必须保留方位角）、rectified flow 的 class-conditional 采样。**已读账本仍 46 篇。**
+
 ## 工作背景与已有基础
 
 沿用原有背景：资深游戏技术美术，工作涉及材质、Houdini 过场特效与 PCG；Houdini、Maya、Unreal Engine、Substance 为熟悉工具。PBR 材质制作是强项；渲染底层、角色/体积/水体渲染、游戏动画系统和 PCG 算法仍需按具体主题判断。
@@ -314,6 +317,7 @@ read_paper_count: 46
 | [[Participating Media]]、[[Linear Transport Theory]] 的概念层 | 沿用概念笔记 Normal，新增 GPIS / Dupuy / Grid-Free 阅读覆盖；随机几何与输运推导另列 Hard |
 | [[Isosurface Extraction]]（★ 2026-11-17 新增） | 等值面提取开域：MC 的机制（8 位索引 / 14 模式 / 线性插值 / 中心差分）是 Easy（本科内容，也是写 shader 的常识）；**"三个决定"的拆法**（拓扑从哪来 / 位置从哪来 / 密度从哪来）与**"三角形 ∝ 表面积 vs ∝ $1/\mathrm{lfs}^2$"**这条判据是 Normal 的核心。**Hard 两处**：受限 Delaunay 的 ε-sampling 证明（只需记"ε 会被 $\kappa$ 打折、$\kappa\le1$ 无条件"）、解析提取的 ReLU 胞划分。**缺口：DC 的 QEF 与 MC33 的歧义判据都没有原文**——"顶点位置"与"拓扑不自洽"这两块在库里仍然是空的 |
 | [[Atmospheric Scattering]]（★ 2026-11-16 新增） | 天空域开域：三个量 + 两种粒子 + 一个嵌套积分的**结构层 Normal**；三族成本（ray march / 解析 / LUT / 解析+级数）与三种边界（平板 / 有界 / 球壳）可读。**Hard 两处**：$f_{ms}$ 的解析积分与 $[0,1]$ 归一化、以及多阶散射的方向性（为何 $g$=0.8 时误差 6.7 倍）。**待补：Bruneton 2008 全文未取**，下一步走作者开源代码反读 |
+| [[Bidirectional Texture Function]]（★ 2026-11-18 新增） | BTF 开域：**三个非局部效应**（视差 / 自阴影 / 互反射）与"它们为什么不是高频问题"是 **Easy**（做材质的人天天见，只是没有名字）；**定义层 Normal**——六维函数 + `BRDF = 空间平均`这个等式，以及**它何时成立由"脚印 vs texel"决定**（与 [[Texture Filtering]] 同一把尺子）。**表示阶梯**（$10^{10}$ 实测 → 分解式 $10^5$–$10^7$ → 神经 1.6–5.4 M → 全局码 256）承载"换单位 vs 调额度"的判据。**Hard 两处**：Rusinkiewicz $(h,d)$ 参数化（方位角在各向异性下不能丢）、rectified flow 的条件采样与 classifier-free guidance。**缺口**：205 方向之间怎么插值（原文未解）、游戏级 BTF 运行时零样本、生成样本的角向保真度无人评 |
 | [[Procedural Content Generation]] | 沿用 Normal，ESG 已读；不能据此认定城市 / 建筑形状文法经典已读 |
 | [[Tile-Based Rendering]]、[[GPU-Driven Rendering]] | 沿用 Normal；From Splats to Silicon 提供性能分析阅读依据，不等于全部管线知识已掌握 |
 | [[Neural Upscaling and Frame Generation]]、[[Temporal Stability and Artistic Intent]] | 沿用 Normal；DLSS 5 / Magpie 可作为已读对照，项目内效果与延迟尚未验证 |
