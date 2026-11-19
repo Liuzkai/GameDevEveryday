@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-11-18
+updated: 2026-11-19
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 46
@@ -272,6 +272,9 @@ read_paper_count: 46
 
 > **2026-11-18 更新（资料侧；阅读状态无变化）**：**BTF 开域（全库 `grep "BTF\|Dana\|CUReT"` 曾 0 命中——227 篇论文、68 个概念里最后一个大空白；[[Microgeometry]] / [[Texture Filtering]] / [[Decoupling Geometry and Appearance]] 三页连续六天在描述一个没有名字、没有出处、没有终点的对象）**——三篇一条线：[[Dana 1999 — Reflectance and Texture of Real-World Surfaces|Dana 1999]]（**定义者**：2×2（尺度 × 方向）把 BTF 与 BRDF 分开；$\text{BRDF}=\frac1A\int_A\text{BTF}\,dx$ ⇒ **BRDF 是空间平均的产物，不是材料的本征属性**；61 样本 × 205 方向 ≈ **14,000 张 / 13 GB**（1999 年）；**13/205 ≈ 6.3% 的对照实验**是本库见到的最省钱的必要性证明）+ [[2026-11-18-Gokbudak — One Code per Material Neural Representation and Generation of Measured BTFs|Gokbudak 2026]]（**换记账单位而不是调压缩率**：每材质一个 **256 维码** + 全局共享解码器，32.56 dB、存储少 14×；⚠️ 但 **LPIPS 输给逐 texel**（0.183 vs 0.132），且采样出的材质要 **3.7 min/A100** 解码成 light–view 表；"重建"≠"泛化"）+ [[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation|Wang 2026]]（**给简化补了此前没人写的下界**：$F_{\min}\asymp\max(c_1A_{\text{curv}}/\varepsilon,\ c_2A_{\text{crease}}/\sqrt{\varepsilon},\ \mathbf{4n_{\text{sig}}},\ c_4g)$，**分量项对 ε 指数为 0** ⇒ "熔毁"是几何性质不是算法缺陷；**清洗承担绝大部分效果**：保守清洗+QEM 1/24 → 固定激进配方 19/24 → 智能体 24/24）。新建第 69 概念 [[Bidirectional Texture Function]]（三个非局部效应 / 五级表示阶梯 / 三条判据 / 五条 gap）。**今日新增判断：「零阶项住在哪」**——预算里**对容差指数为 0** 的那一项，才是决定"再降一档会不会掉件"的东西；网格侧它是连通分量数 $4n_\text{sig}$，材质侧它是 patch 尺寸（⇒ 不可平铺）。**Hard 两处**：Rusinkiewicz $(h,d)$ 半角/差角参数化（各向异性 BTF 必须保留方位角）、rectified flow 的 class-conditional 采样。**已读账本仍 46 篇。**
 
+> **2026-11-19 更新（资料侧；阅读状态无变化）**：**抗锯齿开域（全库 `grep -i "anti-alias"` 只命中 2 个文件、零页承载——228 篇论文、69 个概念里唯一一处"每个像素都要过一遍"的决策没有页面）**。今日三篇连读构成"**三个常数假设**"：**① 面积采样假设原语内部恒定**——[[Catmull 1978 — A Hidden-Surface Algorithm with Anti-Aliasing|Catmull 1978]]（**A 经典·历史重要性 5**，SIGGRAPH '78 六页）把像素从"一个点"改成"一块面积"，代价当场写明（每个像素跑一次隐藏面，关掉积分器快约 3 倍），而"面积 × 颜色"成立的唯一理由就是**原语内部颜色恒定**；**② 合成假设像素内 alpha 恒定**——[[2026-11-19-Zoomers — ATS Anti-Aliased Triangle Splatting with Exact Per-Primitive Integrals|ATS 2026]]（**A**）把 Triangle Splatting 的窗口 $u^\sigma$ 在像素上的积分算成闭式（角平分线切三块 → 换坐标 → Green 定理折边界），**1×1 精确积分 34.5 dB 输给 2×2 点采样 36.2**，而按 2×2 子像素各算一次 ⇒ **43.3**：**精确解的价值不是画质，是让剩下那项误差第一次可归因**；**③ 缓存假设块内成员恒定**——[[2026-11-19-Yilmaz — DOOM-GS Dynamic Out-of-core Optimization for Massive Gaussian Splatting|DOOM-GS 2026]]（**A-**）把 out-of-core 推到动态场景，**1,800 块的显存预算约束"同时驻留"而不是"这一帧要画多少"**（一帧可见约 4,800 块，覆盖率仍 100%），而时空重排几乎不动画质（**0.28 dB**）却值 **6.7×** 时间 ⇒ **局部性只买时间，不能用画质验收**。**新建第 70 概念 [[Anti-Aliasing]]**（三条路 × 三种代价形状 × 三种失效方式；Catmull 1978 那条"定性 vs 定量"判据今天仍能评价 TAA / DLSS / 后处理 AA）。**三条判据**：① 面积采样只在"原语内部是常数"时成立 ② 精确解的价值不在画质在归因 ③ 局部性是一笔纯时间投资。**回填 3 页**：[[Gaussian Splatting]]（第三条被忽略的轴：原语在像素内是不是常数 + 剔除判据从启发式变上界）、[[Streaming]]（第三条隐含条件：块必须保持紧凑；把"容量换时间"改写成"容量换命中率"）、[[Budget Units]]（第 ⑫ 种计价对象「驻留」：同时在场 vs 总量，与 11-15 的 ⑧ 同构）。**一个跨时代观察**：Catmull 1978 自陈精确面积采样比不做好**约 3 倍**，ATS 2026 实测 **2.49×** ——四十八年、两套硬件、同一个倍率（⚠️ 基线不同，可能是巧合，已在笔记里标冷水）。
+
+
 ## 工作背景与已有基础
 
 沿用原有背景：资深游戏技术美术，工作涉及材质、Houdini 过场特效与 PCG；Houdini、Maya、Unreal Engine、Substance 为熟悉工具。PBR 材质制作是强项；渲染底层、角色/体积/水体渲染、游戏动画系统和 PCG 算法仍需按具体主题判断。
@@ -318,6 +321,7 @@ read_paper_count: 46
 | [[Isosurface Extraction]]（★ 2026-11-17 新增） | 等值面提取开域：MC 的机制（8 位索引 / 14 模式 / 线性插值 / 中心差分）是 Easy（本科内容，也是写 shader 的常识）；**"三个决定"的拆法**（拓扑从哪来 / 位置从哪来 / 密度从哪来）与**"三角形 ∝ 表面积 vs ∝ $1/\mathrm{lfs}^2$"**这条判据是 Normal 的核心。**Hard 两处**：受限 Delaunay 的 ε-sampling 证明（只需记"ε 会被 $\kappa$ 打折、$\kappa\le1$ 无条件"）、解析提取的 ReLU 胞划分。**缺口：DC 的 QEF 与 MC33 的歧义判据都没有原文**——"顶点位置"与"拓扑不自洽"这两块在库里仍然是空的 |
 | [[Atmospheric Scattering]]（★ 2026-11-16 新增） | 天空域开域：三个量 + 两种粒子 + 一个嵌套积分的**结构层 Normal**；三族成本（ray march / 解析 / LUT / 解析+级数）与三种边界（平板 / 有界 / 球壳）可读。**Hard 两处**：$f_{ms}$ 的解析积分与 $[0,1]$ 归一化、以及多阶散射的方向性（为何 $g$=0.8 时误差 6.7 倍）。**待补：Bruneton 2008 全文未取**，下一步走作者开源代码反读 |
 | [[Bidirectional Texture Function]]（★ 2026-11-18 新增） | BTF 开域：**三个非局部效应**（视差 / 自阴影 / 互反射）与"它们为什么不是高频问题"是 **Easy**（做材质的人天天见，只是没有名字）；**定义层 Normal**——六维函数 + `BRDF = 空间平均`这个等式，以及**它何时成立由"脚印 vs texel"决定**（与 [[Texture Filtering]] 同一把尺子）。**表示阶梯**（$10^{10}$ 实测 → 分解式 $10^5$–$10^7$ → 神经 1.6–5.4 M → 全局码 256）承载"换单位 vs 调额度"的判据。**Hard 两处**：Rusinkiewicz $(h,d)$ 参数化（方位角在各向异性下不能丢）、rectified flow 的条件采样与 classifier-free guidance。**缺口**：205 方向之间怎么插值（原文未解）、游戏级 BTF 运行时零样本、生成样本的角向保真度无人评 |
+| [[Anti-Aliasing]]（★ 2026-11-19 新增） | 抗锯齿开域：**三条路 × 三种代价形状**（多采样 $\propto N\times$ 像素数 / 预滤波改表示 / 解析积分与分辨率无关）是 **Normal**——每条路都能对着游戏截图说出"它属于哪条"；Catmull 1978 的"定性 vs 定量"判据（平移下强度和是否不变）是 **Easy 到 Normal 的桥**，一句话即可用；**Hard 留给绿定理与变限求导**（ATS §3.2–3.4 的移动边界项为什么为零）。下一处缺口：**误差形状的定量语言**（Dippé & Wold 1985，库内无）——没有它就只能说"结构化伪影更难看"，说不出"多结构化" |
 | [[Procedural Content Generation]] | 沿用 Normal，ESG 已读；不能据此认定城市 / 建筑形状文法经典已读 |
 | [[Tile-Based Rendering]]、[[GPU-Driven Rendering]] | 沿用 Normal；From Splats to Silicon 提供性能分析阅读依据，不等于全部管线知识已掌握 |
 | [[Neural Upscaling and Frame Generation]]、[[Temporal Stability and Artistic Intent]] | 沿用 Normal；DLSS 5 / Magpie 可作为已读对照，项目内效果与延迟尚未验证 |

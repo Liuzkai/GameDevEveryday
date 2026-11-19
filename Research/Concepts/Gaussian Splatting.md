@@ -68,6 +68,7 @@ NeRF（隐式 MLP + volume rendering，慢）
 | 2023 | 3DGS | 椭圆（可学协方差） | 推导 + 学习 | 一个色 + 视角相关 SH |
 | 2024 | 2DGS | 面元（仍是椭圆） | 同上 | 同上 |
 | 2025 | Triangle / Mesh Splatting | 三角形 | **选**（多边形铺砌） | 顶点插值 |
+| **2026** | **[[2026-11-19-Zoomers — ATS Anti-Aliased Triangle Splatting with Exact Per-Primitive Integrals\|ATS]]** | **三角形（窗口 $u^\sigma$）** | **选** | 顶点插值 + **窗口函数（幂次）** |
 | **2026** | **[[2026-10-27-Kaushik — Hexels Compact Hexagonal Primitives for Scene Rendering\|Hexels]]** | **六边形（软边）** | **选**（等周长下面积最大） | **一阶线性色场** |
 | **2026** | **[[2026-11-11-Shramko — Spaghetti Splatting Differentiating Curvilinear Dirac Masses via Convolution\|Spaghetti Splatting]]** | **线段 / 折线（1 维）** | **学**（端点 + 长度） | 一个色 + **连通性（端点、拓扑）** |
 
@@ -78,6 +79,21 @@ NeRF（隐式 MLP + volume rendering，慢）
 3. **覆盖次数**：Hexels 的 overdraw 从 **10.47 → 2.48 blends/px**，而这一项**与颜色场几乎无关**——它是纯形状效应。**颜色场买"表达量"，六边形买"覆盖次数"，这是两笔账。**
 
 **对预算的直接意义**：GS 的预算表通常只有"高斯个数"一列。补上这两列后，"同预算"才有定义——**同原语数、同模型内存、同训练显存、同渲染 FPS 是四个不同的预算**，Hexels 那篇里 2DGS 对 3DGS 的差距就从 −2.64 dB 变到 −1.73 dB，**只因为分母换了**。
+
+### 第三条被忽略的轴：原语在像素内是不是常数（2026-11-19 补，随 ATS 入库）
+
+上面两列（形状、容量）都在**原语内部**做文章。还有一条轴在**原语外部**：**这个原语在一个像素的覆盖面积上，贡献是不是常数？**
+
+- 3DGS 与 Surface Splatting 都是**常数**（一个原语一个色）⇒ 像素值 = 覆盖率 × 颜色 ⇒ [[Catmull 1978 — A Hidden-Surface Algorithm with Anti-Aliasing|Catmull 1978]] 的"面积 × 颜色"直接可用。
+- Triangle Splatting 的窗口是 $I(p)=\mathrm{ReLU}(-\phi(p)/r)^\sigma$（$\phi$ 是到最近边的距离）⇒ **在三角形内部就是一个函数** ⇒ 面积不够，必须真的求 $\iint u^\sigma\,dA$。
+- [[2026-11-19-Zoomers — ATS Anti-Aliased Triangle Splatting with Exact Per-Primitive Integrals|ATS]] 给出闭式：角平分线把三角形切成三块（每块里窗口只依赖一条边）→ 换坐标 → Green 定理折成"每条边一项"。
+
+**两条推论**：
+
+1. **"抗锯齿"在 splat 类表示里不是后处理，是原语定义的一部分**。窗口选成什么形状，直接决定积分有没有闭式；选成高斯就没有（Analytic-Splatting 只能近似），选成"到边的幂"就有。
+2. **它顺带改了一个剔除判据**。原始实现剔除"内切半径 < 1 像素"的三角形——在 1/8 分辨率下这等于**把整个场景删掉**（PSNR 27.2 → 18.0 dB）。ATS 换成"整块三角形的积分都到不了 alpha 阈值才剔"，因为任何像素的积分都不超过整块积分，这条剔除是**可证视觉无损**的。**同一件事，从启发式变成上界。**
+
+**代价**：精确积分比点采样慢 2.5–2.6×（202→81 FPS @训练分辨率、69→27 @1/8），且 PSNR 多数时候仍输给 2×2 超采样——因为剩下那一项误差（**每像素一个标量 alpha**）比采样误差更主导。参 [[Anti-Aliasing]]。
 
 ### 支撑与核：两个正交轴（2026-11-11 补，随 Spaghetti Splatting 入库）
 
