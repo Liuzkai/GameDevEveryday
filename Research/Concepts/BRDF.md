@@ -87,6 +87,7 @@ $$\text{BRDF}(\omega_i,\omega_o)\;=\;\frac{1}{A}\int_A \text{BTF}(x,\omega_i,\om
 | **失效边界** | [[Hair Rendering]]（Kajiya-Kay 1989 / Marschner 2003） | 细长散射体 + 透射，**标准微面 BRDF 不适用** |
 | 生产参数化 | Disney Principled 2012 → Karis UE4 2013 | 实时化，美术友好 |
 | 进引擎 | [[Karis — Real Shading in Unreal Engine 4 (2013)]] | D 取 GGX 且 $\alpha=$Roughness²、G 用 Schlick 形式配 $k$、F 用球面高斯；**环境光走 [[Split-Sum Approximation]]**（2026-09-18 入库） |
+| **物理漫反射（粉尘）** | [[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces\|Blinn 1982]]（Lommel–Seeliger / Hapke–Irvine 极限） | $B\propto\omega\,\varphi(\alpha)\,\dfrac{\mu_0}{\mu_0+\mu}$：**漫反射不是 Lambert**——它是"一层尘埃的单次散射"在 $\tau\to\infty$ 的极限；满月整盘亮度与 $\mathbf N$ 无关正是这个式子的推论 ★ 2026-11-22 入库 |
 | **同源漫反射** | [[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] | **漫反射与镜面使用同一套微面假设**（GGX+Smith 下的 diffuse 解："最多丢一半"→ multi=0.1159α）；**"specular 分母的 4 = (L+V=2H·V) 的平方"**；UE 的 k=α/2 与 Smith 推导同源；理想 Lambert 缺 5% ★ 2026-10-05 入库 |
 | 测量数据 | MERL 100 材质库（2003） | 验证基准 |
 
@@ -103,6 +104,7 @@ $$\text{BRDF}(\omega_i,\omega_o)\;=\;\frac{1}{A}\int_A \text{BTF}(x,\omega_i,\om
 - [[Bidirectional Texture Function]]（★ **另一个方向的"超集"：BRDF 是它在空间维上的平均**；判据是"脚印 vs texel 尺寸"——2026-11-18 建页。**两条超集关系正好对应两个被平均掉的自变量：出点位置、表面位置**）
 - [[Split-Sum Approximation]]（★ 2026-09-18 入库：BRDF 的半球积分在实时里怎么变成查表——**F 用 Schlick 形式是它能被因式分解的前提**）
 - [[Participating Media]]（对偶：微面 = 随机表面，介质 = 随机体积；2026 工作已把两者打通）
+- [[Single Scattering]]（**同一个"只算一次"，两个域**：表面侧是 $D\,G\,F$，介质侧是 $\omega\varphi(\alpha)$ 的闭式；2026-11-22 建页）
 - [[Physically Based Rendering]]（BRDF 是 PBR 的数学核心）
 - [[Global Illumination]]（BRDF 决定 bounce 的能量分配）
 - [[Inverse Rendering]]（BRDF 是要被反解的对象）

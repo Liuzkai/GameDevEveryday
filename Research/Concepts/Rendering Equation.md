@@ -34,6 +34,8 @@ $$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)
 Whitted 递归光线追踪（1980，镜面特解）
 Radiosity（[[Goral — Modeling the Interaction of Light Between Diffuse Surfaces (1984)|Goral et al. 1984]]，漫反射互反射特解；"视角无关⇒可预计算"）
   ↓
+1982 [[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces|Blinn 体积闭式]]（方程尚未写出，**体积那一半已用"平板 + 单次散射"积出来了**）
+  ↓
 ★ Kajiya 统一表述（1986）→ [[Kajiya — The Rendering Equation (1986)]]
   ↓
 双向 PT / MLT / Photon Mapping（1993-1997，求解器多样化）
@@ -48,6 +50,7 @@ Radiosity（[[Goral — Modeling the Interaction of Light Between Diffuse Surfac
 ## Important Papers
 
 - [[Kajiya — The Rendering Equation (1986)]]（提出 + path tracing 发明）
+- [[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces|Blinn 1982]]（**体积版的先行闭式**：比方程早四年，把"穿过介质"写成 $B+\mathrm{Tr}\cdot B_{\rm bkg}$；2026-11-22 入库）
 - [[Cook-Torrance — A Reflectance Model for Computer Graphics (1981)]]（$f_r$ 侧奠基）
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]（漫反射特例的 SH 压缩解）
 - [[2026-09-14-Gaussian Light Transport]]（2026 前沿：残差优化直接拟合解）

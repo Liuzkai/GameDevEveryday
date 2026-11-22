@@ -45,6 +45,20 @@ $$(\omega\cdot\nabla)L(x,\omega) = -\sigma_t L + \sigma_s\int_{S^2} f_p(\omega'\
 
 这直接解释了为什么 **OverDraw 是六大实测指标里最"贵"的那个**——OverDraw 高意味着同一像素被多层半透明反复着色，而半透明的着色成本正是体积渲染成本的近亲。
 
+### 路径 0：让积分有闭式（1982；2026-11-22 补）
+
+上面那笔账 $\text{步数}\times\text{每步查询}$ 有一个共同前提：**积分必须算**。1982 年的做法不同——**换一个能积出来的模型**。
+
+[[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces|Blinn 1982]] 假设"一层均匀球粒 + 只散射一次 + 遮挡是泊松过程"，整条视线就积出一个闭式：
+
+$$B=\omega\,\varphi(\alpha)\,\frac{\mu_0}{\mu_0+\mu}\left[1-e^{-\tau\left(\frac{1}{\mu_0}+\frac{1}{\mu}\right)}\right],\qquad \tau=n\pi\rho^2T$$
+
+**它不是"低精度的近似"，而是"换了一个问题"**：把空间变化的密度换成一层常数 $\tau$，把多次散射换成 $\omega$ 小。代价是**云的形状与内部结构全部消失**——所以 1984 年 Kajiya 立刻转向"任意密度 + 数值积分"。
+
+**但它留下的东西比它的限制更长寿**：$1-e^{-\tau}$ 的饱和形状、$\mu_0/(\mu_0+\mu)$ 的两段路径、以及 $B+\mathrm{Tr}\cdot B_{\text{bkg}}$ 这个合成算子——今天所有指数雾、软粒子、水下后处理都还在用。
+
+> **判据：先问"这个积分有没有闭式"，再问"怎么算得快"。** 有闭式就用闭式（雾、平板云），没有才进采样（有界体积、空间变化的密度）。**反解侧同理**：两项模型之所以能被解出来，也是因为它有闭式。
+
 ### 第四条便宜路：不算（2026-11-13 补）
 
 上面那笔账 $\text{步数}\times\text{每步查询}$ 给出了三条省钱的路，四十年基本都在这三条里：**减步数**（froxel / 时域重投影）、**减每步**（阴影复用、低阶相位）、**算完再修**（降噪）。第三条隐含一个假设：**那个标量（辐亮度）有一个可估的期望，只是估计量噪声大**。
@@ -156,9 +170,9 @@ $$q=T^D+T^S,\qquad T^S=\eta\left(1-e^{-\beta^f r}\right)\ \Longrightarrow\ q\ \g
 ```text
 Chandrasekhar 1960 —— RTE 在天体物理中成型
         ↓
-Blinn 1982 —— 把参与介质引入计算机图形学（"Light Reflection Functions for Simulation of Clouds and Dusty Surfaces"）
+Blinn 1982 —— 把参与介质引入计算机图形学（[[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces|平板 + 单次散射的闭式]]；Hapke–Irvine 极限解释满月）
         ↓
-Kajiya & Von Herzen 1984 —— 体积光线步进（Ray Marching）
+Kajiya & Von Herzen 1984 —— 任意三维密度 + 沿视线数值积分（目标明确：高反照率下的多次散射）
         ↓
 1992  Farrell et al.（医学物理）—— 偶极子模型测组织光学参数（图形学之外）
         ↓
@@ -199,11 +213,14 @@ Wronski / Siggraph 2014-2019 —— UE4 体积雾、寒霜的 froxel volumetric�
 | [[Bruneton 2017 — A Qualitative and Quantitative Evaluation of 8 Clear Sky Models\|Bruneton 2017]] | **量尺**：证明最准的 CG 模型已撞到"参数地板"，精度不再是积分问题 |
 | [[2026-11-20-Chhetri — NIRJALA Draining the Sea out of Gaussian Splatting\|NIRJALA 2026]] | **第七条路（反解）**的代表：三项光路让反演增益有界（$1/q\le1/\kappa$），并指出同一个 $q$ 就是前向梯度；10 参数锚解决（部分）可辨识性 |
 | [[Narasimhan 2002 — Vision and the Atmosphere\|Narasimhan & Nayar 2002]] | **反向的源头**：两项加法 + 二色平面；也是"前向散射可以忽略"这条后来被推翻的理由的出处 |
+| [[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces\|Blinn 1982]] | **路径 0（闭式）的源头**：平板 + 单次散射 + 泊松遮挡；Hapke–Irvine 极限；$B+\mathrm{Tr}\cdot B_{\rm bkg}$ 是后来所有两项模型的原型 |
+| [[Akkaynak 2019 — Sea-thru A Method For Removing Water From Underwater Images\|Sea-thru 2019]] | **反解侧的第一个可执行版本**：$\beta^D\neq\beta^B$ 且 $\beta^D=\beta^D(z)$（两项指数）；**S3 比 raw 更差** ⇒ 半个正确模型会主动制造误差 |
 
 ## Related Concepts
 
 - [[Rendering Equation]]（表面版 ↔ RTE 体积版）
 - [[Subsurface Scattering]]（★ **同一条方程，一个有边界一个没有**——那是本页与它的全部差别；2026-11-14 建页）
+- [[Single Scattering]]（**本页所有路径的"第 0 阶"**：判据是 $\omega\tau$ 而不是"厚不厚"；2026-11-22 建页）
 - [[Microfacet Theory]]（**对偶关系**：微面 = 随机表面的统计；参与介质 = 随机体积的统计；2026 的工作证明它们是同一套随机几何的两端）
 - [[Neural Rendering]]（神经体积表示是当下主流路线）
 - [[Gaussian Splatting]]（同属体积/半透明渲染，同样受排序与 OverDraw 支配）

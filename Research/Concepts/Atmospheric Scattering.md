@@ -72,6 +72,7 @@ $$L_{scat} = \sigma_s \sum_i T(c,x)\,S(x,l_i)\,p(v,l_i)\,E_i,\qquad S = V\!is(l_
 | 年 | 工作 | 突破 | 遗留 |
 |---|---|---|---|
 | 1950 | Chandrasekhar《Radiative Transfer》 | 理论完备 | 不实时 |
+| **1982** | **[[Blinn 1982 — Light Reflection Functions for Simulation of Clouds and Dusty Surfaces\|Blinn（平板云）]]** | **两项形状第一次出现**：$B+\mathrm{Tr}\cdot B_{\rm bkg}$（单次散射 + 透射率）；衬着 Hapke–Irvine 极限 | 平板、常数密度、无球壳几何 |
 | **1993** | **Nishita et al.** | 首个物理正确的天空渲染（球壳 + ray march + 单散射） | 少算约 1/3 辐照度 |
 | 1996 | Nishita et al. | 加二阶散射（8 方向体素） | 换太阳角要重烘 |
 | 1999 | Preetham et al. | 解析拟合，$O(1)$ | 实测高估 2×；只有地面 |
