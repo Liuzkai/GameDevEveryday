@@ -93,6 +93,7 @@ GPU 运行时收益（kernel 时间、内存流量）
 
 - [[Compact Neural Appearance Models for Efficient Gaussian Splatting]]（被测量的那类"算法层优化"）
 - [[TileGS — Tile-Local Depth Binning for Gaussian Splatting Rasterization]]（同上，GPU 运行时层）
+- [[2026-11-24-Nge — PennyGS Full Resolution 3DGS Training in Minutes on Consumer GPUs|PennyGS 2026]] —— **本页框架的第一个完整执行者**。本页说"workload 减少必须传导到下游执行才算数"，PennyGS 就是逐 stage 把 workload 删掉、并给出传导后的分阶段时间（含 55.7 ms × 30k = 27.9 min ≈ 实测 27m03s 的交叉验证）。**两篇合读：一篇给尺子，一篇给施工图。**
 
 ## Personal Knowledge State
 

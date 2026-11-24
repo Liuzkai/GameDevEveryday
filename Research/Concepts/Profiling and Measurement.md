@@ -112,6 +112,22 @@ $$\underbrace{\Delta}_{\text{预算}-\text{实测}}=\underbrace{\delta_{\text{�
 
 > **三者的和一旦大于你要检测的效应，这次测量就是无效的**——不是"结果不理想"，是"**没有结果**"。
 
+## 分阶段账本：把"贵"拆成一个向量（2026-11-24 补）
+
+**总时间是标量，但成本不是。** 一个"这一步很贵"的判断，只有在把它拆成"**哪类对象 × 哪个阶段**"之后才有归因能力。2026-11-24 同一天入库的两篇论文，用两种完全不同的系统各自验证了这件事：
+
+| | [[2026-11-24-Nge — PennyGS Full Resolution 3DGS Training in Minutes on Consumer GPUs\|PennyGS 2026]]（3DGS 训练） | [[2026-11-24-Lyu — ParaBMG A Parallel Block Multigrid Framework for Large-Scale Evolving Sparse Systems on Unstructured Meshes\|ParaBMG 2026]]（稀疏求解） |
+|---|---|---|
+| 拆的维度 | **阶段** × **三种压力**（多 splat / 多像素 / 少带宽） | **阶段** × **时间尺度**（setup 一次 / update 每次 / apply 每迭代） |
+| 最贵的那一项 | 反向光栅 42→47%，但**改分辨率后 loss 从 9% 涨到 26%** | "迭代"通常最贵，但在演化系统里 **update 占 20.5%** |
+| 拆完得到什么 | "最贵的 stage 会换人" ⇒ 单点优化必然失效 | 迭代数最少的解 **慢 48 倍**（21.9 次 / 1318 ms vs 50.4 次 / 27 ms） |
+| 可交叉验证的账 | 55.7 ms/步 × 30k 步 = 27.9 min ≈ 实测 27m03s（差 3%） | $T=T_{\rm setup}+N(T_{\rm update}+n_{\rm iter}T_{\rm iter})$ 逐项有数 |
+
+> **判据（本页新增第四条）：一个"总时间"如果没有被拆成"哪类对象 × 哪个阶段"的矩阵，它只能用来做验收，不能用来做归因。**
+> 而且拆完要**至少换一个条件重测**——PennyGS 的三列、ParaBMG 的 $\alpha$ 扫描，本质都是"换条件看排序会不会翻转"。**排序不翻转，才知道那项是真瓶颈。**
+
+**推论（对游戏侧的用法）**：性能预算表里那一列"毫秒"，其实欠了一个维度。**同一个 2 ms，在"每帧一次"和"每次迭代一次"里是两个完全不同的量。**
+
 ## Historical Evolution
 
 ```text

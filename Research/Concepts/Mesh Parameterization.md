@@ -165,6 +165,7 @@ Campen/SLIM/TutteNet  用"组合条件 / 约束优化 / 复合构造"把保证�
 - **[[Subdivision Surfaces]]**：同一族"几何处理"工作，且共享同一种叙事结构——**一个 1960/70 年代的数学结果，被工程需求反复重写**（Catmull-Clark 1978 → Stam 1998 求值 → DeRose 1998 生产化）。参数化这条线（Tutte 1963 → LSCM 2002 → 2026 流）是它的平行故事。**两者的分界**：细分解决"曲面怎么表示"，参数化解决"曲面怎么摊平"；
 - **[[Skinning]]**：另一个"把一个空间的东西搬到另一个空间"的问题。**结构上同源**（都是"用一组权重把若干变换/位置混合起来"），**但保证完全不同**：蒙皮要的是"混合后仍是刚体"（[[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|DQS]] 解决），参数化要的是"映射后仍是单射"。**两篇经典可以并读**：都在问"混合/求解之后，那个好性质还在不在"；
 - **[[Physically Based Rendering]]**：UV 的下游消费者。**参数化的失真会以"贴图看起来被拉长"的形式出现在 PBR 材质里**——而美术往往归因于贴图本身；
+- **[[Multigrid]]**（**2026-11-24 补：那张表最后一列的价钱**）：上面"保证对照表"的成本列有七行写着"一次线性求解"——**而"一次"是骗人的**：边界控制点一动、手柄一拖，就要重解一次，一拖就是几十上百次。[[2026-11-24-Lyu — ParaBMG A Parallel Block Multigrid Framework for Large-Scale Evolving Sparse Systems on Unstructured Meshes|ParaBMG 2026]] 把 QHM（变边界约束的准调和映射）做成"拖边界点、UV 实时跟"，靠的不是更快的求解器，是**层级复用**（稀疏结构不变 ⇒ 建一次用一万次）。**判据：'一次线性求解'的成本要看你要解多少次。**
 - **[[2026-10-22-Kaushik — A Tutte-Like Theorem for Injective Flows on Meshes|Kaushik & Aigerman 2026]]**：把"参数化"的数学搬到"流"上。**参数化是"每点去哪"，流是"每点沿什么路径走"**——同一套调和理论的两个用途。
 - **[[2026-10-30-Liu — Texture Consolidation of Generated Multi-View Renderings|Liu 2026]]**：atlas 的**下游消费者**，也是把"接缝"从美术问题变成数学问题的第一篇。它的两步（曲面域对齐 → 梯度域融合）正好对应本页的两条老约束：曲面域对齐是在**绕开"UV 展开的扭曲"**，梯度域融合是在**绕开"多片 chart 的 DC 不一致"**。**如果一个任务要给同一张曲面拼 N 份证据（多视角生成、扫描重建、贴花叠加、Lightmap 修补），先问"这 N 份在哪个域对齐"。**
 

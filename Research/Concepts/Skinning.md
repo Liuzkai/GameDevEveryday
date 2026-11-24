@@ -25,10 +25,10 @@ $$v'=\sum_{i=1}^{n} w_i\, T_i\, v,\qquad \sum_i w_i=1$$
 | 混法 | 混的对象 | 结果是否一定是刚体 | 代价 | 代表 |
 |---|---|---|---|---|
 | **LBS**（线性混合） | 矩阵的 9 个元素各自插值 | ❌ 会长出缩放/剪切 | 最低（36 条指令） | 1988 至今的默认 |
-| **DQS / DLB** | 对偶四元数（8 分量） | ✅ 归一化即回 SE(3) | +7 条指令 | [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|Kavan 2008]] |
+| **DQS / DLB** | 对偶四元数（8 分量） | ✅ 归一化即回 SE(3) | +7 条指令 | [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)\|Kavan 2008]] |
 | **PSD / corrective** | 不改混法，改"每个姿态该长什么样" | —（在 LBS 之上叠修正） | 内存 ↑（每姿态一组 delta） | Lewis 2000 |
-| **学习型**（神经蒙皮） | 用网络直接回归形变 | —（不保证刚体，但保证像） | 训练成本 + 推理 12–14 ms | [[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning|PhysSkin++]] |
-| **物理/肌肉层** | 解纤维收缩与体积 | —（这是仿真，不是插值） | 18 ms/帧（单角色） | [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]] |
+| **学习型**（神经蒙皮） | 用网络直接回归形变 | —（不保证刚体，但保证像） | 训练成本 + 推理 12–14 ms | [[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning\|PhysSkin++]] |
+| **物理/肌肉层** | 解纤维收缩与体积 | —（这是仿真，不是插值） | 18 ms/帧（单角色） | [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning\|RLMuscle]] |
 
 **四代的分界线，是"承认什么问题"**：
 
@@ -74,7 +74,7 @@ $$-\Delta w^i+Hw^i=Hp^i$$
 
 ## Prerequisites
 
-- **刚体变换**（旋转 + 平移）与它的几种表示：矩阵 / 四元数 / 对偶四元数——见 [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|Kavan 2008]] 的图 2（"平均点 vs 平均角"是最直观的入口）；
+- **刚体变换**（旋转 + 平移）与它的几种表示：矩阵 / 四元数 / 对偶四元数——见 [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)\|Kavan 2008]] 的图 2（"平均点 vs 平均角"是最直观的入口）；
 - **四元数与球面插值**：库内 [[2026-10-15-LinfCub — Compression of Uniformly Distributed Unit Quaternions|LinfCub]] 讲的是"怎么存得小"，本篇讲的是"怎么混得对"，**同一族数学的两个用途**；
 - **线性代数中的"封闭性"**：正交矩阵集合对加法不封闭——这是全部问题的起点。
 
@@ -154,12 +154,13 @@ $$v'=\sum_i w_iT_iv\ \ \text{是姿态的纯函数}$$
 ## Important Papers
 
 - [[Baran 2007 — Automatic Rigging and Animation of 3D Characters|Baran & Popović 2007]] — **权重的来源**：热平衡（表面 Laplacian + 体内可见性门控）取代距离；见本页"权重从哪来"
-- [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|Kavan et al. 2008]] — **本页主节点**：把"混矩阵会错"讲成几何论证，并给出 +7 条指令的修法
-- [[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning|PhysSkin++]] — 神经蒙皮：前馈蒙皮场，免逐对象训练
-- [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning|RLMuscle]] — 肌肉层：蒙皮之上再解一层"力"
+- [[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)\|Kavan et al. 2008]] — **本页主节点**：把"混矩阵会错"讲成几何论证，并给出 +7 条指令的修法
+- [[2026-10-19-PhysSkin++ — Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning\|PhysSkin++]] — 神经蒙皮：前馈蒙皮场，免逐对象训练
+- [[2026-10-21-Li — RLMuscle Muscle-Driven Character Animation via Reinforcement Learning\|RLMuscle]] — 肌肉层：蒙皮之上再解一层"力"
 - [[GradRig — Differentiable Weights for Skinned Gaussian Splat Deformation|GradRig]] — 蒙皮权重的可微化（GS 表示）
 - [[2026-10-29-Rohmer — Dynamic Skinning Kinematics-Driven Cartoon Effects for Articulated Characters|Dynamic Skinning 2026]] — **第二条轴的开端**：不改混法，在 LBS 之上加一个由关节速度驱动的 FIR 滤波位移项（0.00003 ms/面片，1.5 M 面片模型；见本页"第二条轴"）
 - [[2026-11-10-Zhu — Real-Time Self-Penetration Repair for Skinned Characters|Zhu 2026]] — **蒙皮之外的那一层**：穿模不是形变错，是约束缺；两层（改姿态 1.11 ms + 压皮肤 1.18 ms）+ 一条静态汇率 $\rho$；见本页"第三个失效"
+- [[2026-11-24-Lyu — ParaBMG A Parallel Block Multigrid Framework for Large-Scale Evolving Sparse Systems on Unstructured Meshes|ParaBMG 2026]] — **权重生成侧**：QHW 的求解内核被换成块多重网格，40,987 个演化系统 / 最大 10.2M 顶点；它证明"自动权重"可以做成可交互工具而不是批处理任务
 - （库外必读）Lewis et al. 2000《Pose Space Deformation》；Magnenat-Thalmann et al. 1988（LBS 源头，PDF 已不可得，本条依二手文献核证）
 
 ## Related Concepts
@@ -172,6 +173,7 @@ $$v'=\sum_i w_iT_iv\ \ \text{是姿态的纯函数}$$
 - [[Cloth Simulation]]（**必须分清的一对**：蒙皮是"网格按骨骼权重变形"——零自由度、纯几何、每帧算完就结束；布料是"每个顶点独立自由度 + 碰撞约束"——要解一个系统、要迭代、帧间有状态。**工程上最实用的一条判据：衣服穿模看起来像蒙皮问题，八成是碰撞体问题**（披风穿进大腿是胶囊体和布料解算的接触失效，不是权重没收好）；反过来，关节处的"糖纸"和插值塌陷才是真蒙皮问题。**2026-10-28 开域**：两页在同一天入库，正好把"哪些形变不需要解算"这件事划清）
 - [[Secondary Motion]]（**相邻但不同层**：蒙皮是"骨动 → 皮动"的映射（零时间维），二次运动是"骨的导数 → 皮的附加位移"（有时间维）。**DS 式实现里两者是相加的两项，不是替代关系**；"骨停了皮还在动"这件事归二次运动管，不归蒙皮管）
 - [[Automatic Rigging]]（**上游**：本页把权重当输入，那一页讲权重和骨架怎么来。**时间尺度不同——蒙皮每帧跑，绑骨只在资产入库时跑一次**，这就是它们永远不会合成一个话题的原因）
+- [[Multigrid]]（**同一件事的另一半**：本页讲"权重怎么**混**"，那一页讲"权重怎么**解出来**"。准调和权重（QHW）是解一个带约束的椭圆 PDE——网格一密就卡死，而 [[2026-11-24-Lyu — ParaBMG A Parallel Block Multigrid Framework for Large-Scale Evolving Sparse Systems on Unstructured Meshes|ParaBMG 2026]] 把它做到 10.2M 顶点可交互。**判据：绑骨只在入库时跑，所以要优化的是"总账"（构造 + 迭代），不是"每次迭代"**）
 
 ## Technologies
 
@@ -212,4 +214,4 @@ Current Level: **Normal**（推断）
 3. 只回答一个问题：**"这个差异在我的镜头距离下可见吗？"**——可见就值得开，不可见就留在 LBS；
 4. 若已开 DQS，再检查 **corrective 库是否还匹配**（这是最容易踩的坑）。
 
-**读法建议**：[[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)|Kavan 2008]] 结论层 ≈25 分钟（TL;DR + 图 2/4 + 成本表），不必读附录推导。
+**读法建议**：[[Kavan — Geometric Skinning with Approximate Dual Quaternion Blending (2008)\|Kavan 2008]] 结论层 ≈25 分钟（TL;DR + 图 2/4 + 成本表），不必读附录推导。

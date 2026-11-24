@@ -165,6 +165,8 @@ $$v_n^+=\mu\|v_t^+\|\quad(\text{滑移升离，dilatancy})$$
 - [[Cloth Simulation]] — 布料的接触是同一套理论，但 $n$ 更大、需要自碰撞。
 - [[Physics-based Character Animation]] — 角色与环境的接触是这套理论在游戏里最常现形的场合。
 - [[Budget Units]] — "把 NP-完全的东西塞进 16.6 ms"是预算思维的极端案例。
+- [[Multigrid]] — **本页的下半层**：接触解的是 LCP（非凸、可无解、$n=4$ 才有意义），接触**之后**的弹性/摩擦内层解的是 SPD（凸、唯一、$n$ 上百万）。**同一个引擎，两层两套数学**；Baraff 表里"每步解一次"那一族（Alart–Curnier Newton / ADMM / 内点）的内层就是 [[Shewchuk 1994 — An Introduction to the Conjugate Gradient Method Without the Agonizing Pain|PCG]]。
+- [[Shewchuk 1994 — An Introduction to the Conjugate Gradient Method Without the Agonizing Pain]] — 接触求解器"每步解一次"时，那一次解的是什么。
 
 ## Technologies
 
