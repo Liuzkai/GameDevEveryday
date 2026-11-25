@@ -96,6 +96,8 @@ Inverse Rendering（从图像反推几何/材质/光照）
 - [[Linear Transport Theory]]（"反向传播 = 一条伴随输运"的母语坐标；9-30 补链）
 - [[Adjoint Methods]]（★ 2026-11-13 建页：伴随法的**通用形**——成本与参数维度无关、与状态维度成正比；本页是它在光传输侧的特化）
 - [[Neural Physics Simulation]]（**必须分清**：那一页是"用网络替代求解器"，本页是"对渲染器求导"）
+- [[Subset Selection]]（**下游**：可微化是"选谁"这个问题的解法家族 D——把选择接进梯度图；那一页给出它与"多阶段重打分""联合期望"的取舍）
+- [[Mesh Simplification]]（本页在"简化"上的落点：那一页讲代价模型，本页讲"代价归谁"）
 
 ## Game Applications
 
@@ -119,6 +121,7 @@ Inverse Rendering（从图像反推几何/材质/光照）
 - [[2026-09-26-Constant-Memory Differentiable Light Tracing]] ★ 2026-09-30 入库（**光源侧补全**：ResLRB / LRB-3-pass；1:1 vs 1:k 边界）——**2026-10-10 会议版到货**（SIGGRAPH Asia 2026 TC："Stochastic Graph Compression"，聚焦 ResLRB）
 - [[2026-10-08-Sensitivity as an Arbitrary Output Variable for Differentiable Rendering|Sensitivity AOV]] ★ 2026-10-10 入库（**输出/检查层开线**："**导数是一等渲染输出**"——sensitivity AOV + deferred shading 式"算一次看多处" + 固定/自由双相机分离；同作者 SIGGRAPH Asia 双篇之二）
 - [[Lipp 2024 — View-Independent Adjoint Light Tracing for Lighting Design Optimization|Lipp 2024 — View-Independent Adjoint Light Tracing]] ★ 2026-10-30 入库（**目标轴开线：优化对象不必是图像**。此前这一族全部"目标住在像素里"，于是相机成了必须承担的变量；Lipp 把目标搬到 **3D 曲面上的辐射场**（顶点 × 半球谐波 HSH），相机整个消失，目标可以直接画在几何上或**直接拿烘焙 lightmap 当目标**。**两条硬结论**：① **AD 在光照追踪上系统性失效**——每条 ray 携带**恒定辐射通量**，与方向/距离无关，所以位置/朝向参数在 AD 里得不到正确导数（这不是精度问题，是方向错）；② 解析伴随的"一次求导 ≈ 一次 primal"在这条路上成立，**内存与时间都与参数个数无关**。**与 [[2026-09-26-Constant-Memory Differentiable Light Tracing]] 是同一条线（光照追踪侧的可微化），但关注点不同：那篇解"常数内存"，这篇解"无相机目标"**）
+- [[2026-11-25-Oh — DiffSimp Differentiable Mesh Simplification|DiffSimp 2026]] ★ 2026-11-25 入库（**下游轴开线：可微管线再往前接一环**。此前是"渲染 → 几何"；现在把**简化**插在中间变成"渲染 → 简化 → 几何"。**核心手法**：离散塌陷决策照常做，但固定这一次的历史 $\sigma$，只对塌陷映射 $C_\sigma$ 求导——**"不放宽度量、只对决策之后的连续映射求导"**。工程上靠"把顶点二次型当可微中间变量"把雅可比变成块对角（同轮并行）+ 归约森林（跨轮只求导一次）；**代价**：前向比 CPU QEM 快 61–319×，反向比 autograd 重放快 37–75×，端到端只多 1.25×）
 
 ## Personal Knowledge
 
@@ -131,6 +134,14 @@ Current Level: **Hard**
 1. 自动微分的反向模式（为什么反向比前向快）
 2. 光栅化在哪一步不可导、为什么
 3. 离散量（比如"灯要不要留"）如何变成连续可优化量 —— **2026-11-15 补：LightOpt 给了半个答案，而那个"半个"本身是结论。** 它**没有**把"删/并/增"变成可微操作：删用重要性阈值 $\varepsilon_i$、并用 Chamfer 距离 + 三个并列判据（降重叠 / 80% 正面 / 锥角 ≤130°）、增用 DBSCAN 聚类。**原文明确把"让这些操作完全可微"列为未来工作。** 所以工程上的正确姿势是：**连续部分（参数）交给梯度，离散部分（个数/拓扑）交给"判据 + 阈值 + 重跑"，并且承认后者没有最优性保证。** 这条与 11-13 可微物理那篇的"接触不光滑三障碍"是同一族问题。
+   **2026-11-25 补：这一条现在有四个答案，可以按"离散决策要不要进循环"分类。**
+   | 答案 | 做法 | 代表 | 代价 |
+   |---|---|---|---|
+   | ① **放松** | 把硬判定换成连续权重（软化覆盖 / 松弛） | Soft Rasterizer 一族 | 前向与真实光栅化脱节 |
+   | ② **不碰** | 离散交给判据 + 阈值 + 重跑 | [[LightOpt — Lights Optimization for Real-Time Rendering\|LightOpt]] | 没有梯度信息，靠重跑来搜 |
+   | ③ **冻住再求导** | **固定这一次的离散解，只对"决策之后的连续映射"求导** | [[2026-11-25-Oh — DiffSimp Differentiable Mesh Simplification\|DiffSimp]]（固定塌陷历史 $\sigma$） | 梯度只对这一次实现负责（有偏）；需可微前端 |
+   | ④ **推迟提交** | 决策不当场做：当概率搜、最后一次硬提交 | [[2026-11-25-Jeong — LMnOP Pruning 3DGS via Leave-Many-Out Importance\|LMnOP]]（8 轮不删任何高斯） | 每次评估要全模型 |
+   **③ 与 ④ 的共同点比差别更重要**：**两篇都不在优化循环里改离散决策。** 一个把它冻住，一个把它推迟——**"离散决策不能进循环"，是 2026 年两次独立的工程确认。** 这也回答了本条最初的问法：不是"怎么把离散变连续"，而是"**怎么围着离散做文章**"。
 4. **（2026-09-30 新增）"内存/时间"为什么是这门技术的硬约束**——读 [[Vicini — Path Replay Backpropagation (2021)]] 的**结论层**即可（不用碰推导）：重放三要素 + 两笔账分开结算
 
 ## Next Learning Step

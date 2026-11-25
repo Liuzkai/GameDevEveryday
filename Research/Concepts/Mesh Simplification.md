@@ -94,6 +94,27 @@ $$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\te
 > **可立即用的动作**：任何"把这个模型压到 X%"的需求，先数一次连通分量。**如果 $4n_{\text{sig}}$ 已经超过预算，修不如重做。**
 
 
+## 删得越多，"每个顶点值多少"越取决于"还剩谁"（2026-11-25 补）
+
+本页到这里为止，所有代价模型（QEM / SQEM / 屏幕误差）都共享同一个范式：**给每个可删的原子（边、顶点、簇）定一个标量价，排序，取最小。** 这句话隐含一个假设——**一个原子的价与"还有谁在"无关**。
+
+**这个假设在"只删一点"时是精确的，在高压缩比下必错。** 2026 年出现了两个独立证据，而且都量化了"错多少"：
+
+| 证据 | 现象 | 数字 |
+|---|---|---|
+| [[2026-11-25-Oh — DiffSimp Differentiable Mesh Simplification\|DiffSimp 2026]] | 后处理简化把误差留在循环外；接上梯度后，**增益随预算收紧而变大** | $\Delta_{\text{grad}}$：$K$=2000 **+0.05** → 1500 +0.08 → 1000 +0.27 → 500 +1.08 → **250 +1.34**（CD） |
+| 同上，Table 5 | **"优化稠密的那份"与"优化交付的那份"可以反向** | 后处理：raw −3.4% / **deployed +1.2%**；接梯度：raw +12.3% / **deployed −33.2%** |
+| [[2026-11-25-Jeong — LMnOP Pruning 3DGS via Leave-Many-Out Importance\|LMnOP 2026]]（同一范式在高斯上） | 同一 LOO 分数的两个元素，剪后重要性差 3–6.8 倍 | 90% 删率 **3.0×**；99% **5.0–6.8×**；保留者在 **88–94%** 的对里更重要 |
+
+**两种"错"要分清：**
+
+- **记错了位置**（DiffSimp）：代价算法没错，但**它算的那个网格不是交付的那个网格**。修法是把简化接进优化回路，让上游为将被删的部分负责。
+- **记错了对象**（LMnOP 那一族）：加了"其他也会被删"这一项，**联合重要性 ≠ 单个重要性的和**。三种修法：多阶段重打分（每次都真删）、联合期望（不真删，积概率）、固定结构求导。
+
+**与 QEM 的精确对应**：QEM 的 $E_e(v)=\tilde v^\top Q_e\tilde v$ 与 [[LeCun 1990 — Optimal Brain Damage|OBD]] 的 $s_k=\frac12h_{kk}u_k^2$ 是同一个东西——**二次型 × 位移平方**。所以 1990 年那句"删到约 30% 之后非对角项变得不成比例地重要"，在本页的语言里就是：**QEM 的"每条边一个标量"在删到某个比例之后，不再能代表"一起删"的代价。**
+
+> **两条地板要分清**：[[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation|RemeshingAgent]] 的 $F_{\min}$ 是**"能不能"**的地板（低于 $4n_{\text{sig}}$ 无解，与算法无关）；本节讲的是**"怎么选"**的地板（独立打分在高压缩比下失效，与算力无关）。**前者换算法无用，后者换算法有用。**
+
 ## 代价模型的演化（本页主线）
 
 ```text
@@ -123,6 +144,10 @@ $$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\te
 2026  T2-Splat：把属性【拿出】顶点，搬到每面残差纹理
         · 拓扑按几何复杂度自由改，外观按纹理分辨率独立保证
         · 面数降到 1/3 而质量更高 —— 见 [[Decoupling Geometry and Appearance]]
+  ↓
+2026  DiffSimp：代价模型不变，但【谁来承担这个代价】变了
+        · 固定塌陷历史 σ，对"塌陷映射"求导 ⇒ 简化进梯度图
+        · 增益随预算收紧而增大 —— 见 [[2026-11-25-Oh — DiffSimp Differentiable Mesh Simplification|DiffSimp]]
 ```
 
 > **这条线的方向：误差的单位从"世界距离"走向"像素"，从"几何"走向"几何 + 属性"，而"可加性"始终是那条暗线。**
@@ -175,6 +200,7 @@ $$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\te
 | [[2026-11-05-Wang — Perception Over Geometry Rethinking Gaussian Allocation in Mesh-based Splatting\|P-MGS 2026]] | 同一句话换了对象："误差可加 ⇒ 配额可解"，分的是高斯不是面 |
 | [[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals\|T2-Splat 2026]] | **不补属性，改搬走**：属性住到每面纹理上，拓扑只按几何走 |
 | [[2026-11-18-Wang — RemeshingAgent Iterative Agent for Repair-Based Decimation\|RemeshingAgent 2026]] | **下界**：$F_{\min}$ 的四项分解 + 分量悬崖定理。**第一次回答"最多能删到多少"**，并证明低于 $4n_{\text{sig}}$ 无解 |
+| [[2026-11-25-Oh — DiffSimp Differentiable Mesh Simplification\|DiffSimp 2026]] | **代价的归属**：QEM 不变，但把简化接进梯度图（固定塌陷历史 $\sigma$，只对映射求导）。**第一次量化"后处理的代价"**：交付口径差 34% |
 
 ## Related Concepts
 
@@ -185,6 +211,7 @@ $$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\te
 - **[[Gaussian Splatting]]** —— 2024 年以后出现的新"简化"对象：不是减面，是**减少高斯数**（Budgeted-GS 的"误差 ∝ $N^{-1/2}$"就是 GS 版的率失真曲线）。
 - **[[Subdivision Surfaces]]** —— 反方向：简化是"降分辨率"，细分是"升分辨率"，两者共用同一套多分辨率表示的语言。
 - **[[Automatic Rigging]]** —— 另一条"用代理体表示形状"的路：本页用更少的面，那边用一串内切球/骨架。
+- **[[Subset Selection]]** —— 母题页。本页是它在"网格"上的特化；那一页讲三轴（**可替代性 / 代价空间 / 提交时机**），并解释为什么"逐个打分取最小"这个范本页用了三十年的范式，在高压缩比下会失效。
 
 ## Technologies
 
@@ -218,7 +245,8 @@ $$F_{\min}\asymp\max\Big(c_1A_{\text{curv}}/\varepsilon_{\text{abs}},\ c_2A_{\te
   **所以"四者合成一个标量"这个目标本身可能就是错的**——它们住在不同的空间里。工业实现"拍权重"，是因为**拍权重是唯一能在不同空间之间硬接的办法**。**这条从"缺答案"降级为"目标可疑"。**
 - **"解耦的代价"没有被量化。** 顶点属性 vs 每面纹理，在什么面数下显存开始反转？[[2026-11-09-Tang — T2-Splat Adaptive Topology Mesh Splatting with Texture Residuals|T2-Splat]] 报的 62 MB **对不上**按 8×8×3 逐面估算的 ~518 MB。**没有换算公式，就没有"该不该解耦"的算术答案。**
 - **"简化到什么程度"与"看的时候有多远"之间的映射**（即 $E_i \leftrightarrow$ 像素误差）在 QEM 一侧从未建立；Hoppe 1997 建立了另一侧（偏差空间 → 屏幕）。**两套语言至今没有正式翻译。**
-- **GS 的"简化"与网格的"简化"是不是同一件事**：Budgeted-GS 的 $N^{-1/2}$ 与 QEM 的"平方距离和"形状不同，**两者的误差是否可以互相换算，没人做过。**
+- **GS 的"简化"与网格的"简化"是不是同一件事**：Budgeted-GS 的 $N^{-1/2}$ 与 QEM 的"平方距离和"形状不同，**两者的误差是否可以互相换算，没人做过。**（2026-11-25 补：[[2026-11-25-Jeong — LMnOP Pruning 3DGS via Leave-Many-Out Importance|LMnOP]] 给出了跨域的第一个可比量——**"同一分数、剪后差 3.0×/6.8×"**。这说明两边共享的不只是误差形状，还有**"独立打分失效"这件事本身**。）
+- **"属性可微"是空的。** [[2026-11-25-Oh — DiffSimp Differentiable Mesh Simplification|DiffSimp]] 的梯度只到**位置**：UV / 材质 / 蒙皮权重不进代价，也就补不回来。**本页第 ② 条（属性与边界才是工业分水岭）在可微世界里原封不动地还在。**
 
 ## Next Step
 
