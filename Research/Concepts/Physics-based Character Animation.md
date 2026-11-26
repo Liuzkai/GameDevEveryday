@@ -31,7 +31,7 @@ user_level: Hard
 
 ## Evolution
 
-- DeepMimic（2018，模仿学习范式奠基）
+- [[Peng 2018 — DeepMimic|DeepMimic 2018]]（模仿学习范式奠基——**2026-11-26 补原文**：参考动作不作为播放内容、而作为奖励的一部分；真正承重的是两个训练设置 **RSI**（从参考动作随机采初始状态）与 **ET**（摔倒即终止），没有它们，后空翻/侧翻/旋踢全部学不出来）
 - ASE / AMP 系列（对抗式运动先验，NVIDIA/Jungdam Won 线）
 - [[InstantMimic — A High Performance System for Learning Physics-based Skills in Seconds]]（2026，训练成本压到秒级）
 - ★ [[2026-09-17-DSD — Diffusion Skill Discovery]]（2026-09-18 入库，Xue Bin Peng 线）——**补上另一半：技能库的"宽度"**
@@ -46,6 +46,7 @@ user_level: Hard
 - [[Neural Physics Simulation]]（更一般的学习式物理，反向问题）
 - [[Motion Matching]]（**对偶**：MM 的候选集是"录制的片段"，DSD 零样本控制的候选集是"策略生成的轨迹池"，**两者的查询都是"用代价函数挑"**——见 [[2026-09-17-DSD — Diffusion Skill Discovery]] 的对照表）
 - [[Skinning]]（**分层关系**：蒙皮把**骨骼运动**传给表面，物理/肌肉层把**力**传给表面——它们不是替代，是"传运动"与"传力"两件事；RLMuscle 说明后者可以作为前一层的下一级）
+- [[Amortization Gap]]（**本页的失败有一个统一名字**：一个摊销到全部技能上的学生，在"前驱出口 × 目标入口"的交叉项上没有训练样本；19.8% 就是那个缺口的读数，MESSI 的补丁与 SplatTok 的潜码搜索是同一种修法）
 
 ## Game Applications
 
@@ -55,6 +56,8 @@ user_level: Hard
 
 ## Important Papers
 
+- [[Peng 2018 — DeepMimic|DeepMimic 2018]]（**根节点**：参考动作 → 奖励；RSI + ET 是能不能学会高动态技能的分水岭；三种多技能方案至今仍是这条线的语法）
+- [[2026-11-26-Peng — MESSI Multi-Expert Soccer Skill Integration|MESSI 2026]]（**接缝**：八专家 → 一个学生 → 只在切换后生效的共享 LoRA；native 77.93% / 接缝 19.8%）
 - [[InstantMimic — A High Performance System for Learning Physics-based Skills in Seconds]]
 - [[2026-09-14-Learning Realistic Athletic Sprinting Without Demonstrations]]（零示范路线：肌肉驱动 + 任务奖励，同周与 InstantMimic 双双跨过训练成本门槛）
 - [[2026-09-17-DSD — Diffusion Skill Discovery]]（技能库宽度：扩散 score 估熵梯度）
@@ -80,6 +83,46 @@ user_level: Hard
 > **判据**：动作"看起来不像人"时，先问一句**"这个动作在真实物理里会更贵吗？"** 如果答案是"会"，那不是策略问题，是求解器在补贴它。
 
 这也给"怎么选求解器"加了一条**与实时性无关**的理由：**接触越精确，策略学到的动作越能迁移到现实**（这对机器人是硬需求，对游戏是"动作看起来对不对"）。反过来，如果目标只是游戏里看着对，那么一个**故意做得"硬"一点的求解器**（法向硬、摩擦各向同性、无免费蠕滑）可能比一个快的求解器更省训练成本——**因为它不给捷径，策略不会走偏**。
+
+## 技能之间那道缝（2026-11-26 补）
+
+本页此前讲的全是**"怎么练出一个技能"**：模仿目标、训练成本、技能库的宽度、求解器的欠账。**它从来没有回答"两个技能怎么接起来"。**
+
+2026-11-26 补上 [[2026-11-26-Peng — MESSI Multi-Expert Soccer Skill Integration|MESSI 2026]] 之后，这件事有了第一个可引用的读数：**同一个策略，native 初始化下射门成功率 77.93%，从运球末态接手只剩 19.8%。**
+
+> **技能内部的分数，和接缝上的分数，可以差 58 个百分点。**
+
+而这不是"技能不够强"，是**蒸馏方式决定的必然**——MESSI 的原文写得很直白：每次 rollout 只执行一个技能、只从该技能自己的初始状态开始，*Distillation therefore never trains the student to start a skill from the state that its predecessor leaves behind*. **接缝从一开始就不在训练分布里。**
+
+### 三条历史方案，今天各自欠什么
+
+[[Peng 2018 — DeepMimic|DeepMimic 2018]] 当年就把"多技能"拆成了三种写法，八年后回头看，它们的欠账非常清晰：
+
+| 方案 | 做法 | 今天的问题 |
+|---|---|---|
+| Multi-clip reward | $r^I_t=\max_j r^j_t$ | 片段一多就学不动（作者自陈 *not demonstrated on large motion libraries*） |
+| **Skill selector** | one-hot 目标输入，**要求策略自己学会切换** | **这就是 MESSI 量到 19.8% 的那条路** |
+| Composite policy | 各技能独立训，运行时按 $\text{softmax}(V_i/T)$ 选 | 值函数决定"选谁"，**不修"接手时状态不对"** |
+
+### 今天的四种补法，成本差三个数量级
+
+| 补法 | 代表 | 改什么 | 代价 | 原生性能 |
+|---|---|---|---|---|
+| 直接切换 | — | 不改 | 0 | 77.93% / 接缝 **19.8%** |
+| 前驱状态微调技能 | Expert + STI（PhysicsFC 式） | **目标技能的策略** | 44.1 GPU·h | **降到 63.09%** |
+| 微调整个学生 | Full FT | **学生全部参数** | 42.7 GPU·h | **降到 54.82%** |
+| 每条接缝一个适配器 | Per-transition | 11 个独立补丁 | 43.0 GPU·h / 16.5 MiB | 77.93%（单缝最强 67.8%，长链崩到 35.0%） |
+| **门控共享适配器** | **MESSI** | **冻结学生 + 0.39M 补丁 + 学出来的退出** | 44.7 GPU·h / **1.5 MiB** | **77.93%（按构造不变）** |
+
+**这张表最该记的一列是"原生性能"**：前三行都在"修接缝"和"别改坏原生"之间做交易；最后一行把两者**解耦**了——因为门关着时 $z_t=0$，adapter 分支的乘性项数学上消失，**输出恒等于原学生**。
+
+> **判据**：任何"只在某些状态下生效"的修正，都应该能被**数学地关掉**。能，就是零回归；不能，就只能靠回归测试碰运气。
+
+### 还有一条：长链的死因常常只有一环
+
+MESSI 的 Fig 6 把技能链的失败定位到具体某一环：Per-transition 在 `Dr→ST→Dr→Sh` 这条链上，**stop 阶段只有 49.4%**（标 timeout），随后 dribble 掉到 74.2%。**只把它的 dribble→stop 适配器换成 MESSI 的，就回到 98.8% / 98.4%。**
+
+所以"技能链的完成率"这个指标本身是**不可归因**的——它把一条链上所有环的失败乘在了一起。**要验收，必须先按环拆开。**
 
 ## Personal Knowledge
 

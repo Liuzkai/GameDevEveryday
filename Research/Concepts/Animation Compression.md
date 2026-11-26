@@ -76,6 +76,7 @@ first_introduced: "ACL（开源生产库，2016-）；学习化路线自 2026（
 - [[Open World Character Animation]]——动画管线的应用侧（本概念是其"数据侧"）
 - [[Motion Matching]] / [[Motion Generation]]——"动作怎么来"；本概念管"动作怎么存"
 - [[Scalability and Quality Tiers]]——"误差界即档位"的预算语言接口
+- [[Amortization Gap]]——**本页的"码本 vs 每片段"是那条判据在动画侧的实例**：ACL 的压缩域码本是**跨片段摊销**的产物（一次训练服务所有 clip），而每片段的曲线拟合是**不摊销**的一端。摊销侧省的是"每片段的计算"，代价是"落在码本覆盖之外的动作会系统性变差"——**这正是"冷门动作压得更差"的机制解释**。3DGS 侧的同构证据见 [[2026-11-26-Pentapati — SplatTok Data-Driven Compression of 3D Gaussian Splats|SplatTok 2026]]（编码器摊销 → 84% 的误差是缺口而非容量）
 
 ## Technologies
 
