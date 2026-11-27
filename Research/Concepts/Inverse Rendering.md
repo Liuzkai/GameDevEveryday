@@ -78,11 +78,36 @@ Shape from Shading
 
 （介质侧的正向与工程细节见 [[Participating Media]] 的"第七条路"，域级展开见 [[Underwater Rendering]]。）
 
+## 第五条支线：未知量不是"是什么"，是"参数该怎么放"（2026-11-27 补）
+
+前四条支线都在问"**要解哪些量**"（几何 / 材质 / 光照 / 介质）。[[2026-11-27-Fei — ReMeDi Single-Image PBR Material Estimation via Reparameterization|ReMeDi 2026]] 问的是另一个问题：
+
+> **同样这几个量，把它们摆成什么参数化，才使得"每个通道都估计对"这件事是可判定的？**
+
+背景是 [[Metallic-Roughness Workflow|MR 工作流]] 的一个结构性事实：**base color 与 metalness 通过 $C=\mathrm{lerp}(C_d,C_m;M)$ 耦合**。逐通道回归时，网络可以给出"base color 误差很小、metalness 误差中等"的结果，而两者联合起来渲染出的图**完全不对**——因为 $C$ 与 $M$ 的错误方向相反、互相抵消在图像上（重光照时才暴露）。
+
+这是本库关于"指标与目标错位"的**第四个实例**，且是最纯粹的一个：
+
+| 实例 | 被度量的东西 | 真正要的东西 | 错位方式 |
+|---|---|---|---|
+| DeepMimic（2026-10 入库） | 动作打分 0.730 | 后空翻 | 分数不含目标动作 |
+| SplatTok（2026-11-26） | 逐图元 PSNR | 场景相似度 | 度量对象比目标窄 |
+| MEMO（2026-11-27） | 全图 PSNR | 运动部分 | 目标只占画面一小块 |
+| **ReMeDi** | **逐通道 RMSE** | **渲染 / 重光照误差** | **通道之间存在耦合，单通道误差可互相抵消** |
+
+**它的解法值得单独记：不改网络，改"网络之间怎么分工"。** 把 $C=\mathrm{lerp}(C_d,C_m;M)$ 拆成三个各自独立的生成问题（全介电假设的 $C_d$、全金属假设的 $C_m$、覆盖率 $M$），每个用一个共享冻结骨干 + 独立 LoRA 学，再用**假设专属的监督**（只在高置信像素上算 loss）把三者逼到"各自完整"而不是"三者相加等于原图"。**关键：如果三个网络共享同一套参数，它们会走"两个变体都输出真实 $C$"的捷径，lerp 退化成恒等，重参数化白做**（消融：单网络版重光照掉到 19.37 dB，三网络 20.24 dB）。
+
+> **判据（可直接用于评审任何"多通道输出"的模型）**：**通道之间有没有一致性约束？** 有的话，逐通道指标会系统性地放过联合错误——而且**这种放过在训练集上看起来最干净**（每个通道都"中等好"）。ReMeDi 的 metalness RMSE 从 0.266 降到 0.197（−25.9%），但真正的收益在重光照 +2.74 dB——**两个数字不是同一件事，前者是后者的必要条件而非充分条件。**
+>
+> **与 Burley 2012 的关系**：十四年前 Burley 在**正向**侧写下同一个问题——*"the mask will be filtered and at the blurred edge of the mask the material response must remain plausible"*（纹理过滤会把 mask 插出中间值，中间值必须合法）。ReMeDi 在**逆向**侧遇到它：中间值合法，意味着 $C_d$ 与 $C_m$ 必须**各自都是完整可信的材质**，而不只是"加权平均后像"。**同一问题的两种证明方式：正向靠"处处合法"，逆向靠"两端完整"。**
+
 ## Related Concepts
 
 - [[Differentiable Rendering]]
 - [[Gaussian Splatting]]
 - [[Neural Rendering]]
+- [[Metallic-Roughness Workflow]] ★ 2026-11-27（**逆向侧的参数化**：MR 把 $C$ 与 $M$ 绑在一个 lerp 上，逆渲染要反解的就是这组被绑住的量——**参数化的耦合会变成逆问题的耦合**）
+- [[Physically Based Rendering]]（正向的"三侧"里，2026-11-27 补的第四侧"参数化侧"与本页第五条支线是同一个问题的两面）
 
 ## Game Applications
 
@@ -94,6 +119,7 @@ Shape from Shading
 **表面侧**
 
 - [[Inverse Rendering for Modeling with Line Primitives]]
+- [[2026-11-27-Fei — ReMeDi Single-Image PBR Material Estimation via Reparameterization|ReMeDi 2026]] — **参数化侧**：不改反解的量，改这些量被摆成的形状（双假设重参数化 + 三网络一假设）。单图材质估计，重光照 22.34 dB（+2.74），metalness RMSE 0.197（−25.9%）
 
 **灯侧（2026-11-15 补，四篇一条线）**
 

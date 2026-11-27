@@ -33,7 +33,7 @@ BRDF 形式化（Nicodemus 1977）
         ↓
 ★ [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]：GGX 分布 + Smith height-correlated G（长尾更贴实测，**实时 PBR 的 D 与 G 两项都出自此文**）
         ↓
-Disney Principled BRDF（2012，《无敌破坏王》生产验证：原则化参数化）
+★ [[Burley 2012 — Physically Based Shading at Disney|Burley 2012]]：Disney Principled BRDF（《无敌破坏王》生产验证；**五条"处处合法"原则** + metallic 作为 0–1 插值权重 + GTR 分布族）★ 2026-11-27 入库
         ↓
 ★ Karis 2013：UE4 实时 PBR（Schlick F + GGX D + Smith G + split-sum LUT）
         ↓
@@ -74,6 +74,7 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 
 - [[Participating Media]]（表面 ↔ 介质的对偶；2026 工作已把两者统一）
 - [[Multiple Scattering and Energy Compensation]] ★ 2026-09-19（PBR 的"能量账本"；本概念 Learning Gap 的最后一条）
+- [[Metallic-Roughness Workflow]] ★ 2026-11-27（**参数化那一半**：本页讲"用什么 BRDF"，那一页讲"用哪几个数喂它、这几个数在通道里是什么含义"）
 
 - [[Real-Time Rendering]]
 - [[Inverse Rendering]]（PBR 参数是逆渲染要反解的目标）
@@ -90,6 +91,7 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 - [[Ramamoorthi-Hanrahan — An Efficient Representation for Irradiance Environment Maps (2001)]]——环境光 / 漫反射侧（IBL 的 SH 半边）
 - [[Schlick — An Inexpensive BRDF Model for Physically-based Rendering (1994)]]——F 项
 - [[Walter — Microfacet Models for Refraction through Rough Surfaces (2007)]]——D（GGX）与 G（Smith）
+- [[Burley 2012 — Physically Based Shading at Disney|Burley 2012]]——★ **参数化侧那一步（入库 2026-11-27）**：不新增任何物理，只回答"**拿哪几个 0–1 的数喂给 BRDF，才能让人手调而不出界**"。五条原则（尤其第 3 条归一、第 5 条所有组合可信）+ metallic 作为插值权重 + 三处感知重映射（$F_0\in[0,0.08]$、$\alpha=r^2$、$\alpha_g=(0.5+r/2)^2$）+ GTR 族。**这也是 [[Metallic-Roughness Workflow]] 的源头**
 - [[Karis — Real Shading in Unreal Engine 4 (2013)]]——★ **实时化那一步（入库 2026-09-18）**：三因子换廉价形式 + [[Split-Sum Approximation]] 环境光 + 材质模型定型（BaseColor/Metallic/Roughness，非金属 $F_0$=0.04）
 - [[Kulla-Conty — Revisiting Physically Based Shading at Imageworks (2017)]]——★ **能量侧那一步（入库 2026-09-19）**：单次散射丢掉的那部分能量怎么补回来（32×32 表 ≈ 4KB）+ **Furnace Test** 这个可执行的自测方法
 - [[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]]——★ **漫反射侧那一步（入库 2026-10-05）**：与 GGX+Smith 同源地求解漫反射（"最多丢一半"）；**"specular 的 4 从哪来"与"UE 的 k=α/2 从哪来"两个长期悬置问题的答案**；理想 Lambert 缺 5%（1.05/π）
@@ -100,6 +102,10 @@ Substrate（UE 5.2+）：分层 lobe 框架，PBR 的可组合化扩展
 > **🔴 2026-10-05 补：能量侧再细分"镜面 / 漫反射"两册账** —— 9-19/9-20 的 Kulla-Conty 线是**镜面侧**（$G$ 遮挡的能量）；[[Hammon — PBR Diffuse Lighting for GGX+Smith Microsurfaces (2017)]] 补上**漫反射侧**（单次散射丢一半 → multi=0.1159α；Lambert 缺 5%）。**PBR 经典谱系至此完整**——上游（Cook-Torrance 1981）到能量账（2016/2017 双侧）到理论天花板（Dupuy 2026）全链在库。
 >
 > 🔭 **前沿外延（2026-09-21 补记）**：PBR 正在"出借"到新方向 —— [[2026-09-17-PBR-Latent — Physically Based Rendering in the Latent Space]] 把**渲染方程改写进 VAE 潜空间**（带符号辐射 / 平响应项 / 遮挡项三项修正），路径追踪首次直接输出 latent 图。**含义：渲染方程（[[Rendering Equation]]）的输出物可被整体替换 —— 这不是 PBR 的"改进"，而是 PBR 作为"可迁移求解框架"的第一次外借。**
+>
+> **🟢 2026-11-27 补：第四侧——"参数化侧"** —— 前三侧（来源 / 工程 / 能量）全在回答"**这个 BRDF 对不对**"；[[Burley 2012 — Physically Based Shading at Disney|Burley 2012]] 回答的是另一个问题："**给美术几个旋钮，才能让他在不越界的前提下把这堆 BRDF 调到想要的样子**"。这一侧的判据不是误差，是**合法性**：任何 0–1 的旋钮组合都必须给出可信的响应，因为**纹理过滤会把旋钮在 mask 边缘插出中间值**（原话：*"the mask will be filtered and at the blurred edge of the mask the material response must remain plausible"*）。
+>
+> **这一侧的缺口至今仍在被补**：2026-11-27 的 [[2026-11-27-Fei — ReMeDi Single-Image PBR Material Estimation via Reparameterization|ReMeDi]] 指出，只要 base color 与 metalness 是**分两个通道独立估计**的，两者的联合错误就会被逐通道指标系统性放过——**同一个问题（通道间没有一致性约束），十四年后换了一个领域重新出现**。
 
 ## Personal Knowledge
 
