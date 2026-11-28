@@ -172,6 +172,7 @@ $$\text{成本} \approx W\times H \times (5 + N_{\text{jacobi}}) \times B_{\text
 - [[GPGPU]]——执行环境侧：同一套四步搬到 GPU 后变成 pass 序列，成本形状从"单元数 × 步数"变成"分辨率 × pass 数"
 - [[Adjoint Methods]]——**反问题方向的求解器**：给定形状反解外力需要梯度，而外力维度可达百万（McNamara 水人 150 万），只有伴随能让它可行
 - [[Sparse Volumetric Representation]]——**同一条"存在性"障碍的另一半**：本页讲怎么解方程，那页讲解之前先决定"哪些体素存在"
+- [[Position Based Dynamics]]——**第三条路（PBF 2013）**：不解泊松方程，把"密度必须等于静止密度"写成约束、用投影去满足它，代价是人工压力与 $\alpha$ 标定。库内只有一句转述（未入库）
 
 ## Technologies
 

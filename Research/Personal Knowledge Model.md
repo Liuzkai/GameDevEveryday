@@ -1,7 +1,7 @@
 ---
 type: personal-knowledge-model
 created: 2026-09-07
-updated: 2026-11-27
+updated: 2026-11-28
 status: calibrated-from-reading
 reading_checkpoint: 2026-09-18
 read_paper_count: 46
@@ -304,6 +304,16 @@ read_paper_count: 46
 
 **Hard 两处**：假设专属监督的 token 权重 $w_k^h=\mathrm{clamp}\big(\frac{f_k^h-\tau_p}{1-\tau_p},0,1\big)$ 为什么按"置信度"而不是"像素类别"加权；MEMO 的 GP 闭式初始化为什么会退化成最小二乘、以及 Kalman 门在补什么（模型误差 vs 关联误差）。**⚠️ 一处数据不一致，记一笔**：本文件 `read_paper_count: 46`，而 253 篇 frontmatter 实测 `read` **32** + `- read` **18** = **50** 篇 —— **差 4 篇，待核**（不代改读者标记，只标注）。**已读账本仍 46 篇**（连续第 **12** 日无动作）。
 
+**2026-11-28 更新（资料侧；阅读状态无变化）**：**"软"这个词的两代定义——从"没解完"到"约束允许被违反"**。今日无新批次（`cs.GR/recent` 顶部仍是 `Thu, 26 Nov`，listing 无 `Fri 27 Nov` 段；感恩节 2026-11-26，推断），整天还一笔挂两个月的账：[[Cloth Simulation]] 的 Learning Gap 第 1 条原文就是"PBD/XPBD 的机制（库内缺口，且是游戏引擎实际在跑的）"，而全库 `grep -ril "XPBD"` **16 个文件**、`Position Based Dynamics` 仅 2 个、概念页 **0 页承载**。
+
+**两篇经典**：① [[Müller 2007 — Position Based Dynamics|PBD 2006]]（A 经典·历史重要性 5，AGEIA = PhysX 前身，VRIPHYS 2006，10 页）——**"软"= 没解完**：不算力、不解矩阵，显式预测 → 反复投影 → 用位置差反推速度；$s=C/\sum_j w_j\lvert\nabla_{p_j}C\rvert^2$ 的**三个因子各有出处**（沿 $\nabla C$ 推 ⇒ 动量守恒、不产生鬼力；分母 ⇒ 单条约束一次 Newton 步；$w_i$ ⇒ 逆质量、$w=0$ 即钉死）；**$k'=1-(1-k)^{1/n_s}$ 只修好了迭代**，作者自陈 *"material stiffness is still dependent on the time step… fixed time steps in which case this dependency is not problematic"* ⇒ **固定步长是纪律不是物理**；1364 顶点自碰撞 **30 fps**、4264 顶点撕裂 **47 fps**、6 刚体+3 布条 **>380 fps**（Pentium 4 3 GHz，含渲染）；**2007 版没有刚体**。② [[Macklin 2016 — XPBD Position-Based Simulation of Compliant Constrained Dynamics|XPBD 2016]]（A 经典·历史重要性 4，NVIDIA，MIG '16，6 页）——**"软"= 约束允许被违反**：$\tilde\alpha=\alpha/\Delta t^2$、$\Delta\lambda=(-C-\tilde\alpha\lambda)/(\nabla CM^{-1}\nabla C^{\mathsf T}+\tilde\alpha)$；**$\Delta t^2$ 是量纲逼出来的**（$\alpha$ 是 m/N = s²/kg，而分母项是 1/kg，只有 $\alpha/\Delta t^2$ 同量纲）；$\alpha=0$ 精确退化成 PBD 的 $k=1$，且 $f=\lambda/\Delta t^2=-kC$ ⇒ **约束就是一根弹簧**；约束力误差 **6%/2%/0.5%**（50/100/1000 迭代）、布料表 1 每步 **+2%**；原文写 *"XPBD does not converge faster than PBD"*。
+
+**今日四条判据**：① **一个 0–1 滑块若"没单位 / 改别的设置会变 / 换引擎不能用"，它就是求解器参数，不是材料参数**——这条能同时解释材质的 roughness、灯光的 intensity 与布料的 stiffness；② **同一件资产只改迭代数或帧率，形变变了 ⇒ 求解器账，不变 ⇒ 材料账**（与 Cloth 页"穿随迭代变不变"那条判据同族）；③ **同一年代，渲染在把物理量换成 0–1（给美术调），物理在把 0–1 换回物理量（给资产搬）**——两个方向都对，判据是"这个参数给谁用"；④ **"状态永远合法"是可迁移的设计范式**（PBD 只走到被允许的位置 / 混完必是刚体 / $z=0$ 时数学消失 / 两端各自完整），**检验仍是那句：去掉那个后处理项，它还成立吗？**
+
+**回填 3 页**：[[Cloth Simulation]]（时间线与 Important Papers 的"库外"占位换一手结论 + 新增「"刚度"这个旋钮，调的到底是谁」一节 + Learning Gap 第 1 条结清）、[[Contact Dynamics]]（新增「第八格：PBD 把接触降级成又一条约束」——买到一个循环解决一切，欠下没有真库仑摩擦/没有唯一解/没有收敛保证）、[[Fluid Simulation]]（补 PBF 一条 Related）。
+
+**Hard 两处**：多约束下 $k$ 为什么改的是**不动点**而不只是收敛速度（单约束时 $k<1$ 仍收敛到 $C=0$，多约束时每个约束推一部分、下一个又推回来，平衡点是折中）；XPBD 的 $K\approx M$ 为什么**不改解**（只丢约束 Hessian，改收敛路径不改不动点）。**⚠️ 时代错置更正**："XPBD + 小步长"里的多子步单迭代是 **2019 Small Steps**，不在 2016 那篇里。**已读账本仍 46 篇**（连续第 **13** 日无动作）；253 篇 frontmatter 实测 `read` **50**，差 4 篇，**只标注不代改**。
+
 ## 工作背景与已有基础
 
 沿用原有背景：资深游戏技术美术，工作涉及材质、Houdini 过场特效与 PCG；Houdini、Maya、Unreal Engine、Substance 为熟悉工具。PBR 材质制作是强项；渲染底层、角色/体积/水体渲染、游戏动画系统和 PCG 算法仍需按具体主题判断。
@@ -341,6 +351,7 @@ read_paper_count: 46
 |---|---|
 | [[BRDF]]、[[Physically Based Rendering]]、[[Microfacet Theory]] | Cook–Torrance 框架已 Easy，Kajiya / Walter / Schlick 已读；[[Karis — Real Shading in Unreal Engine 4 (2013)]] 仍未读，工程链尚未完成 |
 | [[Metallic-Roughness Workflow]]（★ 2026-11-27 新增） | **PBR 的第四侧"参数化"**：三个通道的机制层（base color 是 sRGB、MR 是线性、metallic 是插值权重）是 **Easy 入口**——做材质的人每天都在画这三张图；**Normal 的核心是"同一张贴图的含义由 $M$ 决定"**（intended metalness $\mu_X$）——它把"贴图对不对"从**画的水平**问题换成了**语义**问题，而判据可观察：$\mu_C\neq M$ 时**偏暗**（漫反射图被当金属渲染）或**偏亮且平**（金属 albedo 被当漫反射 + 4% 白高光）。**"0.04 有两个来源"**（参数区间中点 + IOR 1.5 的精确 Fresnel）是今天最划算的一分钟。**Easy 到 Normal 的桥**：[[Burley 2012 — Physically Based Shading at Disney\|Burley 2012]] 的 §5 三行重映射（27 页讲义，只读 §5 + 图 16/19，≈30 分钟）+ 自己手画一次 $\alpha=r^2$ vs $\alpha=r$ 的 $D(\theta_h)$ 对照。**Hard 三处**：GTR 族与 HG·Berry·GGX 的等价关系、$F_{D90}$ 的漫反射回溯反射推导、通道打包在 BC7/ASTC 上的平台差异。**缺口**：**"金属覆盖率"与"金属度"在资产管线里是同一件事还是两件，本库没有原文**；0.04 在 roughness 两端的实测验证零篇 |
+| [[Position Based Dynamics]]（★ 2026-11-28 新增） | 求解器开域（游戏里跑的那一个）：**三件套（约束 / 迭代 / 子步）是 Easy 的入口**——Vellum 与 Chaos 每天都在用；**Normal 的核心是"软由谁定义"**——PBD 的 $k\in[0,1]$ 是"每次迭代删掉多少残差"（**软 = 没解完**），XPBD 的 $\alpha$（m/N）是"约束允许被违反多少"（**软 = 材料**），两者之差就是"加迭代会变硬"与"降帧率会变硬"这两个现象的共同根；**配套两条可立刻用的判据**：① 0–1 滑块若**没单位 / 改别的设置会变 / 换引擎不能用** ⇒ 求解器参数；② 同资产只改迭代或帧率，形变变了 ⇒ 求解器账。**Easy 到 Normal 的桥**：[[Müller 2007 — Position Based Dynamics\|PBD 2006]] 的 §3.1–3.3（算法 + 投影 + 刚度，10 页里约 3 页，≈25 分钟）+ [[Macklin 2016 — XPBD Position-Based Simulation of Compliant Constrained Dynamics\|XPBD 2016]] 的式 (18) 与图 2/图 6（6 页，≈20 分钟）。**Hard 三处**：多约束下 $k$ 改不动点、$K\approx M$ 为何不改解、XPBD 的 Rayleigh 阻尼 $\gamma$ 系数。**缺口**：Small Steps 2019 / PBF 2013 / 刚体 XPBD 2020 三篇均未入库；**$\alpha$ 与真实材料（N/m、Pa）的标定流程零篇**；质量比极端时 $\nabla CM^{-1}\nabla C^{\mathsf T}$ 的条件数无实测 |
 | [[Rendering Equation]]、[[Global Illumination]] | Kajiya 与 Gaussian Light Transport 已读；可继续比较采样与函数表示，不能由此确认 GI 缓存族已掌握 |
 | [[Multiple Scattering and Energy Compensation]] | 四篇核心材料已读；工程补偿与精确输运的比较可以继续，Heitz / Dupuy 推导及实测结果未确认 |
 | [[Split-Sum Approximation]] | 沿用 Normal；Fdez-Agüera 已读，Karis 未读，需补全其 IBL 近似与 LUT 假设 |

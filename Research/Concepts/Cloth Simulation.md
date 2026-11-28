@@ -110,6 +110,24 @@ Baraff-Witkin 1998 的 Table 1 是这条最干净的证据：换成隐式后步�
 
 > **判据（接在本页"三类假物理"之后）**：布料穿透如果**随迭代次数增加而减少**，是求解器账（加迭代/子步）；如果**完全不随迭代变**，是碰撞体账（补几何）。**先分清是哪一笔，再动手。**
 
+### "刚度"这个旋钮，调的到底是谁（2026-11-28 补）
+
+本页第一张表里"投影（PBD/XPBD）"那一行，此前只有一句"实时、稳定、旋钮直观"。现在两个旋钮的机制有了一手材料（[[Müller 2007 — Position Based Dynamics]] / [[Macklin 2016 — XPBD Position-Based Simulation of Compliant Constrained Dynamics]]），可以说得更狠一点：
+
+| 系统 | "刚度"是什么 | 单位 | 改迭代数 | 改帧率/子步 |
+|---|---|---|---|---|
+| **PBD（2007）** | 每次迭代删掉多少残差，$k'=1-(1-k)^{1/n_s}$ | 无量纲 [0,1] | **变硬**（且更"闷"） | **变硬**（$\Delta t$ 变小） |
+| **XPBD（2016）** | 柔度 $\alpha$，$\tilde\alpha=\alpha/\Delta t^2$ | m/N | 不变 | 不变 |
+| **隐式（1998）** | 杨氏模量 / 弯曲刚度 | N/m、N·m | 不变（只影响收敛） | 不变（只影响精度） |
+
+**PBD 的 $k'$ 只修了一半**：它把头两行变成"与迭代数线性"，但作者自己写下了剩下那一半——*"the resulting material stiffness is still dependent on the time step"*，理由是"实时环境通常用固定步长，所以不成问题"。**这是一句工程纪律，不是一条物理结论。**
+
+> **判据（可直接在引擎里做）**：同一件衣服、同一段动画，**只改帧率或子步**跑两遍。形变变了 ⇒ 你调的是求解器参数（PBD 语言）；形变不变 ⇒ 才是材料参数（XPBD / 隐式语言）。
+
+**为什么 XPBD 的 $\tilde\alpha$ 必须除以 $\Delta t^2$**：量纲。$\alpha$ 是 m/N（s²/kg），而式子里要跟它相加的那一项 $\nabla CM^{-1}\nabla C^{\mathsf T}$ 是 1/kg——**只有 $\alpha/\Delta t^2$ 同量纲**。顺带一个好处：$\alpha=0$ 时精确退化成 PBD 的 $k=1$，所以升级不需要重写求解器。
+
+**这条机制解释了本页"四种失败模式"里的第三种**（抖动/爆炸之外的"手感漂移"）：不是参数没调好，是**参数的含义随求解设置漂移**。也解释了为什么"同一资产换台机器就变样"——资产里存的不是一个材料参数。
+
 ## Prerequisites
 
 - [[Particle Systems]] — 同一套"粒子 + 力 + 时间步"骨架；布料多的是连接与静止坐标 $(u,v)$。
@@ -130,8 +148,8 @@ Baraff-Witkin 1998 的 Table 1 是这条最干净的证据：换成隐式后步�
 1998  **Baraff-Witkin：隐式 + 直接约束 + modified-PCG** → 步长与刚度解耦（[[Baraff-Witkin — Large Steps in Cloth Simulation (1998)]]）
 2001  Meyer 等：各向异性应变能（"布"→"织物"）
 2002  Bridson 等：鲁棒碰撞处理（连续碰撞、无穿透）
-2007  Müller 等 PBD：把"解线性系统"换成"投影约束"——实时侧的分岔口（库外）
-2016  Macklin 等 XPBD：补上"刚度—步长"一致性，PBD 才有了物理意义上的刚度（库外）
+2007  Müller 等 PBD：把"解线性系统"换成"投影约束"——实时侧的分岔口（[[Müller 2007 — Position Based Dynamics]]）
+2016  Macklin 等 XPBD：补上"刚度—步长"一致性，PBD 才有了物理意义上的刚度（[[Macklin 2016 — XPBD Position-Based Simulation of Compliant Constrained Dynamics]]）
 2010s Houdini Vellum / UE Chaos Cloth：PBD 系的工业化（迭代 + 子步 + 最大距离）
 2022  SNUG / NCS：自监督神经布料（无切向接触）
 2024  HOOD / ContourCraft：跨拓扑自监督 + 多层穿插（摩擦仍是训练常数）
@@ -153,11 +171,11 @@ Baraff-Witkin 1998 的 Table 1 是这条最干净的证据：换成隐式后步�
 | Provot, Deformation Constraints in a Mass-Spring Model | 1995 | "步后修正"这条路的源头 | 未入库（Baraff-Witkin 引用 [13]） |
 | **Baraff & Witkin, Large Steps in Cloth Simulation** | **1998** | **步长与刚度解耦；约束精确；成本搬家** | ✅ [[Baraff-Witkin — Large Steps in Cloth Simulation (1998)]] |
 | Bridson 等, Robust Treatment of Collisions | 2002 | 无穿透的碰撞处理 | 未入库 |
-| Müller 等, Position Based Dynamics | 2007 | 实时侧分岔口（投影取代解方程） | 未入库 |
-| Macklin 等, XPBD | 2016 | 刚度—步长一致性 | 未入库 |
+| Müller 等, Position Based Dynamics | 2007 | 实时侧分岔口（投影取代解方程） | ✅ [[Müller 2007 — Position Based Dynamics]] |
+| Macklin 等, XPBD | 2016 | 刚度—步长一致性 + 约束力 | ✅ [[Macklin 2016 — XPBD Position-Based Simulation of Compliant Constrained Dynamics]] |
 | **Truong 等, Explicit Frictional Contact in Neural Garment Simulation** | **2026** | **摩擦搬到推理后：闭式库仑 + 可调 μ** | ✅ [[2026-10-24-Truong — Explicit Frictional Contact Modeling in Neural Garment Simulation]] |
 
-> 库内目前只有两端（1998 与 2026），中间 1995/2002/2007/2016 四个节点是**明确的缺口**——尤其 PBD/XPBD，因为游戏引擎里跑的是它们，不是 1998 那套。
+> 库内现在是**四个节点**（1998 / 2007 / 2016 / 2026）：两端 + 中间两格。缺的是 **1995 Provot**（"步后修正"的源头）与 **2002 Bridson**（无穿透碰撞处理）——但**游戏里跑的那两个（2007 / 2016）已经有一手材料**，这是本页此前最大的欠账。
 
 ## Related Concepts
 
@@ -169,7 +187,7 @@ Baraff-Witkin 1998 的 Table 1 是这条最干净的证据：换成隐式后步�
 
 ## Technologies
 
-- **PBD 系（Chaos Cloth / Vellum）**：迭代投影 + 子步；参数是"迭代次数 / 子步 / 最大距离 / 摩擦"，不是"解线性系统"。**优点**：实时、稳定、旋钮直观；**缺点**：刚度依赖步长、摩擦是近似切向投影。
+- **PBD 系（Chaos Cloth / Vellum）**：迭代投影 + 子步；参数是"迭代次数 / 子步 / 最大距离 / 摩擦"，不是"解线性系统"。**优点**：实时、稳定、旋钮直观；**缺点**：刚度依赖步长（PBD）或依赖每约束柔度的标定（XPBD）、摩擦是近似切向投影。机制见 [[Position Based Dynamics]]。
 - **隐式系（离线渲染 / 影视）**：每步解稀疏系统，刚度不敏感；**优点**：大步、准；**缺点**：单帧几十秒量级，进不了实时。
 - **神经系（HOOD / ContourCraft + 事后算子）**：一次前向出结果；**优点**：与网格规模弱相关；**缺点**：需要训练数据/自监督目标，且**可调参数容易丢**（除非像 Truong 2026 那样显式补回）。
 
@@ -186,22 +204,25 @@ Baraff-Witkin 1998 的 Table 1 是这条最干净的证据：换成隐式后步�
 
 - **成本结构**：每帧成本 = 步数 × 每步代价 —— 这条已经在 [[Real-Time VFX Performance Budgeting]] 的"粒子/发射器"账里用过，布料是同一个式子的另一个实例。
 - **"成本搬家"直觉**：1998 年把成本从"步数"搬到"每步"，2026 年把它从"每步迭代"搬到"一次修正"——**你调 Niagara 的 substep / iteration 时其实在同一个平面上移动**。
-- **未建立**：没做过布料解算实测；没有 PBD/XPBD 的一手材料（库内缺口）。
+- **今日新建**：**"软 = 没解完"**（PBD 的 $k$ 是欠松弛因子）与 **"软 = 约束允许被违反"**（XPBD 的 $\alpha$ 是柔度）——这两个定义的区别，正好解释了你调 Vellum 时"加迭代就变硬"的经验。
+- **未建立**：没做过布料解算实测；没做过"换帧率看形变"的对照；$\alpha$ 与实测材料参数的换算没有一手数据。
 
 ## Learning Gap
 
-1. **PBD/XPBD 的机制**（库内缺口，且是游戏引擎实际在跑的）：为什么"投影"能替代"解方程"，$\alpha$ 柔度参数如何把刚度变成"与步长无关"。
-2. **自碰撞的工程做法**：空间哈希 + 厚度 + 层级剔除；为什么自碰撞比布-体碰撞贵一个量级。
-3. **拓扑变化的处理**（撕裂/破碎）：为什么 PBD 系难做，工业上怎么绕。
+1. ~~**PBD/XPBD 的机制**~~ ✅ **2026-11-28 结清**：投影为什么能替代解方程（单约束一次 Newton 步 + 沿梯度推 ⇒ 动量守恒）、$\alpha$ 为什么与步长无关（$\tilde\alpha=\alpha/\Delta t^2$，量纲逼出来的）——见 [[Position Based Dynamics]]。**新留下的缺口**：$\alpha$ 与真实材料（N/m、Pa）的标定流程，库内零篇。
+2. **自碰撞的工程做法**：空间哈希 + 厚度 + 层级剔除；为什么自碰撞比布-体碰撞贵一个量级。（PBD 2006 只给了"空间哈希 + 厚度 $h$"这一句，没有预算数字。）
+3. **拓扑变化的处理**（撕裂/破碎）：PBD 2007 给了一个极简做法——边长超阈值就过顶点切分、按分割面上/下分配三角形（4264 顶点 / 8262 三角形 / 47 fps）。**但没有"切完之后约束怎么重建、质量怎么重分配"的细节**，而那才是工程上真正难的部分。
+4. **1995 Provot / 2002 Bridson 未入库**：时间线两头各缺一格——"步后修正"的源头与"无穿透碰撞处理"的分水岭。
 
 ## Next Step
 
-- **最小实验（30 分钟）**：UE 里同一件衣服，只改三个参数各一次——`迭代次数`、`子步/解算频率`、`摩擦系数`——记录"视觉变化"与"帧时间变化"。目标是把"步数 vs 每步代价"这条式子变成手感。
-- **阅读顺序（按需）**：先 [[Baraff-Witkin — Large Steps in Cloth Simulation (1998)]] 的 §5.1（约束即质量）与 Table 1；再补 PBD 2007（库外）的"投影"一节；XPBD 只在需要"刚度为什么不随步长变"时读。
+- **最小实验（30 分钟）**：UE 里同一件衣服，只改三个参数各一次——`迭代次数`、`子步/解算频率`、`摩擦系数`——记录"视觉变化"与"帧时间变化"。目标是把"步数 vs 每步代价"这条式子变成手感。**（2026-11-28 新增第二问：改完迭代数与子步后，再换一个帧率跑同一段——形变变了没有？变了就是求解器账。）**
+- **阅读顺序（按需）**：先 [[Baraff-Witkin — Large Steps in Cloth Simulation (1998)]] 的 §5.1（约束即质量）与 Table 1；再 [[Müller 2007 — Position Based Dynamics]] 的 §3.1–3.3（算法 / 投影 / 刚度，约 3 页）；最后 [[Macklin 2016 — XPBD Position-Based Simulation of Compliant Constrained Dynamics|XPBD]] 的式 (18) 与图 2/图 6（6 页，约 20 分钟）。
 - **与已有工作的挂钩**：把布料的"层数 × 单价"接进 [[Overdraw]] 式的账本语言；把"摩擦是旋钮还是权重"接进 [[Budget Units]] 的"可调性"一栏。
 
 ## Notes
 
 - **建立于 2026-10-28**，由当日经典（Baraff-Witkin 1998）与前沿（Truong 2026）双向开域。此前库内"Cloth"只在 [[DeRose — Subdivision Surfaces in Character Animation (1998)]] 的布料能量项与 [[2026-10-07-Simulation Methods for Multiphysics Phenomena in Visual Computing]] 的框架分类里被提及，**没有独立页**。
-- **未入库的历史节点**（1995 Provot / 2002 Bridson / 2007 PBD / 2016 XPBD）在此仅作"时间线占位"，**没有读过原文，不写具体数字**；日后若入库需回来替换为一手结论。
+- **未入库的历史节点**（1995 Provot / 2002 Bridson）在此仅作"时间线占位"，**没有读过原文，不写具体数字**；日后若入库需回来替换为一手结论。
+- **2026-11-28 更新**：PBD 2007 与 XPBD 2016 入库，表里的"库外"占位全部替换为一手结论；新增「"刚度"这个旋钮，调的到底是谁」一节；Learning Gap 第 1 条结清。**仍未入库的历史节点**：1995 Provot / 2002 Bridson（只在时间线上占位，无具体数字）。
 - **术语**：cloth（布）与 garment（服装）在文献里常混用；差别在于 garment 强调"穿在人身上 + 与身体接触"，所以摩擦/接触是它的核心问题，而 cloth 可以只是"一块布"。
